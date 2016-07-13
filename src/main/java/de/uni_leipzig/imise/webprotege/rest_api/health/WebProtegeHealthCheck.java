@@ -15,6 +15,9 @@ public class WebProtegeHealthCheck extends HealthCheck {
 		this.configuration = configuration;
 	}
 	
+	/**
+	 * checks if path to data folder exists and is readable.
+	 */
 	@Override
 	protected Result check() throws Exception {
 		Path path = FileSystems.getDefault().getPath(configuration.getDataPath());

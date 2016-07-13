@@ -16,7 +16,7 @@ import de.uni_leipzig.imise.webprotege.rest_api.api.ProjectManager;
 import de.uni_leipzig.imise.webprotege.rest_api.api.ProjectManager.ProjectListEntry;
 
 @Path("/")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class Project {
 	private String dataPath;
 
