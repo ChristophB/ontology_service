@@ -20,7 +20,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	
 	@Override
 	public String getName() {
-		return "REST-API";
+		return "WebProtege REST-API";
 	}
 	
 	@Override
