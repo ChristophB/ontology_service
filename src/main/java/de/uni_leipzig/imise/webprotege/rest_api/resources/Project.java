@@ -11,7 +11,6 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.UnknownOWLOntologyException;
 
 import de.uni_leipzig.imise.webprotege.rest_api.api.OntologyManager;
-import de.uni_leipzig.imise.webprotege.rest_api.api.OntologyManager.OWLClassProperties;
 import de.uni_leipzig.imise.webprotege.rest_api.api.ProjectManager;
 import de.uni_leipzig.imise.webprotege.rest_api.api.ProjectManager.ProjectListEntry;
 
@@ -33,11 +32,20 @@ public class Project {
 	
 	@GET
 	@Path("/project/{id}/class/{class}")
-	public ArrayList<OWLClassProperties> getOntologyClass(@PathParam("id") String id, @PathParam("class") String cls) throws OWLOntologyCreationException {
+	public ArrayList<Object> getOntologyClass(@PathParam("id") String id, @PathParam("class") String cls) throws Exception {
 		ProjectManager pm = new ProjectManager(dataPath);
 		OntologyManager om = pm.getOntologyManager(id);
 		
-		return om.getClassProperties(cls);
+		return om.getClassPropertiesByName(cls);
+	}
+	
+	@GET
+	@Path("/project/{id}/individual/{individual}")
+	public ArrayList<Object> getOntologyIndividual(@PathParam("id") String id, @PathParam("individual") String individual) throws Exception {
+		ProjectManager pm = new ProjectManager(dataPath);
+		OntologyManager om = pm.getOntologyManager(id);
+		
+		return om.getNamedIndividualPropertiesByName(individual);
 	}
 	
 	@GET
@@ -48,4 +56,23 @@ public class Project {
 		
 		return om.getOntologyImports();
 	}
+	
+	@GET
+	@Path("/project/{id}/class/hasProperty/{property}")
+	public ArrayList<Object> getOntologyClassWithProperty(@PathParam("id") String id, @PathParam("property") String property) throws Exception {
+		ProjectManager pm = new ProjectManager(dataPath);
+		OntologyManager om = pm.getOntologyManager(id);
+		
+		return om.getClassPropertiesByProperty(property);
+	}
+	
+	@GET
+	@Path("/project/{id}/individual/hasProperty/{property}")
+	public ArrayList<Object> getOntologyNamedIndividualWithProperty(@PathParam("id") String id, @PathParam("property") String property) throws Exception {
+		ProjectManager pm = new ProjectManager(dataPath);
+		OntologyManager om = pm.getOntologyManager(id);
+		
+		return om.getNamedIndividualPropertiesByProperty(property);
+	}
+	
 }
