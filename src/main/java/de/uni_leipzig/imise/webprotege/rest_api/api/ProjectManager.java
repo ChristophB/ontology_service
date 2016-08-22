@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.ws.rs.core.NoContentException;
+
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
@@ -37,11 +39,13 @@ public class ProjectManager {
 		return list;
 	}
 	
-	public OntologyManager getOntologyManager(String id) {
+	public OntologyManager getOntologyManager(String id) throws NoContentException {
 		Instance project = getProjectInstance(id);
 		
-		if (project != null) return new OntologyManager(project, dataPath);
-		else return null;
+		if (project != null) 
+			return new OntologyManager(project, dataPath);
+		else 
+			throw new NoContentException("Could not find project by id: '" + id + "'");
 	}
 	
 	private ArrayList<Instance> getProjectInstances() {

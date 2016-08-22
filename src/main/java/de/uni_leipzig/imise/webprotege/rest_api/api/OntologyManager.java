@@ -3,8 +3,6 @@ package de.uni_leipzig.imise.webprotege.rest_api.api;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -26,8 +24,6 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.UnknownOWLOntologyException;
-
 import edu.stanford.smi.protege.model.Instance;
 
 public class OntologyManager {
@@ -188,10 +184,10 @@ public class OntologyManager {
 	
 	
 	
-	public ArrayList<String> getOntologyImports() throws UnknownOWLOntologyException, OWLOntologyCreationException {
+	public ArrayList<String> getOntologyImports() throws OWLOntologyCreationException {
 		ArrayList<String> imports = new ArrayList<String>();
 		
-		Iterator<OWLOntology> iterator = getImports().iterator();
+		Iterator<OWLOntology> iterator = getRootOntology().getImports().iterator();
 		while (iterator.hasNext()) {
 			imports.add(iterator.next().getOntologyID().toString());
 		}
@@ -219,77 +215,7 @@ public class OntologyManager {
 		return getRootOntology().getImportsClosure();
 	}
 	
-	private Set<OWLOntology> getImports() throws UnknownOWLOntologyException, OWLOntologyCreationException {
-		return getRootOntology().getImports();
-	}
 	
-	public class OWLClassProperties {
-		public Set<String> superclasses = new HashSet<String>();
-		public Set<String> subclasses   = new HashSet<String>();
-		public String iri;
-		
-		public void addSuperClassExpression(OWLClassExpression expression) {
-			this.superclasses.add(expression.toString());
-		}
-		
-		public void addSuperClassExpressions(Set<OWLClassExpression> expressions) {
-			Iterator<OWLClassExpression> iterator = expressions.iterator();
-	    	while (iterator.hasNext()) {
-	    		addSuperClassExpression(iterator.next());
-	    	}
-		}
-		
-		public void addSubClassExpression(OWLClassExpression expression) {
-			this.subclasses.add(expression.toString());
-		}
-		
-		public void addSubClassExpressions(Set<OWLClassExpression> expressions) {
-			Iterator<OWLClassExpression> iterator = expressions.iterator();
-	    	while (iterator.hasNext()) {
-	    		addSubClassExpression(iterator.next());
-	    	}
-		}
-	}
-	
-	public class OWLNamedIndividualProperties {
-		public Set<String> types                                             = new HashSet<String>();
-		public HashMap<String, Set<OWLLiteral>> dataProperties               = new HashMap<String, Set<OWLLiteral>>();
-		public HashMap<String, Set<OWLIndividual>> objectProperties          = new HashMap<String, Set<OWLIndividual>>();
-		public HashMap<String, Set<String>> annotationProperties = new HashMap<String, Set<String>>();
-		public String iri;
-		
-		public void addTypeExpression(OWLClassExpression expression) {
-			this.types.add(expression.toString());
-		}
-		
-		public void addDataProperty(OWLDataProperty property, Set<OWLLiteral> values) {
-			String propertyIRI = property.getIRI().toString();
-			if (!dataProperties.containsKey(propertyIRI)) {
-				dataProperties.put(propertyIRI, new HashSet<OWLLiteral>());
-			}
-			dataProperties.get(property.getIRI().toString()).addAll(values);
-		}
-		
-		public void addObjectProperty(OWLObjectProperty property, Set<OWLIndividual> values) {
-			String propertyIRI = property.getIRI().toString();
-			if (!objectProperties.containsKey(propertyIRI)) {
-				objectProperties.put(propertyIRI, new HashSet<OWLIndividual>());
-			}
-			objectProperties.get(propertyIRI).addAll(values);
-		}
-		
-		public void addAnnotationProperty(OWLAnnotationProperty property, Set<OWLAnnotation> values) {
-			if (values.isEmpty()) return;
-			
-			String propertyIRI = property.getIRI().toString();
-			if (!annotationProperties.containsKey(propertyIRI)) {
-				annotationProperties.put(propertyIRI, new HashSet<String>());
-			}
-			for (OWLAnnotation annotation : values) {
-				annotationProperties.get(property.getIRI().toString()).add(annotation.getValue().toString());
-			}
-		}
-	}
 	
 	private interface Runnable {
 		public boolean run(OWLEntity a, String b);
