@@ -13,6 +13,7 @@ import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentStorer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLParserFactory;
 import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -115,20 +116,28 @@ public class OntologyManager {
 	
 	private OWLNamedIndividualProperties getPropertiesForOWLNamedIndividual(OWLNamedIndividual individual) throws OWLOntologyCreationException {
 		OWLNamedIndividualProperties properties = new OWLNamedIndividualProperties();
+		OWLOntology ontology = getRootOntology();
 		
 		properties.iri = individual.getIRI().toString();
 		
 		for (OWLDataProperty property : individual.getDataPropertiesInSignature()) {
-			Set<OWLLiteral> values = individual.getDataPropertyValues(property, getRootOntology());
+			Set<OWLLiteral> values = individual.getDataPropertyValues(property, ontology);
 			properties.addDataProperty(property, values);
 		}
 		
 		for (OWLObjectProperty property : individual.getObjectPropertiesInSignature()) {
-			Set<OWLIndividual> values = individual.getObjectPropertyValues(property, getRootOntology());
+			Set<OWLIndividual> values = individual.getObjectPropertyValues(property, ontology);
 			properties.addObjectProperty(property, values);
 		}
 		
-		// type, annotationProperty, ...
+		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
+			Set<OWLAnnotation> values = individual.getAnnotations(ontology, property);
+			properties.addAnnotationProperty(property, values);
+		}
+		
+		for (OWLClassExpression type : individual.getTypes(ontology)) {
+			properties.addTypeExpression(type);
+		}
 		
 		return properties;
 	}
@@ -243,29 +252,42 @@ public class OntologyManager {
 	}
 	
 	public class OWLNamedIndividualProperties {
-		public Set<String> types = new HashSet<String>();
-		public HashMap<String, Set<OWLLiteral>> dataProperties = new HashMap<String, Set<OWLLiteral>>();
-		public HashMap<String, Set<OWLIndividual>> objectProperties = new HashMap<String, Set<OWLIndividual>>();
+		public Set<String> types                                             = new HashSet<String>();
+		public HashMap<String, Set<OWLLiteral>> dataProperties               = new HashMap<String, Set<OWLLiteral>>();
+		public HashMap<String, Set<OWLIndividual>> objectProperties          = new HashMap<String, Set<OWLIndividual>>();
+		public HashMap<String, Set<String>> annotationProperties = new HashMap<String, Set<String>>();
 		public String iri;
 		
-		public void addTypeExpression() {
-			this.types.add("expression");
-		}
-		
-		public void addType() {
-			// how to get types?
+		public void addTypeExpression(OWLClassExpression expression) {
+			this.types.add(expression.toString());
 		}
 		
 		public void addDataProperty(OWLDataProperty property, Set<OWLLiteral> values) {
+			String propertyIRI = property.getIRI().toString();
+			if (!dataProperties.containsKey(propertyIRI)) {
+				dataProperties.put(propertyIRI, new HashSet<OWLLiteral>());
+			}
 			dataProperties.get(property.getIRI().toString()).addAll(values);
 		}
 		
 		public void addObjectProperty(OWLObjectProperty property, Set<OWLIndividual> values) {
-			objectProperties.get(property.getIRI().toString()).addAll(values);
+			String propertyIRI = property.getIRI().toString();
+			if (!objectProperties.containsKey(propertyIRI)) {
+				objectProperties.put(propertyIRI, new HashSet<OWLIndividual>());
+			}
+			objectProperties.get(propertyIRI).addAll(values);
 		}
 		
-		public void addAnnotationProperty(OWLAnnotationProperty property, Set<Object> values) {
-			// how to get annotationProperties?
+		public void addAnnotationProperty(OWLAnnotationProperty property, Set<OWLAnnotation> values) {
+			if (values.isEmpty()) return;
+			
+			String propertyIRI = property.getIRI().toString();
+			if (!annotationProperties.containsKey(propertyIRI)) {
+				annotationProperties.put(propertyIRI, new HashSet<String>());
+			}
+			for (OWLAnnotation annotation : values) {
+				annotationProperties.get(property.getIRI().toString()).add(annotation.getValue().toString());
+			}
 		}
 	}
 	
