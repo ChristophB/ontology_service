@@ -1,5 +1,6 @@
 package de.uni_leipzig.imise.webprotege.rest_api.resources;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,29 +34,26 @@ public class Project {
 		ProjectManager pm = new ProjectManager(dataPath);
 		return pm.getProjectList();
 	}
-	
+
 	@GET
-	@Path("/project/{id}/class/{class}")
-	public ArrayList<Object> getOntologyClass(@PathParam("id") String id, @PathParam("class") String cls) {
+	@Path("/project/{id}/{type}/{name}")
+	public ArrayList<Object> getOntologyEntityByName(@PathParam("id") String id, @PathParam("type") String type, @PathParam("name") String name) {
 		ArrayList<Object> result = new ArrayList<Object>();
 		
 		try {
-			result = getOntologyManager(id).getClassPropertiesByName(cls);
-		} catch (Exception e) {
-			logger.warn(e.getMessage());
-			result.add(e.getMessage());
-		}
-		
-		return result;
-	}
-	
-	@GET
-	@Path("/project/{id}/individual/{individual}")
-	public ArrayList<Object> getOntologyIndividual(@PathParam("id") String id, @PathParam("individual") String individual) {
-		ArrayList<Object> result = new ArrayList<Object>();
-		
-		try {
-			result = getOntologyManager(id).getNamedIndividualPropertiesByName(individual);
+			switch (type) {
+				case "entity":
+					result = getOntologyManager(id).getEntityPropertiesByName(name);
+					break;
+				case "individual":
+					result = getOntologyManager(id).getNamedIndividualPropertiesByName(name);
+					break;
+				case "class":
+					result = getOntologyManager(id).getClassPropertiesByName(name);
+					break;
+				default:
+					throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
+			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 			result.add(e.getMessage());
@@ -80,27 +78,21 @@ public class Project {
 	}
 	
 	@GET
-	@Path("/project/{id}/class/hasProperty/{property}")
-	public ArrayList<Object> getOntologyClassWithProperty(@PathParam("id") String id, @PathParam("property") String property) {
+	@Path("/project/{id}/{type}/hasProperty/{property}")
+	public ArrayList<Object> getOntologyEntityWithProperty(@PathParam("id") String id, @PathParam("type") String type, @PathParam("property") String property) {
 		ArrayList<Object> result = new ArrayList<Object>();
 		
 		try {
-			result = getOntologyManager(id).getClassPropertiesByProperty(property);
-		} catch (Exception e) {
-			logger.warn(e.getMessage());
-			result.add(e.getMessage());
-		}
-		
-		return result;
-	}
-	
-	@GET
-	@Path("/project/{id}/individual/hasProperty/{property}")
-	public ArrayList<Object> getOntologyNamedIndividualWithProperty(@PathParam("id") String id, @PathParam("property") String property) {
-		ArrayList<Object> result = new ArrayList<Object>();
-		
-		try {
-			result = getOntologyManager(id).getNamedIndividualPropertiesByProperty(property);
+			switch (type) {
+				case "individual":
+					result = getOntologyManager(id).getNamedIndividualPropertiesByProperty(property);
+					break;
+				case "class":
+					result = getOntologyManager(id).getClassPropertiesByProperty(property);
+					break;
+				default:
+					throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
+			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 			result.add(e.getMessage());
