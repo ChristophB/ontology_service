@@ -103,13 +103,24 @@ public class OntologyManager {
 		return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(property, filter).iterator());
 	}
 	
-	public ArrayList<Object> getEntityPropertiesByName(String name) throws OWLOntologyCreationException, Exception {
+	public ArrayList<Object> getEntityPropertiesByName(String name) throws Exception {
 		Filter filter = new Filter() {
 			@Override public boolean run(OWLEntity a, String b) {
 				return a.getIRI().getFragment().equals(b);
 			}
 		};
 		return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(name, filter).iterator());
+	}
+	
+	public ArrayList<Object> getEntityPropertiesByProperty(String property) throws Exception {
+		Filter filter = new Filter() {
+			@Override public boolean run(OWLEntity a, String b) {
+				return a.getDataPropertiesInSignature().contains(b)
+					|| a.getObjectPropertiesInSignature().contains(b);
+					// annotationproperties missing
+			}
+		};
+		return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(property, filter).iterator());
 	}
 	
 	

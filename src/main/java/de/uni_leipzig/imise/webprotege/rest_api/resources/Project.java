@@ -37,7 +37,11 @@ public class Project {
 
 	@GET
 	@Path("/project/{id}/{type}/{name}")
-	public ArrayList<Object> getOntologyEntityByName(@PathParam("id") String id, @PathParam("type") String type, @PathParam("name") String name) {
+	public ArrayList<Object> getOntologyEntityByName(
+		@PathParam("id") String id,
+		@PathParam("type") String type,
+		@PathParam("name") String name
+	) {
 		ArrayList<Object> result = new ArrayList<Object>();
 		
 		try {
@@ -78,8 +82,13 @@ public class Project {
 	}
 	
 	@GET
-	@Path("/project/{id}/{type}/hasProperty/{property}")
-	public ArrayList<Object> getOntologyEntityWithProperty(@PathParam("id") String id, @PathParam("type") String type, @PathParam("property") String property) {
+	@Path("/project/{id}/{type}/hasProperty/{property}{value : (/\\w*)?}")
+	public ArrayList<Object> getOntologyEntityWithProperty(
+		@PathParam("id") String id,
+		@PathParam("type") String type, 
+		@PathParam("property") String property,
+		@PathParam("value") String value
+	) {
 		ArrayList<Object> result = new ArrayList<Object>();
 		
 		try {
@@ -89,6 +98,9 @@ public class Project {
 					break;
 				case "class":
 					result = getOntologyManager(id).getClassPropertiesByProperty(property);
+					break;
+				case "entity":
+					result = getOntologyManager(id).getEntityPropertiesByProperty(property);
 					break;
 				default:
 					throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
