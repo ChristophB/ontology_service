@@ -7,15 +7,15 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 
 public class OWLNamedIndividualProperties {
-	public Set<String> types                                             = new HashSet<String>();
-	public HashMap<String, Set<OWLLiteral>> dataProperties               = new HashMap<String, Set<OWLLiteral>>();
-	public HashMap<String, Set<OWLIndividual>> objectProperties          = new HashMap<String, Set<OWLIndividual>>();
+	public Set<String> types                                 = new HashSet<String>();
+	public HashMap<String, Set<String>> dataProperties       = new HashMap<String, Set<String>>();
+	public HashMap<String, Set<String>> objectProperties     = new HashMap<String, Set<String>>();
 	public HashMap<String, Set<String>> annotationProperties = new HashMap<String, Set<String>>();
 	public String iri;
 	
@@ -23,20 +23,24 @@ public class OWLNamedIndividualProperties {
 		this.types.add(expression.toString());
 	}
 	
-	public void addDataProperty(OWLDataProperty property, Set<OWLLiteral> values) {
-		String propertyIRI = property.getIRI().toString();
+	public void addDataProperty(OWLDataPropertyExpression property, Set<OWLLiteral> values) {
+		String propertyIRI = property.asOWLDataProperty().getIRI().toString();
 		if (!dataProperties.containsKey(propertyIRI)) {
-			dataProperties.put(propertyIRI, new HashSet<OWLLiteral>());
+			dataProperties.put(propertyIRI, new HashSet<String>());
 		}
-		dataProperties.get(property.getIRI().toString()).addAll(values);
+		for (OWLLiteral literal : values) {
+			dataProperties.get(propertyIRI).add(literal.toString());
+		}
 	}
 	
-	public void addObjectProperty(OWLObjectProperty property, Set<OWLIndividual> values) {
-		String propertyIRI = property.getIRI().toString();
+	public void addObjectProperty(OWLObjectPropertyExpression property, Set<OWLIndividual> values) {
+		String propertyIRI = property.asOWLObjectProperty().getIRI().toString();
 		if (!objectProperties.containsKey(propertyIRI)) {
-			objectProperties.put(propertyIRI, new HashSet<OWLIndividual>());
+			objectProperties.put(propertyIRI, new HashSet<String>());
 		}
-		objectProperties.get(propertyIRI).addAll(values);
+		for (OWLIndividual individual : values) {
+			objectProperties.get(propertyIRI).add(individual.toString());
+		}
 	}
 	
 	public void addAnnotationProperty(OWLAnnotationProperty property, Set<OWLAnnotation> values) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
@@ -17,15 +18,16 @@ import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-
 import edu.stanford.smi.protege.model.Instance;
 
 public class OntologyManager {
@@ -60,7 +62,7 @@ public class OntologyManager {
 			}
 		};
 	    
-	    return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(name, filter).iterator());
+	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
 	public ArrayList<Object> getNamedIndividualPropertiesByName(String name) throws Exception {
@@ -70,7 +72,7 @@ public class OntologyManager {
 			}
 		};
 		
-		return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(name, filter).iterator());
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
 	public ArrayList<Object> getClassPropertiesByProperty(String property) throws Exception {
@@ -85,7 +87,7 @@ public class OntologyManager {
 			}
 		};
 
-	    return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(property, filter).iterator());
+	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(property, filter));
 	}
 	
 	public ArrayList<Object> getNamedIndividualPropertiesByProperty(String property) throws Exception {
@@ -93,14 +95,14 @@ public class OntologyManager {
 			@Override public boolean run(OWLEntity a, String b) { 
 				return a.isOWLNamedIndividual()
 					&& (
-						a.getDataPropertiesInSignature().contains(b)
+						a.getDataPropertiesInSignature().contains(b) //should be dataproperty
 						|| a.getObjectPropertiesInSignature().contains(b)
 						// annotationproperties missing
 					);
 			}
 		};
 
-		return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(property, filter).iterator());
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(property, filter));
 	}
 	
 	public ArrayList<Object> getEntityPropertiesByName(String name) throws Exception {
@@ -109,28 +111,81 @@ public class OntologyManager {
 				return a.getIRI().getFragment().equals(b);
 			}
 		};
-		return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(name, filter).iterator());
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
-	public ArrayList<Object> getEntityPropertiesByProperty(String property) throws Exception {
-		Filter filter = new Filter() {
-			@Override public boolean run(OWLEntity a, String b) {
-				return a.getDataPropertiesInSignature().contains(b)
-					|| a.getObjectPropertiesInSignature().contains(b);
-					// annotationproperties missing
+	public ArrayList<Object> getEntityPropertiesByProperty(String property, String value) throws Exception {
+		return getPropertiesForOWLEntities(extractEntitiesByProperty(property, value));
+	}
+	
+	private ArrayList<OWLEntity> extractEntitiesByProperty(String name, String value) throws OWLOntologyCreationException {
+		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
+		OWLOntology ontology = getRootOntology();
+	    
+	    for (OWLEntity entity : ontology.getSignature(true)) {
+	    	for (OWLDataProperty property : getOWLDataPropertiesFromString(name)) {
+		    	if (entity.getDataPropertiesInSignature().contains(property) && !resultset.contains(entity))
+		    		resultset.add(entity);
+	    	}
+	    	for (OWLObjectProperty property : getOWLObjectPropertiesFromString(name)) {
+		    	if (entity.getObjectPropertiesInSignature().contains(property) && !resultset.contains(entity))
+		    		resultset.add(entity);
+	    	}
+	    	for (OWLAnnotationProperty property : getOWLAnnotationPropertiesFromString(name)) {
+		    	if (!entity.getAnnotations(ontology, property).isEmpty())
+		    		resultset.add(entity);
+	    	}
+	    }
+		
+	    return resultset;
+	}
+	
+	
+	
+	private ArrayList<OWLDataProperty> getOWLDataPropertiesFromString(String name) throws OWLOntologyCreationException {
+		OWLOntology ontology = getRootOntology();
+		ArrayList<OWLDataProperty> properties = new ArrayList<OWLDataProperty>();
+		
+		for (OWLDataProperty property : ontology.getDataPropertiesInSignature(true)) {
+			if (property.getIRI().getFragment().toString().equals(name) && !properties.contains(property))
+				properties.add(property);
+		}
+		
+		return properties;
+	}
+	
+	private ArrayList<OWLObjectProperty> getOWLObjectPropertiesFromString(String name) throws OWLOntologyCreationException {
+		OWLOntology ontology = getRootOntology();
+		ArrayList<OWLObjectProperty> properties = new ArrayList<OWLObjectProperty>();
+		
+		for (OWLObjectProperty property : ontology.getObjectPropertiesInSignature(true)) {
+			if (property.getIRI().getFragment().toString().equals(name) && !properties.contains(property))
+				properties.add(property);
+		}
+		
+		return properties;
+	}
+	
+	private ArrayList<OWLAnnotationProperty> getOWLAnnotationPropertiesFromString(String name) throws OWLOntologyCreationException {
+		OWLOntology ontology = getRootOntology();
+		ArrayList<OWLAnnotationProperty> properties = new ArrayList<OWLAnnotationProperty>();
+		
+		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
+			if (property.getIRI().getFragment().toString().equals(name) && !properties.contains(property)) {
+				properties.add(property);
 			}
-		};
-		return getPropertiesForOWLEntityIterator(extractEntitiesWithFilter(property, filter).iterator());
+		}
+		
+		return properties;
 	}
 	
 	
 	
-	
- 	private ArrayList<Object> getPropertiesForOWLEntityIterator(Iterator<OWLEntity> iterator) throws Exception {
+ 	private ArrayList<Object> getPropertiesForOWLEntities(ArrayList<OWLEntity> entities) throws Exception {
 		ArrayList<Object> properties = new ArrayList<Object>();
 
-		while (iterator.hasNext()) {
-	    	properties.add(getPropertiesForOWLEntity(iterator.next()));
+		for (OWLEntity entity : entities) {
+	    	properties.add(getPropertiesForOWLEntity(entity));
 	    }
 		return properties;
 	}
@@ -140,9 +195,9 @@ public class OntologyManager {
 			return getPropertiesForOWLClass((OWLClass) entity);
 		} else if (entity.isOWLNamedIndividual()) {
 			return getPropertiesForOWLNamedIndividual((OWLNamedIndividual) entity);
+		} else {
+			return entity.getIRI().toString();
 		}
-		
-		throw new Exception("OWLEntity is neither OWLCLass nor OWLNamedIndividual.");
 	}
 	
 	private OWLClassProperties getPropertiesForOWLClass(OWLClass cls) throws OWLOntologyCreationException {
@@ -161,20 +216,20 @@ public class OntologyManager {
     	return properties;
 	}
 	
-	private OWLNamedIndividualProperties getPropertiesForOWLNamedIndividual(OWLNamedIndividual individual) throws OWLOntologyCreationException {
+	private OWLNamedIndividualProperties getPropertiesForOWLNamedIndividual(OWLNamedIndividual individual) throws OWLOntologyCreationException, InterruptedException {
 		OWLNamedIndividualProperties properties = new OWLNamedIndividualProperties();
 		OWLOntology ontology = getRootOntology();
 		
 		properties.iri = individual.getIRI().toString();
 		
-		for (OWLDataProperty property : individual.getDataPropertiesInSignature()) {
-			Set<OWLLiteral> values = individual.getDataPropertyValues(property, ontology);
-			properties.addDataProperty(property, values);
+		Map<OWLDataPropertyExpression, Set<OWLLiteral>> dataProperties = individual.getDataPropertyValues(ontology);
+		for (OWLDataPropertyExpression property : dataProperties.keySet()) {
+			properties.addDataProperty(property, dataProperties.get(property));
 		}
 		
-		for (OWLObjectProperty property : individual.getObjectPropertiesInSignature()) {
-			Set<OWLIndividual> values = individual.getObjectPropertyValues(property, ontology);
-			properties.addObjectProperty(property, values);
+		Map<OWLObjectPropertyExpression, Set<OWLIndividual>> objectProperties = individual.getObjectPropertyValues(ontology);
+		for (OWLObjectPropertyExpression property : objectProperties.keySet()) {
+			properties.addObjectProperty(property, objectProperties.get(property));
 		}
 		
 		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
@@ -239,7 +294,6 @@ public class OntologyManager {
 	private Set<OWLOntology> getOntologies() throws OWLOntologyCreationException {
 		return getRootOntology().getImportsClosure();
 	}
-	
 	
 	
 	

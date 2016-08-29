@@ -100,7 +100,7 @@ public class Project {
 					result = getOntologyManager(id).getClassPropertiesByProperty(property);
 					break;
 				case "entity":
-					result = getOntologyManager(id).getEntityPropertiesByProperty(property);
+					result = getOntologyManager(id).getEntityPropertiesByProperty(property, value);
 					break;
 				default:
 					throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
