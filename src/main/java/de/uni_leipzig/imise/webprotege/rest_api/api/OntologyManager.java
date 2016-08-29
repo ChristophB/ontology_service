@@ -132,8 +132,18 @@ public class OntologyManager {
 		    		resultset.add(entity);
 	    	}
 	    	for (OWLAnnotationProperty property : getOWLAnnotationPropertiesFromString(name)) {
-		    	if (!entity.getAnnotations(ontology, property).isEmpty())
-		    		resultset.add(entity);
+	    		Set<OWLAnnotation> values = entity.getAnnotations(ontology, property);
+	    		if (values.isEmpty() || resultset.contains(entity))
+	    			continue;
+	    		
+		    	for (OWLAnnotation curValue : values) {
+		    		if (value == null || value.equals("")
+		    			|| curValue.getValue().toString().replaceAll("\"|^.*$", "").equals(value)
+		    		) {
+		    			resultset.add(entity);
+		    			break;
+		    		}
+		    	}
 	    	}
 	    }
 		

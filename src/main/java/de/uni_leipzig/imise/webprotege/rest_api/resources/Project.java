@@ -82,7 +82,7 @@ public class Project {
 	}
 	
 	@GET
-	@Path("/project/{id}/{type}/hasProperty/{property}{value : (/\\w*)?}")
+	@Path("/project/{id}/{type}/hasProperty/{property}{value : (/.*)?}")
 	public ArrayList<Object> getOntologyEntityWithProperty(
 		@PathParam("id") String id,
 		@PathParam("type") String type, 
@@ -90,6 +90,7 @@ public class Project {
 		@PathParam("value") String value
 	) {
 		ArrayList<Object> result = new ArrayList<Object>();
+		value = value.replace("/", "");
 		
 		try {
 			switch (type) {
