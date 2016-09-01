@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NoContentException;
 
@@ -82,23 +83,22 @@ public class Project {
 	}
 	
 	@GET
-	@Path("/project/{id}/{type}/hasProperty/{property}{value : (/.*)?}")
+	@Path("/project/{id}/{type}/hasProperty/{property}")
 	public ArrayList<Object> getOntologyEntityWithProperty(
 		@PathParam("id") String id,
 		@PathParam("type") String type, 
 		@PathParam("property") String property,
-		@PathParam("value") String value
+		@QueryParam("value") String value
 	) {
 		ArrayList<Object> result = new ArrayList<Object>();
-		value = value.replace("/", "");
 		
 		try {
 			switch (type) {
 				case "individual":
-					result = getOntologyManager(id).getNamedIndividualPropertiesByProperty(property);
+					result = getOntologyManager(id).getNamedIndividualPropertiesByProperty(property, value);
 					break;
 				case "class":
-					result = getOntologyManager(id).getClassPropertiesByProperty(property);
+					result = getOntologyManager(id).getClassPropertiesByProperty(property, value);
 					break;
 				case "entity":
 					result = getOntologyManager(id).getEntityPropertiesByProperty(property, value);
