@@ -2,6 +2,9 @@ package de.uni_leipzig.imise.webprotege.rest_api.resources;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -36,9 +39,52 @@ public class Project {
 		return pm.getProjectList();
 	}
 
+	/* gemischte Suche sollte auch möglich sein. Also: name+property(+value) */
 	@GET
-	@Path("/project/{id}/{type}/{name}")
-	public ArrayList<Object> getOntologyEntityByName(
+	@Path("/entity")
+	public ArrayList<Object> searchOntologyEntities(
+		@QueryParam("name")	String name,
+		@QueryParam("property") String property,
+		@QueryParam("value") String value,
+		@QueryParam("type") String type,
+		@QueryParam("ontologies") String ontologies
+	) {
+		ArrayList<Object> result = new ArrayList<Object>();
+		
+		if (type == null || type.equals("")) {
+			logger.info("No query param 'entity' given, using default.");
+			type = "entity";
+		}
+		
+		if ((name == null || name.equals("")) && (property == null || property.equals(""))) {
+			String msg = "Neither query param 'name' nor 'property' given.";
+			logger.warn(msg);
+			result.add(msg);
+			return result;
+		}
+		
+		List<String> ontologyList = new ArrayList<String>();
+		if (ontologies == null || ontologies.equals("")) {
+			logger.info("No ontologies given, using all.");
+			
+			for (ProjectListEntry entry : getOntologyList()) {
+				ontologyList.add(entry.id);
+			}
+		} else {
+			ontologyList = Arrays.asList(ontologies.split(","));
+		}
+		
+		for (String id : ontologyList) {
+			if (name != null && !name.equals(""))
+				result.addAll(searchOntologyEntityByName(id, type, name));
+			else if (property != null && !property.equals(""))
+				result.addAll(searchOntologyEntityByProperty(id, type, property, value));
+		}
+		
+		return result;
+	}
+	
+	public ArrayList<Object> searchOntologyEntityByName(
 		@PathParam("id") String id,
 		@PathParam("type") String type,
 		@PathParam("name") String name
@@ -82,9 +128,7 @@ public class Project {
 		return result;
 	}
 	
-	@GET
-	@Path("/project/{id}/{type}/hasProperty/{property}")
-	public ArrayList<Object> getOntologyEntityWithProperty(
+	public ArrayList<Object> searchOntologyEntityByProperty(
 		@PathParam("id") String id,
 		@PathParam("type") String type, 
 		@PathParam("property") String property,
