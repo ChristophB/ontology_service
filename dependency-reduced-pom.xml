@@ -7,7 +7,7 @@
   <version>0.0.1</version>
   <description>REST-full API to access Ontologies developed and stored in WebProtegé.</description>
   <build>
-    <finalName>WebProtegé REST-full API</finalName>
+    <finalName>service</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>

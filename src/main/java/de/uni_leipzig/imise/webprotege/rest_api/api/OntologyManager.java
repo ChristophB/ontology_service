@@ -67,7 +67,7 @@ public class OntologyManager {
 	}
 
 	
-	public ArrayList<Object> getClassPropertiesByName(String name) throws Exception {	
+	public ArrayList<OWLEntityProperties> getClassPropertiesByName(String name) throws Exception {	
 		Filter filter = new Filter() {
 			@Override public boolean run(OWLEntity a, String b) {
 				return a.isOWLClass() && a.getIRI().getFragment().equals(b);
@@ -77,7 +77,7 @@ public class OntologyManager {
 	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
-	public ArrayList<Object> getNamedIndividualPropertiesByName(String name) throws Exception {
+	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name) throws Exception {
 		Filter filter = new Filter() {
 			@Override public boolean run(OWLEntity a, String b) {
 				return a.isOWLNamedIndividual() && a.getIRI().getFragment().equals(b);
@@ -87,7 +87,7 @@ public class OntologyManager {
 		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
-	public ArrayList<Object> getEntityPropertiesByName(String name) throws Exception {
+	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(String name) throws Exception {
 		Filter filter = new Filter() {
 			@Override public boolean run(OWLEntity a, String b) {
 				return a.getIRI().getFragment().equals(b);
@@ -97,15 +97,15 @@ public class OntologyManager {
 	}
 	
 	
-	public ArrayList<Object> getClassPropertiesByProperty(String property, String value) throws Exception {
+	public ArrayList<OWLEntityProperties> getClassPropertiesByProperty(String property, String value) throws Exception {
 	    return getPropertiesForOWLEntities(extractOWLClassesByProperty(property, value));
 	}
 	
-	public ArrayList<Object> getNamedIndividualPropertiesByProperty(String property, String value) throws Exception {
+	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByProperty(String property, String value) throws Exception {
 		return getPropertiesForOWLEntities(extractOWLNamedIndividualByProperty(property, value));
 	}
 	
-	public ArrayList<Object> getEntityPropertiesByProperty(String property, String value) throws Exception {
+	public ArrayList<OWLEntityProperties> getEntityPropertiesByProperty(String property, String value) throws Exception {
 		return getPropertiesForOWLEntities(extractOWLEntitiesByProperty(property, value));
 	}
 	
@@ -254,8 +254,8 @@ public class OntologyManager {
 	}
 	
 	
- 	private ArrayList<Object> getPropertiesForOWLEntities(ArrayList<OWLEntity> entities) throws Exception {
-		ArrayList<Object> properties = new ArrayList<Object>();
+ 	private ArrayList<OWLEntityProperties> getPropertiesForOWLEntities(ArrayList<OWLEntity> entities) throws Exception {
+		ArrayList<OWLEntityProperties> properties = new ArrayList<OWLEntityProperties>();
 
 		for (OWLEntity entity : entities) {
 	    	properties.add(getPropertiesForOWLEntity(entity));
@@ -264,13 +264,15 @@ public class OntologyManager {
 	}
  	
  		
-	private Object getPropertiesForOWLEntity(OWLEntity entity) throws Exception {
+	private OWLEntityProperties getPropertiesForOWLEntity(OWLEntity entity) throws Exception {
 		if (entity.isOWLClass()) {
 			return getPropertiesForOWLClass((OWLClass) entity);
 		} else if (entity.isOWLNamedIndividual()) {
 			return getPropertiesForOWLNamedIndividual((OWLNamedIndividual) entity);
 		} else {
-			return entity.getIRI().toString();
+			OWLEntityProperties result = new OWLEntityProperties();
+			result.iri = entity.getIRI().toString();
+			return result;
 		}
 	}
 	

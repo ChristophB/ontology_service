@@ -4,20 +4,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.semanticweb.owlapi.model.OWLAnnotation;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 
-public class OWLNamedIndividualProperties {
+public class OWLNamedIndividualProperties extends OWLEntityProperties {
 	public Set<String> types                                 = new HashSet<String>();
 	public HashMap<String, Set<String>> dataProperties       = new HashMap<String, Set<String>>();
 	public HashMap<String, Set<String>> objectProperties     = new HashMap<String, Set<String>>();
-	public HashMap<String, Set<String>> annotationProperties = new HashMap<String, Set<String>>();
-	public String iri;
 	
 	public void addTypeExpression(OWLClassExpression expression) {
 		this.types.add(expression.toString());
@@ -42,16 +38,5 @@ public class OWLNamedIndividualProperties {
 			objectProperties.get(propertyIRI).add(individual.toString());
 		}
 	}
-	
-	public void addAnnotationProperty(OWLAnnotationProperty property, Set<OWLAnnotation> values) {
-		if (values.isEmpty()) return;
-		
-		String propertyIRI = property.getIRI().toString();
-		if (!annotationProperties.containsKey(propertyIRI)) {
-			annotationProperties.put(propertyIRI, new HashSet<String>());
-		}
-		for (OWLAnnotation annotation : values) {
-			annotationProperties.get(property.getIRI().toString()).add(annotation.getValue().toString());
-		}
-	}
+
 }

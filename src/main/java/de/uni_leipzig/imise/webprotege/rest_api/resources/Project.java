@@ -17,7 +17,9 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OntologyManager;
+import de.uni_leipzig.imise.webprotege.rest_api.api.PathDocumentation;
 import de.uni_leipzig.imise.webprotege.rest_api.api.ProjectManager;
 import de.uni_leipzig.imise.webprotege.rest_api.api.ProjectManager.ProjectListEntry;
 
@@ -33,81 +35,66 @@ public class Project {
 	}
 	
 	@GET
+	@Path("/")
+	public ArrayList<Object> getDocumentation() {
+		ArrayList<Object> documentation = new ArrayList<Object>();
+		
+		documentation.add(
+			new PathDocumentation("/entity", "Search for a single or multiple entities.")
+				.addParameter("name",       "Entity name")
+				.addParameter("property",   "Name of a Property, the entity is annotated with")
+				.addParameter("value",      "Value of the specified Property")
+				.addParameter("type",       "Entity, class or individual")
+				.addParameter("ontologies", "List of comma separated ontology ids (default: all ontologies)")
+		);
+			
+		documentation.add(
+			new PathDocumentation("/projects", "List all available projects/ontologies with a short description and id.")
+		);
+				
+		documentation.add(
+			new PathDocumentation("/project/{id}/imports", "List all imports of the specified ontology.")
+		);
+		
+		return documentation;
+	}
+	
+	@GET
 	@Path("/projects")
 	public ArrayList<ProjectListEntry> getOntologyList() {
 		ProjectManager pm = new ProjectManager(dataPath);
 		return pm.getProjectList();
 	}
 
-	/* gemischte Suche sollte auch möglich sein. Also: name+property(+value) */
 	@GET
 	@Path("/entity")
-	public ArrayList<Object> searchOntologyEntities(
+	public Object searchOntologyEntities(
 		@QueryParam("name")	String name,
 		@QueryParam("property") String property,
 		@QueryParam("value") String value,
 		@QueryParam("type") String type,
 		@QueryParam("ontologies") String ontologies
 	) {
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
-		if (type == null || type.equals("")) {
-			logger.info("No query param 'entity' given, using default.");
-			type = "entity";
-		}
-		
-		if ((name == null || name.equals("")) && (property == null || property.equals(""))) {
-			String msg = "Neither query param 'name' nor 'property' given.";
-			logger.warn(msg);
-			result.add(msg);
-			return result;
-		}
-		
-		List<String> ontologyList = new ArrayList<String>();
-		if (ontologies == null || ontologies.equals("")) {
-			logger.info("No ontologies given, using all.");
-			
-			for (ProjectListEntry entry : getOntologyList()) {
-				ontologyList.add(entry.id);
-			}
-		} else {
-			ontologyList = Arrays.asList(ontologies.split(","));
-		}
-		
-		for (String id : ontologyList) {
-			if (name != null && !name.equals(""))
-				result.addAll(searchOntologyEntityByName(id, type, name));
-			else if (property != null && !property.equals(""))
-				result.addAll(searchOntologyEntityByProperty(id, type, property, value));
-		}
-		
-		return result;
-	}
-	
-	public ArrayList<Object> searchOntologyEntityByName(
-		@PathParam("id") String id,
-		@PathParam("type") String type,
-		@PathParam("name") String name
-	) {
-		ArrayList<Object> result = new ArrayList<Object>();
+		if (type == null || type.isEmpty()) type = "entity";
 		
 		try {
-			switch (type) {
-				case "entity":
-					result = getOntologyManager(id).getEntityPropertiesByName(name);
-					break;
-				case "individual":
-					result = getOntologyManager(id).getNamedIndividualPropertiesByName(name);
-					break;
-				case "class":
-					result = getOntologyManager(id).getClassPropertiesByName(name);
-					break;
-				default:
-					throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
+			if ((name == null || name.isEmpty()) && (property == null || property.isEmpty()))
+				throw new Exception("Neither query param 'name' nor 'property' given.");
+			
+			for (String id : parseOntologies(ontologies)) {
+				if (name != null && !name.isEmpty()) {
+					result = searchOntologyEntityByName(id, type, name);
+					if (property != null && !property.isEmpty())
+						result.retainAll(searchOntologyEntityByProperty(id, type, property, value));
+				} else if (property != null && !property.isEmpty()) {
+					result = searchOntologyEntityByProperty(id, type, property, value);
+				}
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
-			result.add(e.getMessage());
+			return e.getMessage();
 		}
 		
 		return result;
@@ -128,34 +115,74 @@ public class Project {
 		return result;
 	}
 	
-	public ArrayList<Object> searchOntologyEntityByProperty(
+	
+	
+	
+	public ArrayList<OWLEntityProperties> searchOntologyEntityByName(
+		@PathParam("id") String id,
+		@PathParam("type") String type,
+		@PathParam("name") String name
+	) throws NoContentException, Exception {
+		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		
+		switch (type) {
+			case "entity":
+				result = getOntologyManager(id).getEntityPropertiesByName(name);
+				break;
+			case "individual":
+				result = getOntologyManager(id).getNamedIndividualPropertiesByName(name);
+				break;
+			case "class":
+				result = getOntologyManager(id).getClassPropertiesByName(name);
+				break;
+			default:
+				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
+		}
+		
+		return result;
+	}
+	
+	public ArrayList<OWLEntityProperties> searchOntologyEntityByProperty(
 		@PathParam("id") String id,
 		@PathParam("type") String type, 
 		@PathParam("property") String property,
 		@QueryParam("value") String value
-	) {
-		ArrayList<Object> result = new ArrayList<Object>();
+	) throws NoContentException, Exception {
+		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
-		try {
-			switch (type) {
-				case "individual":
-					result = getOntologyManager(id).getNamedIndividualPropertiesByProperty(property, value);
-					break;
-				case "class":
-					result = getOntologyManager(id).getClassPropertiesByProperty(property, value);
-					break;
-				case "entity":
-					result = getOntologyManager(id).getEntityPropertiesByProperty(property, value);
-					break;
-				default:
-					throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
-			}
-		} catch (Exception e) {
-			logger.warn(e.getMessage());
-			result.add(e.getMessage());
+		switch (type) {
+			case "individual":
+				result = getOntologyManager(id).getNamedIndividualPropertiesByProperty(property, value);
+				break;
+			case "class":
+				result = getOntologyManager(id).getClassPropertiesByProperty(property, value);
+				break;
+			case "entity":
+				result = getOntologyManager(id).getEntityPropertiesByProperty(property, value);
+				break;
+			default:
+				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
 		}
 		
 		return result;
+	}
+	
+	
+	
+	
+	private List<String> parseOntologies(String ontologies) {
+		if (ontologies == null || ontologies.equals("")) {
+			logger.info("No ontologies given, using all.");
+			
+			List<String> ontologyList = new ArrayList<String>();
+			for (ProjectListEntry entry : getOntologyList()) {
+				ontologyList.add(entry.id);
+			}
+			
+			return ontologyList;
+		} else {
+			return Arrays.asList(ontologies.split(","));
+		}
 	}
 	
 	private OntologyManager getOntologyManager(String id) throws NoContentException {
