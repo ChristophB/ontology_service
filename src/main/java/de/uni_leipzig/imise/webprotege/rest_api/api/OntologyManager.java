@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentStorer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -31,6 +32,7 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import edu.stanford.smi.protege.model.Instance;
 
 public class OntologyManager {
+	private final Double THRESHOLD = 0.8;
 	private String path;
 	private String rootPath;
 	private String importsPath;
@@ -67,32 +69,62 @@ public class OntologyManager {
 	}
 
 	
-	public ArrayList<OWLEntityProperties> getClassPropertiesByName(String name) throws Exception {	
-		Filter filter = new Filter() {
-			@Override public boolean run(OWLEntity a, String b) {
-				return a.isOWLClass() && a.getIRI().getFragment().equals(b);
-			}
-		};
+	public ArrayList<OWLEntityProperties> getClassPropertiesByName(String name, String match) throws Exception {
+		Filter filter;
+		
+		if (match.equals("exact")) {
+			filter = new Filter() {
+				@Override public boolean run(OWLEntity a, String b) {
+					return a.isOWLClass() && a.getIRI().getFragment().equals(b);
+				}
+			};
+		} else {
+			filter = new Filter() {
+				@Override public boolean run(OWLEntity a, String b) {
+					return a.isOWLClass() && StringUtils.getJaroWinklerDistance(a.getIRI().getFragment(), b) >= THRESHOLD;
+				}
+			};
+		}
 	    
 	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
-	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name) throws Exception {
-		Filter filter = new Filter() {
-			@Override public boolean run(OWLEntity a, String b) {
-				return a.isOWLNamedIndividual() && a.getIRI().getFragment().equals(b);
-			}
-		};
+	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name, String match) throws Exception {
+		Filter filter;
+		
+		if (match.equals("exact")) {
+			filter = new Filter() {
+				@Override public boolean run(OWLEntity a, String b) {
+					return a.isOWLNamedIndividual() && a.getIRI().getFragment().equals(b);
+				}
+			};
+		} else {
+			filter = new Filter() {
+				@Override public boolean run(OWLEntity a, String b) {
+					return a.isOWLNamedIndividual() && StringUtils.getJaroWinklerDistance(a.getIRI().getFragment(), b) >= THRESHOLD;
+				}
+			};
+		}
 		
 		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
-	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(String name) throws Exception {
-		Filter filter = new Filter() {
-			@Override public boolean run(OWLEntity a, String b) {
-				return a.getIRI().getFragment().equals(b);
-			}
-		};
+	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(String name, String match) throws Exception {
+		Filter filter;
+		
+		if (match.equals("exact")) {
+			filter = new Filter() {
+				@Override public boolean run(OWLEntity a, String b) {
+					return a.getIRI().getFragment().equals(b);
+				}
+			};
+		} else {
+			filter = new Filter() {
+				@Override public boolean run(OWLEntity a, String b) {
+					return StringUtils.getJaroWinklerDistance(a.getIRI().getFragment(), b) >= THRESHOLD;
+				}
+			};
+		}
 		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	

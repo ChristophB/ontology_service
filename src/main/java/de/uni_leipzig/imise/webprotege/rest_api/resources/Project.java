@@ -46,6 +46,7 @@ public class Project {
 				.addParameter("value",      "Value of the specified Property")
 				.addParameter("type",       "Entity, class or individual")
 				.addParameter("ontologies", "List of comma separated ontology ids (default: all ontologies)")
+				.addParameter("match",      "Match method for 'name' parameter: 'exact' or 'loose' (default)")
 		);
 			
 		documentation.add(
@@ -73,11 +74,13 @@ public class Project {
 		@QueryParam("property") String property,
 		@QueryParam("value") String value,
 		@QueryParam("type") String type,
-		@QueryParam("ontologies") String ontologies
+		@QueryParam("ontologies") String ontologies,
+		@QueryParam("match") String match
 	) {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
 		if (type == null || type.isEmpty()) type = "entity";
+		if (match == null || match.isEmpty()) match = "loose";
 		
 		try {
 			if ((name == null || name.isEmpty()) && (property == null || property.isEmpty()))
@@ -85,11 +88,11 @@ public class Project {
 			
 			for (String id : parseOntologies(ontologies)) {
 				if (name != null && !name.isEmpty()) {
-					result = searchOntologyEntityByName(id, type, name);
+					result = searchOntologyEntityByName(id, type, name, match);
 					if (property != null && !property.isEmpty())
-						result.retainAll(searchOntologyEntityByProperty(id, type, property, value));
+						result.retainAll(searchOntologyEntityByProperty(id, type, property, value, match));
 				} else if (property != null && !property.isEmpty()) {
-					result = searchOntologyEntityByProperty(id, type, property, value);
+					result = searchOntologyEntityByProperty(id, type, property, value, match);
 				}
 			}
 		} catch (Exception e) {
@@ -119,21 +122,19 @@ public class Project {
 	
 	
 	public ArrayList<OWLEntityProperties> searchOntologyEntityByName(
-		@PathParam("id") String id,
-		@PathParam("type") String type,
-		@PathParam("name") String name
+		String id, String type, String name, String match
 	) throws NoContentException, Exception {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
 		switch (type) {
 			case "entity":
-				result = getOntologyManager(id).getEntityPropertiesByName(name);
+				result = getOntologyManager(id).getEntityPropertiesByName(name, match);
 				break;
 			case "individual":
-				result = getOntologyManager(id).getNamedIndividualPropertiesByName(name);
+				result = getOntologyManager(id).getNamedIndividualPropertiesByName(name, match);
 				break;
 			case "class":
-				result = getOntologyManager(id).getClassPropertiesByName(name);
+				result = getOntologyManager(id).getClassPropertiesByName(name, match);
 				break;
 			default:
 				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
@@ -143,10 +144,7 @@ public class Project {
 	}
 	
 	public ArrayList<OWLEntityProperties> searchOntologyEntityByProperty(
-		@PathParam("id") String id,
-		@PathParam("type") String type, 
-		@PathParam("property") String property,
-		@QueryParam("value") String value
+		String id, String type, String property, String value, String match
 	) throws NoContentException, Exception {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
