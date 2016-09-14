@@ -6,8 +6,30 @@ This is a Dropwizard bases REST-API for WebProtegé. Specifications are not fixe
 
 * Use one of our released jar files or compile the Maven Project in Eclipse and create your own one.
 * Place a file *config.yml* in the same directory as the jar file. *config.yml* should contain all configurations such as the location of WebProteges data dictionary and ports (use the configuration file of this git repository as reference).
-* Run `java -jar "{name of the created jar file}" server config.yml` on command line.
+* Run `java -jar service.jar server config.yml` on command line.
 
+## Recommendation
+Use the following Dockerfile for an easy setup of our rest-api on a server with installed webprotege.
+
+```Dockerfile
+FROM openjdk:7
+
+WORKDIR /home
+
+EXPOSE 8080 8081
+
+CMD java -jar service.jar server config.yml
+```
+
+Assumption:
+* Webprotegés data folder is `/data/webprotege` on the host file system.
+* `service.jar` and `config.yml` are in a folder `/path/to/rest-api` on the host file system.
+
+Run in a bash:
+```bash
+> docker build -t webprotege-rest-api .
+> docker run --name webprotege-rest-api -d -p 8080:8080 -p 8081:8081 -v /data/webprotege:/data/webprotege -v /path/to/rest-api:/home webprotege-rest-api
+```
 
 # Usage
 
