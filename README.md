@@ -1,15 +1,16 @@
 # webprotege-rest-api
 
-This is a Dropwizard bases REST-API for WebProtege. Specifications are not fixed yet, but the service should enable the user to query ontologies which where created with WebProtege.
+This is a Dropwizard bases REST-API for WebProtegé. Specifications are not fixed yet, but the service should enable the user to query ontologies which are stored in WebProtege as binary-OWL files.
 
 # Installation
 
-* Compile the Maven Project in Eclipse and run java -jar "{name of the created jar file}" on command line.
-* Configurations should be made in config.yml (such as location of WebProteges data dictionary and ports to use).
+* Use one of our released jar files or compile the Maven Project in Eclipse and create your own one.
+* Place a file *config.yml* in the same directory as the jar file. *config.yml* should contain all configurations such as the location of WebProteges data dictionary and ports (use the configuration file of this git repository as reference).
+* Run `java -jar "{name of the created jar file}" server config.yml` on command line.
+
 
 # Usage
 
-* "/projects" lists all public available projects with their id.
-* Use the id to query a single project "/project/{id}/". 
-* "/project/{id}/class{name}" searches for a class in specified project, which matches the given name and returns some properties of the class.
-* other functions will be added later.
+* Access "[host ip]:[allocated port]/" to get a list of possible queries.
+
+e.g.: `localhost:8080/` for the documentation, `localhost:8080/ontologies` for a list of available ontologies an their ids.
