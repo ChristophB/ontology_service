@@ -19,7 +19,7 @@ public class OWLEntityProperties {
 			annotationProperties.put(propertyIRI, new HashSet<String>());
 		}
 		for (OWLAnnotation annotation : values) {
-			annotationProperties.get(property.getIRI().toString()).add(annotation.getValue().toString());
+			annotationProperties.get(property.getIRI().toString()).add(annotation.getValue().toString().replaceAll("^.*?\"|\"\\^.*$", ""));
 		}
 	}
 	

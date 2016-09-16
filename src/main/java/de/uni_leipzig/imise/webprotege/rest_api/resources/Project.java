@@ -41,12 +41,14 @@ public class Project {
 		
 		documentation.add(
 			new PathDocumentation("/entity", "Search for a single or multiple entities.")
-				.addParameter("name",       "Entity name")
-				.addParameter("property",   "Name of a Property, the entity is annotated with")
-				.addParameter("value",      "Value of the specified Property")
 				.addParameter("type",       "Entity, class or individual")
-				.addParameter("ontologies", "List of comma separated ontology ids (default: all ontologies)")
+				.addParameter("name",       "Entity name")
 				.addParameter("match",      "Match method for 'name' parameter: 'exact' or 'loose' (default)")
+				.addParameter("property",   "Name of a Property, the entity is annotated with") // @toto: property -> properties
+				.addParameter("value",      "Value of the specified Property")
+				.addParameter("operator",   "Logical operator to combine 'name' and 'property' (default: and)")
+				.addParameter("ontologies", "List of comma separated ontology ids (default: all ontologies)")
+				
 		);
 			
 		documentation.add(
@@ -75,12 +77,14 @@ public class Project {
 		@QueryParam("value") String value,
 		@QueryParam("type") String type,
 		@QueryParam("ontologies") String ontologies,
-		@QueryParam("match") String match
+		@QueryParam("match") String match,
+		@QueryParam("operator") String operator
 	) {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
 		if (type == null || type.isEmpty()) type = "entity";
 		if (match == null || match.isEmpty()) match = "loose";
+		if (operator == null || operator.isEmpty()) operator = "and";
 		
 		try {
 			if ((name == null || name.isEmpty()) && (property == null || property.isEmpty()))
@@ -88,11 +92,14 @@ public class Project {
 			
 			for (String id : parseOntologies(ontologies)) {
 				if (name != null && !name.isEmpty()) {
-					result = searchOntologyEntityByName(id, type, name, match);
+					result = searchOntologyEntityByName(null, id, type, name, match);
 					if (property != null && !property.isEmpty())
-						result.retainAll(searchOntologyEntityByProperty(id, type, property, value, match));
+						if (operator.equals("or"))
+							result.addAll(searchOntologyEntityByProperty(null, id, type, property, value, match));
+						else
+							result.retainAll(searchOntologyEntityByProperty(result, id, type, property, value, match)); 
 				} else if (property != null && !property.isEmpty()) {
-					result = searchOntologyEntityByProperty(id, type, property, value, match);
+					result = searchOntologyEntityByProperty(null, id, type, property, value, match);
 				}
 			}
 		} catch (Exception e) {
@@ -122,19 +129,27 @@ public class Project {
 	
 	
 	public ArrayList<OWLEntityProperties> searchOntologyEntityByName(
-		String id, String type, String name, String match
-	) throws NoContentException, Exception {
+		ArrayList<OWLEntityProperties> set, String id, String type, String name, String match
+	) throws Exception {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		OntologyManager manager = getOntologyManager(id);
+		
+		ArrayList<String> iriSet = new ArrayList<String>();
+		if (set != null)
+			for (OWLEntityProperties entity : set) {
+				iriSet.add(entity.iri);
+			}
+		if (iriSet.isEmpty()) iriSet = null;
 		
 		switch (type) {
 			case "entity":
-				result = getOntologyManager(id).getEntityPropertiesByName(name, match);
+				result = manager.getEntityPropertiesByName(iriSet, name, match);
 				break;
 			case "individual":
-				result = getOntologyManager(id).getNamedIndividualPropertiesByName(name, match);
+				result = manager.getNamedIndividualPropertiesByName(iriSet, name, match);
 				break;
 			case "class":
-				result = getOntologyManager(id).getClassPropertiesByName(name, match);
+				result = manager.getClassPropertiesByName(iriSet, name, match);
 				break;
 			default:
 				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
@@ -144,19 +159,27 @@ public class Project {
 	}
 	
 	public ArrayList<OWLEntityProperties> searchOntologyEntityByProperty(
-		String id, String type, String property, String value, String match
+		ArrayList<OWLEntityProperties> set, String id, String type, String property, String value, String match
 	) throws NoContentException, Exception {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		OntologyManager manager = getOntologyManager(id);
+		
+		ArrayList<String> iriSet = new ArrayList<String>();
+		if (set != null)
+			for (OWLEntityProperties entity : set) {
+				iriSet.add(entity.iri);
+			}
+		if (iriSet.isEmpty()) iriSet = null;
 		
 		switch (type) {
 			case "individual":
-				result = getOntologyManager(id).getNamedIndividualPropertiesByProperty(property, value);
+				result = manager.getNamedIndividualPropertiesByProperty(iriSet, property, value);
 				break;
 			case "class":
-				result = getOntologyManager(id).getClassPropertiesByProperty(property, value);
+				result = manager.getClassPropertiesByProperty(iriSet, property, value);
 				break;
 			case "entity":
-				result = getOntologyManager(id).getEntityPropertiesByProperty(property, value);
+				result = manager.getEntityPropertiesByProperty(iriSet, property, value);
 				break;
 			default:
 				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
@@ -170,13 +193,10 @@ public class Project {
 	
 	private List<String> parseOntologies(String ontologies) {
 		if (ontologies == null || ontologies.equals("")) {
-			logger.info("No ontologies given, using all.");
-			
 			List<String> ontologyList = new ArrayList<String>();
 			for (ProjectListEntry entry : getOntologyList()) {
 				ontologyList.add(entry.id);
 			}
-			
 			return ontologyList;
 		} else {
 			return Arrays.asList(ontologies.split(","));

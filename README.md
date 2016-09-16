@@ -36,4 +36,4 @@ Run in a bash:
 
 * Access "[host ip]:[allocated port]/" to get a list of possible queries.
 
-e.g.: `localhost:8080/` for the documentation, `localhost:8080/ontologies` for a list of available ontologies an their ids.
+e.g.: `localhost:8080/` for the documentation, `localhost:8080/ontologies` for a list of available ontologies and their ids.

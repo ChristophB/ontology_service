@@ -11,7 +11,6 @@ public class OWLClassProperties extends OWLEntityProperties {
 	public Set<String> subclasses   = new HashSet<String>();
 	
 	
-	
 	public void addSuperClassExpression(OWLClassExpression expression) {
 		this.superclasses.add(expression.toString());
 	}
