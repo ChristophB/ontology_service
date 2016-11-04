@@ -18,10 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
-import de.uni_leipzig.imise.webprotege.rest_api.api.OntologyManager;
 import de.uni_leipzig.imise.webprotege.rest_api.api.PathDocumentation;
-import de.uni_leipzig.imise.webprotege.rest_api.api.ProjectManager;
-import de.uni_leipzig.imise.webprotege.rest_api.api.ProjectManager.ProjectListEntry;
+import de.uni_leipzig.imise.webprotege.rest_api.ontology.OntologyManager;
+import de.uni_leipzig.imise.webprotege.rest_api.ontology.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.ontology.ProjectManager.ProjectListEntry;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")

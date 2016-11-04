@@ -1,7 +1,8 @@
-package de.uni_leipzig.imise.webprotege.rest_api.api;
+package de.uni_leipzig.imise.webprotege.rest_api.ontology;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentStorer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLParserFactory;
 import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
+import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -30,6 +32,10 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+
+import de.uni_leipzig.imise.webprotege.rest_api.api.OWLClassProperties;
+import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
+import de.uni_leipzig.imise.webprotege.rest_api.api.OWLNamedIndividualProperties;
 import edu.stanford.smi.protege.model.Instance;
 
 public class OntologyManager {
@@ -61,9 +67,8 @@ public class OntologyManager {
 	public ArrayList<String> getOntologyImports() throws OWLOntologyCreationException {
 		ArrayList<String> imports = new ArrayList<String>();
 		
-		Iterator<OWLOntology> iterator = getRootOntology().getImports().iterator();
-		while (iterator.hasNext()) {
-			imports.add(iterator.next().getOntologyID().toString());
+		for (OWLOntology ontology : getRootOntology().getImports()) {
+			imports.add(ontology.getOntologyID().toString());
 		}
 		
 		return imports;
@@ -380,16 +385,23 @@ public class OntologyManager {
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         manager.addOntologyStorer(new BinaryOWLOntologyDocumentStorer());
 	    
-        File[] cachedDocuments = (new File(importsPath)).listFiles();
-		for (File ontologyDocument : cachedDocuments) {
-            if (!ontologyDocument.isHidden() && !ontologyDocument.isDirectory()) {
-                manager.loadOntologyFromOntologyDocument(ontologyDocument);
-            }
+        ArrayList<File> cachedDocuments = new ArrayList<File>(
+        	Arrays.asList((new File(importsPath)).listFiles())
+        );
+        cachedDocuments.removeIf(x -> (x.isHidden() || x.isDirectory()));
+        
+        int counter = 0, maxTries = cachedDocuments.size();
+        while (!cachedDocuments.isEmpty() && counter <= maxTries) {
+        	for (int i = 0; i < cachedDocuments.size(); i++) {
+        		File ontologyDocument = cachedDocuments.get(i);
+        		try {
+        			manager.loadOntologyFromOntologyDocument(ontologyDocument);
+        			cachedDocuments.remove(ontologyDocument);
+        		} catch (UnparsableOntologyException e) {}
+        	}
         }
-		
-		OWLOntology rootOntology = manager.loadOntologyFromOntologyDocument(new File(rootPath));
-		
-		return rootOntology;
+        		
+		return manager.loadOntologyFromOntologyDocument(new File(rootPath));
 	}
 	
 	private Set<OWLOntology> getOntologies() throws OWLOntologyCreationException {

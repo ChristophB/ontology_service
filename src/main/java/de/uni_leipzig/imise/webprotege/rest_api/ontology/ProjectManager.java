@@ -1,4 +1,4 @@
-package de.uni_leipzig.imise.webprotege.rest_api.api;
+package de.uni_leipzig.imise.webprotege.rest_api.ontology;
 
 import java.util.ArrayList;
 import java.util.Collection;
