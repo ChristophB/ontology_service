@@ -11,8 +11,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NoContentException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,11 +179,11 @@ public class Project {
 		
 		switch (type) {
 			case "entity":
-				return manager.getEntityPropertiesByName(null, name, match);
+				return manager.getEntityPropertiesByName(name, match);
 			case "individual":
-				return manager.getNamedIndividualPropertiesByName(null, name, match);
+				return manager.getNamedIndividualPropertiesByName(name, match);
 			case "class":
-				return manager.getClassPropertiesByName(null, name, match);
+				return manager.getClassPropertiesByName(name, match);
 			default:
 				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
 		}
@@ -210,11 +208,11 @@ public class Project {
 		
 		switch (type) {
 			case "individual":
-				return manager.getNamedIndividualPropertiesByProperty(null, property, value);
+				return manager.getNamedIndividualPropertiesByProperty(property, value);
 			case "class":
-				return manager.getClassPropertiesByProperty(null, property, value);
+				return manager.getClassPropertiesByProperty(property, value);
 			case "entity":
-				return manager.getEntityPropertiesByProperty(null, property, value);
+				return manager.getEntityPropertiesByProperty(property, value);
 			default:
 				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
 		}
@@ -244,9 +242,9 @@ public class Project {
 	 * Returns the OntologyManager for a given projectid
 	 * @param projectid ID of a WebProtegé project
 	 * @return OntologyManager
-	 * @throws NoContentException If no public project exists with specified id.
+	 * @throws Exception If ontology for given projectid could not be parsed
 	 */
-	private OntologyManager getOntologyManager(String projectid) throws NoContentException {
+	private OntologyManager getOntologyManager(String projectid) throws Exception {
 		ProjectManager pm = new ProjectManager(dataPath);
 		OntologyManager om = pm.getOntologyManager(projectid);
 		

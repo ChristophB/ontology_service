@@ -65,9 +65,9 @@ public class ProjectManager {
 	 * Returns an OntologyManager for a given id, if project with specified id exists and is public.
 	 * @param projectId id of a project
 	 * @return OntologyManager for project with specified id
-	 * @throws NoContentException if no public project with matching id was found
+	 * @throws Exception If no public project with matching id was found or ontology was not parsable
 	 */
-	public OntologyManager getOntologyManager(String projectId) throws NoContentException {
+	public OntologyManager getOntologyManager(String projectId) throws Exception {
 		Instance project = getProjectInstance(projectId);
 		
 		if (project != null) 

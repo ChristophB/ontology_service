@@ -3,9 +3,6 @@ package de.uni_leipzig.imise.webprotege.rest_api.ontology;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentStorer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.io.OWLParserFactory;
 import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -38,36 +34,74 @@ import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLNamedIndividualProperties;
 import edu.stanford.smi.protege.model.Instance;
 
+/**
+ * Instances of this class can be used to query a specific project ontology of WebProtegé.
+ * 
+ * @author Christoph Beger
+ */
 public class OntologyManager {
+	
+	/**
+	 * Threshhold for Jaro Winkler Distance comparisson.
+	 */
 	private static final Double THRESHOLD = 0.8;
+	
+	/**
+	 * Relative path to the project folder.
+	 */
 	private String path;
+	
+	/**
+	 * Absolute path to WebProtegés data folder.
+	 */
 	private String rootPath;
+	
+	/**
+	 * Relative path to imported ontology documents.
+	 */
 	private String importsPath;
 	
+	/**
+	 * OWLOntology object for one project.
+	 */
+	private OWLOntology ontology;
+	
+	
+	/**
+	 * Adds the BinaryOWLOntologyDocumentParserFactory to OWLParserFactoryRegistry for parsing binaryowl files.
+	 */
 	static {
 	    OWLManager.getOWLDataFactory();
 	    OWLParserFactoryRegistry parserFactoryRegistry = OWLParserFactoryRegistry.getInstance();
-	    List<OWLParserFactory> parserFactoryList = new ArrayList<OWLParserFactory>(parserFactoryRegistry.getParserFactories());
-	    Collections.reverse(parserFactoryList);
 	    parserFactoryRegistry.clearParserFactories();
-	    for(OWLParserFactory parserFactory : parserFactoryList) {
-	         parserFactoryRegistry.registerParserFactory(parserFactory);
-	    }
 	    parserFactoryRegistry.registerParserFactory(new BinaryOWLOntologyDocumentParserFactory());
 	}
 	
 	
-	public OntologyManager(Instance project, String dataPath) {
+	
+	/**
+	 * Constructor.
+	 * @param project Instance of class Project in WebProtegés metaproject
+	 * @param dataPath Absolute path to WebProtegés data folder.
+	 * @throws OWLOntologyCreationException 
+	 */
+	public OntologyManager(Instance project, String dataPath) throws OWLOntologyCreationException {
 		path        = dataPath + "/data-store/project-data/" + project.getName();
 		rootPath    = path + "/ontology-data/root-ontology.binary";
 		importsPath = path + "/imports-cache";
+		
+		ontology = getRootOntology();
 	}
 	
 	
-	public ArrayList<String> getOntologyImports() throws OWLOntologyCreationException {
+	/**
+	 * Returns a list of imported ontology ids.
+	 * @return List of imported ontology ids
+	 */
+	public ArrayList<String> getOntologyImports() {
 		ArrayList<String> imports = new ArrayList<String>();
 		
-		for (OWLOntology ontology : getRootOntology().getImports()) {
+		for (OWLOntology ontology : ontology.getImports()) {
 			imports.add(ontology.getOntologyID().toString());
 		}
 		
@@ -75,7 +109,13 @@ public class OntologyManager {
 	}
 
 	
-	public ArrayList<OWLEntityProperties> getClassPropertiesByName(ArrayList<String> set, String name, String match) throws Exception {
+	/**
+	 * Returns a list of OWLEntityProperties for all classes with matching localname.
+	 * @param name Localename to search for
+	 * @param match 'exact' or 'loose', defaults to 'loose'
+	 * @return List of found OWLEntityProperties
+	 */
+	public ArrayList<OWLEntityProperties> getClassPropertiesByName(String name, String match) {
 		Filter filter;
 		
 		if ("exact".equals(match)) {
@@ -92,10 +132,17 @@ public class OntologyManager {
 			};
 		}
 	    
-	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(set, name, filter));
+	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
-	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(ArrayList<String> set, String name, String match) throws Exception {
+	
+	/**
+	 * Returns a list of OWLEntityProperties for all individuals with matching localname.
+	 * @param name Localname to match with
+	 * @param match 'exact' or 'loose', defaults to 'loose'
+	 * @return List of found OWLEntityProperties 
+	 */
+	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name, String match) {
 		Filter filter;
 		
 		if ("exact".equals(match)) {
@@ -112,10 +159,17 @@ public class OntologyManager {
 			};
 		}
 		
-		return getPropertiesForOWLEntities(extractEntitiesWithFilter(set, name, filter));
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
-	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(ArrayList<String> set, String name, String match) throws Exception {
+	
+	/**
+	 * Returns a list of OWLEntityProperties for all entities witch matching localname.
+	 * @param name Localname to match with
+	 * @param match 'exact' or 'loose', defaults to 'loose'
+	 * @return List of found OWLEntityProperties
+	 */
+	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(String name, String match) {
 		Filter filter;
 		
 		if ("exact".equals(match)) {
@@ -131,30 +185,29 @@ public class OntologyManager {
 				}
 			};
 		}
-		return getPropertiesForOWLEntities(extractEntitiesWithFilter(set, name, filter));
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
 	}
 	
 	
-	public ArrayList<OWLEntityProperties> getClassPropertiesByProperty(ArrayList<String> set, String property, String value) throws Exception {
-	    return getPropertiesForOWLEntities(extractOWLClassesByProperty(set, property, value));
-	}
-	
-	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByProperty(ArrayList<String> set, String property, String value) throws Exception {
-		return getPropertiesForOWLEntities(extractOWLNamedIndividualByProperty(set, property, value));
-	}
-	
-	public ArrayList<OWLEntityProperties> getEntityPropertiesByProperty(ArrayList<String> set, String property, String value) throws Exception {
-		return getPropertiesForOWLEntities(extractOWLEntitiesByProperty(set, property, value));
+	public ArrayList<OWLEntityProperties> getClassPropertiesByProperty(String property, String value) {
+	    return getPropertiesForOWLEntities(extractOWLClassesByProperty(property, value));
 	}
 	
 	
-	private ArrayList<OWLEntity> extractOWLClassesByProperty(ArrayList<String> set, String name, String value) throws OWLOntologyCreationException {
+	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByProperty(String property, String value) {
+		return getPropertiesForOWLEntities(extractOWLNamedIndividualByProperty(property, value));
+	}
+	
+	
+	public ArrayList<OWLEntityProperties> getEntityPropertiesByProperty(String property, String value) {
+		return getPropertiesForOWLEntities(extractOWLEntitiesByProperty(property, value));
+	}
+	
+	
+	private ArrayList<OWLEntity> extractOWLClassesByProperty(String name, String value) {
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
-		OWLOntology ontology = getRootOntology();
 		
 		for (OWLClass cls : ontology.getClassesInSignature(true)) {
-			if (set != null && !set.contains(cls.getIRI().toString())) continue;
-			
 			for (OWLAnnotationProperty property : getOWLAnnotationPropertiesFromString(name)) {
 	    		@SuppressWarnings({ "unchecked", "rawtypes" })
 				Set<OWLObject> values = (Set)cls.getAnnotations(ontology, property);
@@ -178,15 +231,13 @@ public class OntologyManager {
 		
 		return resultset;
 	}
+
 	
-	private ArrayList<OWLEntity> extractOWLEntitiesByProperty(ArrayList<String> set, String name, String value) throws OWLOntologyCreationException {
+	private ArrayList<OWLEntity> extractOWLEntitiesByProperty(String name, String value) {
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
-		OWLOntology ontology = getRootOntology();
 	    	
 	    for (OWLDataProperty property : getOWLDataPropertiesFromString(name)) {
 	    	for (OWLEntity entity : ontology.getSignature(true)) {
-		    	if (set != null && !set.contains(entity.getIRI().toString())) continue;
-	    		
 		    	@SuppressWarnings({ "unchecked", "rawtypes" })
 				Set<OWLObject> values = (Set)entity.getDataPropertiesInSignature();
 	    		if (values.isEmpty() || !values.contains(property) || resultset.contains(entity)) // @todo: filter values by property
@@ -199,8 +250,6 @@ public class OntologyManager {
 	    	
 	    for (OWLObject property : getOWLObjectPropertiesFromString(name)) {
 	    	for (OWLEntity entity : ontology.getSignature(true)) {
-		    	if (set != null && !set.contains(entity.getIRI().toString())) continue;
-	    	
 		    	@SuppressWarnings({ "unchecked", "rawtypes" })
 				Set<OWLObject> values = (Set)entity.getObjectPropertiesInSignature();
 	    		if (values.isEmpty() ||!values.contains(property) || resultset.contains(entity)) // @todo: filter values by property
@@ -213,8 +262,6 @@ public class OntologyManager {
 	    
 	    for (OWLAnnotationProperty property : getOWLAnnotationPropertiesFromString(name)) {
 	    	for (OWLEntity entity : ontology.getSignature(true)) {
-		    	if (set != null && !set.contains(entity.getIRI().toString())) continue;
-		    	
 		    	@SuppressWarnings({ "rawtypes", "unchecked" })
 				Set<OWLObject> values = (Set)entity.getAnnotations(ontology, property);
 	    		if (values.isEmpty() || resultset.contains(entity))
@@ -228,6 +275,7 @@ public class OntologyManager {
 	    return resultset;
 	}
 	
+	
 	/**
 	 * Checks if set of values contains a value or value is null.
 	 * @param valueSet
@@ -236,7 +284,7 @@ public class OntologyManager {
 	 */
 	private boolean valueSetContains(Set<OWLObject> valueSet, String value) {
 		for (OWLObject curValue : valueSet) {
-    		if (value == null || value.equals("")
+    		if (StringUtils.isEmpty(value)
     			|| curValue.toString().replaceAll("^.*?\"|\"\\^.*$", "").equals(value)
     		) {
     			return true;
@@ -245,8 +293,9 @@ public class OntologyManager {
 		return false;
 	}
 	
-	private ArrayList<OWLEntity> extractOWLNamedIndividualByProperty(ArrayList<String> set, String name, String value) throws OWLOntologyCreationException {
-		ArrayList<OWLEntity> entities = extractOWLEntitiesByProperty(set, name, value);
+	
+	private ArrayList<OWLEntity> extractOWLNamedIndividualByProperty(String name, String value) {
+		ArrayList<OWLEntity> entities = extractOWLEntitiesByProperty(name, value);
 		
 		for (OWLEntity entity : entities) {
 			if (!entity.isOWLNamedIndividual())
@@ -257,8 +306,12 @@ public class OntologyManager {
 	}
 	
 	
-	private ArrayList<OWLDataProperty> getOWLDataPropertiesFromString(String name) throws OWLOntologyCreationException {
-		OWLOntology ontology = getRootOntology();
+	/**
+	 * Returns a list of all data properties witch matching name
+	 * @param name localname
+	 * @return List of found OWLDataPropertys
+	 */
+	private ArrayList<OWLDataProperty> getOWLDataPropertiesFromString(String name) {
 		ArrayList<OWLDataProperty> properties = new ArrayList<OWLDataProperty>();
 		
 		for (OWLDataProperty property : ontology.getDataPropertiesInSignature(true)) {
@@ -268,9 +321,14 @@ public class OntologyManager {
 		
 		return properties;
 	}
+
 	
-	private ArrayList<OWLObjectProperty> getOWLObjectPropertiesFromString(String name) throws OWLOntologyCreationException {
-		OWLOntology ontology = getRootOntology();
+	/**
+	 * Returns a list of all object properties witch matching name.
+	 * @param name localname
+	 * @return List of found OWLObjectPropertys
+	 */
+	private ArrayList<OWLObjectProperty> getOWLObjectPropertiesFromString(String name) {
 		ArrayList<OWLObjectProperty> properties = new ArrayList<OWLObjectProperty>();
 		
 		for (OWLObjectProperty property : ontology.getObjectPropertiesInSignature(true)) {
@@ -281,8 +339,13 @@ public class OntologyManager {
 		return properties;
 	}
 	
-	private ArrayList<OWLAnnotationProperty> getOWLAnnotationPropertiesFromString(String name) throws OWLOntologyCreationException {
-		OWLOntology ontology = getRootOntology();
+	
+	/**
+	 * Returns a list of all annotationproperties witch matching name.
+	 * @param name localname
+	 * @return List of found OWLAnnotationpropertys
+	 */
+	private ArrayList<OWLAnnotationProperty> getOWLAnnotationPropertiesFromString(String name) {
 		ArrayList<OWLAnnotationProperty> properties = new ArrayList<OWLAnnotationProperty>();
 		
 		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
@@ -295,7 +358,12 @@ public class OntologyManager {
 	}
 	
 	
- 	private ArrayList<OWLEntityProperties> getPropertiesForOWLEntities(ArrayList<OWLEntity> entities) throws Exception {
+	/**
+	 * Returns a list of OWLEntityProperties for a set of entities.
+	 * @param entities set of OWLEntitys
+	 * @return List of OWLEntityProperties
+	 */
+ 	private ArrayList<OWLEntityProperties> getPropertiesForOWLEntities(ArrayList<OWLEntity> entities) {
 		ArrayList<OWLEntityProperties> properties = new ArrayList<OWLEntityProperties>();
 
 		for (OWLEntity entity : entities) {
@@ -304,8 +372,13 @@ public class OntologyManager {
 		return properties;
 	}
  	
- 		
-	private OWLEntityProperties getPropertiesForOWLEntity(OWLEntity entity) throws Exception {
+ 	
+ 	/**
+ 	 * Returns OWLEntityProperties for a single entity
+ 	 * @param entity single OWLEntity
+ 	 * @return OWLEntityProperties for specified entity
+ 	 */
+	private OWLEntityProperties getPropertiesForOWLEntity(OWLEntity entity) {
 		if (entity.isOWLClass()) {
 			return getPropertiesForOWLClass((OWLClass) entity);
 		} else if (entity.isOWLNamedIndividual()) {
@@ -317,9 +390,14 @@ public class OntologyManager {
 		}
 	}
 	
-	private OWLClassProperties getPropertiesForOWLClass(OWLClass cls) throws OWLOntologyCreationException {
+	
+	/**
+	 * Returns properties for a single class.
+	 * @param cls class object
+	 * @return properties as OWLClassProperties
+	 */
+	private OWLClassProperties getPropertiesForOWLClass(OWLClass cls) {
 		OWLClassProperties properties = new OWLClassProperties();
-    	OWLOntology ontology = getRootOntology();
     	
     	properties.iri = cls.getIRI().toString();
     	properties.addSuperClassExpressions(cls.getSuperClasses(getOntologies()));
@@ -333,9 +411,14 @@ public class OntologyManager {
     	return properties;
 	}
 	
-	private OWLNamedIndividualProperties getPropertiesForOWLNamedIndividual(OWLNamedIndividual individual) throws OWLOntologyCreationException, InterruptedException {
+	
+	/**
+	 * Returns properties for a single individual.
+	 * @param individual individual object
+	 * @return properties as OWLNamedIndividualProperties
+	 */
+	private OWLNamedIndividualProperties getPropertiesForOWLNamedIndividual(OWLNamedIndividual individual) {
 		OWLNamedIndividualProperties properties = new OWLNamedIndividualProperties();
-		OWLOntology ontology = getRootOntology();
 		
 		properties.iri = individual.getIRI().toString();
 		
@@ -361,14 +444,18 @@ public class OntologyManager {
 		return properties;
 	}
 	
-	private ArrayList<OWLEntity> extractEntitiesWithFilter(ArrayList<String> set, String name, Filter filter) throws OWLOntologyCreationException {		
+	
+	/**
+	 * Returns a list of OWLEntities which match the given filter criteria.
+	 * @param name entity name
+	 * @param filter Filter object which uses parameter name
+	 * @return Resulting list of OWLEntities
+	 */
+	private ArrayList<OWLEntity> extractEntitiesWithFilter(String name, Filter filter) {		
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
-		
-		OWLOntology ontology = getRootOntology();
 	    
 	    for (OWLEntity entity : ontology.getSignature(true)) {
 	    	if (!filter.run(entity, name)) continue;
-	    	if (set != null && !set.contains(entity.getIRI().toString())) continue;
 	    	
 	    	if (!resultset.contains(entity))
 	    		resultset.add(entity);
@@ -377,7 +464,16 @@ public class OntologyManager {
 	    return resultset;
 	}
 	
-		
+	
+	/**
+	 * Returns the root-ontology witch all loaded imports.
+	 * This function tries to load all imports before loading the ontology.
+	 * Depending on their filename, the order of loading may vary and errors can occure.
+	 * When ever an error occures, the concerned document remains as 'not loaded',
+	 * so the function can try to load it in the next iteration.
+	 * @return root-ontology
+	 * @throws OWLOntologyCreationException If there was an error while parsing the ontology
+	 */
 	@SuppressWarnings("unchecked")
 	private OWLOntology getRootOntology() throws OWLOntologyCreationException {
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -408,13 +504,22 @@ public class OntologyManager {
         		
 		return manager.loadOntologyFromOntologyDocument(new File(rootPath));
 	}
+
 	
-	private Set<OWLOntology> getOntologies() throws OWLOntologyCreationException {
-		return getRootOntology().getImportsClosure();
+	/**
+	 * Returns all ontologies, imports are included.
+	 * @return Set of OWLOntologys
+	 */
+	private Set<OWLOntology> getOntologies() {
+		return ontology.getImportsClosure();
 	}
 	
 	
 	
+	/**
+	 * Abstract filter class.
+	 * @author Christoph Beger
+	 */
 	abstract class Filter {
 		public abstract boolean run(OWLEntity a, String b);
 	}
