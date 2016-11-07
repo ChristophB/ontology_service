@@ -16,10 +16,13 @@ import io.dropwizard.Configuration;
 public class RestApiConfiguration extends Configuration {
 	@NotEmpty private String dataPath;
 	
+	
+	
 	@JsonProperty
 	public String getDataPath() {
 		return dataPath;
 	}
+	
 	
 	@JsonProperty
 	public void setDataPath(String path) {

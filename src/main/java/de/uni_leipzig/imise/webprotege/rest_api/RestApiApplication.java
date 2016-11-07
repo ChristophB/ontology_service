@@ -10,7 +10,6 @@ import io.dropwizard.setup.Environment;
  * This is the main application of the WebProtegé Rest-API.
  * 
  * @author Christoph Beger
- *
  */
 public class RestApiApplication extends Application<RestApiConfiguration>{
 
@@ -18,14 +17,17 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		new RestApiApplication().run(args);
 	}
 	
+	
 	@Override
 	public String getName() {
 		return "WebProtege REST-API";
 	}
 	
+	
 	@Override
 	public void initialize(Bootstrap<RestApiConfiguration> bootstrap) { }
 
+	
 	@Override
 	public void run(RestApiConfiguration configuration, Environment environment) throws Exception {
 		final WebProtegeHealthCheck webProtegeHealthCheck = new WebProtegeHealthCheck(configuration);

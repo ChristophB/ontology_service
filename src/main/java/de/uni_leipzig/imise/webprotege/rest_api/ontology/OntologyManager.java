@@ -39,7 +39,7 @@ import de.uni_leipzig.imise.webprotege.rest_api.api.OWLNamedIndividualProperties
 import edu.stanford.smi.protege.model.Instance;
 
 public class OntologyManager {
-	private final Double THRESHOLD = 0.8;
+	private static final Double THRESHOLD = 0.8;
 	private String path;
 	private String rootPath;
 	private String importsPath;
@@ -78,7 +78,7 @@ public class OntologyManager {
 	public ArrayList<OWLEntityProperties> getClassPropertiesByName(ArrayList<String> set, String name, String match) throws Exception {
 		Filter filter;
 		
-		if (match.equals("exact")) {
+		if ("exact".equals(match)) {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
 					return a.isOWLClass() && a.getIRI().getFragment().equals(b);
@@ -98,7 +98,7 @@ public class OntologyManager {
 	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(ArrayList<String> set, String name, String match) throws Exception {
 		Filter filter;
 		
-		if (match.equals("exact")) {
+		if ("exact".equals(match)) {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
 					return a.isOWLNamedIndividual() && a.getIRI().getFragment().equals(b);
@@ -118,7 +118,7 @@ public class OntologyManager {
 	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(ArrayList<String> set, String name, String match) throws Exception {
 		Filter filter;
 		
-		if (match.equals("exact")) {
+		if ("exact".equals(match)) {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
 					return a.getIRI().getFragment().equals(b);
@@ -360,16 +360,13 @@ public class OntologyManager {
 		
 		return properties;
 	}
-		
+	
 	private ArrayList<OWLEntity> extractEntitiesWithFilter(ArrayList<String> set, String name, Filter filter) throws OWLOntologyCreationException {		
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
 		
 		OWLOntology ontology = getRootOntology();
 	    
-	    Iterator<OWLEntity> entityIterator = ontology.getSignature(true).iterator();
-	    while (entityIterator.hasNext()) {
-	    	OWLEntity entity = entityIterator.next();
-	    	
+	    for (OWLEntity entity : ontology.getSignature(true)) {
 	    	if (!filter.run(entity, name)) continue;
 	    	if (set != null && !set.contains(entity.getIRI().toString())) continue;
 	    	
@@ -381,23 +378,31 @@ public class OntologyManager {
 	}
 	
 		
+	@SuppressWarnings("unchecked")
 	private OWLOntology getRootOntology() throws OWLOntologyCreationException {
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         manager.addOntologyStorer(new BinaryOWLOntologyDocumentStorer());
 	    
-        ArrayList<File> cachedDocuments = new ArrayList<File>(
+        ArrayList<File> documents = new ArrayList<File>(
         	Arrays.asList((new File(importsPath)).listFiles())
         );
-        cachedDocuments.removeIf(x -> (x.isHidden() || x.isDirectory()));
+        for (File ontologyDocument : documents) {
+        	if (ontologyDocument.isHidden() || ontologyDocument.isDirectory())
+        		documents.remove(ontologyDocument);
+        }
         
-        int counter = 0, maxTries = cachedDocuments.size();
-        while (!cachedDocuments.isEmpty() && counter <= maxTries) {
-        	for (int i = 0; i < cachedDocuments.size(); i++) {
-        		File ontologyDocument = cachedDocuments.get(i);
+        int counter = 0, maxTries = documents.size();
+        while (!documents.isEmpty() && counter <= maxTries) {
+        	for (File ontologyDocument : (ArrayList<File>)documents.clone()) {
         		try {
         			manager.loadOntologyFromOntologyDocument(ontologyDocument);
-        			cachedDocuments.remove(ontologyDocument);
-        		} catch (UnparsableOntologyException e) {}
+        			documents.remove(ontologyDocument);
+        		} catch (UnparsableOntologyException e) {
+        			System.err.println(
+        				"Could not parse ontology " + ontologyDocument.getName() + ". "
+        				+ "Trying other imports first."
+        			);
+        		}
         	}
         }
         		
