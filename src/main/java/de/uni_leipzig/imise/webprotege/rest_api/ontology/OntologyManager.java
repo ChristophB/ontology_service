@@ -1,5 +1,6 @@
 package de.uni_leipzig.imise.webprotege.rest_api.ontology;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -9,10 +10,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLParserFactory;
-//import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
+import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -24,21 +26,22 @@ import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
 import com.google.common.collect.Multimap;
-import de.uni_leipzig.imise.webprotege.rest_api.api.OWLClassProperties;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
-import de.uni_leipzig.imise.webprotege.rest_api.api.OWLNamedIndividualProperties;
 import edu.stanford.smi.protege.model.Instance;
+import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
 /**
  * Instances of this class can be used to query a specific project ontology of WebProtegé.
@@ -72,16 +75,10 @@ public class OntologyManager {
 	 */
 	private OWLOntology ontology;
 	
-	
 	/**
-	 * Adds the BinaryOWLOntologyDocumentParserFactory to OWLParserFactoryRegistry for parsing binaryowl files.
+	 * OWLReasoner object for one project
 	 */
-//static {
-//	    OWLManager.getOWLDataFactory();
-//	    OWLParserFactoryRegistry parserFactoryRegistry = OWLParserFactoryRegistry.getInstance();
-//	    parserFactoryRegistry.clearParserFactories();
-//	    parserFactoryRegistry.registerParserFactory(new BinaryOWLOntologyDocumentParserFactory());
-//}
+	private OWLReasoner reasoner;
 	
 	
 	
@@ -91,12 +88,14 @@ public class OntologyManager {
 	 * @param dataPath Absolute path to WebProtegés data folder.
 	 * @throws OWLOntologyCreationException 
 	 */
+	@SuppressWarnings("deprecation")
 	public OntologyManager(Instance project, String dataPath) throws OWLOntologyCreationException {
 		path        = dataPath + "/data-store/project-data/" + project.getName();
 		rootPath    = path + "/ontology-data/root-ontology.binary";
 		importsPath = path + "/imports-cache";
 		
 		ontology = getRootOntology();
+		reasoner = new Reasoner.ReasonerFactory().createReasoner(ontology);
 	}
 	
 	
@@ -121,24 +120,8 @@ public class OntologyManager {
 	 * @param match 'exact' or 'loose', defaults to 'loose'
 	 * @return List of found OWLEntityProperties
 	 */
-	public ArrayList<OWLEntityProperties> getClassPropertiesByName(String name, String match) {
-		Filter filter;
-		
-		if ("exact".equals(match)) {
-			filter = new Filter() {
-				@Override public boolean run(OWLEntity a, String b) {
-					return a.isOWLClass() && XMLUtils.getNCNameSuffix(a.getIRI()).equals(b);
-				}
-			};
-		} else {
-			filter = new Filter() {
-				@Override public boolean run(OWLEntity a, String b) {
-					return a.isOWLClass() && StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(a.getIRI()), b) >= THRESHOLD;
-				}
-			};
-		}
-	    
-	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
+	public ArrayList<OWLEntityProperties> getClassPropertiesByName(String name, String match) {	    
+	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, OWLClassImpl.class, "exact".equals(match)));
 	}
 	
 	
@@ -148,24 +131,8 @@ public class OntologyManager {
 	 * @param match 'exact' or 'loose', defaults to 'loose'
 	 * @return List of found OWLEntityProperties 
 	 */
-	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name, String match) {
-		Filter filter;
-		
-		if ("exact".equals(match)) {
-			filter = new Filter() {
-				@Override public boolean run(OWLEntity a, String b) {
-					return a.isOWLNamedIndividual() && XMLUtils.getNCNameSuffix(a.getIRI()).equals(b);
-				}
-			};
-		} else {
-			filter = new Filter() {
-				@Override public boolean run(OWLEntity a, String b) {
-					return a.isOWLNamedIndividual() && StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(a.getIRI()), b) >= THRESHOLD;
-				}
-			};
-		}
-		
-		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
+	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name, String match) {		
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, OWLNamedIndividualImpl.class, "exact".equals(match)));
 	}
 	
 	
@@ -176,22 +143,7 @@ public class OntologyManager {
 	 * @return List of found OWLEntityProperties
 	 */
 	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(String name, String match) {
-		Filter filter;
-		
-		if ("exact".equals(match)) {
-			filter = new Filter() {
-				@Override public boolean run(OWLEntity a, String b) {
-					return XMLUtils.getNCNameSuffix(a.getIRI()).equals(b);
-				}
-			};
-		} else {
-			filter = new Filter() {
-				@Override public boolean run(OWLEntity a, String b) {
-					return StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(a.getIRI()), b) >= THRESHOLD;
-				}
-			};
-		}
-		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, filter));
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, OWLEntity.class, "exact".equals(match)));
 	}
 	
 	
@@ -377,77 +329,45 @@ public class OntologyManager {
 	    }
 		return properties;
 	}
- 	
- 	
- 	/**
- 	 * Returns OWLEntityProperties for a single entity
- 	 * @param entity single OWLEntity
- 	 * @return OWLEntityProperties for specified entity
- 	 */
-	private OWLEntityProperties getPropertiesForOWLEntity(OWLEntity entity) {
-		if (entity.isOWLClass()) {
-			return getPropertiesForOWLClass((OWLClass) entity);
-		} else if (entity.isOWLNamedIndividual()) {
-			return getPropertiesForOWLNamedIndividual((OWLNamedIndividual) entity);
-		} else {
-			OWLEntityProperties result = new OWLEntityProperties();
-			result.iri = entity.getIRI().toString();
-			return result;
-		}
-	}
-	
 	
 	/**
-	 * Returns properties for a single class.
-	 * @param cls class object
-	 * @return properties as OWLClassProperties
+	 * Returns properties for a single entity.
+	 * @param entity entity object
+	 * @return properties as OWLEntityProperties
 	 */
-	private OWLClassProperties getPropertiesForOWLClass(OWLClass cls) {
-		OWLClassProperties properties = new OWLClassProperties();
+	private OWLEntityProperties getPropertiesForOWLEntity(OWLEntity entity) {
+		OWLEntityProperties properties = new OWLEntityProperties();
     	
-    	properties.iri = cls.getIRI().toString();
-    	properties.addSuperClassExpressions(EntitySearcher.getSuperClasses(cls, getOntologies()));
-    	properties.addSubClassExpressions(EntitySearcher.getSubClasses(cls, getOntologies()));
+    	properties.iri = entity.getIRI().toString();
+    	properties.javaClass = entity.getClass().getName();
     	
     	for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
-			Collection<OWLAnnotation> values = EntitySearcher.getAnnotations(cls, ontology, property);
+			Collection<OWLAnnotation> values = EntitySearcher.getAnnotations(entity, ontology, property);
 			properties.addAnnotationProperty(property, values);
 		}
     	
+    	if (entity.isOWLClass()) {
+    		properties.addSuperClassExpressions(EntitySearcher.getSuperClasses(entity.asOWLClass(), getOntologies()));
+    		properties.addSubClassExpressions(EntitySearcher.getSubClasses(entity.asOWLClass(), getOntologies()));
+    	}
+    	
+    	if (entity.isOWLNamedIndividual()) {
+	    	Multimap<OWLDataPropertyExpression, OWLLiteral> dataProperties = EntitySearcher.getDataPropertyValues(entity.asOWLNamedIndividual(), ontology);
+			for (OWLDataPropertyExpression property : dataProperties.keySet()) {
+				properties.addDataProperty(property, (Set<OWLLiteral>) dataProperties.get(property));
+			}
+			
+			Multimap<OWLObjectPropertyExpression, OWLIndividual> objectProperties = EntitySearcher.getObjectPropertyValues(entity.asOWLNamedIndividual(), ontology);
+			for (OWLObjectPropertyExpression property : objectProperties.keySet()) {
+				properties.addObjectProperty(property, (Set<OWLIndividual>) objectProperties.get(property));
+			}
+			
+			for (OWLClassExpression type : EntitySearcher.getTypes(entity.asOWLNamedIndividual(), ontology)) {
+				properties.addTypeExpression(type);
+			}
+    	}
+    	
     	return properties;
-	}
-	
-	
-	/**
-	 * Returns properties for a single individual.
-	 * @param individual individual object
-	 * @return properties as OWLNamedIndividualProperties
-	 */
-	private OWLNamedIndividualProperties getPropertiesForOWLNamedIndividual(OWLNamedIndividual individual) {
-		OWLNamedIndividualProperties properties = new OWLNamedIndividualProperties();
-		
-		properties.iri = individual.getIRI().toString();
-		
-		Multimap<OWLDataPropertyExpression, OWLLiteral> dataProperties = EntitySearcher.getDataPropertyValues(individual, ontology);
-		for (OWLDataPropertyExpression property : dataProperties.keySet()) {
-			properties.addDataProperty(property, (Set<OWLLiteral>) dataProperties.get(property));
-		}
-		
-		Multimap<OWLObjectPropertyExpression, OWLIndividual> objectProperties = EntitySearcher.getObjectPropertyValues(individual, ontology);
-		for (OWLObjectPropertyExpression property : objectProperties.keySet()) {
-			properties.addObjectProperty(property, (Set<OWLIndividual>) objectProperties.get(property));
-		}
-		
-		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
-			Collection<OWLAnnotation> values = EntitySearcher.getAnnotations(individual, ontology, property);
-			properties.addAnnotationProperty(property, values);
-		}
-		
-		for (OWLClassExpression type : EntitySearcher.getTypes(individual, ontology)) {
-			properties.addTypeExpression(type);
-		}
-		
-		return properties;
 	}
 	
 	
@@ -457,11 +377,11 @@ public class OntologyManager {
 	 * @param filter Filter object which uses parameter name
 	 * @return Resulting list of OWLEntities
 	 */
-	private ArrayList<OWLEntity> extractEntitiesWithFilter(String name, Filter filter) {		
+	private ArrayList<OWLEntity> extractEntitiesWithFilter(String name, Class<?> cls, Boolean match) {		
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
 	    
 	    for (OWLEntity entity : ontology.getSignature(Imports.INCLUDED)) {
-	    	if (!filter.run(entity, name)) continue;
+	    	if (!Filter.run(entity, name, cls, match)) continue;
 	    	
 	    	if (!resultset.contains(entity))
 	    		resultset.add(entity);
@@ -566,7 +486,7 @@ public class OntologyManager {
         	}
         }
       
-		return manager.loadOntologyFromOntologyDocument(new File(rootPath));
+		return manager.loadOntologyFromOntologyDocument(new File(rootPath)); // very slow!!???
 	}
 
 	
@@ -578,14 +498,46 @@ public class OntologyManager {
 		return ontology.getImportsClosure();
 	}
 	
+
+	/**
+	 * Returns the full RDF document for this ontology as string.
+	 * @return string containing the full RDF document.
+	 * @throws OWLOntologyStorageException If ontology could not be transformed into a string.
+	 */
+	public Object getFullRDFDocument() throws OWLOntologyStorageException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ontology.getOWLOntologyManager().saveOntology(ontology, new RDFXMLDocumentFormat(), outputStream);
+		return outputStream.toString();
+	}
+
 	
 	
 	/**
 	 * Abstract filter class.
 	 * @author Christoph Beger
 	 */
-	abstract class Filter {
-		public abstract boolean run(OWLEntity a, String b);
+	abstract static class Filter {
+		
+		public static boolean run(OWLEntity entity, String name, Class<?> cls, Boolean exact) {
+			if (!cls.isAssignableFrom(entity.getClass())) return false;
+			
+			if (exact) {
+				return exactMatch(entity, name);
+			} else {
+				return looseMatch(entity, name);
+			}
+		}
+		
+		private static boolean exactMatch(OWLEntity entity, String name) {
+			return XMLUtils.getNCNameSuffix(entity.getIRI()).equals(name);
+		}
+		
+		private static boolean looseMatch(OWLEntity entity, String name) {
+			return StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(entity.getIRI()), name) >= THRESHOLD;
+		}
 	}
 
+
+
+	
 }

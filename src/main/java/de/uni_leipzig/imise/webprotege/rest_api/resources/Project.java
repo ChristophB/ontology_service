@@ -75,6 +75,10 @@ public class Project {
 			new PathDocumentation("/project/{id}/imports", "List all imports of the specified ontology.")
 		);
 		
+		documentation.add(
+			new PathDocumentation("/project/{id}", "Get full OWL document as RDF/XML.")
+		);
+		
 		return documentation;
 	}
 	
@@ -147,7 +151,7 @@ public class Project {
 	
 	/**
 	 * Returns a list of imported ontologies for a specified project.
-	 * @param projectid IF of the WebProtegé project
+	 * @param projectid ID of the WebProtegé project
 	 * @return List of imported ontologies or error message
 	 */
 	@GET
@@ -161,6 +165,22 @@ public class Project {
 		}
 	}
 	
+	
+	/**
+	 * Returns full OWL document as RDF/XML.
+	 * @param projectid ID of the WebProtegé project
+	 * @return
+	 */
+	@GET
+	@Path("/project/{id}")
+	public Object getFullRDFDocument(@PathParam("id") String projectid) {
+		try {
+			return getOntologyManager(projectid).getFullRDFDocument();
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+			return e.getMessage();
+		}
+	}
 	
 	/**
 	 * Parses a string of projectids separated by comma and returns a list of projectids.

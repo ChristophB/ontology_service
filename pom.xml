@@ -9,8 +9,9 @@
     <dropwizard.version>0.9.2</dropwizard.version>
     <jackson.version>2.7.0</jackson.version>
     <binaryowl.version>2.0.0</binaryowl.version>
-    <owlapi.version>4.1.3</owlapi.version>
+    <owlapi.version>4.2.7</owlapi.version>
     <protege.version>3.5.1.1</protege.version>
+    <hermit.version>1.3.8.413</hermit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
@@ -64,6 +65,11 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.owlapi</groupId>
+      <artifactId>org.semanticweb.hermit</artifactId>
+      <version>${hermit.version}</version>
     </dependency>
   </dependencies>
   
