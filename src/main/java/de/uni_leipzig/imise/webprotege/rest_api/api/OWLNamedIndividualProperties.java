@@ -25,7 +25,7 @@ public class OWLNamedIndividualProperties extends OWLEntityProperties {
 			dataProperties.put(propertyIRI, new HashSet<String>());
 		}
 		for (OWLLiteral literal : values) {
-			dataProperties.get(propertyIRI).add(literal.toString().replaceAll("^.*?\"|\"\\^.*$", ""));
+			dataProperties.get(propertyIRI).add(literal.getLiteral());
 		}
 	}
 	

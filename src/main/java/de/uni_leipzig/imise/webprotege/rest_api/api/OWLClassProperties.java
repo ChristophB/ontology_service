@@ -1,5 +1,6 @@
 package de.uni_leipzig.imise.webprotege.rest_api.api;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -15,8 +16,8 @@ public class OWLClassProperties extends OWLEntityProperties {
 		this.superclasses.add(expression.toString());
 	}
 	
-	public void addSuperClassExpressions(Set<OWLClassExpression> expressions) {
-		Iterator<OWLClassExpression> iterator = expressions.iterator();
+	public void addSuperClassExpressions(Collection<OWLClassExpression> collection) {
+		Iterator<OWLClassExpression> iterator = collection.iterator();
     	while (iterator.hasNext()) {
     		addSuperClassExpression(iterator.next());
     	}
@@ -26,8 +27,8 @@ public class OWLClassProperties extends OWLEntityProperties {
 		this.subclasses.add(expression.toString());
 	}
 	
-	public void addSubClassExpressions(Set<OWLClassExpression> expressions) {
-		Iterator<OWLClassExpression> iterator = expressions.iterator();
+	public void addSubClassExpressions(Collection<OWLClassExpression> collection) {
+		Iterator<OWLClassExpression> iterator = collection.iterator();
     	while (iterator.hasNext()) {
     		addSubClassExpression(iterator.next());
     	}

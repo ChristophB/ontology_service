@@ -1,17 +1,20 @@
 package de.uni_leipzig.imise.webprotege.rest_api.ontology;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
-import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentStorer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
+import org.semanticweb.owlapi.io.OWLParserFactory;
+//import org.semanticweb.owlapi.io.OWLParserFactoryRegistry;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
+import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -28,7 +31,10 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
+import com.google.common.collect.Multimap;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLClassProperties;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLNamedIndividualProperties;
@@ -70,12 +76,12 @@ public class OntologyManager {
 	/**
 	 * Adds the BinaryOWLOntologyDocumentParserFactory to OWLParserFactoryRegistry for parsing binaryowl files.
 	 */
-	static {
-	    OWLManager.getOWLDataFactory();
-	    OWLParserFactoryRegistry parserFactoryRegistry = OWLParserFactoryRegistry.getInstance();
-	    parserFactoryRegistry.clearParserFactories();
-	    parserFactoryRegistry.registerParserFactory(new BinaryOWLOntologyDocumentParserFactory());
-	}
+//static {
+//	    OWLManager.getOWLDataFactory();
+//	    OWLParserFactoryRegistry parserFactoryRegistry = OWLParserFactoryRegistry.getInstance();
+//	    parserFactoryRegistry.clearParserFactories();
+//	    parserFactoryRegistry.registerParserFactory(new BinaryOWLOntologyDocumentParserFactory());
+//}
 	
 	
 	
@@ -121,13 +127,13 @@ public class OntologyManager {
 		if ("exact".equals(match)) {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
-					return a.isOWLClass() && a.getIRI().getFragment().equals(b);
+					return a.isOWLClass() && XMLUtils.getNCNameSuffix(a.getIRI()).equals(b);
 				}
 			};
 		} else {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
-					return a.isOWLClass() && StringUtils.getJaroWinklerDistance(a.getIRI().getFragment(), b) >= THRESHOLD;
+					return a.isOWLClass() && StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(a.getIRI()), b) >= THRESHOLD;
 				}
 			};
 		}
@@ -148,13 +154,13 @@ public class OntologyManager {
 		if ("exact".equals(match)) {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
-					return a.isOWLNamedIndividual() && a.getIRI().getFragment().equals(b);
+					return a.isOWLNamedIndividual() && XMLUtils.getNCNameSuffix(a.getIRI()).equals(b);
 				}
 			};
 		} else {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
-					return a.isOWLNamedIndividual() && StringUtils.getJaroWinklerDistance(a.getIRI().getFragment(), b) >= THRESHOLD;
+					return a.isOWLNamedIndividual() && StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(a.getIRI()), b) >= THRESHOLD;
 				}
 			};
 		}
@@ -175,13 +181,13 @@ public class OntologyManager {
 		if ("exact".equals(match)) {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
-					return a.getIRI().getFragment().equals(b);
+					return XMLUtils.getNCNameSuffix(a.getIRI()).equals(b);
 				}
 			};
 		} else {
 			filter = new Filter() {
 				@Override public boolean run(OWLEntity a, String b) {
-					return StringUtils.getJaroWinklerDistance(a.getIRI().getFragment(), b) >= THRESHOLD;
+					return StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(a.getIRI()), b) >= THRESHOLD;
 				}
 			};
 		}
@@ -207,10 +213,10 @@ public class OntologyManager {
 	private ArrayList<OWLEntity> extractOWLClassesByProperty(String name, String value) {
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
 		
-		for (OWLClass cls : ontology.getClassesInSignature(true)) {
+		for (OWLClass cls : ontology.getClassesInSignature(Imports.INCLUDED)) {
 			for (OWLAnnotationProperty property : getOWLAnnotationPropertiesFromString(name)) {
-	    		@SuppressWarnings({ "unchecked", "rawtypes" })
-				Set<OWLObject> values = (Set)cls.getAnnotations(ontology, property);
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				Collection<OWLObject> values = (Collection)EntitySearcher.getAnnotations(cls, ontology, property);
 	    		if (values.isEmpty() || resultset.contains(cls))
 	    			continue;
 	    		
@@ -220,8 +226,8 @@ public class OntologyManager {
 			
 			for (OWLObjectProperty property : getOWLObjectPropertiesFromString(name)) {
 				@SuppressWarnings({ "unchecked", "rawtypes" })
-				Set<OWLObject> values = (Set)cls.getObjectPropertiesInSignature();
-				if (!values.contains(property) || resultset.contains(cls)) // @todo: filter values by property
+				Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) cls, property, ontology);
+				if (values.isEmpty() || resultset.contains(cls))
 	    			continue;
 	    		
 	    		if (valueSetContains(values, value))
@@ -237,10 +243,10 @@ public class OntologyManager {
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
 	    	
 	    for (OWLDataProperty property : getOWLDataPropertiesFromString(name)) {
-	    	for (OWLEntity entity : ontology.getSignature(true)) {
+	    	for (OWLEntity entity : ontology.getSignature(Imports.INCLUDED)) {
 		    	@SuppressWarnings({ "unchecked", "rawtypes" })
-				Set<OWLObject> values = (Set)entity.getDataPropertiesInSignature();
-	    		if (values.isEmpty() || !values.contains(property) || resultset.contains(entity)) // @todo: filter values by property
+				Collection<OWLObject> values = (Collection) EntitySearcher.getDataPropertyValues((OWLIndividual) entity, property, ontology);
+	    		if (values.isEmpty() || resultset.contains(entity))
 		    		continue;
 	    		
 	    		if (valueSetContains(values, value))
@@ -248,11 +254,11 @@ public class OntologyManager {
 	    	}
 	    }
 	    	
-	    for (OWLObject property : getOWLObjectPropertiesFromString(name)) {
-	    	for (OWLEntity entity : ontology.getSignature(true)) {
-		    	@SuppressWarnings({ "unchecked", "rawtypes" })
-				Set<OWLObject> values = (Set)entity.getObjectPropertiesInSignature();
-	    		if (values.isEmpty() ||!values.contains(property) || resultset.contains(entity)) // @todo: filter values by property
+	    for (OWLObjectProperty property : getOWLObjectPropertiesFromString(name)) {
+	    	for (OWLEntity entity : ontology.getSignature(Imports.INCLUDED)) {
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) entity, property, ontology);
+	    		if (values.isEmpty() || resultset.contains(entity))
 	    			continue;
 		    	
 	    		if (valueSetContains(values, value))
@@ -261,9 +267,9 @@ public class OntologyManager {
 	    }
 	    
 	    for (OWLAnnotationProperty property : getOWLAnnotationPropertiesFromString(name)) {
-	    	for (OWLEntity entity : ontology.getSignature(true)) {
-		    	@SuppressWarnings({ "rawtypes", "unchecked" })
-				Set<OWLObject> values = (Set)entity.getAnnotations(ontology, property);
+	    	for (OWLEntity entity : ontology.getSignature(Imports.INCLUDED)) {
+				@SuppressWarnings({ "unchecked", "rawtypes" })
+				Collection<OWLObject> values = (Collection) EntitySearcher.getAnnotations(entity, ontology, property);
 	    		if (values.isEmpty() || resultset.contains(entity))
 	    			continue;
 	    		
@@ -278,12 +284,12 @@ public class OntologyManager {
 	
 	/**
 	 * Checks if set of values contains a value or value is null.
-	 * @param valueSet
+	 * @param values
 	 * @param value
 	 * @return true if valueSet contains value or value is null, else false
 	 */
-	private boolean valueSetContains(Set<OWLObject> valueSet, String value) {
-		for (OWLObject curValue : valueSet) {
+	private boolean valueSetContains(Collection<OWLObject> values, String value) {
+		for (OWLObject curValue : values) {
     		if (StringUtils.isEmpty(value)
     			|| curValue.toString().replaceAll("^.*?\"|\"\\^.*$", "").equals(value)
     		) {
@@ -314,8 +320,8 @@ public class OntologyManager {
 	private ArrayList<OWLDataProperty> getOWLDataPropertiesFromString(String name) {
 		ArrayList<OWLDataProperty> properties = new ArrayList<OWLDataProperty>();
 		
-		for (OWLDataProperty property : ontology.getDataPropertiesInSignature(true)) {
-			if (property.getIRI().getFragment().toString().equals(name) && !properties.contains(property))
+		for (OWLDataProperty property : ontology.getDataPropertiesInSignature(Imports.INCLUDED)) {
+			if (XMLUtils.getNCNameSuffix(property.getIRI()).equals(name) && !properties.contains(property))
 				properties.add(property);
 		}
 		
@@ -331,8 +337,8 @@ public class OntologyManager {
 	private ArrayList<OWLObjectProperty> getOWLObjectPropertiesFromString(String name) {
 		ArrayList<OWLObjectProperty> properties = new ArrayList<OWLObjectProperty>();
 		
-		for (OWLObjectProperty property : ontology.getObjectPropertiesInSignature(true)) {
-			if (property.getIRI().getFragment().toString().equals(name) && !properties.contains(property))
+		for (OWLObjectProperty property : ontology.getObjectPropertiesInSignature(Imports.INCLUDED)) {
+			if (XMLUtils.getNCNameSuffix(property.getIRI()).equals(name) && !properties.contains(property))
 				properties.add(property);
 		}
 		
@@ -349,7 +355,7 @@ public class OntologyManager {
 		ArrayList<OWLAnnotationProperty> properties = new ArrayList<OWLAnnotationProperty>();
 		
 		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
-			if (property.getIRI().getFragment().toString().equals(name) && !properties.contains(property)) {
+			if (XMLUtils.getNCNameSuffix(property.getIRI()).equals(name) && !properties.contains(property)) {
 				properties.add(property);
 			}
 		}
@@ -400,11 +406,11 @@ public class OntologyManager {
 		OWLClassProperties properties = new OWLClassProperties();
     	
     	properties.iri = cls.getIRI().toString();
-    	properties.addSuperClassExpressions(cls.getSuperClasses(getOntologies()));
-    	properties.addSubClassExpressions(cls.getSubClasses(getOntologies()));
+    	properties.addSuperClassExpressions(EntitySearcher.getSuperClasses(cls, getOntologies()));
+    	properties.addSubClassExpressions(EntitySearcher.getSubClasses(cls, getOntologies()));
     	
     	for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
-			Set<OWLAnnotation> values = cls.getAnnotations(ontology, property);
+			Collection<OWLAnnotation> values = EntitySearcher.getAnnotations(cls, ontology, property);
 			properties.addAnnotationProperty(property, values);
 		}
     	
@@ -422,22 +428,22 @@ public class OntologyManager {
 		
 		properties.iri = individual.getIRI().toString();
 		
-		Map<OWLDataPropertyExpression, Set<OWLLiteral>> dataProperties = individual.getDataPropertyValues(ontology);
+		Multimap<OWLDataPropertyExpression, OWLLiteral> dataProperties = EntitySearcher.getDataPropertyValues(individual, ontology);
 		for (OWLDataPropertyExpression property : dataProperties.keySet()) {
-			properties.addDataProperty(property, dataProperties.get(property));
+			properties.addDataProperty(property, (Set<OWLLiteral>) dataProperties.get(property));
 		}
 		
-		Map<OWLObjectPropertyExpression, Set<OWLIndividual>> objectProperties = individual.getObjectPropertyValues(ontology);
+		Multimap<OWLObjectPropertyExpression, OWLIndividual> objectProperties = EntitySearcher.getObjectPropertyValues(individual, ontology);
 		for (OWLObjectPropertyExpression property : objectProperties.keySet()) {
-			properties.addObjectProperty(property, objectProperties.get(property));
+			properties.addObjectProperty(property, (Set<OWLIndividual>) objectProperties.get(property));
 		}
 		
 		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
-			Set<OWLAnnotation> values = individual.getAnnotations(ontology, property);
+			Collection<OWLAnnotation> values = EntitySearcher.getAnnotations(individual, ontology, property);
 			properties.addAnnotationProperty(property, values);
 		}
 		
-		for (OWLClassExpression type : individual.getTypes(ontology)) {
+		for (OWLClassExpression type : EntitySearcher.getTypes(individual, ontology)) {
 			properties.addTypeExpression(type);
 		}
 		
@@ -454,7 +460,7 @@ public class OntologyManager {
 	private ArrayList<OWLEntity> extractEntitiesWithFilter(String name, Filter filter) {		
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
 	    
-	    for (OWLEntity entity : ontology.getSignature(true)) {
+	    for (OWLEntity entity : ontology.getSignature(Imports.INCLUDED)) {
 	    	if (!filter.run(entity, name)) continue;
 	    	
 	    	if (!resultset.contains(entity))
@@ -462,6 +468,59 @@ public class OntologyManager {
 	    }
 		
 	    return resultset;
+	}
+	
+	
+	/**
+	 * Searches for OWLEntities with given type, and name.
+	 * @param type 'entity', 'individual' or 'class', defaults to 'entity'
+	 * @param name localename of the entity to search for
+	 * @param match 'exact' or 'loose', defaults to 'loose'
+	 * @return List of OWLEntityProperties for found entities
+	 * @throws Exception If the specified type is not one of 'entity', 'individual' and 'class', or the project was not found
+	 */
+	public ArrayList<OWLEntityProperties> searchOntologyEntityByName(
+		String type, String name, String match
+	) throws Exception {
+		if (StringUtils.isEmpty(type)) type = "entity";
+		
+		switch (type) {
+			case "entity":
+				return getEntityPropertiesByName(name, match);
+			case "individual":
+				return getNamedIndividualPropertiesByName(name, match);
+			case "class":
+				return getClassPropertiesByName(name, match);
+			default:
+				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
+		}
+	}
+	
+	
+	/**
+	 * Searches for OWLEntities which are annotated with a property with given name.
+	 * @param type 'entity', 'individual' or 'class', defaults to 'entity'
+	 * @param property localename of the property
+	 * @param value with property annotated value or null for no value check
+	 * @param match 'exact' or 'loose', defaults to 'loose'
+	 * @return List of OWLEntityProperties for found entities
+	 * @throws Exception If the specified type is not one of 'entity', 'individual' and 'class', or the project was not found
+	 */
+	public ArrayList<OWLEntityProperties> searchOntologyEntityByProperty(
+		String type, String property, String value, String match
+	) throws Exception {
+		if (StringUtils.isEmpty(type)) type = "entity";
+		
+		switch (type) {
+			case "individual":
+				return getNamedIndividualPropertiesByProperty(property, value);
+			case "class":
+				return getClassPropertiesByProperty(property, value);
+			case "entity":
+				return getEntityPropertiesByProperty(property, value);
+			default:
+				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
+		}
 	}
 	
 	
@@ -477,8 +536,11 @@ public class OntologyManager {
 	@SuppressWarnings("unchecked")
 	private OWLOntology getRootOntology() throws OWLOntologyCreationException {
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        manager.addOntologyStorer(new BinaryOWLOntologyDocumentStorer());
-	    
+		
+		Set<OWLParserFactory> parserFactories = new HashSet<OWLParserFactory>();
+		parserFactories.add(new BinaryOWLOntologyDocumentParserFactory());
+		manager.setOntologyParsers(parserFactories);
+		
         ArrayList<File> documents = new ArrayList<File>(
         	Arrays.asList((new File(importsPath)).listFiles())
         );
@@ -487,8 +549,10 @@ public class OntologyManager {
         		documents.remove(ontologyDocument);
         }
         
-        int counter = 0, maxTries = documents.size();
+        int counter = 0;
+        int maxTries = documents.size();
         while (!documents.isEmpty() && counter <= maxTries) {
+        	counter++;
         	for (File ontologyDocument : (ArrayList<File>)documents.clone()) {
         		try {
         			manager.loadOntologyFromOntologyDocument(ontologyDocument);
@@ -501,7 +565,7 @@ public class OntologyManager {
         		}
         	}
         }
-        		
+      
 		return manager.loadOntologyFromOntologyDocument(new File(rootPath));
 	}
 

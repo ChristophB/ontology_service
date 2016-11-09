@@ -1,6 +1,5 @@
 package de.uni_leipzig.imise.webprotege.rest_api.resources;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -122,16 +121,17 @@ public class Project {
 			
 			for (String id : parseOntologies(ontologies)) {
 				ArrayList<OWLEntityProperties> tempResult = new ArrayList<OWLEntityProperties>();
+				OntologyManager manager = getOntologyManager(id);
 				
 				if (StringUtils.isNotEmpty(name)) {
-					tempResult = searchOntologyEntityByName(id, type, name, match);
+					tempResult = manager.searchOntologyEntityByName(type, name, match);
 				}
 				
 				if (StringUtils.isNotEmpty(property)) {
 					if ("or".equals(operator) || StringUtils.isEmpty(name))
-						tempResult.addAll(searchOntologyEntityByProperty(id, type, property, value, match));
+						tempResult.addAll(manager.searchOntologyEntityByProperty(type, property, value, match));
 					else
-						tempResult.retainAll(searchOntologyEntityByProperty(id, type, property, value, match));	
+						tempResult.retainAll(manager.searchOntologyEntityByProperty(type, property, value, match));	
 				}
 				
 				result.addAll(tempResult);
@@ -158,63 +158,6 @@ public class Project {
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 			return e.getMessage();
-		}
-	}
-	
-	
-	/**
-	 * Searches for OWLEntities with given type, and name.
-	 * @param projectid ID of the WebProtegé project
-	 * @param type 'entity', 'individual' or 'class', defaults to 'entity'
-	 * @param name localename of the entity to search for
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of OWLEntityProperties for found entities
-	 * @throws Exception If the specified type is not one of 'entity', 'individual' and 'class', or the project was not found
-	 */
-	public ArrayList<OWLEntityProperties> searchOntologyEntityByName(
-		String projectid, String type, String name, String match
-	) throws Exception {
-		OntologyManager manager = getOntologyManager(projectid);
-		if (StringUtils.isEmpty(type)) type = "entity";
-		
-		switch (type) {
-			case "entity":
-				return manager.getEntityPropertiesByName(name, match);
-			case "individual":
-				return manager.getNamedIndividualPropertiesByName(name, match);
-			case "class":
-				return manager.getClassPropertiesByName(name, match);
-			default:
-				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
-		}
-	}
-	
-	
-	/**
-	 * Searches for OWLEntities which are annotated with a property with given name.
-	 * @param projectid ID of the WebProtegé project
-	 * @param type 'entity', 'individual' or 'class', defaults to 'entity'
-	 * @param property localename of the property
-	 * @param value with property annotated value or null for no value check
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of OWLEntityProperties for found entities
-	 * @throws Exception If the specified type is not one of 'entity', 'individual' and 'class', or the project was not found
-	 */
-	public ArrayList<OWLEntityProperties> searchOntologyEntityByProperty(
-		String projectid, String type, String property, String value, String match
-	) throws Exception {
-		OntologyManager manager = getOntologyManager(projectid);
-		if (StringUtils.isEmpty(type)) type = "entity";
-		
-		switch (type) {
-			case "individual":
-				return manager.getNamedIndividualPropertiesByProperty(property, value);
-			case "class":
-				return manager.getClassPropertiesByProperty(property, value);
-			case "entity":
-				return manager.getEntityPropertiesByProperty(property, value);
-			default:
-				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
 		}
 	}
 	

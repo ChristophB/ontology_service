@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -34,7 +35,7 @@ public class OntologyClass {
 	@JsonProperty
 	public ArrayList<String> getSuperclasses() {
 		ArrayList<String> result = new ArrayList<String>();
-		Iterator<OWLClassExpression> iterator = ontClass.getSuperClasses(ontology).iterator();
+		Iterator<OWLClassExpression> iterator = EntitySearcher.getSuperClasses(ontClass, ontology).iterator();
 		
 		while (iterator.hasNext()) {
 			result.add(iterator.next().toString());
