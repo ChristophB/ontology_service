@@ -19,7 +19,6 @@ import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
@@ -132,7 +131,9 @@ public class OntologyManager {
 	 * @return List of found OWLEntityProperties 
 	 */
 	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name, String match) {		
-		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, OWLNamedIndividualImpl.class, "exact".equals(match)));
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(
+			name, OWLNamedIndividualImpl.class, "exact".equals(match)
+		));
 	}
 	
 	
@@ -143,51 +144,21 @@ public class OntologyManager {
 	 * @return List of found OWLEntityProperties
 	 */
 	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(String name, String match) {
-		return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, OWLEntity.class, "exact".equals(match)));
-	}
-	
-	
-	public ArrayList<OWLEntityProperties> getClassPropertiesByProperty(String property, String value) {
-	    return getPropertiesForOWLEntities(extractOWLClassesByProperty(property, value));
-	}
-	
-	
-	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByProperty(String property, String value) {
-		return getPropertiesForOWLEntities(extractOWLNamedIndividualByProperty(property, value));
-	}
-	
-	
-	public ArrayList<OWLEntityProperties> getEntityPropertiesByProperty(String property, String value) {
-		return getPropertiesForOWLEntities(extractOWLEntitiesByProperty(property, value));
+		return getPropertiesForOWLEntities(extractEntitiesWithFilter(
+			name, OWLEntity.class, "exact".equals(match)
+		));
 	}
 	
 	
 	private ArrayList<OWLEntity> extractOWLClassesByProperty(String name, String value) {
-		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
+		ArrayList<OWLEntity> entities = extractOWLEntitiesByProperty(name, value);
 		
-		for (OWLClass cls : ontology.getClassesInSignature(Imports.INCLUDED)) {
-			for (OWLAnnotationProperty property : getOWLAnnotationPropertiesFromString(name)) {
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				Collection<OWLObject> values = (Collection)EntitySearcher.getAnnotations(cls, ontology, property);
-	    		if (values.isEmpty() || resultset.contains(cls))
-	    			continue;
-	    		
-	    		if (valueSetContains(values, value))
-		    		resultset.add(cls);
-	    	}
-			
-			for (OWLObjectProperty property : getOWLObjectPropertiesFromString(name)) {
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) cls, property, ontology);
-				if (values.isEmpty() || resultset.contains(cls))
-	    			continue;
-	    		
-	    		if (valueSetContains(values, value))
-		    		resultset.add(cls);
-	    	}
+		for (OWLEntity entity : entities) {
+			if (!entity.isOWLNamedIndividual())
+				entities.remove(entity);
 		}
 		
-		return resultset;
+		return entities;
 	}
 
 	
@@ -201,7 +172,7 @@ public class OntologyManager {
 	    		if (values.isEmpty() || resultset.contains(entity))
 		    		continue;
 	    		
-	    		if (valueSetContains(values, value))
+	    		if (valueCollectionContains(values, value))
 		    		resultset.add(entity);
 	    	}
 	    }
@@ -213,7 +184,7 @@ public class OntologyManager {
 	    		if (values.isEmpty() || resultset.contains(entity))
 	    			continue;
 		    	
-	    		if (valueSetContains(values, value))
+	    		if (valueCollectionContains(values, value))
 		    		resultset.add(entity);
 	    	}
 	    }
@@ -225,30 +196,12 @@ public class OntologyManager {
 	    		if (values.isEmpty() || resultset.contains(entity))
 	    			continue;
 	    		
-		    	if (valueSetContains(values, value))
+		    	if (valueCollectionContains(values, value))
 		    		resultset.add(entity);
 	    	}
 	    }
 		
 	    return resultset;
-	}
-	
-	
-	/**
-	 * Checks if set of values contains a value or value is null.
-	 * @param values
-	 * @param value
-	 * @return true if valueSet contains value or value is null, else false
-	 */
-	private boolean valueSetContains(Collection<OWLObject> values, String value) {
-		for (OWLObject curValue : values) {
-    		if (StringUtils.isEmpty(value)
-    			|| curValue.toString().replaceAll("^.*?\"|\"\\^.*$", "").equals(value)
-    		) {
-    			return true;
-    		}
-    	}
-		return false;
 	}
 	
 	
@@ -306,7 +259,7 @@ public class OntologyManager {
 	private ArrayList<OWLAnnotationProperty> getOWLAnnotationPropertiesFromString(String name) {
 		ArrayList<OWLAnnotationProperty> properties = new ArrayList<OWLAnnotationProperty>();
 		
-		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature()) {
+		for (OWLAnnotationProperty property : ontology.getAnnotationPropertiesInSignature(Imports.INCLUDED)) {
 			if (XMLUtils.getNCNameSuffix(property.getIRI()).equals(name) && !properties.contains(property)) {
 				properties.add(property);
 			}
@@ -347,8 +300,8 @@ public class OntologyManager {
 		}
     	
     	if (entity.isOWLClass()) {
-    		properties.addSuperClassExpressions(EntitySearcher.getSuperClasses(entity.asOWLClass(), getOntologies()));
-    		properties.addSubClassExpressions(EntitySearcher.getSubClasses(entity.asOWLClass(), getOntologies()));
+    		properties.addSuperClassExpressions(EntitySearcher.getSuperClasses(entity.asOWLClass(), ontology.getImportsClosure()));
+    		properties.addSubClassExpressions(EntitySearcher.getSubClasses(entity.asOWLClass(), ontology.getImportsClosure()));
     	}
     	
     	if (entity.isOWLNamedIndividual()) {
@@ -429,30 +382,37 @@ public class OntologyManager {
 	public ArrayList<OWLEntityProperties> searchOntologyEntityByProperty(
 		String type, String property, String value, String match
 	) throws Exception {
+		ArrayList<OWLEntity> entities;
+		
 		if (StringUtils.isEmpty(type)) type = "entity";
 		
 		switch (type) {
 			case "individual":
-				return getNamedIndividualPropertiesByProperty(property, value);
+				entities = extractOWLNamedIndividualByProperty(property, value);
+				break;
 			case "class":
-				return getClassPropertiesByProperty(property, value);
+				entities = extractOWLClassesByProperty(property, value);
+				break;
 			case "entity":
-				return getEntityPropertiesByProperty(property, value);
+				entities = extractOWLEntitiesByProperty(property, value);
+				break;
 			default:
 				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
 		}
+		
+		return getPropertiesForOWLEntities(entities);
 	}
 	
 	
 	/**
-	 * Returns the root-ontology witch all loaded imports.
+	 * Returns the root-ontology with all loaded imports.
 	 * This function tries to load all imports before loading the ontology.
 	 * Depending on their filename, the order of loading may vary and errors can occure.
 	 * When ever an error occures, the concerned document remains as 'not loaded',
 	 * so the function can try to load it in the next iteration.
 	 * @return root-ontology
 	 * @throws OWLOntologyCreationException If there was an error while parsing the ontology
-	 */
+	 */	
 	@SuppressWarnings("unchecked")
 	private OWLOntology getRootOntology() throws OWLOntologyCreationException {
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -486,16 +446,7 @@ public class OntologyManager {
         	}
         }
       
-		return manager.loadOntologyFromOntologyDocument(new File(rootPath)); // very slow!!???
-	}
-
-	
-	/**
-	 * Returns all ontologies, imports are included.
-	 * @return Set of OWLOntologys
-	 */
-	private Set<OWLOntology> getOntologies() {
-		return ontology.getImportsClosure();
+		return manager.loadOntologyFromOntologyDocument(new File(rootPath));
 	}
 	
 
@@ -510,6 +461,24 @@ public class OntologyManager {
 		return outputStream.toString();
 	}
 
+	
+	/**
+	 * Checks if set of values contains a value or value is null.
+	 * @param values
+	 * @param value
+	 * @return true if valueSet contains value or value is null, else false
+	 */
+	private boolean valueCollectionContains(Collection<OWLObject> values, String value) {
+		for (OWLObject curValue : values) {
+    		if (StringUtils.isEmpty(value)
+    			|| curValue.toString().replaceAll("^.*?\"|\"\\^.*$", "").equals(value)
+    		) {
+    			return true;
+    		}
+    	}
+		return false;
+	}
+	
 	
 	
 	/**
@@ -537,7 +506,4 @@ public class OntologyManager {
 		}
 	}
 
-
-
-	
 }
