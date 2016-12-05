@@ -15,10 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
-import de.uni_leipzig.imise.webprotege.rest_api.api.PathDocumentation;
 import de.uni_leipzig.imise.webprotege.rest_api.ontology.OntologyManager;
-import de.uni_leipzig.imise.webprotege.rest_api.ontology.ProjectManager;
-import de.uni_leipzig.imise.webprotege.rest_api.ontology.ProjectManager.ProjectListEntry;
+import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectListEntry;
 import de.uni_leipzig.imise.webprotege.rest_api.views.DocumentationView;
 
 /**
@@ -29,8 +28,8 @@ import de.uni_leipzig.imise.webprotege.rest_api.views.DocumentationView;
  */
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-public class Project {
-	final static Logger logger = LoggerFactory.getLogger(Project.class);
+public class ProjectResource {
+	final static Logger logger = LoggerFactory.getLogger(ProjectResource.class);
 	
 	/**
 	 * Path to WebProtegés data folder.
@@ -43,7 +42,7 @@ public class Project {
 	 * Constructor.
 	 * @param dataPath path to WebProtegés data folder.
 	 */
-	public Project(String dataPath) {
+	public ProjectResource(String dataPath) {
 		this.dataPath = dataPath;
 	}
 	
