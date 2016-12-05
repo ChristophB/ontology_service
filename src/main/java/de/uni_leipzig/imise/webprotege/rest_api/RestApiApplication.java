@@ -5,6 +5,7 @@ import de.uni_leipzig.imise.webprotege.rest_api.resources.Project;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.views.ViewBundle;
 
 /**
  * This is the main application of the WebProtegé Rest-API.
@@ -24,8 +25,11 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	}
 	
 	
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void initialize(Bootstrap<RestApiConfiguration> bootstrap) { }
+	public void initialize(Bootstrap<RestApiConfiguration> bootstrap) { 
+		bootstrap.addBundle(new ViewBundle());
+	}
 
 	
 	@Override

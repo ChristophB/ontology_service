@@ -19,6 +19,7 @@ import de.uni_leipzig.imise.webprotege.rest_api.api.PathDocumentation;
 import de.uni_leipzig.imise.webprotege.rest_api.ontology.OntologyManager;
 import de.uni_leipzig.imise.webprotege.rest_api.ontology.ProjectManager;
 import de.uni_leipzig.imise.webprotege.rest_api.ontology.ProjectManager.ProjectListEntry;
+import de.uni_leipzig.imise.webprotege.rest_api.views.DocumentationView;
 
 /**
  * Project resource, which is accessible by the REST API.
@@ -53,39 +54,9 @@ public class Project {
 	 */
 	@GET
 	@Path("/")
-	public ArrayList<Object> getDocumentation() {
-		ArrayList<Object> documentation = new ArrayList<Object>();
-		
-		documentation.add(
-			new PathDocumentation("/entity", "Search for a single or multiple entities.")
-				.addParameter("type",       "Entity, class or individual")
-				.addParameter("name",       "Entity name")
-				.addParameter("match",      "Match method for 'name' parameter: 'exact' or 'loose' (default: loose)")
-				.addParameter("property",   "Name of a Property, the entity is annotated with") // @toto: property -> properties
-				.addParameter("value",      "Value of the specified Property")
-				.addParameter("operator",   "Logical operator to combine 'name' and 'property' (default: and)")
-				.addParameter("ontologies", "List of comma separated ontology ids (default: all ontologies)")	
-		);
-			
-		documentation.add(
-			new PathDocumentation("/projects", "List all available projects/ontologies with a short description and id.")
-		);
-				
-		documentation.add(
-			new PathDocumentation("/project/{id}/imports", "List all imports of the specified ontology.")
-		);
-		
-		documentation.add(
-			new PathDocumentation("/project/{id}", "Get full OWL document as RDF/XML.")
-		);
-		
-		documentation.add(
-			new PathDocumentation("/reason", "Search for individuals by reasoning")
-				.addParameter("ce", "Class expression (currently not working with short forms, use full IRIs instead)")
-				.addParameter("ontologies", "List of comma separated ontology ids (default: all ontologies)")
-		);
-		
-		return documentation;
+	@Produces(MediaType.TEXT_HTML)
+	public DocumentationView getDocumentation() {
+		return new DocumentationView();
 	}
 	
 	
