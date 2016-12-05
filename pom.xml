@@ -3,8 +3,8 @@
   <groupId>de.uni-leipzig.imise.webprotege</groupId>
   <artifactId>rest-api</artifactId>
   <version>0.0.1</version>
-  <name>WebProtegé REST-full API</name>
-  <description>REST-full API to access Ontologies developed and stored in WebProtegé.</description>
+  <name>WebProtégé REST-full API</name>
+  <description>REST-full API to access Ontologies developed and stored in WebProtégé.</description>
   <properties>
     <dropwizard.version>0.9.2</dropwizard.version>
     <jackson.version>2.7.0</jackson.version>

@@ -79,6 +79,12 @@ public class Project {
 			new PathDocumentation("/project/{id}", "Get full OWL document as RDF/XML.")
 		);
 		
+		documentation.add(
+			new PathDocumentation("/reason", "Search for individuals by reasoning")
+				.addParameter("ce", "Class expression (currently not working with short forms, use full IRIs instead)")
+				.addParameter("ontologies", "List of comma separated ontology ids (default: all ontologies)")
+		);
+		
 		return documentation;
 	}
 	
@@ -200,6 +206,27 @@ public class Project {
 		}
 	}
 	
+	
+	@GET
+	@Path("/reason")
+	public Object reasonClassExpression(@QueryParam("ce") String ce, @QueryParam("ontologies") String ontologies) {
+		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		
+		try {
+			if (StringUtils.isEmpty(ce))
+				throw new Exception("No class expression given.");
+		
+			for (String id : parseOntologies(ontologies)) {
+				OntologyManager manager = getOntologyManager(id);
+				result.addAll(manager.getIndividualPropertiesByClassExpression(ce));
+			}
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+			return e.getMessage();
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * Returns the OntologyManager for a given projectid

@@ -78,7 +78,7 @@ public class OWLEntityProperties {
 		this.types.add(expression.toString());
 	}
 	
-	public void addDataProperty(OWLDataPropertyExpression property, Set<OWLLiteral> values) {
+	public void addDataProperty(OWLDataPropertyExpression property, Collection<OWLLiteral> values) {
 		String propertyIRI = property.asOWLDataProperty().getIRI().toString();
 		if (!dataProperties.containsKey(propertyIRI)) {
 			dataProperties.put(propertyIRI, new HashSet<String>());
@@ -88,7 +88,7 @@ public class OWLEntityProperties {
 		}
 	}
 	
-	public void addObjectProperty(OWLObjectPropertyExpression property, Set<OWLIndividual> values) {
+	public void addObjectProperty(OWLObjectPropertyExpression property, Collection<OWLIndividual> values) {
 		String propertyIRI = property.asOWLObjectProperty().getIRI().toString();
 		if (!objectProperties.containsKey(propertyIRI)) {
 			objectProperties.put(propertyIRI, new HashSet<String>());

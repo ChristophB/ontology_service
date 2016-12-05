@@ -10,13 +10,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.glassfish.hk2.utilities.reflection.Logger;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
 import org.semanticweb.owlapi.io.OWLParserFactory;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.io.XMLUtils;
+import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxParserImpl;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxPrefixNameShortFormProvider;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -25,6 +31,7 @@ import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
@@ -33,11 +40,17 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.search.EntitySearcher;
+import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
+import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
+import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
+import de.uni_leipzig.imise.webprotege.rest_api.resources.Project;
 import edu.stanford.smi.protege.model.Instance;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
@@ -307,12 +320,12 @@ public class OntologyManager {
     	if (entity.isOWLNamedIndividual()) {
 	    	Multimap<OWLDataPropertyExpression, OWLLiteral> dataProperties = EntitySearcher.getDataPropertyValues(entity.asOWLNamedIndividual(), ontology);
 			for (OWLDataPropertyExpression property : dataProperties.keySet()) {
-				properties.addDataProperty(property, (Set<OWLLiteral>) dataProperties.get(property));
+				properties.addDataProperty(property, dataProperties.get(property));
 			}
 			
 			Multimap<OWLObjectPropertyExpression, OWLIndividual> objectProperties = EntitySearcher.getObjectPropertyValues(entity.asOWLNamedIndividual(), ontology);
 			for (OWLObjectPropertyExpression property : objectProperties.keySet()) {
-				properties.addObjectProperty(property, (Set<OWLIndividual>) objectProperties.get(property));
+				properties.addObjectProperty(property, objectProperties.get(property));
 			}
 			
 			for (OWLClassExpression type : EntitySearcher.getTypes(entity.asOWLNamedIndividual(), ontology)) {
@@ -480,6 +493,45 @@ public class OntologyManager {
 	}
 	
 	
+	/**
+	 * Searches for individuals which match the class expression.
+	 * @param string class expression as string
+	 * @return List of named individuals
+	 */
+	public ArrayList<OWLEntityProperties> getIndividualPropertiesByClassExpression(String string) {
+		OWLClassExpression ce = convertStringToClassExpression(string);
+		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		
+		for (Node<OWLNamedIndividual> node : reasoner.getInstances(ce, false)) {
+			result.add(getPropertiesForOWLEntity(node.iterator().next()));
+		}
+		
+		return result;
+	}
+	
+	
+	private OWLClassExpression convertStringToClassExpression(String expression) {
+        ManchesterOWLSyntaxParserImpl parser = (ManchesterOWLSyntaxParserImpl) OWLManager.createManchesterParser();
+        OWLEntityChecker owlEntityChecker = new ShortFormEntityChecker(getShortFormProvider());
+		parser.setOWLEntityChecker(owlEntityChecker);
+        parser.setDefaultOntology(ontology);
+
+        return parser.parseClassExpression(expression);
+    }
+	
+	
+	private BidirectionalShortFormProvider getShortFormProvider() {
+		OWLOntologyManager manager = ontology.getOWLOntologyManager();
+        Set<OWLOntology> ontologies = manager.getOntologies();
+        ShortFormProvider sfp = new ManchesterOWLSyntaxPrefixNameShortFormProvider(manager.getOntologyFormat(ontology));
+        BidirectionalShortFormProvider shortFormProvider = new BidirectionalShortFormProviderAdapter(ontologies, sfp);
+        return shortFormProvider;
+    }
+	
+	
+	
+	
+	
 	
 	/**
 	 * Abstract filter class.
@@ -505,5 +557,8 @@ public class OntologyManager {
 			return StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(entity.getIRI()), name) >= THRESHOLD;
 		}
 	}
+
+
+
 
 }
