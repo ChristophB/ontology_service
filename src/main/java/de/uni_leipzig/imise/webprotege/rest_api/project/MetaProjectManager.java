@@ -15,7 +15,7 @@ import edu.stanford.smi.protege.model.Project;
  * 
  * @author Christoph Beger
  */
-public class ProjectManager {
+public class MetaProjectManager {
 	/**
 	 * Knowledgebase of WebProtegé which contains all project meta informations.
 	 * Typically location: [webprotege-data]/metaproject/metaproject.pprj
@@ -36,7 +36,7 @@ public class ProjectManager {
 	 * Constructor
 	 * @param dataPath Path to WebProtegés data folder.
 	 */
-	public ProjectManager(String dataPath) {
+	public MetaProjectManager(String dataPath) {
 		kb = new Project(dataPath + "metaproject/metaproject.pprj",	new ArrayList<String>()).getKnowledgeBase();
 		projectClass = kb.getCls("Project");
 		this.dataPath = dataPath;
@@ -47,14 +47,15 @@ public class ProjectManager {
 	 * Returns a list of all available public readable projects, stored in WebProtegé.
 	 * @return List of projects
 	 */
-	public ArrayList<ProjectListEntry> getProjectList() {
-		ArrayList<ProjectListEntry> list = new ArrayList<ProjectListEntry>();
+	public ArrayList<WebProtegeProject> getProjectList() {
+		ArrayList<WebProtegeProject> list = new ArrayList<WebProtegeProject>();
 		
 		for (Instance project : getProjectInstances()) {
-			list.add(new ProjectListEntry(
+			list.add(new WebProtegeProject(
 				project.getName(),
 				(String) project.getOwnSlotValue(kb.getSlot("displayName")),
 				(String) project.getOwnSlotValue(kb.getSlot("description"))
+				
 			));
 		}
 		
@@ -69,11 +70,14 @@ public class ProjectManager {
 	 * @throws Exception If no public project with matching id was found or ontology was not parsable
 	 */
 	public OntologyManager getOntologyManager(String projectId) throws Exception {
-		Instance project = getProjectInstance(projectId);
+		Instance instance = getProjectInstance(projectId);
 		
-		if (project != null) 
-			return new OntologyManager(project, dataPath);
-		else 
+		if (instance != null) {
+			OntologyManager om = new OntologyManager(projectId, dataPath);
+			om.setName((String) instance.getOwnSlotValue(kb.getSlot("displayName")));
+			om.setDescription((String) instance.getOwnSlotValue(kb.getSlot("description")));
+			return om;
+		} else 
 			throw new NoContentException("Could not find project by id: '" + projectId + "'");
 	}
 	
@@ -133,5 +137,7 @@ public class ProjectManager {
 		}
 		return false;
 	}
+
+
 
 }

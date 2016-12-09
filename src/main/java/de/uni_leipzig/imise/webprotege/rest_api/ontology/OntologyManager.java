@@ -46,7 +46,6 @@ import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import com.google.common.collect.Multimap;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
-import edu.stanford.smi.protege.model.Instance;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
@@ -77,6 +76,11 @@ public class OntologyManager {
 	 */
 	private String importsPath;
 	
+	private String projectId;
+	private String name;
+	private String description;
+	
+	private OWLOntologyManager manager;
 	/**
 	 * OWLOntology object for one project.
 	 */
@@ -96,13 +100,24 @@ public class OntologyManager {
 	 * @throws OWLOntologyCreationException 
 	 */
 	@SuppressWarnings("deprecation")
-	public OntologyManager(Instance project, String dataPath) throws OWLOntologyCreationException {
-		path        = dataPath + "/data-store/project-data/" + project.getName();
+	public OntologyManager(String projectId, String dataPath) throws OWLOntologyCreationException {
+		this.projectId = projectId;
+		path        = dataPath + "/data-store/project-data/" + projectId;
 		rootPath    = path + "/ontology-data/root-ontology.binary";
 		importsPath = path + "/imports-cache";
 		
+
+		manager  = getOWLOntologyManager();
 		ontology = getRootOntology();
 		reasoner = new Reasoner.ReasonerFactory().createReasoner(ontology);
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	
@@ -422,13 +437,7 @@ public class OntologyManager {
 	 * @throws OWLOntologyCreationException If there was an error while parsing the ontology
 	 */	
 	@SuppressWarnings("unchecked")
-	private OWLOntology getRootOntology() throws OWLOntologyCreationException {
-		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-		
-		Set<OWLParserFactory> parserFactories = new HashSet<OWLParserFactory>();
-		parserFactories.add(new BinaryOWLOntologyDocumentParserFactory());
-		manager.setOntologyParsers(parserFactories);
-		
+	private OWLOntology getRootOntology() throws OWLOntologyCreationException {		
         ArrayList<File> documents = new ArrayList<File>(
         	Arrays.asList((new File(importsPath)).listFiles())
         );
@@ -437,7 +446,7 @@ public class OntologyManager {
         		documents.remove(ontologyDocument);
         }
         
-        int counter = 0;
+        int counter  = 0;
         int maxTries = documents.size();
         while (!documents.isEmpty() && counter <= maxTries) {
         	counter++;
@@ -455,6 +464,20 @@ public class OntologyManager {
         }
       
 		return manager.loadOntologyFromOntologyDocument(new File(rootPath));
+	}
+	
+	/**
+	 * Creates and returns an OWLOntologyManager
+	 * @return ontology manager
+	 */
+	private OWLOntologyManager getOWLOntologyManager() {
+		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+		
+		Set<OWLParserFactory> parserFactories = new HashSet<OWLParserFactory>();
+		parserFactories.add(new BinaryOWLOntologyDocumentParserFactory());
+		manager.setOntologyParsers(parserFactories);
+		
+		return manager;
 	}
 	
 
@@ -524,8 +547,42 @@ public class OntologyManager {
     }
 	
 	
+	public String getProjectId() {
+		return projectId;
+	}
+	
+	public String getName() {
+		return StringUtils.defaultString(name, "");
+	}
+	
+	public String getDescription() {
+		return StringUtils.defaultString(description, "");
+	}
 	
 	
+	public int getCountAxioms() {
+		return ontology.getAxiomCount(Imports.INCLUDED);
+	}
+	
+	public int getCountClasses() {
+		return ontology.getClassesInSignature(Imports.INCLUDED).size();
+	}
+	
+	public int getCountIndividuals() {
+		return ontology.getIndividualsInSignature(Imports.INCLUDED).size();
+	}
+	
+	public int getCountDataTypeProperties() {
+		return ontology.getDataPropertiesInSignature(Imports.INCLUDED).size();
+	}
+	
+	public int getCountObjectProperties() {
+		return ontology.getObjectPropertiesInSignature(Imports.INCLUDED).size();
+	}
+	
+	public int getCountAnnotationProperties() {
+		return ontology.getAnnotationPropertiesInSignature(Imports.INCLUDED).size();
+	}
 	
 	
 	/**

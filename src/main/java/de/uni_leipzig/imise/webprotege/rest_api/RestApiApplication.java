@@ -1,7 +1,9 @@
 package de.uni_leipzig.imise.webprotege.rest_api;
 
 import de.uni_leipzig.imise.webprotege.rest_api.health.WebProtegeHealthCheck;
-import de.uni_leipzig.imise.webprotege.rest_api.resources.ProjectResource;
+import de.uni_leipzig.imise.webprotege.rest_api.resources.DocumentationResource;
+import de.uni_leipzig.imise.webprotege.rest_api.resources.MetaProjectResource;
+import de.uni_leipzig.imise.webprotege.rest_api.resources.OntologyResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -34,11 +36,10 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	
 	@Override
 	public void run(RestApiConfiguration configuration, Environment environment) throws Exception {
-		final WebProtegeHealthCheck webProtegeHealthCheck = new WebProtegeHealthCheck(configuration);
-		final ProjectResource project = new ProjectResource(configuration.getDataPath()); 
-		
-		environment.healthChecks().register("template", webProtegeHealthCheck);
-		environment.jersey().register(project);
+		environment.healthChecks().register("template", new WebProtegeHealthCheck(configuration));
+		environment.jersey().register(new MetaProjectResource(configuration.getDataPath()));
+		environment.jersey().register(new DocumentationResource());
+		environment.jersey().register(new OntologyResource(configuration.getDataPath()));
 	}
 
 }
