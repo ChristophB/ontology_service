@@ -9,12 +9,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NoContentException;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang3.StringUtils;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
-import de.uni_leipzig.imise.webprotege.rest_api.project.MetaProjectManager;
-import de.uni_leipzig.imise.webprotege.rest_api.project.WebProtegeProject;
-import de.uni_leipzig.imise.webprotege.rest_api.views.WebProtegeProjectListView;
+import de.uni_leipzig.imise.webprotege.rest_api.metaproject.MetaProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.views.EntityResultsetView;
+import de.uni_leipzig.imise.webprotege.rest_api.views.ProjectListView;
 
 /**
  * Project resource, which is accessible by the REST API.
@@ -23,31 +29,38 @@ import de.uni_leipzig.imise.webprotege.rest_api.views.WebProtegeProjectListView;
  * @author Christoph Beger
  */
 @Path("/")
-@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
 public class MetaProjectResource extends Resource {
+	
+	private MetaProjectManager mpm;
+
+	
+	
 	/**
 	 * Constructor.
 	 * @param dataPath path to WebProtegés data folder.
 	 */
 	public MetaProjectResource(String dataPath) {
 		super(dataPath);
+		mpm = new MetaProjectManager(dataPath);
 	}
 	
 	
 	/**
 	 * Returns a list of public projects with condensed metadata.
 	 * @return List of projects with metadata
+	 * @throws NoContentException 
 	 */
 	@GET
 	@Path("/projects")
-	@Produces(MediaType.TEXT_HTML)
-	public WebProtegeProjectListView getProjectList() {
-		return new WebProtegeProjectListView(getOntologyList());
-	}
-	
-	private ArrayList<WebProtegeProject> getOntologyList() {
-		MetaProjectManager pm = new MetaProjectManager(dataPath);
-		return pm.getProjectList();
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response getProjectList(@Context HttpHeaders headers) throws NoContentException {
+		List<MediaType> accepts = headers.getAcceptableMediaTypes();
+		
+		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+			return Response.ok(mpm.getProjectList()).build();
+		} else {
+			return Response.ok(new ProjectListView(mpm.getProjectList())).build();
+		}
 	}
 
 	
@@ -64,7 +77,9 @@ public class MetaProjectResource extends Resource {
 	 */
 	@GET
 	@Path("/entity")
-	public Object searchOntologyEntities(
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response searchOntologyEntities(
+		@Context HttpHeaders headers,
 		@QueryParam("name")	String name,
 		@QueryParam("property") String property,
 		@QueryParam("value") String value,
@@ -80,18 +95,22 @@ public class MetaProjectResource extends Resource {
 				throw new Exception("Neither query param 'name' nor 'property' given.");
 			
 			for (String projectId : parseOntologies(ontologies)) {
-				result.addAll(new OntologyResource(dataPath).searchOntologyEntities(
+				result.addAll(new ProjectResource(dataPath).searchOntologyEntities(
 					projectId, name, property, value, type, match, operator
 				));
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
-			return e.getMessage();
+			throw new WebApplicationException(e.getMessage());
 		}
 		
-		return result;
+		List<MediaType> accepts = headers.getAcceptableMediaTypes();
+		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+			return Response.ok(result).build();
+		} else {
+			return Response.ok(new EntityResultsetView(result)).build();
+		}
 	}
-	
 	
 	
 	/**
@@ -102,7 +121,12 @@ public class MetaProjectResource extends Resource {
 	 */
 	@GET
 	@Path("/reason")
-	public ArrayList<OWLEntityProperties> reason(@QueryParam("ce") String ce, @QueryParam("ontologies") String ontologies) {
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response reason(
+			@Context HttpHeaders headers,
+			@QueryParam("ce") String ce,
+			@QueryParam("ontologies") String ontologies
+		) {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
 		try {
@@ -110,34 +134,40 @@ public class MetaProjectResource extends Resource {
 				throw new Exception("No class expression given.");
 		
 			for (String projectId : parseOntologies(ontologies)) {
-				OntologyResource or = new OntologyResource(dataPath);
-				result.addAll(or.reason(projectId, ce));
+				ProjectResource pr = new ProjectResource(dataPath);
+				result.addAll(pr.reason(projectId, ce));
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 			throw new WebApplicationException(e.getMessage());
 		}
 		
-		return result;
+		List<MediaType> accepts = headers.getAcceptableMediaTypes();
+		
+		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+			return Response.ok(result).build();
+		} else {
+			return Response.ok(new EntityResultsetView(result)).build();
+		}
 	}
 
-	
 	
 	/**
 	 * Parses a string of projectids separated by comma and returns a list of projectids.
 	 * If the string is empty, this function returns a list of all public projects.
 	 * @param ontologies String of projectids separated by comma
 	 * @return List of projectids
+	 * @throws NoContentException 
 	 */
-	private List<String> parseOntologies(String ontologies) {
-		if (StringUtils.isEmpty(ontologies)) {
-			List<String> ontologyList = new ArrayList<String>();
-			for (WebProtegeProject entry : getOntologyList()) {
-				ontologyList.add(entry.getProjectId());
+	private List<String> parseOntologies(String projects) throws NoContentException {
+		if (StringUtils.isEmpty(projects)) {
+			List<String> projectList = new ArrayList<String>();
+			for (ProjectManager pm : mpm.getProjectList()) {
+				projectList.add(pm.getProjectId());
 			}
-			return ontologyList;
+			return projectList;
 		} else {
-			return Arrays.asList(ontologies.split(","));
+			return Arrays.asList(projects.split(","));
 		}
 	}
 	

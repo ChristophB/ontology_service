@@ -1,6 +1,7 @@
 package de.uni_leipzig.imise.webprotege.rest_api.resources;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -8,26 +9,32 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
-
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
-import de.uni_leipzig.imise.webprotege.rest_api.ontology.OntologyManager;
-import de.uni_leipzig.imise.webprotege.rest_api.project.MetaProjectManager;
-import de.uni_leipzig.imise.webprotege.rest_api.views.WebProtegeProjectView;
+import de.uni_leipzig.imise.webprotege.rest_api.metaproject.MetaProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.views.EntityFormView;
+import de.uni_leipzig.imise.webprotege.rest_api.views.ProjectView;
+import de.uni_leipzig.imise.webprotege.rest_api.views.ReasonFormView;
+import de.uni_leipzig.imise.webprotege.rest_api.views.SimpleListView;
 
 /**
  * This class provids all ontology specific tasks.
  * @author Christoph Beger
  */
 @Path("/project")
-public class OntologyResource extends Resource {
+public class ProjectResource extends Resource {
+	
 	/**
 	 * Constructor.
 	 * @param dataPath path to WebProtegés data folder.
 	 */
-	public OntologyResource(String dataPath) {
+	public ProjectResource(String dataPath) {
 		super(dataPath);
 	}
 	
@@ -39,22 +46,27 @@ public class OntologyResource extends Resource {
 	 */
 	@GET
 	@Path("/{id}/imports")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-	public Object getOntologyImports(@PathParam("id") String projectId) {
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response getOntologyImportsJson(@Context HttpHeaders headers, @PathParam("id") String projectId) {
 		try {
-			return getOntologyManager(projectId).getOntologyImports();
+			List<MediaType> accepts = headers.getAcceptableMediaTypes();
+			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(getProjectManager(projectId).getOntologyImports()).build();
+			} else {
+				return Response.ok(new SimpleListView(getProjectManager(projectId).getOntologyImports(), "Imported Ontologies")).build();
+			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
-			return e.getMessage();
+			throw new WebApplicationException(e.getMessage());
 		}
 	}
 	
 
 	@GET
-	@Path("/{id}")
+	@Path("/{id}/overview")
 	@Produces(MediaType.TEXT_HTML)
-	public WebProtegeProjectView getProject(@PathParam("id") String projectId) throws Exception {
-		return new WebProtegeProjectView(new MetaProjectManager(dataPath).getOntologyManager(projectId));
+	public ProjectView getProject(@PathParam("id") String projectId) throws Exception {
+		return new ProjectView(new MetaProjectManager(dataPath).getProjectManager(projectId));
 	}
 	
 	
@@ -65,13 +77,13 @@ public class OntologyResource extends Resource {
 	 */
 	@GET
 	@Path("/{id}")
-	@Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
+	@Produces(MediaType.TEXT_PLAIN)
 	public Object getFullRDFDocument(@PathParam("id") String projectId) {
 		try {
-			return getOntologyManager(projectId).getFullRDFDocument();
+			return getProjectManager(projectId).getFullRDFDocument();
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
-			return e.getMessage();
+			throw new WebApplicationException(e.getMessage());
 		}
 	}
 
@@ -84,12 +96,12 @@ public class OntologyResource extends Resource {
 	 */
 	@GET
 	@Path("/{id}/reason")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<OWLEntityProperties> reason(@PathParam("id") String projectId, @QueryParam("ce") String ce) {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
 		try {
-			OntologyManager manager = getOntologyManager(projectId);
+			ProjectManager manager = getProjectManager(projectId);
 			result.addAll(manager.getIndividualPropertiesByClassExpression(ce));
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
@@ -113,7 +125,7 @@ public class OntologyResource extends Resource {
 	 */
 	@GET
 	@Path("/{id}/entity")
-	@Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public ArrayList<OWLEntityProperties> searchOntologyEntities(
 		@PathParam("id") String projectId,
 		@QueryParam("name")	String name,
@@ -130,7 +142,7 @@ public class OntologyResource extends Resource {
 				throw new Exception("Neither query param 'name' nor 'property' given.");
 			
 			ArrayList<OWLEntityProperties> tempResult = new ArrayList<OWLEntityProperties>();
-			OntologyManager manager = getOntologyManager(projectId);
+			ProjectManager manager = getProjectManager(projectId);
 				
 			if (StringUtils.isNotEmpty(name)) {
 				tempResult = manager.searchOntologyEntityByName(type, name, match);
@@ -142,7 +154,7 @@ public class OntologyResource extends Resource {
 				else
 					tempResult.retainAll(manager.searchOntologyEntityByProperty(type, property, value, match));	
 			}
-				
+			
 			result.addAll(tempResult);
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
@@ -152,4 +164,29 @@ public class OntologyResource extends Resource {
 		return result;
 	}
 	
+	
+	@GET
+	@Path("/{id}/entity-form")
+	@Produces(MediaType.TEXT_HTML)
+	public EntityFormView getEntityForm(@PathParam("id") String projectId) {
+		try {
+			return new EntityFormView(getProjectManager(projectId));
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+			throw new WebApplicationException(e.getMessage());
+		}
+	}
+	
+	@GET
+	@Path("/{id}/reason-form")
+	@Produces(MediaType.TEXT_HTML)
+	public ReasonFormView getReasonForm(@PathParam("id") String projectId) {
+		try {
+			return new ReasonFormView(getProjectManager(projectId));
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+			throw new WebApplicationException(e.getMessage());
+		}
+	}
+
 }

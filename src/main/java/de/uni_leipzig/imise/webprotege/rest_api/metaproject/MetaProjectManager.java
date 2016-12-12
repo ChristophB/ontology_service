@@ -1,10 +1,10 @@
-package de.uni_leipzig.imise.webprotege.rest_api.project;
+package de.uni_leipzig.imise.webprotege.rest_api.metaproject;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.core.NoContentException;
 
-import de.uni_leipzig.imise.webprotege.rest_api.ontology.OntologyManager;
+import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
@@ -46,17 +46,13 @@ public class MetaProjectManager {
 	/**
 	 * Returns a list of all available public readable projects, stored in WebProtegé.
 	 * @return List of projects
+	 * @throws NoContentException 
 	 */
-	public ArrayList<WebProtegeProject> getProjectList() {
-		ArrayList<WebProtegeProject> list = new ArrayList<WebProtegeProject>();
+	public ArrayList<ProjectManager> getProjectList() throws NoContentException {
+		ArrayList<ProjectManager> list = new ArrayList<ProjectManager>();
 		
 		for (Instance project : getProjectInstances()) {
-			list.add(new WebProtegeProject(
-				project.getName(),
-				(String) project.getOwnSlotValue(kb.getSlot("displayName")),
-				(String) project.getOwnSlotValue(kb.getSlot("description"))
-				
-			));
+			list.add(getProjectManager(project.getName()));
 		}
 		
 		return list;
@@ -67,16 +63,16 @@ public class MetaProjectManager {
 	 * Returns an OntologyManager for a given id, if project with specified id exists and is public.
 	 * @param projectId id of a project
 	 * @return OntologyManager for project with specified id
-	 * @throws Exception If no public project with matching id was found or ontology was not parsable
+	 * @throws NoContentException If no public project with matching id was found or ontology was not parsable
 	 */
-	public OntologyManager getOntologyManager(String projectId) throws Exception {
+	public ProjectManager getProjectManager(String projectId) throws NoContentException {
 		Instance instance = getProjectInstance(projectId);
 		
 		if (instance != null) {
-			OntologyManager om = new OntologyManager(projectId, dataPath);
-			om.setName((String) instance.getOwnSlotValue(kb.getSlot("displayName")));
-			om.setDescription((String) instance.getOwnSlotValue(kb.getSlot("description")));
-			return om;
+			ProjectManager pm = new ProjectManager(projectId, dataPath);
+			pm.setName((String) instance.getOwnSlotValue(kb.getSlot("displayName")));
+			pm.setDescription((String) instance.getOwnSlotValue(kb.getSlot("description")));
+			return pm;
 		} else 
 			throw new NoContentException("Could not find project by id: '" + projectId + "'");
 	}

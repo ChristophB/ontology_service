@@ -3,8 +3,8 @@ package de.uni_leipzig.imise.webprotege.rest_api.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uni_leipzig.imise.webprotege.rest_api.ontology.OntologyManager;
-import de.uni_leipzig.imise.webprotege.rest_api.project.MetaProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.metaproject.MetaProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
 
 public abstract class Resource {
 	final static Logger logger = LoggerFactory.getLogger(MetaProjectResource.class);
@@ -19,7 +19,7 @@ public abstract class Resource {
 	}
 	
 	
-	protected OntologyManager getOntologyManager(String projectId) throws Exception {
-		return new MetaProjectManager(dataPath).getOntologyManager(projectId);
+	protected ProjectManager getProjectManager(String projectId) throws Exception {
+		return new MetaProjectManager(dataPath).getProjectManager(projectId);
 	}
 }
