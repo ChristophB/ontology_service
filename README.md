@@ -34,6 +34,6 @@ Run in a bash:
 
 # Usage
 
-* Access "[host ip]:[allocated port]/documentation" to get a list of possible queries.
+* Access "[host ip]:[allocated port]" to get a list of possible queries.
 
-e.g.: `localhost:8080/documentation` for the documentation, `localhost:8080/projects` for a list of available project ontologies and their ids.
+e.g.: `localhost:8080` for the documentation, `localhost:8080/projects` for a list of available project ontologies and their ids.
