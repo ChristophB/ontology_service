@@ -1,6 +1,7 @@
 package de.uni_leipzig.imise.webprotege.rest_api.resources;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -16,9 +17,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
-import de.uni_leipzig.imise.webprotege.rest_api.metaproject.MetaProjectManager;
-import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.MetaProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.ProjectManager;
 import de.uni_leipzig.imise.webprotege.rest_api.views.EntityFormView;
+import de.uni_leipzig.imise.webprotege.rest_api.views.EntityResultsetView;
 import de.uni_leipzig.imise.webprotege.rest_api.views.ProjectView;
 import de.uni_leipzig.imise.webprotege.rest_api.views.ReasonFormView;
 import de.uni_leipzig.imise.webprotege.rest_api.views.SimpleListView;
@@ -87,6 +89,39 @@ public class ProjectResource extends Resource {
 		}
 	}
 
+	
+	@GET
+	@Path("/{id}/reason")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response reason(
+		@Context HttpHeaders headers,
+		@PathParam("id") String projectId,
+		@QueryParam("ce") String ce
+	) {
+		ArrayList<OWLEntityProperties> result;
+		List<MediaType> accepts = headers.getAcceptableMediaTypes();
+		ProjectManager project  = null;
+		
+		try {
+			project = getProjectManager(projectId);
+			result  = reason(projectId, ce);
+		} catch (Exception e) {
+			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(e.getMessage()).build();
+			} else {
+				ReasonFormView view = new ReasonFormView(project);
+				view.addErrorMessage(ce + "<br><br>" + e.getMessage().replaceAll("\\n", "<br>"));
+				return Response.ok(view).build();
+			}
+		}
+		
+		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+			return Response.ok(result).build();
+		} else {
+			return Response.ok(new EntityResultsetView(result)).build();
+		}
+	}
+	
 
 	/**
 	 * Reasons over the specified ontologies with supplied classexpression
@@ -94,14 +129,18 @@ public class ProjectResource extends Resource {
 	 * @param ce class expression
 	 * @return search result
 	 */
-	@GET
-	@Path("/{id}/reason")
-	@Produces(MediaType.APPLICATION_JSON)
-	public ArrayList<OWLEntityProperties> reason(@PathParam("id") String projectId, @QueryParam("ce") String ce) {
+	public ArrayList<OWLEntityProperties> reason(String projectId, String ce) {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		
 		try {
 			ProjectManager manager = getProjectManager(projectId);
+			
+			/* TODO: remove this workarround */
+			HashMap<String, String> shortFormMap = manager.getOntologyIris();
+			for (String shortForm : shortFormMap.keySet()) {
+				ce = ce.replaceAll(shortForm + ":([\\w_\\-]+)", "<" + shortFormMap.get(shortForm) + "#$1>");
+				System.err.println(ce);
+			}
 			result.addAll(manager.getIndividualPropertiesByClassExpression(ce));
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
@@ -109,6 +148,45 @@ public class ProjectResource extends Resource {
 		}
 		
 		return result;
+	}
+	
+	
+	@GET
+	@Path("/{id}/entity")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response searchOntologyEntities(
+		@Context HttpHeaders headers,
+		@PathParam("id") String projectId,
+		@QueryParam("name")	String name,
+		@QueryParam("property") String property,
+		@QueryParam("value") String value,
+		@QueryParam("type") String type,
+		@QueryParam("match") String match,
+		@QueryParam("operator") String operator
+	) {
+		List<MediaType> accepts = headers.getAcceptableMediaTypes();
+		ArrayList<OWLEntityProperties> result;
+		ProjectManager project = null;
+		
+		try {
+			project = getProjectManager(projectId);
+			result  = searchOntologyEntities(projectId, name, property, value, type, match, operator);
+		} catch (Exception e) {
+			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(e.getMessage()).build();
+			} else {
+				EntityFormView view = new EntityFormView(project);
+				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
+				return Response.ok(view).build();
+			}
+		}
+		
+		
+		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+			return Response.ok(result).build();
+		} else {
+			return Response.ok(new EntityResultsetView(result)).build();
+		}
 	}
 	
 	
@@ -123,17 +201,9 @@ public class ProjectResource extends Resource {
 	 * @param operator logical operator to combine name and property, defaults to 'and')
 	 * @return ArrayList of OWLEntityProperties or error message
 	 */
-	@GET
-	@Path("/{id}/entity")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public ArrayList<OWLEntityProperties> searchOntologyEntities(
-		@PathParam("id") String projectId,
-		@QueryParam("name")	String name,
-		@QueryParam("property") String property,
-		@QueryParam("value") String value,
-		@QueryParam("type") String type,
-		@QueryParam("match") String match,
-		@QueryParam("operator") String operator
+		String projectId, String name, String property, String value,
+		String type, String match, String operator
 	) {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
 		

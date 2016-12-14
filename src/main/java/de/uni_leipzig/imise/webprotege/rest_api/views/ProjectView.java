@@ -1,6 +1,6 @@
 package de.uni_leipzig.imise.webprotege.rest_api.views;
 
-import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.ProjectManager;
 import io.dropwizard.views.View;
 
 public class ProjectView extends View {

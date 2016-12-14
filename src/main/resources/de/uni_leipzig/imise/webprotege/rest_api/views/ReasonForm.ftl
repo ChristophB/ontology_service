@@ -1,29 +1,34 @@
 <#-- @ftlvariable name="" type="de.uni_leipzig.imise.webprotege.rest_api.views.ReasonFormView" -->
+<#assign title = "Reasoning">
+<#assign current = "Reasoning">
+
 <html>
-	<head>
-		<title>Reasoning | WebProt&#233;g&#233; REST-Interface</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	</head>
+	<#include "Head.ftl">
 	
 	<body>
-		<nav class="navbar navbar-default navbar-fixed-top">
-			<div class="container">
-				<ul class="nav navbar-nav">
-					<li><a href="/">Documentation</a></li>
-					<li><a href="/projects">Projects</a></li>
-					<li><a href="/entity-form">Query Entities</a></li>
-					<li class="active"><a href="/reason-form">Reasoning</a></li>
-				</ul>
-			</div>
-		</nav>
-		<div class="row" style="height: 50px; width:100%"></div>
+		<#include "Navbar.ftl">
 		
-		<div class="jumbotron text-center">
+		<div class="jumbotron text-center" style="padding: 10 0 10">
 			<h2>Reasoning</h2>
 			<p><!-- Description --></p>
 		</div>
 		
 		<div class="container">
+			<div class="row">
+				<#if errorMessage??>
+					<div class="alert alert-danger">
+						<strong>Error:</strong> ${errorMessage}
+					</div>
+				</#if>
+			</div>
+			
+			<div class="row">
+				<p>
+					Whenever you refere to an OWLEntity, add the shortform as a prefix.<br>
+					e.g.: class <i>Example</i> in ontology "http://example.com/example_ontology" becomes "example_ontology:Example".
+				</p>
+			</div>
+			
 			<div class="row">
 				<form action="<#if project??>/project/${project.projectId}</#if>/reason" method="get" class="form" role="form">
 					<div class="form-group row">

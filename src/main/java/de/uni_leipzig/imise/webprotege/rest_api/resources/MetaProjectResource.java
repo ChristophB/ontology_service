@@ -8,7 +8,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -17,10 +16,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import de.uni_leipzig.imise.webprotege.rest_api.api.OWLEntityProperties;
-import de.uni_leipzig.imise.webprotege.rest_api.metaproject.MetaProjectManager;
-import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.MetaProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.views.EntityFormView;
 import de.uni_leipzig.imise.webprotege.rest_api.views.EntityResultsetView;
 import de.uni_leipzig.imise.webprotege.rest_api.views.ProjectListView;
+import de.uni_leipzig.imise.webprotege.rest_api.views.ReasonFormView;
 
 /**
  * Project resource, which is accessible by the REST API.
@@ -89,6 +90,7 @@ public class MetaProjectResource extends Resource {
 		@QueryParam("operator") String operator
 	) {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		List<MediaType> accepts = headers.getAcceptableMediaTypes();
 		
 		try {
 			if (StringUtils.isEmpty(name) && StringUtils.isEmpty(property))
@@ -100,11 +102,15 @@ public class MetaProjectResource extends Resource {
 				));
 			}
 		} catch (Exception e) {
-			logger.warn(e.getMessage());
-			throw new WebApplicationException(e.getMessage());
+			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(e.getMessage()).build();
+			} else {
+				EntityFormView view = new EntityFormView();
+				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
+				return Response.ok(view).build();
+			}
 		}
 		
-		List<MediaType> accepts = headers.getAcceptableMediaTypes();
 		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
 			return Response.ok(result).build();
 		} else {
@@ -128,6 +134,7 @@ public class MetaProjectResource extends Resource {
 			@QueryParam("ontologies") String ontologies
 		) {
 		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		List<MediaType> accepts = headers.getAcceptableMediaTypes();
 		
 		try {
 			if (StringUtils.isEmpty(ce))
@@ -138,11 +145,14 @@ public class MetaProjectResource extends Resource {
 				result.addAll(pr.reason(projectId, ce));
 			}
 		} catch (Exception e) {
-			logger.warn(e.getMessage());
-			throw new WebApplicationException(e.getMessage());
+			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(e.getMessage()).build();
+			} else {
+				ReasonFormView view = new ReasonFormView();
+				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
+				return Response.ok(view).build();
+			}
 		}
-		
-		List<MediaType> accepts = headers.getAcceptableMediaTypes();
 		
 		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
 			return Response.ok(result).build();

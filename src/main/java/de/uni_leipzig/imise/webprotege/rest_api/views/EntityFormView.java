@@ -1,22 +1,14 @@
 package de.uni_leipzig.imise.webprotege.rest_api.views;
 
-import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
-import io.dropwizard.views.View;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.ProjectManager;
 
-public class EntityFormView extends View {
-	private final ProjectManager project;
+public class EntityFormView extends FormView {
 	
  	public EntityFormView() {
 		super("EntityForm.ftl");
-		project = null;
 	}
  	
  	public EntityFormView(ProjectManager project) {
- 		super("EntityForm.ftl");
- 		this.project = project;
- 	}
-
- 	public ProjectManager getProject() {
- 		return project;
+ 		super("EntityForm.ftl", project);
  	}
 }

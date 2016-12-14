@@ -1,27 +1,15 @@
 package de.uni_leipzig.imise.webprotege.rest_api.views;
 
-import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
-import io.dropwizard.views.View;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.ProjectManager;
 
-public class ReasonFormView extends View {
-
-	private final ProjectManager project;
-	
+public class ReasonFormView extends FormView {
 	
 	public ReasonFormView() {
 		super("ReasonForm.ftl");
-		project = null;
 	}
-	
 	
 	public ReasonFormView(ProjectManager project) {
-		super("ReasonForm.ftl");
-		this.project = project;
-	}
-	
-	
-	public ProjectManager getProject() {
-		return project;
+		super("ReasonForm.ftl", project);
 	}
 	
 }

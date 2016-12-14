@@ -17,4 +17,5 @@ public class EntityResultsetView extends View {
 	public ArrayList<OWLEntityProperties> getResultset() {
 		return resultset;
 	}
+
 }

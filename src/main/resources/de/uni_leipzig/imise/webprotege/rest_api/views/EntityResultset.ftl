@@ -1,24 +1,14 @@
 <#-- @ftlvariable name="" type="de.uni_leipzig.imise.webprotege.rest_api.views.EntityResultsetView" -->
+<#assign title = "Resultset">
+<#assign current = "">
+
 <html>
-	<head>
-		<title>Resultset | WebProt&#233;g&#233; REST-Interface</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	</head>
+	<#include "Head.ftl">
 	
 	<body>
-		<nav class="navbar navbar-default navbar-fixed-top">
-			<div class="container">
-				<ul class="nav navbar-nav">
-					<li><a href="/">Documentation</a></li>
-					<li class="active"><a href="/projects">Projects</a></li>
-					<li><a href="/entity-form">Query Entities</a></li>
-					<li><a href="/reason-form">Reasoning</a></li>
-				</ul>
-			</div>
-		</nav>
-		<div class="row" style="height: 50px; width:100%"></div>
+		<#include "Navbar.ftl">
 		
-		<div class="jumbotron text-center">
+		<div class="jumbotron text-center" style="padding: 10 0 10">
 			<h2>Resultset</h2>
 			<p>Set of OWL entities.</p>
 		</div>

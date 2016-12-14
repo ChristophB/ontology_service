@@ -1,10 +1,9 @@
-package de.uni_leipzig.imise.webprotege.rest_api.metaproject;
+package de.uni_leipzig.imise.webprotege.rest_api.manager;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.core.NoContentException;
 
-import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;

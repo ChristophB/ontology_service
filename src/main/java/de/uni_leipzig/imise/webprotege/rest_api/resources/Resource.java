@@ -3,8 +3,8 @@ package de.uni_leipzig.imise.webprotege.rest_api.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uni_leipzig.imise.webprotege.rest_api.metaproject.MetaProjectManager;
-import de.uni_leipzig.imise.webprotege.rest_api.project.ProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.MetaProjectManager;
+import de.uni_leipzig.imise.webprotege.rest_api.manager.ProjectManager;
 
 public abstract class Resource {
 	final static Logger logger = LoggerFactory.getLogger(MetaProjectResource.class);

@@ -1,4 +1,4 @@
-package de.uni_leipzig.imise.webprotege.rest_api.project;
+package de.uni_leipzig.imise.webprotege.rest_api.manager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxParserImpl;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxPrefixNameShortFormProvider;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -476,11 +478,10 @@ public class ProjectManager {
 	 */
 	private OWLOntologyManager getOWLOntologyManager() {
 		OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-		
 		Set<OWLParserFactory> parserFactories = new HashSet<OWLParserFactory>();
 		parserFactories.add(new BinaryOWLOntologyDocumentParserFactory());
 		manager.setOntologyParsers(parserFactories);
-		
+
 		return manager;
 	}
 	
@@ -547,10 +548,10 @@ public class ProjectManager {
 	
 	
 	private BidirectionalShortFormProvider getShortFormProvider() throws OWLOntologyCreationException {
-		OWLOntologyManager manager = getRootOntology().getOWLOntologyManager();
-        Set<OWLOntology> ontologies = manager.getOntologies();
+        // TODO: fix non-short shortforms
         ShortFormProvider sfp = new ManchesterOWLSyntaxPrefixNameShortFormProvider(manager.getOntologyFormat(getRootOntology()));
-        BidirectionalShortFormProvider shortFormProvider = new BidirectionalShortFormProviderAdapter(ontologies, sfp);
+        BidirectionalShortFormProvider shortFormProvider = new BidirectionalShortFormProviderAdapter(manager.getOntologies(), sfp);
+        
         return shortFormProvider;
     }
 	
@@ -592,7 +593,29 @@ public class ProjectManager {
 		return getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED).size();
 	}
 	
-
+	
+	public String getProjectIri() throws OWLOntologyCreationException  {
+		return getRootOntology().getOntologyID().getOntologyIRI().get().toString();
+	}
+	
+	
+	/**
+	 * Returns shortforms and iris for each loaded ontology.
+	 * @return HashMap with key: shortform and value: iri
+	 * @throws OWLOntologyCreationException 
+	 */
+	public HashMap<String, String> getOntologyIris() throws OWLOntologyCreationException {
+		getRootOntology();
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		for (OWLOntology ontology : manager.getOntologies()) {
+			IRI iri = ontology.getOntologyID().getOntologyIRI().get();
+			map.put(iri.getShortForm(), iri.toString());
+		}
+		
+		return map;
+	}
+	
 	
 	/**
 	 * Abstract filter class.

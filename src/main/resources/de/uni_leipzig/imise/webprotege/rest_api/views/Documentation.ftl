@@ -1,4 +1,6 @@
 <#-- @ftlvariable name="" type="de.uni_leipzig.imise.webprotege.rest_api.views.DocumentationView" -->
+<#assign current = "Documentation">
+
 <html>
 	<head>
 		<title>Documentation | WebProt&#233;g&#233; REST-Interface</title>
@@ -6,19 +8,9 @@
 	</head>
 	
 	<body>
-		<nav class="navbar navbar-default navbar-fixed-top">
-			<div class="container">
-				<ul class="nav navbar-nav">
-					<li class="active"><a href="/">Documentation</a></li>
-					<li><a href="/projects">Projects</a></li>
-					<li><a href="/entity-form">Query Entities</a></li>
-					<li><a href="/reason-form">Reasoning</a></li>
-				</ul>
-			</div>
-		</nav>
-		<div class="row" style="height: 50px; width:100%"></div>
+		<#include "Navbar.ftl">
 		
-		<div class="jumbotron text-center">
+		<div class="jumbotron text-center" style="padding: 10 0 10">
 			<h2>Documentation of WebProt&#233;g&#233; REST-Interface</h2>
 			<p>This page contains a list of all available RESTfull functions with respective URL and parameters.</p>
 		</div>
