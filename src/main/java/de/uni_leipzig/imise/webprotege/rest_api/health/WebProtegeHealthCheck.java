@@ -20,12 +20,15 @@ public class WebProtegeHealthCheck extends HealthCheck {
 	 */
 	@Override
 	protected Result check() throws Exception {
+		if (!dataFolderIsAccessible())
+			return Result.unhealthy("Could not access WebProteges data folder!");
+
+		return Result.healthy();
+	}
+	
+	private boolean dataFolderIsAccessible() {
 		Path path = FileSystems.getDefault().getPath(configuration.getDataPath());
 		
-		if (Files.exists(path) && Files.isReadable(path)) {
-			return Result.healthy();
-		} else {
-			return Result.unhealthy("Could not access WebProteges data folder!");
-		}
+		return Files.exists(path) && Files.isReadable(path);
 	}
 }

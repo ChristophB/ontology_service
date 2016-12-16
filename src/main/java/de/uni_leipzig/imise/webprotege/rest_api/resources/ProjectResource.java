@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -160,9 +161,9 @@ public class ProjectResource extends Resource {
 		@QueryParam("name")	String name,
 		@QueryParam("property") String property,
 		@QueryParam("value") String value,
-		@QueryParam("type") String type,
-		@QueryParam("match") String match,
-		@QueryParam("operator") String operator
+		@DefaultValue("entity") @QueryParam("type") String type,
+		@DefaultValue("loose") @QueryParam("match") String match,
+		@DefaultValue("and") @QueryParam("operator") String operator
 	) {
 		List<MediaType> accepts = headers.getAcceptableMediaTypes();
 		ArrayList<OWLEntityProperties> result;
