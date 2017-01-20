@@ -13,9 +13,16 @@
 			<p>The following table contains all public readable projects/ontologies of the locally running WebProt&#233;g&#233; instance.</p>
 		</div>
 		
+		<script>
+			jQuery(document).ready(function($) {
+    			$(".clickable-row").click(function() {
+        			window.document.location = $(this).data("href");
+    			});
+			});
+		</script>
 		<div class="container">
 			<div class="row">
-				<table class="table">
+				<table class="table table-hover">
 					<thead>
 						<tr>
 							<th>ID</th>
@@ -26,8 +33,8 @@
 					
 					<tbody>
 						<#list projects as project>
-							<tr>
-								<td><a href="/project/${project.projectId}/overview">${project.projectId}</a></td>
+							<tr class="clickable-row" data-href="/project/${project.projectId}/overview" style="cursor:pointer">
+								<td>${project.projectId}</td>
 								<td>${project.name}</td>
 								<td>${project.description}</td>
 							</tr>

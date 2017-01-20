@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>de.uni-leipzig.imise.webprotege</groupId>
+  <groupId>de.onto_med.webprotege_rest_api</groupId>
   <artifactId>rest-api</artifactId>
   <name>WebProtégé REST-full API</name>
   <version>0.0.1</version>
@@ -22,7 +22,7 @@
               <transformers>
                 <transformer />
                 <transformer>
-                  <mainClass>de.uni_leipzig.imise.webprotege.rest_api.RestApiApplication</mainClass>
+                  <mainClass>de.onto_med.webprotege_rest_api.RestApiApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>

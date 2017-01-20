@@ -3,7 +3,7 @@
 <#assign title = "Documentation">
 
 <html>
-	<#include "head.ftl">
+	<#include "Head.ftl">
 	
 	<body>
 		<#include "Navbar.ftl">

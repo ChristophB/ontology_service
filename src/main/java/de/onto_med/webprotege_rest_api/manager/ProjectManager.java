@@ -574,6 +574,10 @@ public class ProjectManager {
 		return getRootOntology().getAxiomCount(Imports.INCLUDED);
 	}
 	
+	public int getCountLogicalAxioms() throws OWLOntologyCreationException {
+		return getRootOntology().getLogicalAxiomCount(Imports.INCLUDED);
+	}
+	
 	public int getCountClasses() throws OWLOntologyCreationException {
 		return getRootOntology().getClassesInSignature(Imports.INCLUDED).size();
 	}
