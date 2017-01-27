@@ -12,7 +12,7 @@ public abstract class Resource {
 	 * Path to WebProtegés data folder.
 	 */
 	protected String dataPath;
-	
+	protected MetaProjectManager metaProjectManager;
 	
 	public Resource(String dataPath) {
 		this.dataPath = dataPath;
@@ -20,6 +20,12 @@ public abstract class Resource {
 	
 	
 	protected ProjectManager getProjectManager(String projectId) throws Exception {
-		return new MetaProjectManager(dataPath).getProjectManager(projectId);
+		return metaProjectManager.getProjectManager(projectId);
+	}
+	
+	public MetaProjectManager setMetaProjectManager(MetaProjectManager mpm) {
+		metaProjectManager = mpm;
+		
+		return metaProjectManager;
 	}
 }

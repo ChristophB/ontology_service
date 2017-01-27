@@ -18,8 +18,9 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.inject.Singleton;
+
 import de.onto_med.webprotege_rest_api.api.OWLEntityProperties;
-import de.onto_med.webprotege_rest_api.manager.MetaProjectManager;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 import de.onto_med.webprotege_rest_api.views.EntityFormView;
 import de.onto_med.webprotege_rest_api.views.EntityResultsetView;
@@ -32,8 +33,9 @@ import de.onto_med.webprotege_rest_api.views.SimpleListView;
  * @author Christoph Beger
  */
 @Path("/project")
+@Singleton
 public class ProjectResource extends Resource {
-	
+
 	/**
 	 * Constructor.
 	 * @param dataPath path to WebProtegés data folder.
@@ -65,12 +67,12 @@ public class ProjectResource extends Resource {
 		}
 	}
 	
-
+	
 	@GET
 	@Path("/{id}/overview")
 	@Produces(MediaType.TEXT_HTML)
 	public ProjectView getProject(@PathParam("id") String projectId) throws Exception {
-		return new ProjectView(new MetaProjectManager(dataPath).getProjectManager(projectId));
+		return new ProjectView(metaProjectManager.getProjectManager(projectId));
 	}
 	
 	

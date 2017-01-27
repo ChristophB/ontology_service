@@ -443,6 +443,7 @@ public class ProjectManager {
 	private OWLOntology getRootOntology() throws OWLOntologyCreationException {
 		if (ontology != null) return ontology;
 		
+		System.err.println("Parsing project " + getProjectId() + " for the first time.");
         ArrayList<File> documents = new ArrayList<File>(
         	Arrays.asList((new File(importsPath)).listFiles())
         );

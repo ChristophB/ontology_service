@@ -1,19 +1,19 @@
 package de.onto_med.webprotege_rest_api.views;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 import io.dropwizard.views.View;
 
 public class ProjectListView extends View {
-	private final ArrayList<ProjectManager> projects;
+	private final Collection<ProjectManager> projects;
 	
-	public ProjectListView(ArrayList<ProjectManager> arrayList) {
+	public ProjectListView(Collection<ProjectManager> collection) {
 		super("ProjectList.ftl");
-		this.projects = arrayList;
+		this.projects = collection;
 	}
 	
-	public ArrayList<ProjectManager> getProjects() {
+	public Collection<ProjectManager> getProjects() {
 		return projects;
 	}
 }

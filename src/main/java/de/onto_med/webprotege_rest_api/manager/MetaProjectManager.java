@@ -2,7 +2,15 @@ package de.onto_med.webprotege_rest_api.manager;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 import javax.ws.rs.core.NoContentException;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.inject.Singleton;
 
 import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Instance;
@@ -14,6 +22,7 @@ import edu.stanford.smi.protege.model.Project;
  * 
  * @author Christoph Beger
  */
+@Singleton
 public class MetaProjectManager {
 	/**
 	 * Knowledgebase of WebProtegé which contains all project meta informations.
@@ -29,7 +38,26 @@ public class MetaProjectManager {
 	 */
 	private String dataPath;
 	
-	
+	private LoadingCache<String, ProjectManager> projectManagers = CacheBuilder.newBuilder()
+		.expireAfterWrite(10, TimeUnit.MINUTES)
+		.build(
+			new CacheLoader<String, ProjectManager>() {
+				@Override
+				public ProjectManager load(String key) throws Exception {
+					System.err.println("populating cache with '" + key + "'.");
+					
+					Instance instance = getProjectInstance(key);
+					
+					if (instance != null) {
+						ProjectManager projectManager = new ProjectManager(key, dataPath);
+						projectManager.setName((String) instance.getOwnSlotValue(kb.getSlot("displayName")));
+						projectManager.setDescription((String) instance.getOwnSlotValue(kb.getSlot("description")));
+						return projectManager;
+					} else 
+						throw new NoContentException("Could not find project by id: '" + key + "'");
+				}
+			}
+		);
 	
 	/**
 	 * Constructor
@@ -46,15 +74,14 @@ public class MetaProjectManager {
 	 * Returns a list of all available public readable projects, stored in WebProtegé.
 	 * @return List of projects
 	 * @throws NoContentException 
+	 * @throws ExecutionException 
 	 */
-	public ArrayList<ProjectManager> getProjectList() throws NoContentException {
-		ArrayList<ProjectManager> list = new ArrayList<ProjectManager>();
-		
+	public Collection<ProjectManager> getProjectList() throws NoContentException, ExecutionException {
 		for (Instance project : getProjectInstances()) {
-			list.add(getProjectManager(project.getName()));
+			projectManagers.get(project.getName());
 		}
 		
-		return list;
+		return projectManagers.asMap().values();
 	}
 
 	
@@ -63,17 +90,10 @@ public class MetaProjectManager {
 	 * @param projectId id of a project
 	 * @return OntologyManager for project with specified id
 	 * @throws NoContentException If no public project with matching id was found or ontology was not parsable
+	 * @throws ExecutionException 
 	 */
-	public ProjectManager getProjectManager(String projectId) throws NoContentException {
-		Instance instance = getProjectInstance(projectId);
-		
-		if (instance != null) {
-			ProjectManager pm = new ProjectManager(projectId, dataPath);
-			pm.setName((String) instance.getOwnSlotValue(kb.getSlot("displayName")));
-			pm.setDescription((String) instance.getOwnSlotValue(kb.getSlot("description")));
-			return pm;
-		} else 
-			throw new NoContentException("Could not find project by id: '" + projectId + "'");
+	public ProjectManager getProjectManager(String projectId) throws NoContentException, ExecutionException {
+		return projectManagers.get(projectId);
 	}
 	
 	

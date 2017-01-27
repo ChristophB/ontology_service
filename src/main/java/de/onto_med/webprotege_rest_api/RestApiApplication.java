@@ -37,9 +37,15 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	@Override
 	public void run(RestApiConfiguration configuration, Environment environment) throws Exception {
 		environment.healthChecks().register("template", new WebProtegeHealthCheck(configuration));
-		environment.jersey().register(new MetaProjectResource(configuration.getDataPath()));
+		MetaProjectResource metaProjectResource = new MetaProjectResource(configuration.getDataPath());
+		ProjectResource projectResource = new ProjectResource(configuration.getDataPath());
+		
+		metaProjectResource.setProjectResource(projectResource);
+		projectResource.setMetaProjectManager(metaProjectResource.getMetaProjectManager());
+		
+		environment.jersey().register(metaProjectResource);
+		environment.jersey().register(projectResource);
 		environment.jersey().register(new StaticResource());
-		environment.jersey().register(new ProjectResource(configuration.getDataPath()));
 	}
 
 }

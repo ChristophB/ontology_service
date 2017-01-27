@@ -3,6 +3,7 @@ package de.onto_med.webprotege_rest_api.resources;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -16,6 +17,8 @@ import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.inject.Singleton;
 
 import de.onto_med.webprotege_rest_api.api.OWLEntityProperties;
 import de.onto_med.webprotege_rest_api.manager.MetaProjectManager;
@@ -32,11 +35,10 @@ import de.onto_med.webprotege_rest_api.views.ReasonFormView;
  * @author Christoph Beger
  */
 @Path("/")
+@Singleton
 public class MetaProjectResource extends Resource {
 	
-	private MetaProjectManager mpm;
-
-	
+	private ProjectResource projectResource;
 	
 	/**
 	 * Constructor.
@@ -44,25 +46,31 @@ public class MetaProjectResource extends Resource {
 	 */
 	public MetaProjectResource(String dataPath) {
 		super(dataPath);
-		mpm = new MetaProjectManager(dataPath);
+		metaProjectManager = new MetaProjectManager(dataPath);
 	}
 	
+	public ProjectResource setProjectResource(ProjectResource pr) {
+		projectResource = pr;
+		
+		return projectResource;
+	}
 	
 	/**
 	 * Returns a list of public projects with condensed metadata.
 	 * @return List of projects with metadata
 	 * @throws NoContentException 
+	 * @throws ExecutionException 
 	 */
 	@GET
 	@Path("/projects")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response getProjectList(@Context HttpHeaders headers) throws NoContentException {
+	public Response getProjectList(@Context HttpHeaders headers) throws NoContentException, ExecutionException {
 		List<MediaType> accepts = headers.getAcceptableMediaTypes();
 		
 		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
-			return Response.ok(mpm.getProjectList()).build();
+			return Response.ok(metaProjectManager.getProjectList()).build();
 		} else {
-			return Response.ok(new ProjectListView(mpm.getProjectList())).build();
+			return Response.ok(new ProjectListView(metaProjectManager.getProjectList())).build();
 		}
 	}
 
@@ -99,7 +107,7 @@ public class MetaProjectResource extends Resource {
 				throw new Exception("Neither query param 'name' nor 'property' given.");
 			
 			for (String projectId : parseOntologies(ontologies)) {
-				result.addAll(new ProjectResource(dataPath).searchOntologyEntities(
+				result.addAll(projectResource.searchOntologyEntities(
 					projectId, name, property, value, type, match, operator
 				));
 			}
@@ -143,8 +151,7 @@ public class MetaProjectResource extends Resource {
 				throw new Exception("No class expression given.");
 		
 			for (String projectId : parseOntologies(ontologies)) {
-				ProjectResource pr = new ProjectResource(dataPath);
-				result.addAll(pr.reason(projectId, ce));
+				result.addAll(projectResource.reason(projectId, ce));
 			}
 		} catch (Exception e) {
 			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
@@ -163,18 +170,21 @@ public class MetaProjectResource extends Resource {
 		}
 	}
 
-	
+	public MetaProjectManager getMetaProjectManager() {
+		return metaProjectManager;
+	}
 	/**
 	 * Parses a string of projectids separated by comma and returns a list of projectids.
 	 * If the string is empty, this function returns a list of all public projects.
 	 * @param ontologies String of projectids separated by comma
 	 * @return List of projectids
 	 * @throws NoContentException 
+	 * @throws ExecutionException 
 	 */
-	private List<String> parseOntologies(String projects) throws NoContentException {
+	private List<String> parseOntologies(String projects) throws NoContentException, ExecutionException {
 		if (StringUtils.isEmpty(projects)) {
 			List<String> projectList = new ArrayList<String>();
-			for (ProjectManager pm : mpm.getProjectList()) {
+			for (ProjectManager pm : metaProjectManager.getProjectList()) {
 				projectList.add(pm.getProjectId());
 			}
 			return projectList;
