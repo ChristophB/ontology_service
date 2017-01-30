@@ -40,20 +40,22 @@ public class MetaProjectResource extends Resource {
 	
 	private ProjectResource projectResource;
 	
+	
 	/**
 	 * Constructor.
 	 * @param dataPath path to WebProtegés data folder.
 	 */
 	public MetaProjectResource(String dataPath) {
-		super(dataPath);
 		metaProjectManager = new MetaProjectManager(dataPath);
 	}
+	
 	
 	public ProjectResource setProjectResource(ProjectResource pr) {
 		projectResource = pr;
 		
 		return projectResource;
 	}
+	
 	
 	/**
 	 * Returns a list of public projects with condensed metadata.
@@ -170,9 +172,12 @@ public class MetaProjectResource extends Resource {
 		}
 	}
 
+	
 	public MetaProjectManager getMetaProjectManager() {
 		return metaProjectManager;
 	}
+	
+	
 	/**
 	 * Parses a string of projectids separated by comma and returns a list of projectids.
 	 * If the string is empty, this function returns a list of all public projects.

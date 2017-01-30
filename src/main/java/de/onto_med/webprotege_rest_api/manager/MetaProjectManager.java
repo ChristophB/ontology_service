@@ -1,42 +1,31 @@
 package de.onto_med.webprotege_rest_api.manager;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.NoContentException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Singleton;
 
-import edu.stanford.smi.protege.model.Cls;
+import de.onto_med.webprotege_rest_api.RestApiApplication;
+import de.onto_med.webprotege_rest_api.ontology.PprjParser;
 import edu.stanford.smi.protege.model.Instance;
-import edu.stanford.smi.protege.model.KnowledgeBase;
-import edu.stanford.smi.protege.model.Project;
 
 /**
  * This class provides information about existing projects in WebProtegé.
- * 
  * @author Christoph Beger
  */
 @Singleton
 public class MetaProjectManager {
-	/**
-	 * Knowledgebase of WebProtegé which contains all project meta informations.
-	 * Typically location: [webprotege-data]/metaproject/metaproject.pprj
-	 */
-	private KnowledgeBase kb;
-	/**
-	 * Ontological class in knowledgebase for projects.
-	 */
-	private Cls projectClass;
-	/**
-	 * Path to WebProtegés data folder.
-	 */
-	private String dataPath;
+	private static final Logger LOGGER = LoggerFactory.getLogger(RestApiApplication.class);
+	private PprjParser pprjParser;
 	
 	private LoadingCache<String, ProjectManager> projectManagers = CacheBuilder.newBuilder()
 		.expireAfterWrite(10, TimeUnit.MINUTES)
@@ -44,14 +33,10 @@ public class MetaProjectManager {
 			new CacheLoader<String, ProjectManager>() {
 				@Override
 				public ProjectManager load(String key) throws Exception {
-					System.err.println("populating cache with '" + key + "'.");
+					LOGGER.info("populating cache with '" + key + "'.");
 					
-					Instance instance = getProjectInstance(key);
-					
-					if (instance != null) {
-						ProjectManager projectManager = new ProjectManager(key, dataPath);
-						projectManager.setName((String) instance.getOwnSlotValue(kb.getSlot("displayName")));
-						projectManager.setDescription((String) instance.getOwnSlotValue(kb.getSlot("description")));
+					ProjectManager projectManager = pprjParser.getProjectManager(key);
+					if (projectManager != null) {
 						return projectManager;
 					} else 
 						throw new NoContentException("Could not find project by id: '" + key + "'");
@@ -64,9 +49,7 @@ public class MetaProjectManager {
 	 * @param dataPath Path to WebProtegés data folder.
 	 */
 	public MetaProjectManager(String dataPath) {
-		kb = new Project(dataPath + "metaproject/metaproject.pprj",	new ArrayList<String>()).getKnowledgeBase();
-		projectClass = kb.getCls("Project");
-		this.dataPath = dataPath;
+		pprjParser = new PprjParser(dataPath);
 	}
 	
 	
@@ -77,7 +60,7 @@ public class MetaProjectManager {
 	 * @throws ExecutionException 
 	 */
 	public Collection<ProjectManager> getProjectList() throws NoContentException, ExecutionException {
-		for (Instance project : getProjectInstances()) {
+		for (Instance project : pprjParser.getProjectInstances()) {
 			projectManagers.get(project.getName());
 		}
 		
@@ -95,64 +78,4 @@ public class MetaProjectManager {
 	public ProjectManager getProjectManager(String projectId) throws NoContentException, ExecutionException {
 		return projectManagers.get(projectId);
 	}
-	
-	
-	/**
-	 * Returns the ontological instances of all public projects in WebProtegé.
-	 * @return list of instances of class Project of the knowledgebase
-	 */
-	private ArrayList<Instance> getProjectInstances() {
-		ArrayList<Instance> instances = new ArrayList<Instance>();
-		
-		for (Instance project : projectClass.getInstances())
-			if (isPublic(project))
-				instances.add(project);
-		
-		return instances;
-	}
-
-	
-	/**
-	 * Returns an ontological instance of a public project for a given projectid.
-	 * @param projectId id of an instance of class Project of the knowledgebase
-	 * @return Instance of class Project or null if no matching instance was found
-	 */
-	private Instance getProjectInstance(String projectId) {
-		for (Instance project : getProjectInstances())
-			if (project.getName().equals(projectId))
-				return project;
-		
-		return null;
-	}
-
-	
-	/**
-	 * Checks if an project in WebProtegé is public.
-	 * A project is public if it is not in trash
-	 * and if it has allowedOperation "Read" for allowedGroup "World"
-	 * @param project instance of class Project of the knowledgebase
-	 * @return true if the project is public, else false
-	 */
-	@SuppressWarnings("unchecked")
-	private boolean isPublic(Instance project) {
-		if ((Boolean) project.getOwnSlotValue(kb.getSlot("inTrash")))
-			return false;
-		
-		Collection<Instance> groupOperations = project.getOwnSlotValues(kb.getSlot("allowedGroupOperation"));
-		for (Instance groupOperation : groupOperations) {
-			Instance group = (Instance)groupOperation.getOwnSlotValue(
-				kb.getSlot("allowedGroup")
-			);
-			if (!group.getBrowserText().equals("World")) continue;
-			
-			Collection<Instance> operations = groupOperation.getOwnSlotValues(kb.getSlot("allowedOperation"));
-			for (Instance operation : operations)
-				if (operation.getBrowserText().equals("Read"))
-					return true;
-		}
-		return false;
-	}
-
-
-
 }

@@ -35,15 +35,6 @@ import de.onto_med.webprotege_rest_api.views.SimpleListView;
 @Path("/project")
 @Singleton
 public class ProjectResource extends Resource {
-
-	/**
-	 * Constructor.
-	 * @param dataPath path to WebProtegés data folder.
-	 */
-	public ProjectResource(String dataPath) {
-		super(dataPath);
-	}
-	
 	
 	/**
 	 * Returns a list of imported ontologies for a specified project.
@@ -57,9 +48,9 @@ public class ProjectResource extends Resource {
 		try {
 			List<MediaType> accepts = headers.getAcceptableMediaTypes();
 			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
-				return Response.ok(getProjectManager(projectId).getOntologyImports()).build();
+				return Response.ok(getProjectManager(projectId).getImportedOntologyIds()).build();
 			} else {
-				return Response.ok(new SimpleListView(getProjectManager(projectId).getOntologyImports(), "Imported Ontologies")).build();
+				return Response.ok(new SimpleListView(getProjectManager(projectId).getImportedOntologyIds(), "Imported Ontologies")).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());

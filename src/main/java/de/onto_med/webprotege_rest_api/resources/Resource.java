@@ -11,12 +11,7 @@ public abstract class Resource {
 	/**
 	 * Path to WebProtegés data folder.
 	 */
-	protected String dataPath;
 	protected MetaProjectManager metaProjectManager;
-	
-	public Resource(String dataPath) {
-		this.dataPath = dataPath;
-	}
 	
 	
 	protected ProjectManager getProjectManager(String projectId) throws Exception {

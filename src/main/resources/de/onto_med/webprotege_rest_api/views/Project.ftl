@@ -22,7 +22,7 @@
 						<tr><td><b>Logical Axioms:</b</td> <td>${project.countLogicalAxioms}</td></tr>
 						<tr><td><b>Classes:</b></td> <td>${project.countClasses}</td></tr>
 						<tr><td><b>Individuals:</b></td> <td>${project.countIndividuals}</td></tr>
-						<tr><td><b>DataTypeProperties:</b></td> <td>${project.countDataTypeProperties}</td></tr>
+						<tr><td><b>DataProperties:</b></td> <td>${project.countDataProperties}</td></tr>
 						<tr><td><b>ObjectProperties:</b></td> <td>${project.countObjectProperties}</td></tr>
 						<tr><td><b>AnnotationProperties:</b></td> <td>${project.countAnnotationProperties}</td></tr>
 					</tbody>
