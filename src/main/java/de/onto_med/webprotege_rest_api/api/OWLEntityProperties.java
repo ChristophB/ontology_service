@@ -28,22 +28,19 @@ public class OWLEntityProperties {
 	private HashMap<String, Set<String>> objectProperties;
 	
 	
-	public void addAnnotationProperty(OWLAnnotationProperty property, Collection<OWLAnnotation> values) {
-		if (values.isEmpty()) return;
+	public void addAnnotationProperty(OWLAnnotationProperty property, OWLAnnotationValue value) {
+		if (property == null || value == null) return;
 		if (annotationProperties == null) annotationProperties = new HashMap<String, Set<String>>();
 		
 		String propertyIRI = property.getIRI().toString();
 		if (!annotationProperties.containsKey(propertyIRI)) {
 			annotationProperties.put(propertyIRI, new HashSet<String>());
 		}
-		for (OWLAnnotation annotation : values) {
-			OWLAnnotationValue value = annotation.getValue();
-			
-			if (value.getClass().isAssignableFrom(OWLLiteralImplString.class)) {
-				annotationProperties.get(property.getIRI().toString()).add(((OWLLiteralImplString)value).getLiteral());
-			} else {
-				annotationProperties.get(property.getIRI().toString()).add(annotation.getValue().toString().replaceAll("^.*?\"|\"\\^.*$", ""));
-			}
+		
+		if (value.getClass().isAssignableFrom(OWLLiteralImplString.class)) {
+			annotationProperties.get(propertyIRI).add(((OWLLiteralImplString) value).getLiteral());
+		} else {
+			annotationProperties.get(propertyIRI).add(value.toString().replaceAll("^.*?\"|\"\\^.*$", ""));
 		}
 	}
 	

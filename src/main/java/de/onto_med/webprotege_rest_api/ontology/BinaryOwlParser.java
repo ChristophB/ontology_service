@@ -23,11 +23,12 @@ import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxParserImpl;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxPrefixNameShortFormProvider;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -71,6 +72,18 @@ public class BinaryOwlParser extends OntologyParser {
 	private String projectId;
 	
 	
+	public static void main(String[] args) {
+		BinaryOwlParser parser = new BinaryOwlParser(
+			"702fdf23-882e-41cf-9d8d-0f589e7632a0",
+			"H:/Projekte/Leipzig Health Atlas/Development/Web-Service/data/webprotege/"
+		);
+		
+		OWLOntology ontology      = parser.getRootOntology();
+		OWLDataFactory factory    = parser.manager.getOWLDataFactory();
+		OWLNamedIndividual entity = factory.getOWLNamedIndividual(IRI.create("http://www.lha.org/pol#GSE61374_RAW"));
+		
+		// ...
+	}
 
 	/**
 	 * Constructor
@@ -396,9 +409,8 @@ public class BinaryOwlParser extends OntologyParser {
     	properties.setIri(entity.getIRI().toString());
     	properties.setJavaClass(entity.getClass().getName());
     	
-    	for (OWLAnnotationProperty property : getRootOntology().getAnnotationPropertiesInSignature()) {
-			Collection<OWLAnnotation> values = EntitySearcher.getAnnotations(entity, getRootOntology(), property);
-			properties.addAnnotationProperty(property, values);
+    	for (OWLAnnotationAssertionAxiom property : EntitySearcher.getAnnotationAssertionAxioms(entity, getRootOntology())) {
+			properties.addAnnotationProperty(property.getProperty(), property.getValue());
 		}
     	
     	if (entity.isOWLClass()) {
