@@ -72,6 +72,7 @@ public class BinaryOwlParser extends OntologyParser {
 	private String projectId;
 	
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		BinaryOwlParser parser = new BinaryOwlParser(
 			"702fdf23-882e-41cf-9d8d-0f589e7632a0",
