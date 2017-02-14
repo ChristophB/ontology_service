@@ -58,6 +58,18 @@ public class MetaProjectResource extends Resource {
 	
 	
 	/**
+	 * Removes all entries of the ProjectManager cache.
+	 * @return Response message
+	 */
+	@GET
+	@Path("/clear_cache")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response clearCache() {
+		metaProjectManager.clearCache();
+		return Response.ok("Cache cleared!").build();
+	}
+	
+	/**
 	 * Returns a list of public projects with condensed metadata.
 	 * @return List of projects with metadata
 	 * @throws NoContentException 

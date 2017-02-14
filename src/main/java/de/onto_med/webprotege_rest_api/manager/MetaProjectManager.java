@@ -53,6 +53,11 @@ public class MetaProjectManager {
 	}
 	
 	
+	public void clearCache() {
+		projectManagers.invalidateAll();
+	}
+	
+	
 	/**
 	 * Returns a list of all available public readable projects, stored in WebProtegé.
 	 * @return List of projects

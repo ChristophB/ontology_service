@@ -2,25 +2,22 @@ package de.onto_med.webprotege_rest_api.ontology;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
-import edu.stanford.smi.protege.model.Cls;
 import edu.stanford.smi.protege.model.Instance;
 import edu.stanford.smi.protege.model.KnowledgeBase;
 import edu.stanford.smi.protege.model.Project;
-import edu.stanford.smi.protege.model.Slot;
 
 /**
  * This class can be used to parse an existing Protégé metaproject file (*.pprj).
  * @author Christoph Beger
  */
 public class PprjParser extends OntologyParser {
-	private KnowledgeBase knowledgeBase;
-	private Slot description;
-	private Slot displayName;
-	private Cls project;
-	private Slot allowedGroupOperation;
-	private Slot allowedOperation;
+	private Supplier<KnowledgeBase> knowledgeBaseSupplier;
 	
 	
 	/**
@@ -30,16 +27,9 @@ public class PprjParser extends OntologyParser {
 	public PprjParser(String dataPath) {
 		super(dataPath);
 		
-		knowledgeBase = new Project(
-			dataPath + "metaproject/metaproject.pprj",
-			new ArrayList<String>()
-		).getKnowledgeBase();
-		
-		description = knowledgeBase.getSlot("description");
-		displayName = knowledgeBase.getSlot("displayName");
-		project     = knowledgeBase.getCls("Project");
-		allowedGroupOperation = knowledgeBase.getSlot("allowedGroupOperation");
-		allowedOperation      = knowledgeBase.getSlot("allowedOperation");
+		knowledgeBaseSupplier = Suppliers.memoizeWithExpiration(
+			getKnowledgeBaseSupplier(dataPath + "metaproject/metaproject.pprj"), 1, TimeUnit.MINUTES
+		);
 	}
 	
 	
@@ -62,7 +52,7 @@ public class PprjParser extends OntologyParser {
 	 * @return list of instances of class Project of the knowledgebase
 	 */
 	public Collection<Instance> getProjectInstances() {
-		Collection<Instance> instances = project.getInstances();
+		Collection<Instance> instances = knowledgeBaseSupplier.get().getCls("Project").getInstances();
 		instances.removeIf(i -> !isPublic(i));
 		return instances;
 	}
@@ -77,10 +67,19 @@ public class PprjParser extends OntologyParser {
 		Instance instance = getProjectInstance(projectId);
 		
 		ProjectManager projectManager = new ProjectManager(projectId, dataPath);
-		projectManager.setName((String) instance.getOwnSlotValue(displayName));
-		projectManager.setDescription((String) instance.getOwnSlotValue(description));
+		projectManager.setName((String) instance.getOwnSlotValue(knowledgeBaseSupplier.get().getSlot("displayName")));
+		projectManager.setDescription((String) instance.getOwnSlotValue(knowledgeBaseSupplier.get().getSlot("description")));
 		
 		return projectManager;
+	}
+	
+	
+	private Supplier<KnowledgeBase> getKnowledgeBaseSupplier(String pprjPath) {
+		return new Supplier<KnowledgeBase>() {
+			public KnowledgeBase get() {
+				return new Project(pprjPath, new ArrayList<String>()).getKnowledgeBase();
+			}
+		};
 	}
 	
 	
@@ -93,17 +92,17 @@ public class PprjParser extends OntologyParser {
 	 */
 	@SuppressWarnings("unchecked")
 	private boolean isPublic(Instance project) {
-		if ((Boolean) project.getOwnSlotValue(knowledgeBase.getSlot("inTrash")))
+		if ((Boolean) project.getOwnSlotValue(knowledgeBaseSupplier.get().getSlot("inTrash")))
 			return false;
 		
-		Collection<Instance> groupOperations = project.getOwnSlotValues(allowedGroupOperation);
+		Collection<Instance> groupOperations = project.getOwnSlotValues(knowledgeBaseSupplier.get().getSlot("allowedGroupOperation"));
 		for (Instance groupOperation : groupOperations) {
 			Instance group = (Instance) groupOperation.getOwnSlotValue(
-				knowledgeBase.getSlot("allowedGroup")
+				knowledgeBaseSupplier.get().getSlot("allowedGroup")
 			);
 			if (!group.getBrowserText().equals("World")) continue;
 			
-			Collection<Instance> operations = groupOperation.getOwnSlotValues(allowedOperation);
+			Collection<Instance> operations = groupOperation.getOwnSlotValues(knowledgeBaseSupplier.get().getSlot("allowedOperation"));
 			for (Instance operation : operations)
 				if (operation.getBrowserText().equals("Read"))
 					return true;
