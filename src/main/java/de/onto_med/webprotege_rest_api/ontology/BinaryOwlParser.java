@@ -288,7 +288,7 @@ public class BinaryOwlParser extends OntologyParser {
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
 	    
 	    for (OWLEntity entity : getRootOntology().getSignature(Imports.INCLUDED)) {
-	    	if (!Filter.run(entity, name, cls, match)) continue;
+	    	if (!Filter.run(entity, name, cls, match, getRootOntology())) continue;
 	    	
 	    	if (!resultset.contains(entity))
 	    		resultset.add(entity);

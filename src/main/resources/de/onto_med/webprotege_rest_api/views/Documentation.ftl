@@ -27,6 +27,11 @@
 		    		<tbody>
 						
 						<tr>
+							<td colspan="2">/clear-cache</td>
+							<td>Clears the ProjectManager cache to speed up the cognition of changes via WebProtégé.</td>
+						</tr>
+						
+						<tr>
 							<td colspan="2">/entity</td>
 							<td>
 								<p>Search for a single or multiple entities in multiple projects.</p>

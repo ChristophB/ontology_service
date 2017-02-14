@@ -14,8 +14,6 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 
-import uk.ac.manchester.cs.owl.owlapi.OWLLiteralImplString;
-
 public class OWLEntityProperties {
 	private String iri;
 	private String javaClass;
@@ -36,8 +34,8 @@ public class OWLEntityProperties {
 			annotationProperties.put(propertyIRI, new HashSet<String>());
 		}
 		
-		if (value.getClass().isAssignableFrom(OWLLiteralImplString.class)) {
-			annotationProperties.get(propertyIRI).add(((OWLLiteralImplString) value).getLiteral());
+		if (value instanceof OWLLiteral) {
+			annotationProperties.get(propertyIRI).add(((OWLLiteral) value).getLiteral());
 		} else {
 			annotationProperties.get(propertyIRI).add(value.toString().replaceAll("^.*?\"|\"\\^.*$", ""));
 		}
