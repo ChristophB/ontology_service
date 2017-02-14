@@ -14,6 +14,11 @@
 		</div>
 		
 		<div class="container">
+			<#if project??>
+				<#assign current_submenue = "Query this Ontology">
+				<#include "ProjectLinks.ftl">
+			</#if>
+			
 			<div class="row">
 				<#if errorMessage??>
 					<div class="alert alert-danger">
@@ -22,7 +27,7 @@
 				</#if>
 			</div>
 			
-			<div class="row">
+			<div class="row well">
 				<form action="<#if project??>/project/${project.projectId}</#if>/entity" method="get" class="form" role="form">
 					<div class="form-group row">
 						<label for="type" class="col-md-2">Type:</label>

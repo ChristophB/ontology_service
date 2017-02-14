@@ -14,6 +14,11 @@
 		</div>
 		
 		<div class="container">
+			<#if project??>
+				<#assign current_submenue = "Reason this Ontology">
+				<#include "ProjectLinks.ftl">
+			</#if>
+			
 			<div class="row">
 				<#if errorMessage??>
 					<div class="alert alert-danger">
@@ -22,14 +27,12 @@
 				</#if>
 			</div>
 			
-			<div class="row">
+			<div class="row well">
 				<p>
 					Whenever you refere to an OWLEntity, add the shortform as a prefix.<br>
 					e.g.: class <i>Example</i> in ontology "http://example.com/example_ontology" becomes "example_ontology:Example".
 				</p>
-			</div>
 			
-			<div class="row">
 				<form action="<#if project??>/project/${project.projectId}</#if>/reason" method="get" class="form" role="form">
 					<div class="form-group row">
 						<label for="ce" class="col-md-2">Class Expression:</label>

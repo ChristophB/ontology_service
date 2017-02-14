@@ -48,7 +48,7 @@
 						</tr>
 						
 						<tr>
-							<td rowspan="8">/project</td>
+							<td rowspan="7">/project</td>
 						</tr>
 						<tr>
 							<td>/{id}</td>
@@ -75,10 +75,10 @@
 							<td><p>Form-based user interface to search for entities in the specified project.</p></td>
 						</tr>
 						
-						<tr>
+						<!--<tr>
 							<td>/{id}/imports</td>
 							<td>List all imports of the specified ontology.</td>
-						</tr>
+						</tr>-->
 						
 						<tr>
 							<td>/{id}/reason</td>

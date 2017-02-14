@@ -43,7 +43,6 @@
 								<tr>
 									<td>Superclasses:</td>
 									<td>
-									
 										<ul>
 											<#list result.superclasses as superclass>
 												<li>${superclass?html}</li>

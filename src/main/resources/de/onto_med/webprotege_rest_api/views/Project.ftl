@@ -1,6 +1,7 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.ProjectView" -->
 <#assign title = project.name?html>
 <#assign current = "Projects">
+<#assign current_submenue = "Overview">
 
 <html>
 	<#include "Head.ftl">
@@ -14,6 +15,8 @@
 		</div>
 		
 		<div class="container">
+			<#include "ProjectLinks.ftl">
+			
 			<div class="row">
 				<table class="table">
 					<tbody>
@@ -29,14 +32,20 @@
 				</table>
 			</div>
 			
-			<div class="row">
-				<ul>
-					<li><a href="/project/${project.projectId}/entity-form">Query this ontology</a></li>
-					<li><a href="/project/${project.projectId}/reason-form">Reason this ontology</a></li>
-					<li><a href="/project/${project.projectId}/imports">List Imports</a></li>
-					<li><a href="/project/${project.projectId}">OWL File (RDF/XML)</a></li>
-				</ul>
-			</div>
+			<#if project.importedOntologyIds??>
+				<div class="row">
+					<table class="table">
+						<thead><tr><th>Imports</th></tr></thead>
+						<tbody>
+							<#list project.importedOntologyIds as import>
+								<tr>
+									<td>${import?html}</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</div>
+			</#if>
 		</div>
 		
 		<#include "Footer.ftl">
