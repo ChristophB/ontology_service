@@ -4,6 +4,7 @@ public class EntityFormView extends FormView {
 	
  	private String type;
 	private String name;
+	private String iri;
 	private String property;
 	private String value;
 	private String match;
@@ -12,12 +13,13 @@ public class EntityFormView extends FormView {
 
 	
 	public EntityFormView(
- 		String type, String name, String property, String value,
- 		String match, String operator, String ontologies
+ 		String type, String name, String iri, String property,
+ 		String value, String match, String operator, String ontologies
  	) {
 		super("EntityForm.ftl");
 		this.type       = type;
 		this.name       = name;
+		this.iri        = iri;
 		this.property   = property;
 		this.value      = value;
 		this.match      = match;
@@ -33,6 +35,11 @@ public class EntityFormView extends FormView {
  	
  	public String getName() {
  		return name;
+ 	}
+ 	
+ 	
+ 	public String getIri() {
+ 		return iri;
  	}
  	
  	

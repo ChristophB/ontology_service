@@ -1,6 +1,7 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.EntityResultsetView" -->
 <#assign title = "Resultset">
 <#assign current = "">
+<#setting url_escaping_charset="UTF-8">
 
 <html>
 	<#include "Head.ftl">
@@ -16,22 +17,12 @@
 		<div class="container">
 			<div class="row">
 				<#list resultset as result>
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Property</th>
-								<th>Values</th>
-							</tr>
-						</thead>
+					<fieldset class="well" style="padding-bottom: 0px">
+						<#if result.iri??>
+							<h4><b>${result.iri?html}<b></h4>
+						</#if>
 						
-						<tbody>
-							<#if result.iri??>
-								<tr>
-									<td>IRI:</td>
-									<td><b>${result.iri?html}</b></td>
-								</tr>
-							</#if>
-							
+						<table class="table">
 							<#if result.javaClass??>
 								<tr>
 									<td>Javaclass:</td>
@@ -43,11 +34,11 @@
 								<tr>
 									<td>Superclasses:</td>
 									<td>
-										<ul>
-											<#list result.superclasses as superclass>
-												<li>${superclass?html}</li>
-											</#list>
-										</ul>
+										<#list result.superclasses as superclass>
+											<a href="/entity?iri=${superclass?url}&match=exact&ontologies=${result.projectId}">
+												${superclass?html}
+											</a><br>
+										</#list>
 									</td>
 								</tr>
 							</#if>
@@ -56,11 +47,11 @@
 								<tr>
 									<td>Subclasses:</td>
 									<td>
-										<ul>
-											<#list result.subclasses as subclass>
-												<li>${subclass?html}</li>
-											</#list>
-										</ul>
+										<#list result.subclasses as subclass>
+											<a href="/entity?iri=${subclass?url}&match=exact&ontologies=${result.projectId}">
+												${subclass?html}
+											</a><br>
+										</#list>
 									</td>
 								</tr>
 							</#if>
@@ -69,11 +60,11 @@
 								<tr>
 									<td>Types:</td>
 									<td>
-										<ul>
-											<#list result.types as type>
-												<li>${type?html}</li>
-											</#list>
-										</ul>
+										<#list result.types as type>
+											<a href="/entity?iri=${type?url}&match=exact&ontologies=${result.projectId}">
+												${type?html}
+											</a><br>
+										</#list>
 									</td>
 								</tr>
 							</#if>
@@ -82,18 +73,16 @@
 								<tr>
 									<td>AnnotationProperties:</td>
 									<td>
-										<ul>
-											<#list result.annotationProperties?keys as key>
-												<li>
-													${key?html}:
-													<ul>
-														<#list result.annotationProperties[key] as value>
-															<li>${value?html}</li>
-														</#list>
-													</ul>
-												</li>
-											</#list>
-										</ul>
+										<#list result.annotationProperties?keys as key>
+											<a href="/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
+												${key?html}
+											</a>:
+											<ul>
+												<#list result.annotationProperties[key] as value>
+													<li>${value?html}</li>
+												</#list>
+											</ul>
+										</#list>
 									</td>
 								</tr>
 							</#if>
@@ -102,18 +91,16 @@
 								<tr>
 									<td>DataTypeProperties:</td>
 									<td>
-										<ul>
-											<#list result.dataTypeProperties?keys as key>
-												<li>
-													${key?html}:
-													<ul>
-														<#list result.dataTypeProperties[key] as value>
-															<li>${value?html}</li>
-														</#list>
-													</ul>	
-												</li>
-											</#list>
-										</ul>
+										<#list result.dataTypeProperties?keys as key>
+											<a href="/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
+												${key?html}
+											</a>:
+											<ul>
+												<#list result.dataTypeProperties[key] as value>
+													<li>${value?html}</li>
+												</#list>
+											</ul>	
+										</#list>
 									</td>
 								</tr>
 							</#if>
@@ -122,23 +109,35 @@
 								<tr>
 									<td>ObjectProperties:</td>
 									<td>
-										<ul>
-											<#list result.objectProperties?keys as key>
-												<li>
-													${key?html}:
-													<ul>
-														<#list result.objectProperties[key] as value>
-															<li>${value?html}</li>
-														</#list>
-													</ul>
-												</li>
-											</#list>
-										</ul>
+										<#list result.objectProperties?keys as key>
+											<a href="/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
+												${key?html}
+											</a>:
+											<ul>
+												<#list result.objectProperties[key] as value>
+													<li>${value?html}</li>
+												</#list>
+											</ul>
+										</#list>
 									</td>
 								</tr>
 							</#if>
-						</tbody>
-					</table>
+							
+							<#if result.individuals??>
+								<tr>
+									<td>Individuals:</td>
+									<td>
+										<#list result.individuals as individual>
+											<a href="/entity?iri=${individual?url}&match=exact&ontologies=${result.projectId}">
+												${individual?html}
+											</a><br>
+										</#list>
+									</td>
+								</tr>
+							</#if>
+						
+						</table>
+					</fieldset>
 				</#list>
 			</div>
 		</div>

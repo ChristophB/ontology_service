@@ -106,6 +106,7 @@ public class MetaProjectResource extends Resource {
 	public Response searchOntologyEntities(
 		@Context HttpHeaders headers,
 		@QueryParam("name")	String name,
+		@QueryParam("iri") String iri,
 		@QueryParam("property") String property,
 		@QueryParam("value") String value,
 		@DefaultValue("entity") @QueryParam("type") String type,
@@ -117,12 +118,12 @@ public class MetaProjectResource extends Resource {
 		List<MediaType> accepts = headers.getAcceptableMediaTypes();
 		
 		try {
-			if (StringUtils.isEmpty(name) && StringUtils.isEmpty(property))
-				throw new Exception("Neither query param 'name' nor 'property' given.");
+			if (StringUtils.isEmpty(name) && StringUtils.isEmpty(property) && StringUtils.isEmpty(iri))
+				throw new Exception("Neither query param 'name' nor 'iri', nor 'property' given.");
 			
 			for (String projectId : parseOntologies(ontologies)) {
 				result.addAll(projectResource.searchOntologyEntities(
-					projectId, name, property, value, type, match, operator
+					projectId, name, iri, property, value, type, match, operator
 				));
 			}
 		} catch (Exception e) {
@@ -130,7 +131,7 @@ public class MetaProjectResource extends Resource {
 				return Response.ok(e.getMessage()).build();
 			} else {
 				EntityFormView view = new EntityFormView(
-					type, name, property, value, match, operator, ontologies
+					type, name, iri, property, value, match, operator, ontologies
 				);
 				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
 				return Response.ok(view).build();

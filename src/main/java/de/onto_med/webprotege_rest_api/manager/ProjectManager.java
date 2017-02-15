@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -56,82 +57,24 @@ public class ProjectManager {
 	public ArrayList<String> getImportedOntologyIds() {
 		return binaryOwlParser.getImportedOntologyIds();
 	}
-
-	
-	/**
-	 * Returns a list of OWLEntityProperties for all classes with matching localname.
-	 * @param name Localename to search for
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of found OWLEntityProperties
-	 * @throws OWLOntologyCreationException 
-	 */
-	public ArrayList<OWLEntityProperties> getClassPropertiesByName(String name, String match) throws OWLOntologyCreationException {	    
-	    return binaryOwlParser.getClassPropertiesByName(name, match);
-	}
 	
 	
-	/**
-	 * Returns a list of OWLEntityProperties for all individuals with matching localname.
-	 * @param name Localname to match with
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of found OWLEntityProperties 
-	 */
-	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name, String match) {		
-		return binaryOwlParser.getNamedIndividualPropertiesByName(name, match);
-	}
-	
-	
-	/**
-	 * Returns a list of OWLEntityProperties for all entities witch matching localname.
-	 * @param name Localname to match with
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of found OWLEntityProperties
-	 */
-	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(String name, String match) {
-		return binaryOwlParser.getEntityPropertiesByName(name, match);
-	}
-		
-	
-	
-	/**
-	 * Searches for OWLEntities with given type, and name.
-	 * @param type 'entity', 'individual' or 'class', defaults to 'entity'
-	 * @param name localename of the entity to search for
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of OWLEntityProperties for found entities
-	 * @throws Exception If the specified type is not one of 'entity', 'individual' and 'class', or the project was not found
-	 */
-	public ArrayList<OWLEntityProperties> searchOntologyEntityByName(
-		String type, String name, String match
-	) throws Exception {
-		if (StringUtils.isEmpty(type)) type = "entity";
-		
-		switch (type) {
-			case "entity":
-				return getEntityPropertiesByName(name, match);
-			case "individual":
-				return getNamedIndividualPropertiesByName(name, match);
-			case "class":
-				return getClassPropertiesByName(name, match);
-			default:
-				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
-		}
-	}
-	
-	
-	/**
-	 * Searches for OWLEntities which are annotated with a property with given name.
-	 * @param type 'entity', 'individual' or 'class', defaults to 'entity'
-	 * @param property localename of the property
-	 * @param value with property annotated value or null for no value check
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of OWLEntityProperties for found entities
-	 * @throws NoSuchAlgorithmException If the specified type is not one of 'entity', 'individual' and 'class', or the project was not found
-	 */
-	public ArrayList<OWLEntityProperties> searchOntologyEntityByProperty(
-		String type, String property, String value, String match
+	public ArrayList<OWLEntityProperties> getEntityProperties(
+		String iri, String name, String property, String value, String match, String operator, String type
 	) throws NoSuchAlgorithmException {
-		return binaryOwlParser.searchOntologyEntityByProperty(type, property, value, match);
+		Class<?> cls;
+		
+		if ("class".equals(type)) {
+			cls = OWLClass.class;
+		} else if ("individual".equals(type)) {
+			cls = OWLIndividual.class;
+		} else {
+			cls = OWLEntity.class;
+		}
+		
+		return binaryOwlParser.getEntityProperties(
+			iri, name, property, value, "exact".equals(match), "and".equals(operator), cls
+		);
 	}
 	
 

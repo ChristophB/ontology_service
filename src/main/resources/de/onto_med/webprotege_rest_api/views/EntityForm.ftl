@@ -43,6 +43,13 @@
 					</div>
 					
 					<div class="form-group row">
+						<label for="name" class="col-md-2">Entity IRI:</label>
+						<div class="col-md-6">
+							<input type="text" name="iri" placeholder="http://example.org/ontology#entity" class="form-control" <#if iri??>value="${iri}"</#if>>
+						</div>
+					</div>
+					
+					<div class="form-group row">
 						<label for="property" class="col-md-2">Property:</label>
 						<div class="col-md-3">
 							<input type="text" name="property" placeholder="Name" class="form-control" <#if property??>value="${property}"</#if>>
@@ -55,7 +62,7 @@
 					<div class="form-group row">
 						<label for="match" class="col-md-2">Match Method:</label>
 						<div class="col-md-2">
-							<select name="match" class="form-control">
+							<select name="match" class="form-control" title="Applied to 'IRI', 'name' and 'property'.">
 								<option value="loose">loose</option>
 								<option value="exact" <#if match?? && match == "exact">selected</#if>>exact</option>
 							</select>
@@ -63,9 +70,9 @@
 					
 						<label for="operator" class="col-md-2">Logical Operator:</label>
 						<div class="col-md-2">
-							<select name="operator" class="form-control">
-								<option value="and">and</option>
+							<select name="operator" class="form-control" title="Applied to 'IRI', 'name' and 'property'.">
 								<option value="or" <#if operator?? && operator == "or">selected</#if>>or</option>
+								<option value="and">and</option>
 							</select>
 						</div>
 					</div>

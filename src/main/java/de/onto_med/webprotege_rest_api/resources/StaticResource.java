@@ -40,13 +40,14 @@ public class StaticResource {
 	public EntityFormView getEntityForm(
 		@QueryParam("type") String type,
 		@QueryParam("name") String name,
+		@QueryParam("iri") String iri,
 		@QueryParam("property") String property,
 		@QueryParam("value") String value,
 		@QueryParam("match") String match,
 		@QueryParam("operator") String operator,
 		@QueryParam("ontologies") String ontologies
 	) {
-		return new EntityFormView(type, name, property, value, match, operator, ontologies);
+		return new EntityFormView(type, name, iri, property, value, match, operator, ontologies);
 	}
 	
 	

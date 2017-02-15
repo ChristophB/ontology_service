@@ -23,6 +23,7 @@ import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxParserImpl;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxPrefixNameShortFormProvider;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -57,13 +58,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Multimap;
 
 import de.onto_med.webprotege_rest_api.RestApiApplication;
-import de.onto_med.webprotege_rest_api.api.Filter;
 import de.onto_med.webprotege_rest_api.api.OWLEntityProperties;
-import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
 public class BinaryOwlParser extends OntologyParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestApiApplication.class);
+	private static final Double MATCH_THRESHOLD = 0.8;
+	
 	private String importsPath;
 	private String projectPath;
 	private String rootPath;
@@ -106,14 +106,101 @@ public class BinaryOwlParser extends OntologyParser {
 	}
 	
 	
-	/**
-	 * Returns a list of OWLEntityProperties for all classes with matching localname.
-	 * @param name Localename to search for
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of found OWLEntityProperties
-	 */
-	public ArrayList<OWLEntityProperties> getClassPropertiesByName(String name, String match) {	    
-	    return getPropertiesForOWLEntities(extractEntitiesWithFilter(name, OWLClassImpl.class, "exact".equals(match)));
+	public ArrayList<OWLEntityProperties> getEntityProperties(
+		String iri, String name, String property, String value, Boolean exact, Boolean and, Class<?> cls
+	) throws NoSuchAlgorithmException {
+		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
+		
+		for (OWLEntity entity : getRootOntology().getSignature(Imports.INCLUDED)) {
+			Boolean iriMatch      = false;
+			Boolean nameMatch     = false;
+			Boolean propertyMatch = false;
+			
+			if (StringUtils.isNotEmpty(iri)) {
+				if (exact) {
+					if (iri.equals(entity.getIRI().toString()))
+						iriMatch = true;
+				} else {
+					if (StringUtils.getJaroWinklerDistance(iri, entity.getIRI().toString()) >= MATCH_THRESHOLD)
+						iriMatch = true;
+				}
+			}
+			
+			if (StringUtils.isNotEmpty(name)) {
+				if (exact) {
+					if (iri.equals(entity.getIRI().toString()))
+						nameMatch = true;
+				} else {
+					if (StringUtils.getJaroWinklerDistance(name, getLabel(entity)) >= MATCH_THRESHOLD
+						|| StringUtils.getJaroWinklerDistance(name, XMLUtils.getNCNameSuffix(entity.getIRI())) >= MATCH_THRESHOLD
+					) nameMatch = true;
+				}
+			}
+			
+			if (StringUtils.isNotEmpty(property)) {
+				if (hasProperty(entity, property, value, exact))
+					propertyMatch = true;
+			}
+			
+			if (and) {
+				if (StringUtils.isNotEmpty(iri) && !iriMatch
+					|| StringUtils.isNotEmpty(name) && !nameMatch
+					|| StringUtils.isNotEmpty(property) && !propertyMatch
+				) continue;
+			} else {
+				if (!iriMatch && !nameMatch && !propertyMatch)
+					continue;
+			}
+			
+			if (cls.equals(OWLEntity.class)) {
+				resultset.add(entity);
+			} else if (cls.equals(OWLClass.class)) {
+				if (entity.isOWLClass())
+					resultset.add(entity);
+			} else if (cls.equals(OWLIndividual.class)) {
+				if (entity.isOWLNamedIndividual())
+					resultset.add(entity);
+			} else {
+				throw new NoSuchAlgorithmException("Error: class " + cls.getName() + " is not supported by this method.");
+			}
+		}
+		
+		return getPropertiesForOWLEntities(resultset);
+	}
+	
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Boolean hasProperty(OWLEntity entity, String property, String value, Boolean exact) {
+		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
+    	
+	    for (OWLDataProperty dataProperty : extractPropertyByNameFromSet(
+	    		property, getRootOntology().getDataPropertiesInSignature(Imports.INCLUDED), exact
+	    )) {
+			Collection<OWLObject> values = (Collection) EntitySearcher.getDataPropertyValues((OWLIndividual) entity, dataProperty, getRootOntology());
+	    	
+			if (values.isEmpty()) continue;
+	    	if (valueCollectionContains(values, value)) resultset.add(entity);
+	    }
+	    	
+	    for (OWLObjectProperty objectProperty : extractPropertyByNameFromSet(
+	    		property, getRootOntology().getObjectPropertiesInSignature(Imports.INCLUDED), exact
+	    )) {
+	    	Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) entity, objectProperty, getRootOntology());
+	    	
+	    	if (values.isEmpty()) continue;
+		    if (valueCollectionContains(values, value)) return true;
+	    }
+	    
+	    for (OWLAnnotationProperty annotationProperty : extractPropertyByNameFromSet(
+	    		property, getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED), exact
+	    )) {
+	    	Collection<OWLObject> values = (Collection) EntitySearcher.getAnnotations(entity, getRootOntology(), annotationProperty);
+	    		
+	    	if (values.isEmpty()) continue;
+	    	if (valueCollectionContains(values, value)) return true;
+	    }
+		
+		return false;
 	}
 	
 	
@@ -135,19 +222,6 @@ public class BinaryOwlParser extends OntologyParser {
 		} else {
 			return 0;
 		}
-	}
-	
-	
-	/**
-	 * Returns a list of OWLEntityProperties for all entities witch matching localname.
-	 * @param name Localname to match with
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of found OWLEntityProperties
-	 */
-	public ArrayList<OWLEntityProperties> getEntityPropertiesByName(String name, String match) {
-		return getPropertiesForOWLEntities(extractEntitiesWithFilter(
-			name, OWLEntity.class, "exact".equals(match)
-		));
 	}
 	
 	
@@ -205,19 +279,6 @@ public class BinaryOwlParser extends OntologyParser {
 	
 	
 	/**
-	 * Returns a list of OWLEntityProperties for all individuals with matching localname.
-	 * @param name Localname to match with
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of found OWLEntityProperties 
-	 */
-	public ArrayList<OWLEntityProperties> getNamedIndividualPropertiesByName(String name, String match) {		
-		return getPropertiesForOWLEntities(extractEntitiesWithFilter(
-			name, OWLNamedIndividualImpl.class, "exact".equals(match)
-		));
-	}
-	
-	
-	/**
 	 * Returns shortforms and iris for each loaded ontology.
 	 * @return HashMap with key: shortform and value: iri
 	 */
@@ -234,40 +295,6 @@ public class BinaryOwlParser extends OntologyParser {
 	}
 	
 	
-	/**
-	 * Searches for OWLEntities which are annotated with a property with given name.
-	 * @param type 'entity', 'individual' or 'class', defaults to 'entity'
-	 * @param property localename of the property
-	 * @param value with property annotated value or null for no value check
-	 * @param match 'exact' or 'loose', defaults to 'loose'
-	 * @return List of OWLEntityProperties for found entities
-	 * @throws NoSuchAlgorithmException If the specified type is not one of 'entity', 'individual' and 'class', or the project was not found
-	 */
-	public ArrayList<OWLEntityProperties> searchOntologyEntityByProperty(
-		String type, String property, String value, String match
-	) throws NoSuchAlgorithmException {
-		ArrayList<OWLEntity> entities;
-		
-		if (StringUtils.isEmpty(type)) type = "entity";
-		
-		switch (type) {
-			case "individual":
-				entities = extractOWLNamedIndividualByProperty(property, value);
-				break;
-			case "class":
-				entities = extractOWLClassesByProperty(property, value);
-				break;
-			case "entity":
-				entities = extractOWLEntitiesByProperty(property, value);
-				break;
-			default:
-				throw new NoSuchAlgorithmException("OWL type '" + type + "' does not exist or is not implemented.");
-		}
-		
-		return getPropertiesForOWLEntities(entities);
-	}
-	
-	
 	private OWLClassExpression convertStringToClassExpression(String expression) {
         ManchesterOWLSyntaxParserImpl parser = (ManchesterOWLSyntaxParserImpl) OWLManager.createManchesterParser();
         OWLEntityChecker owlEntityChecker = new ShortFormEntityChecker(getShortFormProvider());
@@ -278,92 +305,17 @@ public class BinaryOwlParser extends OntologyParser {
     }
 	
 	
-	/**
-	 * Returns a list of OWLEntities which match the given filter criteria.
-	 * @param name entity name
-	 * @param filter Filter object which uses parameter name
-	 * @return Resulting list of OWLEntities
-	 */
-	private ArrayList<OWLEntity> extractEntitiesWithFilter(String name, Class<?> cls, Boolean match) {		
-		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
-	    
-	    for (OWLEntity entity : getRootOntology().getSignature(Imports.INCLUDED)) {
-	    	if (!Filter.run(entity, name, cls, match, getRootOntology())) continue;
-	    	
-	    	if (!resultset.contains(entity))
-	    		resultset.add(entity);
-	    }
-		
-	    return resultset;
-	}
-	
-	
-	private ArrayList<OWLEntity> extractOWLClassesByProperty(String name, String value) {
-		ArrayList<OWLEntity> entities = extractOWLEntitiesByProperty(name, value);
-		entities.removeIf(e -> !e.isOWLNamedIndividual());
-		
-		return entities;
-	}
-	
-	
-	private ArrayList<OWLEntity> extractOWLEntitiesByProperty(String name, String value) {
-		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
-	    	
-	    for (OWLDataProperty property : extractPropertyByNameFromSet(name, getRootOntology().getDataPropertiesInSignature(Imports.INCLUDED))) {
-	    	for (OWLEntity entity : getRootOntology().getSignature(Imports.INCLUDED)) {
-		    	@SuppressWarnings({ "unchecked", "rawtypes" })
-				Collection<OWLObject> values = (Collection) EntitySearcher.getDataPropertyValues((OWLIndividual) entity, property, getRootOntology());
-	    		if (values.isEmpty() || resultset.contains(entity))
-		    		continue;
-	    		
-	    		if (valueCollectionContains(values, value))
-		    		resultset.add(entity);
-	    	}
-	    }
-	    	
-	    for (OWLObjectProperty property : extractPropertyByNameFromSet(name, getRootOntology().getObjectPropertiesInSignature(Imports.INCLUDED))) {
-	    	for (OWLEntity entity : getRootOntology().getSignature(Imports.INCLUDED)) {
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) entity, property, getRootOntology());
-	    		if (values.isEmpty() || resultset.contains(entity))
-	    			continue;
-		    	
-	    		if (valueCollectionContains(values, value))
-		    		resultset.add(entity);
-	    	}
-	    }
-	    
-	    for (OWLAnnotationProperty property : extractPropertyByNameFromSet(name, getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED))) {
-	    	for (OWLEntity entity : getRootOntology().getSignature(Imports.INCLUDED)) {
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				Collection<OWLObject> values = (Collection) EntitySearcher.getAnnotations(entity, getRootOntology(), property);
-	    		if (values.isEmpty() || resultset.contains(entity))
-	    			continue;
-	    		
-		    	if (valueCollectionContains(values, value))
-		    		resultset.add(entity);
-	    	}
-	    }
-		
-	    return resultset;
-	}
-	
-	
-	private ArrayList<OWLEntity> extractOWLNamedIndividualByProperty(String name, String value) {
-		ArrayList<OWLEntity> entities = extractOWLEntitiesByProperty(name, value);
-		
-		entities.removeIf(e -> !e.isOWLNamedIndividual());
-		
-		return entities;
-	}
-	
-	
-	private <T> ArrayList<T> extractPropertyByNameFromSet(String name, Set<T> properties) {
+	private <T> ArrayList<T> extractPropertyByNameFromSet(String name, Set<T> properties, Boolean exact) {
 		ArrayList<T> results = new ArrayList<T>();
 		
 		for (T property : properties)
-			if (XMLUtils.getNCNameSuffix(((OWLNamedObject) property).getIRI()).equals(name) && !results.contains(property))
-				results.add(property);
+			if (exact) {
+				if (XMLUtils.getNCNameSuffix(((OWLNamedObject) property).getIRI()).equals(name) && !results.contains(property))
+					results.add(property);
+			} else {
+				if (StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(((OWLNamedObject) property).getIRI()), name) >= MATCH_THRESHOLD)
+					results.add(property);
+			}
 		
 		return results;
 	}
@@ -407,6 +359,7 @@ public class BinaryOwlParser extends OntologyParser {
 	private OWLEntityProperties getPropertiesForOWLEntity(OWLEntity entity) {
 		OWLEntityProperties properties = new OWLEntityProperties();
     	
+		properties.setProjectId(projectId);
     	properties.setIri(entity.getIRI().toString());
     	properties.setJavaClass(entity.getClass().getName());
     	
@@ -417,6 +370,10 @@ public class BinaryOwlParser extends OntologyParser {
     	if (entity.isOWLClass()) {
     		properties.addSuperClassExpressions(EntitySearcher.getSuperClasses(entity.asOWLClass(), getRootOntology().getImportsClosure()));
     		properties.addSubClassExpressions(EntitySearcher.getSubClasses(entity.asOWLClass(), getRootOntology().getImportsClosure()));
+    	
+    		for (OWLIndividual individual : EntitySearcher.getIndividuals(entity.asOWLClass(), getRootOntology())) {
+				properties.addIndividual(individual);
+			}
     	}
     	
     	if (entity.isOWLNamedIndividual()) {
@@ -488,6 +445,14 @@ public class BinaryOwlParser extends OntologyParser {
         return shortFormProvider;
     }
 	
+	
+	private String getLabel(OWLEntity entity) {
+		for (OWLAnnotation a : EntitySearcher.getAnnotations(entity, getRootOntology())) {
+			if (a.getValue() instanceof OWLLiteral)
+				return ((OWLLiteral) a.getValue()).getLiteral();
+		}
+		return "";
+	}
 	
 	/**
 	 * Checks if set of values contains a value or value is null.

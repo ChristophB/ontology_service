@@ -119,36 +119,20 @@ public class ProjectResource extends Resource {
 	 * @return ArrayList of OWLEntityProperties or error message
 	 */
 	public ArrayList<OWLEntityProperties> searchOntologyEntities(
-		String projectId, String name, String property, String value,
+		String projectId, String name, String iri, String property, String value,
 		String type, String match, String operator
 	) {
-		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
-		
 		try {
-			if (StringUtils.isEmpty(name) && StringUtils.isEmpty(property))
-				throw new Exception("Neither query param 'name' nor 'property' given.");
+			if (StringUtils.isEmpty(name) && StringUtils.isEmpty(property) && StringUtils.isEmpty(iri))
+				throw new Exception("Neither query param 'name' nor 'iri', nor 'property' given.");
 			
-			ArrayList<OWLEntityProperties> tempResult = new ArrayList<OWLEntityProperties>();
 			ProjectManager manager = getProjectManager(projectId);
-				
-			if (StringUtils.isNotEmpty(name)) {
-				tempResult = manager.searchOntologyEntityByName(type, name, match);
-			}
-				
-			if (StringUtils.isNotEmpty(property)) {
-				if ("or".equals(operator) || StringUtils.isEmpty(name))
-					tempResult.addAll(manager.searchOntologyEntityByProperty(type, property, value, match));
-				else
-					tempResult.retainAll(manager.searchOntologyEntityByProperty(type, property, value, match));	
-			}
 			
-			result.addAll(tempResult);
+			return manager.getEntityProperties(iri, name, property, value, match, operator, type);
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 			throw new WebApplicationException(e.getMessage());
 		}
-		
-		return result;
 	}
 	
 }

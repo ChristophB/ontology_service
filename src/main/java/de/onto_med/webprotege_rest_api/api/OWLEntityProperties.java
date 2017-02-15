@@ -12,11 +12,14 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 
 public class OWLEntityProperties {
+	private String projectId;
 	private String iri;
 	private String javaClass;
+	private HashSet<String> individuals;
 	private HashSet<String> superclasses;
 	private HashSet<String> subclasses;
 	private HashSet<String> types;
@@ -41,9 +44,14 @@ public class OWLEntityProperties {
 		}
 	}
 	
+	public void addIndividual(OWLIndividual individual) {
+		if (individuals == null) individuals = new HashSet<String>();
+		this.individuals.add(((OWLEntity) individual).getIRI().toString());
+	}
+	
 	public void addSuperClassExpression(OWLClassExpression expression) {
 		if (superclasses == null) superclasses = new HashSet<String>();
-		this.superclasses.add(expression.toString());
+		superclasses.add(expression.toString().replaceAll("[<>]", ""));
 	}
 	
 	public void addSuperClassExpressions(Collection<OWLClassExpression> collection) {
@@ -58,7 +66,7 @@ public class OWLEntityProperties {
 	
 	public void addSubClassExpression(OWLClassExpression expression) {
 		if (subclasses == null) subclasses = new HashSet<String>();
-		this.subclasses.add(expression.toString());
+		subclasses.add(expression.toString().replaceAll("[<>]", ""));
 	}
 	
 	public void addSubClassExpressions(Collection<OWLClassExpression> collection) {
@@ -80,7 +88,7 @@ public class OWLEntityProperties {
 	public void addTypeExpression(OWLClassExpression expression) {
 		if (types == null) types = new HashSet<String>();
 		
-		this.types.add(expression.toString());
+		types.add(expression.toString().replaceAll("[<>]", ""));
 	}
 	
 	public void addDataTypeProperty(OWLDataPropertyExpression property, Collection<OWLLiteral> values) {
@@ -113,6 +121,10 @@ public class OWLEntityProperties {
 		return iri.hashCode();
 	}
 
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+	
 	public void setIri(String iri) {
 		this.iri = iri;
 	}
@@ -133,6 +145,10 @@ public class OWLEntityProperties {
 		this.types = types;
 	}
 	
+	public void setIndividuals(HashSet<String> individuals) {
+		this.individuals = individuals;
+	}
+	
 	public void setAnnotationProperties(HashMap<String, Set<String>> annotationProperties) {
 		this.annotationProperties = annotationProperties;
 	}
@@ -146,12 +162,20 @@ public class OWLEntityProperties {
 	}
 	
 	
+	public String getProjectId() {
+		return projectId;
+	}
+	
 	public String getIri() {
 		return iri;
 	}
 	
 	public String getJavaClass() {
 		return javaClass;
+	}
+	
+	public HashSet<String> getIndividuals() {
+		return individuals;
 	}
 	
 	public HashSet<String> getSuperclasses() {

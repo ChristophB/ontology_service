@@ -33,7 +33,7 @@
 				</table>
 			</div>
 			
-			<#if project.importedOntologyIds??>
+			<#if project.importedOntologyIds?? && project.importedOntologyIds?size != 0>
 				<div class="row">
 					<table class="table">
 						<thead><tr><th>Imports</th></tr></thead>
