@@ -14,11 +14,6 @@
 		</div>
 		
 		<div class="container">
-			<#if project??>
-				<#assign current_submenue = "Query this Ontology">
-				<#include "ProjectLinks.ftl">
-			</#if>
-			
 			<div class="row">
 				<#if errorMessage??>
 					<div class="alert alert-danger">
@@ -34,8 +29,8 @@
 						<div class="col-md-3">
 							<select name="type" class="form-control">
 								<option value="entity">Entity</option>
-								<option value="class">Class</option>
-								<option value="individual">Individual</option>
+								<option value="class" <#if type?? && type == "class">selected</#if>>Class</option>
+								<option value="individual" <#if type?? && type == "individual">selected</#if>>Individual</option>
 							</select>
 						</div>
 					</div>
@@ -43,17 +38,17 @@
 					<div class="form-group row">
 						<label for="name" class="col-md-2">Entity Name:</label>
 						<div class="col-md-3">
-							<input type="text" name="name" placeholder="Name" class="form-control">
+							<input type="text" name="name" placeholder="Name" class="form-control" <#if name??>value="${name}"</#if>>
 						</div>
 					</div>
 					
 					<div class="form-group row">
 						<label for="property" class="col-md-2">Property:</label>
 						<div class="col-md-3">
-							<input type="text" name="property" placeholder="Name" class="form-control">
+							<input type="text" name="property" placeholder="Name" class="form-control" <#if property??>value="${property}"</#if>>
 						</div>
 						<div class="col-md-3">
-							<input type="text" name="value" placeholder="Value" class="form-control">
+							<input type="text" name="value" placeholder="Value" class="form-control" <#if value??>value="${value}"</#if>>
 						</div>
 					</div>
 					
@@ -62,7 +57,7 @@
 						<div class="col-md-2">
 							<select name="match" class="form-control">
 								<option value="loose">loose</option>
-								<option value="exact">exact</option>
+								<option value="exact" <#if match?? && match == "exact">selected</#if>>exact</option>
 							</select>
 						</div>
 					
@@ -70,19 +65,17 @@
 						<div class="col-md-2">
 							<select name="operator" class="form-control">
 								<option value="and">and</option>
-								<option value="or">or</option>
+								<option value="or" <#if operator?? && operator == "or">selected</#if>>or</option>
 							</select>
 						</div>
 					</div>
 					
-					<#if !project??>
-						<div class="form-group row">
-							<label for="ontologies" class="col-md-2">Ontologies:</label>
-							<div class="col-md-6">
-								<textarea name="ontologies" col="3" placeholder="comma separated list of project IDs" class="form-control"></textarea>
-							</div>
+					<div class="form-group row">
+						<label for="ontologies" class="col-md-2">Ontologies:</label>
+						<div class="col-md-6">
+							<textarea name="ontologies" col="3" placeholder="comma separated list of project IDs" class="form-control"><#if ontologies??>${ontologies}</#if></textarea>
 						</div>
-					</#if>
+					</div>
 					
 					<div class="form-group row">
 						<div class="col-md-8">

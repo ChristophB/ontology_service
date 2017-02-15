@@ -14,11 +14,6 @@
 		</div>
 		
 		<div class="container">
-			<#if project??>
-				<#assign current_submenue = "Reason this Ontology">
-				<#include "ProjectLinks.ftl">
-			</#if>
-			
 			<div class="row">
 				<#if errorMessage??>
 					<div class="alert alert-danger">
@@ -33,22 +28,20 @@
 					e.g.: class <i>Example</i> in ontology "http://example.com/example_ontology" becomes "example_ontology:Example".
 				</p>
 			
-				<form action="<#if project??>/project/${project.projectId}</#if>/reason" method="get" class="form" role="form">
+				<form action="/reason" method="get" class="form" role="form">
 					<div class="form-group row">
 						<label for="ce" class="col-md-2">Class Expression:</label>
 						<div class="col-md-6">
-							<textarea name="ce" col="3" placeholder="Manchestersyntax" class="form-control"></textarea>
+							<textarea name="ce" col="3" placeholder="Manchestersyntax" class="form-control"><#if ce??>${ce}</#if></textarea>
 						</div>
 					</div>
 					
-					<#if !project??>
-						<div class="form-group row">
-							<label for="ontologies" class="col-md-2">Ontologies:</label>
-							<div class="col-md-6">
-								<textarea name="ontologies" col="3" placeholder="comma separated list of project IDs" class="form-control"></textarea>
-							</div>
+					<div class="form-group row">
+						<label for="ontologies" class="col-md-2">Ontologies:</label>
+						<div class="col-md-6">
+							<textarea name="ontologies" col="3" placeholder="comma separated list of project IDs" class="form-control"><#if ontologies??>${ontologies}</#if></textarea>
 						</div>
-					</#if>
+					</div>
 					
 					<div class="form-group row">
 						<div class="col-md-8">

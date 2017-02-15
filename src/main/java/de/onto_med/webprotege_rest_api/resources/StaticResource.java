@@ -3,6 +3,7 @@ package de.onto_med.webprotege_rest_api.resources;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import de.onto_med.webprotege_rest_api.views.DocumentationView;
@@ -36,16 +37,24 @@ public class StaticResource {
 	@GET
 	@Path("/entity-form")
 	@Produces(MediaType.TEXT_HTML)
-	public EntityFormView getEntityForm() {
-		return new EntityFormView();
+	public EntityFormView getEntityForm(
+		@QueryParam("type") String type,
+		@QueryParam("name") String name,
+		@QueryParam("property") String property,
+		@QueryParam("value") String value,
+		@QueryParam("match") String match,
+		@QueryParam("operator") String operator,
+		@QueryParam("ontologies") String ontologies
+	) {
+		return new EntityFormView(type, name, property, value, match, operator, ontologies);
 	}
 	
 	
 	@GET
 	@Path("/reason-form")
 	@Produces(MediaType.TEXT_HTML)
-	public ReasonFormView getReasonForm() {
-		return new ReasonFormView();
+	public ReasonFormView getReasonForm(@QueryParam("ce") String ce, @QueryParam("ontologies") String ontologies) {
+		return new ReasonFormView(ce, ontologies);
 	}
 	
 }

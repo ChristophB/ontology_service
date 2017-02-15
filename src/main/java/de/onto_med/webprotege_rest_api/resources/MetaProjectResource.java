@@ -129,7 +129,9 @@ public class MetaProjectResource extends Resource {
 			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(e.getMessage()).build();
 			} else {
-				EntityFormView view = new EntityFormView();
+				EntityFormView view = new EntityFormView(
+					type, name, property, value, match, operator, ontologies
+				);
 				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
 				return Response.ok(view).build();
 			}
@@ -171,7 +173,7 @@ public class MetaProjectResource extends Resource {
 			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(e.getMessage()).build();
 			} else {
-				ReasonFormView view = new ReasonFormView();
+				ReasonFormView view = new ReasonFormView(ce, ontologies);
 				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
 				return Response.ok(view).build();
 			}

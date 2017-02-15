@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.ProjectView" -->
 <#assign title = project.name?html>
 <#assign current = "Projects">
-<#assign current_submenue = "Overview">
+<#assign current_submenu = "Overview">
 
 <html>
 	<#include "Head.ftl">
@@ -21,6 +21,7 @@
 				<table class="table">
 					<tbody>
 						<tr><td><b>IRI:</b></td> <td><b>${project.projectIri}</b></td></tr>
+						<tr><td><b>ProjectID:</b></td> <td>${project.projectId}</td></tr>
 						<tr><td><b>Axioms:</b></td> <td>${project.countAxioms}</td></tr>
 						<tr><td><b>Logical Axioms:</b</td> <td>${project.countLogicalAxioms}</td></tr>
 						<tr><td><b>Classes:</b></td> <td>${project.countClasses}</td></tr>

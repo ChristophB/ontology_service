@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -22,10 +20,7 @@ import com.google.inject.Singleton;
 
 import de.onto_med.webprotege_rest_api.api.OWLEntityProperties;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
-import de.onto_med.webprotege_rest_api.views.EntityFormView;
-import de.onto_med.webprotege_rest_api.views.EntityResultsetView;
 import de.onto_med.webprotege_rest_api.views.ProjectView;
-import de.onto_med.webprotege_rest_api.views.ReasonFormView;
 import de.onto_med.webprotege_rest_api.views.SimpleListView;
 
 /**
@@ -83,39 +78,6 @@ public class ProjectResource extends Resource {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
-
-	
-	@GET
-	@Path("/{id}/reason")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response reason(
-		@Context HttpHeaders headers,
-		@PathParam("id") String projectId,
-		@QueryParam("ce") String ce
-	) {
-		ArrayList<OWLEntityProperties> result;
-		List<MediaType> accepts = headers.getAcceptableMediaTypes();
-		ProjectManager project  = null;
-		
-		try {
-			project = getProjectManager(projectId);
-			result  = reason(projectId, ce);
-		} catch (Exception e) {
-			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
-				return Response.ok(e.getMessage()).build();
-			} else {
-				ReasonFormView view = new ReasonFormView(project);
-				view.addErrorMessage(ce + "<br><br>" + e.getMessage().replaceAll("\\n", "<br>"));
-				return Response.ok(view).build();
-			}
-		}
-		
-		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
-			return Response.ok(result).build();
-		} else {
-			return Response.ok(new EntityResultsetView(result)).build();
-		}
-	}
 	
 
 	/**
@@ -134,7 +96,6 @@ public class ProjectResource extends Resource {
 			HashMap<String, String> shortFormMap = manager.getOntologyIris();
 			for (String shortForm : shortFormMap.keySet()) {
 				ce = ce.replaceAll(shortForm + ":([\\w_\\-]+)", "<" + shortFormMap.get(shortForm) + "#$1>");
-				System.err.println(ce);
 			}
 			result.addAll(manager.getIndividualPropertiesByClassExpression(ce));
 		} catch (Exception e) {
@@ -143,45 +104,6 @@ public class ProjectResource extends Resource {
 		}
 		
 		return result;
-	}
-	
-	
-	@GET
-	@Path("/{id}/entity")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response searchOntologyEntities(
-		@Context HttpHeaders headers,
-		@PathParam("id") String projectId,
-		@QueryParam("name")	String name,
-		@QueryParam("property") String property,
-		@QueryParam("value") String value,
-		@DefaultValue("entity") @QueryParam("type") String type,
-		@DefaultValue("loose") @QueryParam("match") String match,
-		@DefaultValue("and") @QueryParam("operator") String operator
-	) {
-		List<MediaType> accepts = headers.getAcceptableMediaTypes();
-		ArrayList<OWLEntityProperties> result;
-		ProjectManager project = null;
-		
-		try {
-			project = getProjectManager(projectId);
-			result  = searchOntologyEntities(projectId, name, property, value, type, match, operator);
-		} catch (Exception e) {
-			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
-				return Response.ok(e.getMessage()).build();
-			} else {
-				EntityFormView view = new EntityFormView(project);
-				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
-				return Response.ok(view).build();
-			}
-		}
-		
-		
-		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
-			return Response.ok(result).build();
-		} else {
-			return Response.ok(new EntityResultsetView(result)).build();
-		}
 	}
 	
 	
@@ -229,29 +151,4 @@ public class ProjectResource extends Resource {
 		return result;
 	}
 	
-	
-	@GET
-	@Path("/{id}/entity-form")
-	@Produces(MediaType.TEXT_HTML)
-	public EntityFormView getEntityForm(@PathParam("id") String projectId) {
-		try {
-			return new EntityFormView(getProjectManager(projectId));
-		} catch (Exception e) {
-			logger.warn(e.getMessage());
-			throw new WebApplicationException(e.getMessage());
-		}
-	}
-	
-	@GET
-	@Path("/{id}/reason-form")
-	@Produces(MediaType.TEXT_HTML)
-	public ReasonFormView getReasonForm(@PathParam("id") String projectId) {
-		try {
-			return new ReasonFormView(getProjectManager(projectId));
-		} catch (Exception e) {
-			logger.warn(e.getMessage());
-			throw new WebApplicationException(e.getMessage());
-		}
-	}
-
 }

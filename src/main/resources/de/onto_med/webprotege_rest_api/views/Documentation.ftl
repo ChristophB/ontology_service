@@ -36,7 +36,12 @@
 							<td>
 								<p>Search for a single or multiple entities in multiple projects.</p>
 								<ul>
-									<li>see /project/{id}/entity</li>
+									<li><b>type:</b> Entity, class or individual</li>
+									<li><b>name:</b> Entity name</li>
+									<li><b>match:</b> Match method for 'name' parameter: 'exact' or 'loose' (default: loose)</li>
+									<li><b>property:</b> Name of a Property, the entity is annotated with</li>
+									<li><b>value:</b> Value of the specified Property</li>
+									<li><b>operator:</b> Logical operator to combine 'name' and 'property' (default: and)</li>
 									<li><b>ontologies:</b> List of comma separated ontology ids (default: all ontologies)</li>
 								</ul>
 							</td>	
@@ -44,55 +49,15 @@
 						
 						<tr>
 							<td colspan="2">/entity-form</td>
-							<td><p>Form-based user interface to search for entities in multiple projects.</p></td>
+							<td><p>Form-based user interface to search for entities in one or multiple projects.</p></td>
 						</tr>
 						
 						<tr>
-							<td rowspan="7">/project</td>
+							<td rowspan="3">/project</td>
 						</tr>
 						<tr>
 							<td>/{id}</td>
 							<td>Get full OWL document as RDF/XML.</td>
-						</tr>
-						
-						<tr>
-							<td>/{id}/entity</td>
-							<td>
-								<p>Search for single or multiple entities in project with respective id.</p>
-								<ul>
-									<li><b>type:</b> Entity, class or individual</li>
-									<li><b>name:</b> Entity name</li>
-									<li><b>match:</b> Match method for 'name' parameter: 'exact' or 'loose' (default: loose)</li>
-									<li><b>property:</b> Name of a Property, the entity is annotated with</li>
-									<li><b>value:</b> Value of the specified Property</li>
-									<li><b>operator:</b> Logical operator to combine 'name' and 'property' (default: and)</li>
-								</ul>
-							</td>
-						</tr>
-						
-						<tr>
-							<td>/{id}/entity-form</td>
-							<td><p>Form-based user interface to search for entities in the specified project.</p></td>
-						</tr>
-						
-						<!--<tr>
-							<td>/{id}/imports</td>
-							<td>List all imports of the specified ontology.</td>
-						</tr>-->
-						
-						<tr>
-							<td>/{id}/reason</td>
-							<td>
-								<p>Search for individuals by reasoning in the specified project.</p>
-								<ul>
-									<li><b>ce:</b> Class expression</li>
-								</ul>
-							</td>
-						</tr>
-						
-						<tr>
-							<td>/{id}/reason-form</td>
-							<td><p>Form-based user interface to reason in the specified project.</p></td>
 						</tr>
 						
 						<tr>
@@ -108,7 +73,7 @@
 						<tr>
 		    				<td colspan="2">/reason</td>
 		    				<td>
-		    					<p>Search for individuals by reasoning in multiple projects.</p>
+		    					<p>Search for individuals by reasoning in one or multiple projects.</p>
 		    	   				<ul>
 		    	   					<li><b>ce:</b> Class expression</li>
 									<li><b>ontologies:</b> List of comma separated ontology ids (default: all ontologies)</li>
@@ -118,7 +83,7 @@
 						
 						<tr>
 							<td colspan="2">/reason-form</td>
-							<td><p>Form-based user interface to reason in multiple projects.</p></td>
+							<td><p>Form-based user interface to reason in one or multiple projects.</p></td>
 						</tr>
 						
 		    		</tbody>
