@@ -104,7 +104,7 @@ public class IntegrationTest {
     		.request(MediaType.TEXT_HTML_TYPE)
     		.get(String.class);
     	
-    	assertThat((String) response).contains("Neither query param 'name' nor 'property' given.");
+    	assertThat((String) response).contains("Neither query param 'name' nor 'iri', nor 'property' given.");
     }
     
     @Test
