@@ -106,6 +106,25 @@ public class BinaryOwlParser extends OntologyParser {
 	}
 	
 	
+	/**
+	 * Searches for entities which match the class expression.
+	 * @param string class expression as string
+	 * @return List of entities 
+	 */
+	public ArrayList<OWLEntityProperties> getEntityProperties(String string) {
+		@SuppressWarnings("deprecation")
+		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		OWLClassExpression ce = convertStringToClassExpression(string);
+		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		
+		for (Node<OWLNamedIndividual> node : reasoner.getInstances(ce, false)) {
+			result.add(getPropertiesForOWLEntity(node.iterator().next()));
+		}
+		
+		return result;
+	}
+	
+	
 	public ArrayList<OWLEntityProperties> getEntityProperties(
 		String iri, String name, String property, String value, Boolean exact, Boolean and, Class<?> cls
 	) throws NoSuchAlgorithmException {
@@ -256,25 +275,6 @@ public class BinaryOwlParser extends OntologyParser {
 		}
 		
 		return imports;
-	}
-	
-	
-	/**
-	 * Searches for individuals which match the class expression.
-	 * @param string class expression as string
-	 * @return List of named individuals 
-	 */
-	@SuppressWarnings("deprecation")
-	public ArrayList<OWLEntityProperties> getIndividualPropertiesByClassExpression(String string) {
-		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
-		OWLClassExpression ce = convertStringToClassExpression(string);
-		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
-		
-		for (Node<OWLNamedIndividual> node : reasoner.getInstances(ce, false)) {
-			result.add(getPropertiesForOWLEntity(node.iterator().next()));
-		}
-		
-		return result;
 	}
 	
 	

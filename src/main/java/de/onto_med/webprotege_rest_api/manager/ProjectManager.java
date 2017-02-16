@@ -59,6 +59,16 @@ public class ProjectManager {
 	}
 	
 	
+	/**
+	 * Searches for entities which match the class expression.
+	 * @param string class expression as string
+	 * @return List of entities
+	 */
+	public ArrayList<OWLEntityProperties> getEntityProperties(String ce) {
+		return binaryOwlParser.getEntityProperties(ce);
+	}
+	
+	
 	public ArrayList<OWLEntityProperties> getEntityProperties(
 		String iri, String name, String property, String value, String match, String operator, String type
 	) throws NoSuchAlgorithmException {
@@ -86,16 +96,6 @@ public class ProjectManager {
 	 */
 	public Object getFullRDFDocument() {
 		return binaryOwlParser.getFullRDFDocument();
-	}
-
-	
-	/**
-	 * Searches for individuals which match the class expression.
-	 * @param string class expression as string
-	 * @return List of named individuals
-	 */
-	public ArrayList<OWLEntityProperties> getIndividualPropertiesByClassExpression(String string) {
-		return binaryOwlParser.getIndividualPropertiesByClassExpression(string);
 	}
 	
 	

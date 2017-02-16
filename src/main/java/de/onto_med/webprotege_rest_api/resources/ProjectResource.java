@@ -87,8 +87,6 @@ public class ProjectResource extends Resource {
 	 * @return search result
 	 */
 	public ArrayList<OWLEntityProperties> reason(String projectId, String ce) {
-		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
-		
 		try {
 			ProjectManager manager = getProjectManager(projectId);
 			
@@ -97,13 +95,11 @@ public class ProjectResource extends Resource {
 			for (String shortForm : shortFormMap.keySet()) {
 				ce = ce.replaceAll(shortForm + ":([\\w_\\-]+)", "<" + shortFormMap.get(shortForm) + "#$1>");
 			}
-			result.addAll(manager.getIndividualPropertiesByClassExpression(ce));
+			return manager.getEntityProperties(ce);
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 			throw new WebApplicationException(e.getMessage());
 		}
-		
-		return result;
 	}
 	
 	
