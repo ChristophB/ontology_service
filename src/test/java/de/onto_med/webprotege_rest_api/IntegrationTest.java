@@ -123,4 +123,21 @@ public class IntegrationTest {
     	
     	assertThat((String) response).contains("No class expression given.");
     }
+    
+    @Test
+    public void testBinaryOwlUtilsgetIriMethod() throws Exception {
+    	Object response
+			= client.target("http://localhost:8080/project/http%3A%2F%2Fwww.lha.org%2Fduo")
+			.request(MediaType.TEXT_PLAIN_TYPE)
+			.get();
+        
+    	assertThat(((javax.ws.rs.core.Response) response).getStatus()).isEqualTo(Response.SC_OK);
+    
+	    response
+	    	= client.target("http://localhost:8080/entity?ontologies=http%3A%2F%2Fwww.lha.org%2Fduo&name=file")
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.get(String.class);
+		
+		assertThat((String) response).contains("http://www.lha.org/duo#File");
+    }
 }
