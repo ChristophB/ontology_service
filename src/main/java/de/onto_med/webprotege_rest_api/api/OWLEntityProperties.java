@@ -8,12 +8,14 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
-import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.reasoner.NodeSet;
 
 public class OWLEntityProperties {
 	private String projectId;
@@ -23,6 +25,9 @@ public class OWLEntityProperties {
 	private HashSet<String> superclasses;
 	private HashSet<String> subclasses;
 	private HashSet<String> types;
+	private HashSet<String> disjointClasses;
+	private HashSet<String> equivalentClasses;
+	private HashSet<String> sameIndividuals;
 	private HashMap<String, Set<String>> annotationProperties;
 	private HashMap<String, Set<String>> dataTypeProperties;
 	private HashMap<String, Set<String>> objectProperties;
@@ -44,38 +49,30 @@ public class OWLEntityProperties {
 		}
 	}
 	
-	public void addIndividual(OWLIndividual individual) {
-		if (individuals == null) individuals = new HashSet<String>();
-		this.individuals.add(((OWLEntity) individual).getIRI().toString());
-	}
-	
-	public void addSuperClassExpression(OWLClassExpression expression) {
-		if (superclasses == null) superclasses = new HashSet<String>();
-		superclasses.add(expression.toString().replaceAll("[<>]", ""));
-	}
-	
-	public void addSuperClassExpressions(Collection<OWLClassExpression> collection) {
-		if (collection.isEmpty()) return;
-		if (superclasses == null) superclasses = new HashSet<String>();
+	public void addIndividuals(NodeSet<OWLNamedIndividual> individuals) {
+		if (individuals.isEmpty()) return;
+		if (this.individuals == null) this.individuals = new HashSet<String>();
 		
-		Iterator<OWLClassExpression> iterator = collection.iterator();
-    	while (iterator.hasNext()) {
-    		addSuperClassExpression(iterator.next());
+		for (Node<OWLNamedIndividual> individual : individuals) {
+			this.individuals.add(individual.iterator().next().getIRI().toString());
+		}
+	}
+	
+	public void addSuperClassExpressions(NodeSet<OWLClass> superClasses) {
+		if (superClasses.isEmpty()) return;
+		if (this.superclasses == null) this.superclasses = new HashSet<String>();
+		
+    	for (Node<OWLClass> node : superClasses) {
+    		this.superclasses.add(node.iterator().next().getIRI().toString());
     	}
 	}
 	
-	public void addSubClassExpression(OWLClassExpression expression) {
-		if (subclasses == null) subclasses = new HashSet<String>();
-		subclasses.add(expression.toString().replaceAll("[<>]", ""));
-	}
-	
-	public void addSubClassExpressions(Collection<OWLClassExpression> collection) {
-		if (collection.isEmpty()) return;
-		if (subclasses == null) subclasses = new HashSet<String>();
+	public void addSubClassExpressions(NodeSet<OWLClass> subclasses) {
+		if (subclasses.isEmpty()) return;
+		if (this.subclasses == null) this.subclasses = new HashSet<String>();
 		
-		Iterator<OWLClassExpression> iterator = collection.iterator();
-    	while (iterator.hasNext()) {
-    		addSubClassExpression(iterator.next());
+    	for (Node<OWLClass> node : subclasses) {
+    		this.subclasses.add(node.iterator().next().getIRI().toString());
     	}
 	}
 	
@@ -85,13 +82,26 @@ public class OWLEntityProperties {
 		return iri.equals(((OWLEntityProperties)object).iri);
 	}
 	
-	public void addTypeExpression(OWLClassExpression expression) {
-		if (types == null) types = new HashSet<String>();
+	public void addTypes(NodeSet<OWLClass> types) {
+		if (types.isEmpty()) return;
+		if (this.types == null) this.types = new HashSet<String>();
 		
-		types.add(expression.toString().replaceAll("[<>]", ""));
+		for (Node<OWLClass> node : types) {
+			this.types.add(node.iterator().next().getIRI().toString());
+		}
 	}
 	
-	public void addDataTypeProperty(OWLDataPropertyExpression property, Collection<OWLLiteral> values) {
+	public void addSameIndividuals(Node<OWLNamedIndividual> sameIndividuals) {
+		if (sameIndividuals.getSize() == 0) return;
+		if (this.sameIndividuals == null) this.sameIndividuals = new HashSet<String>();
+		
+		Iterator<OWLNamedIndividual> iterator = sameIndividuals.iterator();
+		while (iterator.hasNext()) {
+			this.sameIndividuals.add(iterator.next().getIRI().toString());
+		}
+	}
+	
+	public void addDataProperty(OWLDataPropertyExpression property, Collection<OWLLiteral> values) {
 		if (values.isEmpty()) return;
 		if (dataTypeProperties == null) dataTypeProperties = new HashMap<String, Set<String>>();
 		
@@ -114,6 +124,25 @@ public class OWLEntityProperties {
 		}
 		for (OWLIndividual individual : values) {
 			objectProperties.get(propertyIRI).add(individual.toString().replaceAll("^.*?\"|\"\\^.*$", ""));
+		}
+	}
+	
+	public void addDisjointClasses(NodeSet<OWLClass> disjointClasses) {
+		if (disjointClasses.isEmpty()) return;
+		if (this.disjointClasses == null) this.disjointClasses = new HashSet<String>();
+		
+		for (Node<OWLClass> node : disjointClasses) {
+			this.disjointClasses.add(node.iterator().next().getIRI().toString());
+		}
+	}
+	
+	public void addEquivalentClasses(Node<OWLClass> equivalentClasses) {
+		if (equivalentClasses.getSize() == 0) return;
+		if (this.equivalentClasses == null) this.equivalentClasses = new HashSet<String>();
+		
+		Iterator<OWLClass> iterator = equivalentClasses.iterator();
+		while (iterator.hasNext()) {
+			this.equivalentClasses.add(iterator.next().getIRI().toString());
 		}
 	}
 	
@@ -145,8 +174,20 @@ public class OWLEntityProperties {
 		this.types = types;
 	}
 	
+	public void setDisjointClasses(HashSet<String> disjointClasses) {
+		this.disjointClasses = disjointClasses;
+	}
+	
+	public void setEquivalentClasses(HashSet<String> equivalentClasses) {
+		this.equivalentClasses = equivalentClasses;
+	}
+	
 	public void setIndividuals(HashSet<String> individuals) {
 		this.individuals = individuals;
+	}
+	
+	public void setSameIndividuals(HashSet<String> sameIndividuals) {
+		this.sameIndividuals = sameIndividuals;
 	}
 	
 	public void setAnnotationProperties(HashMap<String, Set<String>> annotationProperties) {
@@ -189,6 +230,18 @@ public class OWLEntityProperties {
 	public HashSet<String> getTypes() {
 		return types;
 	}
+	
+	public HashSet<String> getSameIndivduals() {
+		return sameIndividuals;
+	}
+	
+	public HashSet<String> getDisjointClasses() {
+		return disjointClasses;
+	}
+	
+	public HashSet<String> getEquivalentClasses() {
+		return equivalentClasses;
+	}
 
 	public HashMap<String, Set<String>> getAnnotationProperties() {
 		return annotationProperties;
@@ -201,4 +254,6 @@ public class OWLEntityProperties {
 	public HashMap<String, Set<String>> getObjectProperties() {
 		return objectProperties;
 	}
+
+	
 }

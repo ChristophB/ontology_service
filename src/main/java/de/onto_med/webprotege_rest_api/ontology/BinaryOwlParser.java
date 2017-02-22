@@ -358,7 +358,9 @@ public class BinaryOwlParser extends OntologyParser {
 	 */
 	private OWLEntityProperties getPropertiesForOWLEntity(OWLEntity entity) {
 		OWLEntityProperties properties = new OWLEntityProperties();
-    	
+		@SuppressWarnings("deprecation")
+		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		
 		properties.setProjectId(projectId);
     	properties.setIri(entity.getIRI().toString());
     	properties.setJavaClass(entity.getClass().getName());
@@ -368,18 +370,17 @@ public class BinaryOwlParser extends OntologyParser {
 		}
     	
     	if (entity.isOWLClass()) {
-    		properties.addSuperClassExpressions(EntitySearcher.getSuperClasses(entity.asOWLClass(), getRootOntology().getImportsClosure()));
-    		properties.addSubClassExpressions(EntitySearcher.getSubClasses(entity.asOWLClass(), getRootOntology().getImportsClosure()));
-    	
-    		for (OWLIndividual individual : EntitySearcher.getIndividuals(entity.asOWLClass(), getRootOntology())) {
-				properties.addIndividual(individual);
-			}
+    		properties.addSuperClassExpressions(reasoner.getSuperClasses(entity.asOWLClass(), true));
+    		properties.addSubClassExpressions(reasoner.getSubClasses(entity.asOWLClass(), true));
+			properties.addIndividuals(reasoner.getInstances(entity.asOWLClass(), true));
+    		properties.addDisjointClasses(reasoner.getDisjointClasses(entity.asOWLClass()));
+    		properties.addEquivalentClasses(reasoner.getEquivalentClasses(entity.asOWLClass()));
     	}
     	
     	if (entity.isOWLNamedIndividual()) {
 	    	Multimap<OWLDataPropertyExpression, OWLLiteral> dataProperties = EntitySearcher.getDataPropertyValues(entity.asOWLNamedIndividual(), getRootOntology());
 			for (OWLDataPropertyExpression property : dataProperties.keySet()) {
-				properties.addDataTypeProperty(property, dataProperties.get(property));
+				properties.addDataProperty(property, dataProperties.get(property));
 			}
 			
 			Multimap<OWLObjectPropertyExpression, OWLIndividual> objectProperties = EntitySearcher.getObjectPropertyValues(entity.asOWLNamedIndividual(), getRootOntology());
@@ -387,11 +388,11 @@ public class BinaryOwlParser extends OntologyParser {
 				properties.addObjectProperty(property, objectProperties.get(property));
 			}
 			
-			for (OWLClassExpression type : EntitySearcher.getTypes(entity.asOWLNamedIndividual(), getRootOntology())) {
-				properties.addTypeExpression(type);
-			}
+			properties.addTypes(reasoner.getTypes(entity.asOWLNamedIndividual(), true));
+			properties.addSameIndividuals(reasoner.getSameIndividuals(entity.asOWLNamedIndividual()));
     	}
     	
+    	reasoner.dispose();
     	return properties;
 	}
 	

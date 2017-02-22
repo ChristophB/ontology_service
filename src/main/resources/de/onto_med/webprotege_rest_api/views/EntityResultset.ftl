@@ -56,6 +56,32 @@
 								</tr>
 							</#if>
 							
+							<#if result.disjointClasses??>
+								<tr>
+									<td>Disjoint Classes:</td>
+									<td>
+										<#list result.disjointClasses as disjointClasses>
+											<a href="/entity?iri=${disjointClasses?url}&match=exact&ontologies=${result.projectId}">
+												${disjointClasses?html}
+											</a><br>
+										</#list>
+									</td>
+								</tr>
+							</#if>
+							
+							<#if result.equivalentClasses??>
+								<tr>
+									<td>Equivalent Classes:</td>
+									<td>
+										<#list result.equivalentClasses as equivalentClasses>
+											<a href="/entity?iri=${equivalentClasses?url}&match=exact&ontologies=${result.projectId}">
+												${equivalentClasses?html}
+											</a><br>
+										</#list>
+									</td>
+								</tr>
+							</#if>
+							
 							<#if result.types??>
 								<tr>
 									<td>Types:</td>
@@ -63,6 +89,19 @@
 										<#list result.types as type>
 											<a href="/entity?iri=${type?url}&match=exact&ontologies=${result.projectId}">
 												${type?html}
+											</a><br>
+										</#list>
+									</td>
+								</tr>
+							</#if>
+							
+							<#if result.sameIndividuals??>
+								<tr>
+									<td>Same Individuals:</td>
+									<td>
+										<#list result.sameIndividuals as sameIndividual>
+											<a href="/entity?iri=${sameIndividual?url}&match=exact&ontologies=${result.projectId}">
+												${sameIndividual?html}
 											</a><br>
 										</#list>
 									</td>
