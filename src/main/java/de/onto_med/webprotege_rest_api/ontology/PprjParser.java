@@ -66,6 +66,7 @@ public class PprjParser extends OntologyParser {
 	public ProjectManager getProjectManager(String projectId) {
 		Instance instance = getProjectInstance(projectId);
 		
+		if (instance == null) return null;
 		ProjectManager projectManager = new ProjectManager(projectId, dataPath);
 		projectManager.setName((String) instance.getOwnSlotValue(knowledgeBaseSupplier.get().getSlot("displayName")));
 		projectManager.setDescription((String) instance.getOwnSlotValue(knowledgeBaseSupplier.get().getSlot("description")));

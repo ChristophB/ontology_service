@@ -15,6 +15,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.inject.Singleton;
 
 import de.onto_med.webprotege_rest_api.RestApiApplication;
+import de.onto_med.webprotege_rest_api.api.BinaryOwlUtils;
 import de.onto_med.webprotege_rest_api.ontology.PprjParser;
 import edu.stanford.smi.protege.model.Instance;
 
@@ -26,6 +27,7 @@ import edu.stanford.smi.protege.model.Instance;
 public class MetaProjectManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestApiApplication.class);
 	private PprjParser pprjParser;
+	private String dataPath;
 	
 	private LoadingCache<String, ProjectManager> projectManagers = CacheBuilder.newBuilder()
 		.expireAfterWrite(10, TimeUnit.MINUTES)
@@ -33,13 +35,25 @@ public class MetaProjectManager {
 			new CacheLoader<String, ProjectManager>() {
 				@Override
 				public ProjectManager load(String key) throws Exception {
-					LOGGER.info("populating cache with '" + key + "'.");
-					
 					ProjectManager projectManager = pprjParser.getProjectManager(key);
-					if (projectManager != null) {
-						return projectManager;
-					} else 
-						throw new NoContentException("Could not find project by id: '" + key + "'");
+					if (projectManager == null) {
+						for (Instance instance : pprjParser.getProjectInstances()) {
+							String projectId = instance.getName();
+							String path = dataPath + "/data-store/project-data/" + projectId + "/ontology-data/root-ontology.binary";
+							
+							String extractedIri = BinaryOwlUtils.getOntologyIriFromBinaryOwl(path);
+							if (extractedIri != null && extractedIri.equals(key)) {
+								projectManager = pprjParser.getProjectManager(projectId);
+								break;
+							}
+						}
+						
+						if (projectManager == null)
+							throw new NoContentException("Could not find project by id: '" + key + "'");
+					}
+					
+					LOGGER.info("Populated cache with '" + key + "'.");
+					return projectManager;
 				}
 			}
 		);
@@ -49,6 +63,7 @@ public class MetaProjectManager {
 	 * @param dataPath Path to WebProtegés data folder.
 	 */
 	public MetaProjectManager(String dataPath) {
+		this.dataPath = dataPath;
 		pprjParser = new PprjParser(dataPath);
 	}
 	
