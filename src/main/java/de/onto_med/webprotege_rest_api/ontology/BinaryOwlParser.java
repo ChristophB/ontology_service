@@ -294,6 +294,13 @@ public class BinaryOwlParser extends OntologyParser {
 		return map;
 	}
 	
+	public boolean isConsistent() {
+		@SuppressWarnings("deprecation")
+		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		
+		return reasoner.isConsistent();
+	}
+	
 	
 	private OWLClassExpression convertStringToClassExpression(String expression) {
         ManchesterOWLSyntaxParserImpl parser = (ManchesterOWLSyntaxParserImpl) OWLManager.createManchesterParser();

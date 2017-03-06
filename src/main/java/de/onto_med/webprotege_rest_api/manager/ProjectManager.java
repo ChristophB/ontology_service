@@ -109,6 +109,10 @@ public class ProjectManager {
 	}
 	
 	
+	public boolean getIsConsistent() {
+		return binaryOwlParser.isConsistent();
+	}
+	
 	public String getDescription() {
 		return StringUtils.defaultString(description, "");
 	}

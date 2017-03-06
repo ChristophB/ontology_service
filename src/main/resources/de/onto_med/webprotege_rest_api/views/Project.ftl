@@ -3,6 +3,8 @@
 <#assign current = "Projects">
 <#assign current_submenu = "Overview">
 
+<#macro coloredBoolean boolean><#if boolean><font color="green">true</font><#else><font color="red">false</font></#if></#macro>
+
 <html>
 	<#include "Head.ftl">
 	
@@ -22,6 +24,7 @@
 					<tbody>
 						<tr><td><b>IRI:</b></td> <td><b>${project.projectIri}</b></td></tr>
 						<tr><td><b>ProjectID:</b></td> <td>${project.projectId}</td></tr>
+						<tr><td><b>Is Consistent:</b></td> <td><@coloredBoolean project.isConsistent /></td></tr>
 						<tr><td><b>Axioms:</b></td> <td>${project.countAxioms}</td></tr>
 						<tr><td><b>Logical Axioms:</b</td> <td>${project.countLogicalAxioms}</td></tr>
 						<tr><td><b>Classes:</b></td> <td>${project.countClasses}</td></tr>
