@@ -128,16 +128,28 @@ public class IntegrationTest {
     public void testBinaryOwlUtilsgetIriMethod() throws Exception {
     	Object response
 			= client.target("http://localhost:8080/project/http%3A%2F%2Fwww.lha.org%2Fduo")
-			.request(MediaType.TEXT_PLAIN_TYPE)
+			.request(MediaType.APPLICATION_OCTET_STREAM_TYPE)
 			.get();
         
     	assertThat(((javax.ws.rs.core.Response) response).getStatus()).isEqualTo(Response.SC_OK);
     
 	    response
-	    	= client.target("http://localhost:8080/entity?ontologies=http%3A%2F%2Fwww.lha.org%2Fduo&name=file")
+	    	= client.target("http://localhost:8080/entity")
+	    	.queryParam("ontologies", "http://www.lha.org/duo")
+	    	.queryParam("name", "file")
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.get(String.class);
 		
 		assertThat((String) response).contains("http://www.lha.org/duo#File");
+		
+		response
+	    	= client.target("http://localhost:8080/reason")
+	    	.queryParam("ontologies", "http://imise.uni-leipzig.de/inference-test")
+	    	.queryParam("ce", "inference-test:Normal")
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.get(String.class);
+		
+		assertThat((String) response).contains("http://imise.uni-leipzig.de/inference-test#Max_Mustermann");
     }
+    
 }

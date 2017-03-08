@@ -17,7 +17,7 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 
-public class OWLEntityProperties {
+public class Entity {
 	private String projectId;
 	private String iri;
 	private String javaClass;
@@ -77,9 +77,9 @@ public class OWLEntityProperties {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof OWLEntityProperties)) 
+		if (!(object instanceof Entity)) 
 			return false;
-		return iri.equals(((OWLEntityProperties)object).iri);
+		return iri.equals(((Entity)object).iri);
 	}
 	
 	public void addTypes(NodeSet<OWLClass> types) {

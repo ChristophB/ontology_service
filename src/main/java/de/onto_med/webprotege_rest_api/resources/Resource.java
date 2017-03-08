@@ -1,5 +1,8 @@
 package de.onto_med.webprotege_rest_api.resources;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +21,14 @@ public abstract class Resource {
 		return metaProjectManager.getProjectManager(projectId);
 	}
 	
+	protected boolean acceptsMediaType(HttpHeaders headers, MediaType mediaType) {
+		return headers.getAcceptableMediaTypes().contains(mediaType);
+	}
+	
 	public MetaProjectManager setMetaProjectManager(MetaProjectManager mpm) {
 		metaProjectManager = mpm;
 		
 		return metaProjectManager;
 	}
+	
 }

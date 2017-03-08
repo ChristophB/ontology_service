@@ -5,11 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -17,12 +20,13 @@ import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
-
 import com.google.inject.Singleton;
 
-import de.onto_med.webprotege_rest_api.api.OWLEntityProperties;
+import de.onto_med.webprotege_rest_api.api.CondencedProject;
+import de.onto_med.webprotege_rest_api.api.Entity;
+import de.onto_med.webprotege_rest_api.api.EntityQuery;
+import de.onto_med.webprotege_rest_api.api.ReasonQuery;
 import de.onto_med.webprotege_rest_api.manager.MetaProjectManager;
-import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 import de.onto_med.webprotege_rest_api.views.EntityFormView;
 import de.onto_med.webprotege_rest_api.views.EntityResultsetView;
 import de.onto_med.webprotege_rest_api.views.ProjectListView;
@@ -36,6 +40,7 @@ import de.onto_med.webprotege_rest_api.views.ReasonFormView;
  */
 @Path("/")
 @Singleton
+@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 public class MetaProjectResource extends Resource {
 	
 	private ProjectResource projectResource;
@@ -77,14 +82,17 @@ public class MetaProjectResource extends Resource {
 	 */
 	@GET
 	@Path("/projects")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response getProjectList(@Context HttpHeaders headers) throws NoContentException, ExecutionException {
-		List<MediaType> accepts = headers.getAcceptableMediaTypes();
-		
-		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
-			return Response.ok(metaProjectManager.getProjectList()).build();
-		} else {
-			return Response.ok(new ProjectListView(metaProjectManager.getProjectList())).build();
+	public Response getProjectList(@Context HttpHeaders headers) {
+		try {
+			ArrayList<CondencedProject> projectList = metaProjectManager.getProjectList();
+			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(projectList).build();
+			} else {
+				return Response.ok(new ProjectListView(projectList)).build();
+			}
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+			throw new WebApplicationException(e.getMessage());
 		}
 	}
 
@@ -102,7 +110,6 @@ public class MetaProjectResource extends Resource {
 	 */
 	@GET
 	@Path("/entity")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response searchOntologyEntities(
 		@Context HttpHeaders headers,
 		@QueryParam("name")	String name,
@@ -114,8 +121,7 @@ public class MetaProjectResource extends Resource {
 		@DefaultValue("loose") @QueryParam("match") String match,
 		@DefaultValue("and") @QueryParam("operator") String operator
 	) {
-		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
-		List<MediaType> accepts = headers.getAcceptableMediaTypes();
+		ArrayList<Entity> result = new ArrayList<Entity>();
 		
 		try {
 			if (StringUtils.isEmpty(name) && StringUtils.isEmpty(property) && StringUtils.isEmpty(iri))
@@ -127,7 +133,7 @@ public class MetaProjectResource extends Resource {
 				));
 			}
 		} catch (Exception e) {
-			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(e.getMessage()).build();
 			} else {
 				EntityFormView view = new EntityFormView(
@@ -138,11 +144,23 @@ public class MetaProjectResource extends Resource {
 			}
 		}
 		
-		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+		if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 			return Response.ok(result).build();
 		} else {
 			return Response.ok(new EntityResultsetView(result)).build();
 		}
+	}
+	
+	
+	@POST
+	@Path("/entity")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response reason(@Context HttpHeaders headers, EntityQuery entityQuery) {
+		return searchOntologyEntities(
+			headers, entityQuery.getName(), entityQuery.getIri(), entityQuery.getProperty(),
+			entityQuery.getValue(), entityQuery.getType(), entityQuery.getOntologies(), 
+			entityQuery.getMatch(), entityQuery.getOperator()
+		);
 	}
 	
 	
@@ -154,14 +172,12 @@ public class MetaProjectResource extends Resource {
 	 */
 	@GET
 	@Path("/reason")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response reason(
 			@Context HttpHeaders headers,
 			@QueryParam("ce") String ce,
 			@QueryParam("ontologies") String ontologies
 		) {
-		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
-		List<MediaType> accepts = headers.getAcceptableMediaTypes();
+		ArrayList<Entity> result = new ArrayList<Entity>();
 		
 		try {
 			if (StringUtils.isEmpty(ce))
@@ -171,7 +187,7 @@ public class MetaProjectResource extends Resource {
 				result.addAll(projectResource.reason(projectId, ce));
 			}
 		} catch (Exception e) {
-			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(e.getMessage()).build();
 			} else {
 				ReasonFormView view = new ReasonFormView(ce, ontologies);
@@ -180,11 +196,18 @@ public class MetaProjectResource extends Resource {
 			}
 		}
 		
-		if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
+		if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 			return Response.ok(result).build();
 		} else {
 			return Response.ok(new EntityResultsetView(result)).build();
 		}
+	}
+	
+	@POST
+	@Path("/reason")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response reason(@Context HttpHeaders headers, ReasonQuery reasonQuery) {
+		return reason(headers, reasonQuery.getCe(), reasonQuery.getOntologies());
 	}
 
 	
@@ -204,8 +227,8 @@ public class MetaProjectResource extends Resource {
 	private List<String> parseOntologies(String projects) throws NoContentException, ExecutionException {
 		if (StringUtils.isEmpty(projects)) {
 			List<String> projectList = new ArrayList<String>();
-			for (ProjectManager pm : metaProjectManager.getProjectList()) {
-				projectList.add(pm.getProjectId());
+			for (CondencedProject project : metaProjectManager.getProjectList()) {
+				projectList.add(project.getProjectId());
 			}
 			return projectList;
 		} else {

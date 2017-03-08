@@ -1,6 +1,6 @@
 package de.onto_med.webprotege_rest_api.manager;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +16,7 @@ import com.google.inject.Singleton;
 
 import de.onto_med.webprotege_rest_api.RestApiApplication;
 import de.onto_med.webprotege_rest_api.api.BinaryOwlUtils;
+import de.onto_med.webprotege_rest_api.api.CondencedProject;
 import de.onto_med.webprotege_rest_api.ontology.PprjParser;
 import edu.stanford.smi.protege.model.Instance;
 
@@ -79,12 +80,13 @@ public class MetaProjectManager {
 	 * @throws NoContentException 
 	 * @throws ExecutionException 
 	 */
-	public Collection<ProjectManager> getProjectList() throws NoContentException, ExecutionException {
-		for (Instance project : pprjParser.getProjectInstances()) {
-			projectManagers.get(project.getName());
+	public ArrayList<CondencedProject> getProjectList() throws NoContentException, ExecutionException {
+		ArrayList<CondencedProject> projectList = new ArrayList<CondencedProject>();
+		for (Instance instance : pprjParser.getProjectInstances()) {
+			projectList.add(new CondencedProject(projectManagers.get(instance.getName())));
 		}
 		
-		return projectManagers.asMap().values();
+		return projectList;
 	}
 
 	

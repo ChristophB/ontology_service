@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Multimap;
 
 import de.onto_med.webprotege_rest_api.RestApiApplication;
-import de.onto_med.webprotege_rest_api.api.OWLEntityProperties;
+import de.onto_med.webprotege_rest_api.api.Entity;
 
 public class BinaryOwlParser extends OntologyParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestApiApplication.class);
@@ -111,21 +111,21 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @param string class expression as string
 	 * @return List of entities 
 	 */
-	public ArrayList<OWLEntityProperties> getEntityProperties(String string) {
+	public ArrayList<Entity> getEntityProperties(String string) {
 		@SuppressWarnings("deprecation")
 		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
 		OWLClassExpression ce = convertStringToClassExpression(string);
-		ArrayList<OWLEntityProperties> result = new ArrayList<OWLEntityProperties>();
+		ArrayList<Entity> result = new ArrayList<Entity>();
 		
 		for (Node<OWLNamedIndividual> node : reasoner.getInstances(ce, false)) {
-			result.add(getPropertiesForOWLEntity(node.iterator().next()));
+			result.add(getEntity(node.iterator().next()));
 		}
 		
 		return result;
 	}
 	
 	
-	public ArrayList<OWLEntityProperties> getEntityProperties(
+	public ArrayList<Entity> getEntityProperties(
 		String iri, String name, String property, String value, Boolean exact, Boolean and, Class<?> cls
 	) throws NoSuchAlgorithmException {
 		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
@@ -184,7 +184,7 @@ public class BinaryOwlParser extends OntologyParser {
 			}
 		}
 		
-		return getPropertiesForOWLEntities(resultset);
+		return getEntities(resultset);
 	}
 	
 	
@@ -348,11 +348,11 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @param entities set of OWLEntitys
 	 * @return List of OWLEntityProperties
 	 */
- 	private ArrayList<OWLEntityProperties> getPropertiesForOWLEntities(ArrayList<OWLEntity> entities) {
-		ArrayList<OWLEntityProperties> properties = new ArrayList<OWLEntityProperties>();
+ 	private ArrayList<Entity> getEntities(ArrayList<OWLEntity> entities) {
+		ArrayList<Entity> properties = new ArrayList<Entity>();
 
 		for (OWLEntity entity : entities) {
-	    	properties.add(getPropertiesForOWLEntity(entity));
+	    	properties.add(getEntity(entity));
 	    }
 		return properties;
 	}
@@ -363,8 +363,8 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @param entity entity object
 	 * @return properties as OWLEntityProperties
 	 */
-	private OWLEntityProperties getPropertiesForOWLEntity(OWLEntity entity) {
-		OWLEntityProperties properties = new OWLEntityProperties();
+	private Entity getEntity(OWLEntity entity) {
+		Entity properties = new Entity();
 		@SuppressWarnings("deprecation")
 		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
 		

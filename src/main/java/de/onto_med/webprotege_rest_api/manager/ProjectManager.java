@@ -15,7 +15,8 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import de.onto_med.webprotege_rest_api.api.OWLEntityProperties;
+
+import de.onto_med.webprotege_rest_api.api.Entity;
 import de.onto_med.webprotege_rest_api.ontology.BinaryOwlParser;
 
 /**
@@ -65,12 +66,12 @@ public class ProjectManager {
 	 * @param string class expression as string
 	 * @return List of entities
 	 */
-	public ArrayList<OWLEntityProperties> getEntityProperties(String ce) {
+	public ArrayList<Entity> getEntityProperties(String ce) {
 		return binaryOwlParser.getEntityProperties(ce);
 	}
 	
 	
-	public ArrayList<OWLEntityProperties> getEntityProperties(
+	public ArrayList<Entity> getEntityProperties(
 		String iri, String name, String property, String value, String match, String operator, String type
 	) throws NoSuchAlgorithmException {
 		Class<?> cls;

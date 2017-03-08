@@ -1,5 +1,7 @@
 package de.onto_med.webprotege_rest_api;
 
+//import org.glassfish.jersey.media.multipart.MultiPartFeature;
+
 import de.onto_med.webprotege_rest_api.health.WebProtegeHealthCheck;
 import de.onto_med.webprotege_rest_api.resources.MetaProjectResource;
 import de.onto_med.webprotege_rest_api.resources.ProjectResource;
@@ -46,6 +48,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		environment.jersey().register(metaProjectResource);
 		environment.jersey().register(projectResource);
 		environment.jersey().register(new StaticResource());
+//		environment.jersey().register(MultiPartFeature.class);
 	}
 
 }

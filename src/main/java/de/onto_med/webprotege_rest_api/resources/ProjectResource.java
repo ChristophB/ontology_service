@@ -2,8 +2,6 @@ package de.onto_med.webprotege_rest_api.resources;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,7 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Singleton;
 
-import de.onto_med.webprotege_rest_api.api.OWLEntityProperties;
+import de.onto_med.webprotege_rest_api.api.Entity;
+import de.onto_med.webprotege_rest_api.api.Project;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 import de.onto_med.webprotege_rest_api.views.ProjectView;
 import de.onto_med.webprotege_rest_api.views.SimpleListView;
@@ -41,11 +40,11 @@ public class ProjectResource extends Resource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response getOntologyImportsJson(@Context HttpHeaders headers, @PathParam("id") String projectId) {
 		try {
-			List<MediaType> accepts = headers.getAcceptableMediaTypes();
-			if (accepts.contains(MediaType.APPLICATION_JSON_TYPE)) {
-				return Response.ok(getProjectManager(projectId).getImportedOntologyIds()).build();
+			ArrayList<String> importedOntologyIds = getProjectManager(projectId).getImportedOntologyIds();
+			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(importedOntologyIds).build();
 			} else {
-				return Response.ok(new SimpleListView(getProjectManager(projectId).getImportedOntologyIds(), "Imported Ontologies")).build();
+				return Response.ok(new SimpleListView(importedOntologyIds, "Imported Ontologies")).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
@@ -56,9 +55,19 @@ public class ProjectResource extends Resource {
 	
 	@GET
 	@Path("/{id}/overview")
-	@Produces(MediaType.TEXT_HTML)
-	public ProjectView getProject(@PathParam("id") String projectId) throws Exception {
-		return new ProjectView(metaProjectManager.getProjectManager(projectId));
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response getProject(@Context HttpHeaders headers, @PathParam("id") String projectId) {
+		try {
+			ProjectManager project = metaProjectManager.getProjectManager(projectId);
+			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(new Project(project)).build();
+			} else {
+				return Response.ok(new ProjectView(project)).build();
+			}
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+			throw new WebApplicationException(e.getMessage());
+		}
 	}
 	
 	
@@ -90,7 +99,7 @@ public class ProjectResource extends Resource {
 	 * @param ce class expression
 	 * @return search result
 	 */
-	public ArrayList<OWLEntityProperties> reason(String projectId, String ce) {
+	public ArrayList<Entity> reason(String projectId, String ce) {
 		try {
 			ProjectManager manager = getProjectManager(projectId);
 			
@@ -118,7 +127,7 @@ public class ProjectResource extends Resource {
 	 * @param operator logical operator to combine name and property, defaults to 'and')
 	 * @return ArrayList of OWLEntityProperties or error message
 	 */
-	public ArrayList<OWLEntityProperties> searchOntologyEntities(
+	public ArrayList<Entity> searchOntologyEntities(
 		String projectId, String name, String iri, String property, String value,
 		String type, String match, String operator
 	) {
