@@ -4,6 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -165,6 +166,10 @@ public class ProjectManager {
 	 */
 	public HashMap<String, String> getOntologyIris() throws OWLOntologyCreationException {
 		return binaryOwlParser.getOntologyIris();
+	}
+
+	public String getProjectShortForm() {
+		return XMLUtils.getNCNameSuffix(this.getProjectIri());
 	}
 
 }

@@ -69,10 +69,14 @@ public class ProjectResource extends Resource {
 	 */
 	@GET
 	@Path("/{id}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public Object getFullRDFDocument(@PathParam("id") String projectId) {
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getFullRDFDocument(@PathParam("id") String projectId) {
 		try {
-			return getProjectManager(projectId).getFullRDFDocument();
+			ProjectManager pm = getProjectManager(projectId);
+			return Response.ok(pm.getFullRDFDocument())
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						String.format("attachment; filename='%s.owl'", pm.getProjectShortForm()))
+				.build();
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 			throw new WebApplicationException(e.getMessage());
@@ -90,7 +94,7 @@ public class ProjectResource extends Resource {
 		try {
 			ProjectManager manager = getProjectManager(projectId);
 			
-			/* TODO: remove this workarround */
+			/* TODO: remove this workaround */
 			HashMap<String, String> shortFormMap = manager.getOntologyIris();
 			for (String shortForm : shortFormMap.keySet()) {
 				ce = ce.replaceAll(shortForm + ":([\\w_\\-]+)", "<" + shortFormMap.get(shortForm) + "#$1>");

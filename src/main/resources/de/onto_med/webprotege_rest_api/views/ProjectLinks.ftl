@@ -18,7 +18,7 @@
 				Reason this Ontology
 			</a>
 			
-			<a class="list-group-item" href="/project/${project.projectId}" target="_blank">
+			<a class="list-group-item" href="/project/${project.projectId}">
 				OWL File (RDF/XML)
 			</a>
 		</div>
