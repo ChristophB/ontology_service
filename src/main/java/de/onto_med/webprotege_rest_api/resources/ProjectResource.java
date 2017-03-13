@@ -11,6 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -56,13 +57,13 @@ public class ProjectResource extends Resource {
 	@GET
 	@Path("/{id}/overview")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response getProject(@Context HttpHeaders headers, @PathParam("id") String projectId) {
+	public Response getProject(@Context HttpHeaders headers, @Context UriInfo uriInfo, @PathParam("id") String projectId) {
 		try {
 			ProjectManager project = metaProjectManager.getProjectManager(projectId);
 			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(new Project(project)).build();
 			} else {
-				return Response.ok(new ProjectView(project)).build();
+				return Response.ok(new ProjectView(project, uriInfo.getBaseUri().getHost())).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
