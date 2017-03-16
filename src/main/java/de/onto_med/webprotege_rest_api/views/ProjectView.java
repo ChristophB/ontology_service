@@ -4,17 +4,22 @@ import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 import io.dropwizard.views.View;
 
 public class ProjectView extends View {
-	private final ProjectManager ontologyManager;
-	private final String baseUri;
+	protected final ProjectManager projectManager;
+	protected final String baseUri;
+	private static final String template = "Project.ftl";
 	
-	public ProjectView(ProjectManager ontologyManager, String baseUri) {
-		super("Project.ftl");
-		this.ontologyManager = ontologyManager;
+	protected ProjectView(String template, ProjectManager projectManager, String baseUri) {
+		super(template);
+		this.projectManager = projectManager;
 		this.baseUri = baseUri;
+	}
+	
+	public ProjectView(ProjectManager projectManager, String baseUri) {
+		this(template, projectManager, baseUri);
 	}
 
 	public ProjectManager getProject() {
-		return ontologyManager;
+		return projectManager;
 	}
 	
 	public String getWebProtegeUri() {

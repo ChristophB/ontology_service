@@ -4,7 +4,7 @@
   <groupId>de.onto_med.webprotege_rest_api</groupId>
   <artifactId>rest-api</artifactId>
   <name>WebProtégé REST-full API</name>
-  <version>0.0.1</version>
+  <version>0.1</version>
   <description>REST-full API to access Ontologies developed and stored in WebProtégé.</description>
   <build>
     <finalName>service</finalName>

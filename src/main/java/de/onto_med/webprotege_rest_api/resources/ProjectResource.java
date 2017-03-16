@@ -20,6 +20,7 @@ import com.google.inject.Singleton;
 import de.onto_med.webprotege_rest_api.api.Entity;
 import de.onto_med.webprotege_rest_api.api.Project;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
+import de.onto_med.webprotege_rest_api.views.ProjectTaxonomyView;
 import de.onto_med.webprotege_rest_api.views.ProjectView;
 import de.onto_med.webprotege_rest_api.views.SimpleListView;
 
@@ -53,7 +54,36 @@ public class ProjectResource extends Resource {
 		}
 	}
 	
+
+	/**
+	 * Returns project's ontology as simple taxonomy.
+	 * @return HTML page or JSON object
+	 */
+	@GET
+	@Path("/{id}/taxonomy")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response getTaxonomy(@Context HttpHeaders headers, @Context UriInfo uriInfo, @PathParam("id") String projectId) {
+		try {
+			ProjectManager project = metaProjectManager.getProjectManager(projectId);
+			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
+				return Response.ok(project.getTaxonomy()).build();
+			} else {
+				return Response.ok(new ProjectTaxonomyView(project, uriInfo.getBaseUri().getHost(), project.getTaxonomy())).build();
+			}
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+			throw new WebApplicationException(e.getMessage());
+		}
+	}
 	
+	
+	/**
+	 * Returns some generic information about project's ontology
+	 * @param headers
+	 * @param uriInfo
+	 * @param projectId
+	 * @return HTML page or JSON list of generic information
+	 */
 	@GET
 	@Path("/{id}/overview")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })

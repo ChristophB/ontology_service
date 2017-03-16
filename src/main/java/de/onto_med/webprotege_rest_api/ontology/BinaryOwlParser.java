@@ -59,6 +59,7 @@ import com.google.common.collect.Multimap;
 
 import de.onto_med.webprotege_rest_api.RestApiApplication;
 import de.onto_med.webprotege_rest_api.api.Entity;
+import de.onto_med.webprotege_rest_api.api.TaxonomyNode;
 
 public class BinaryOwlParser extends OntologyParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestApiApplication.class);
@@ -245,6 +246,19 @@ public class BinaryOwlParser extends OntologyParser {
 	
 	
 	/**
+	 * Returns a multidimensional Array of class labels/names.
+	 * @return ArrayList containing the taxonomy of this ontology.
+	 */
+	public TaxonomyNode getTaxonomy() {
+		@SuppressWarnings("deprecation")
+		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		OWLClass topClass = reasoner.getTopClassNode().iterator().next();
+		
+		return getTaxonomyForOWLClass(topClass, reasoner);
+	}
+	
+	
+	/**
 	 * Returns the full RDF document for this ontology as string.
 	 * @return string containing the full RDF document.
 	 */
@@ -299,6 +313,23 @@ public class BinaryOwlParser extends OntologyParser {
 		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
 		
 		return reasoner.isConsistent();
+	}
+	
+	
+	private TaxonomyNode getTaxonomyForOWLClass(OWLClass cls, OWLReasoner reasoner) {
+		TaxonomyNode taxonomy = new TaxonomyNode(
+			StringUtils.defaultIfBlank(getLabel(cls), XMLUtils.getNCNameSuffix(cls.getIRI())),
+			cls.getIRI().toString(),
+			reasoner.getInstances(cls, true).getNodes().size()
+		);
+		
+		for (Node<OWLClass> node : reasoner.getSubClasses(cls, true)) {
+			OWLClass subClass = node.iterator().next();
+			if (subClass.isBottomEntity()) continue;
+			taxonomy.addChildNode(getTaxonomyForOWLClass(subClass, reasoner));
+		}
+		
+		return taxonomy;
 	}
 	
 	

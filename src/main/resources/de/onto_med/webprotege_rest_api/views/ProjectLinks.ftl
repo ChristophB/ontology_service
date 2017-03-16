@@ -18,11 +18,16 @@
 				Reason this Ontology
 			</a>
 			
+			<a class="list-group-item <@active "Taxonomy" />"
+			   href="/project/${project.projectId}/taxonomy">
+			   	Taxonomy
+			</a>
+			
 			<a class="list-group-item" href="/project/${project.projectId}">
 				OWL File (RDF/XML)
 			</a>
 			
-			<a class="list-group-item" href="${webProtegeUri}">
+			<a class="list-group-item" href="${webProtegeUri}" target="_blank">
 				Open in WebProt&#233;g&#233;
 			</a>
 		</div>

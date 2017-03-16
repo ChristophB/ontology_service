@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import de.onto_med.webprotege_rest_api.api.Entity;
+import de.onto_med.webprotege_rest_api.api.TaxonomyNode;
 import de.onto_med.webprotege_rest_api.ontology.BinaryOwlParser;
 
 /**
@@ -58,6 +59,11 @@ public class ProjectManager {
 	 */
 	public ArrayList<String> getImportedOntologyIds() {
 		return binaryOwlParser.getImportedOntologyIds();
+	}
+	
+	
+	public TaxonomyNode getTaxonomy() {
+		return binaryOwlParser.getTaxonomy();
 	}
 	
 	
