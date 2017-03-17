@@ -486,8 +486,8 @@ public class BinaryOwlParser extends OntologyParser {
 	
 	
 	private String getLabel(OWLEntity entity) {
-		for (OWLAnnotation a : EntitySearcher.getAnnotations(entity, getRootOntology())) {
-			if (a.getValue() instanceof OWLLiteral)
+		for (OWLAnnotation a : EntitySearcher.getAnnotationObjects(entity, getRootOntology())) {
+			if (a.getProperty().isLabel() && a.getValue() instanceof OWLLiteral)
 				return ((OWLLiteral) a.getValue()).getLiteral();
 		}
 		return "";

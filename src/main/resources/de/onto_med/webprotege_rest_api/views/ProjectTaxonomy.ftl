@@ -35,9 +35,7 @@
 			<div class="row">
 				<div class="list">
 					<ul>
-						<li>
-							<@class taxonomy />
-						</li>
+						<li><@class taxonomy /></li>
 					</ul>
 				</div>
 			</div>
