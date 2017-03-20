@@ -3,6 +3,8 @@ package de.onto_med.webprotege_rest_api.manager;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -17,6 +19,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import de.onto_med.webprotege_rest_api.api.Entity;
+import de.onto_med.webprotege_rest_api.api.Individual;
 import de.onto_med.webprotege_rest_api.api.TaxonomyNode;
 import de.onto_med.webprotege_rest_api.ontology.BinaryOwlParser;
 
@@ -96,6 +99,11 @@ public class ProjectManager {
 	}
 	
 
+	public List<String> classifyIndividual(Individual individual) throws NoSuchAlgorithmException {
+		return binaryOwlParser.classifyIndividual(individual);
+	}
+	
+	
 	/**
 	 * Returns the full RDF document for this ontology as string.
 	 * @return string containing the full RDF document.

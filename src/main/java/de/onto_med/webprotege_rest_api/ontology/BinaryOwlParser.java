@@ -8,7 +8,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.HermiT.Reasoner;
@@ -59,7 +62,10 @@ import com.google.common.collect.Multimap;
 
 import de.onto_med.webprotege_rest_api.RestApiApplication;
 import de.onto_med.webprotege_rest_api.api.Entity;
+import de.onto_med.webprotege_rest_api.api.Individual;
+import de.onto_med.webprotege_rest_api.api.Property;
 import de.onto_med.webprotege_rest_api.api.TaxonomyNode;
+import de.onto_med.webprotege_rest_api.resources.MetaProjectResource;
 
 public class BinaryOwlParser extends OntologyParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestApiApplication.class);
@@ -106,6 +112,22 @@ public class BinaryOwlParser extends OntologyParser {
 		return getRootOntology().getOntologyID().getOntologyIRI().get().toString();
 	}
 	
+	
+	public List<String> classifyIndividual(Individual individual) throws NoSuchAlgorithmException {
+		List<String> classifications = new ArrayList<String>();
+		OWLNamedIndividual tempIndividual = createNamedIndividual(individual);
+		
+		@SuppressWarnings("deprecation")
+		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		
+		for (Node<OWLClass> node : reasoner.getTypes(tempIndividual, true)) {
+			classifications.addAll(node.getEntities().stream().map(
+				e -> e.getIRI().toString()
+			).collect(Collectors.toList()));
+		}
+		
+		return classifications;
+	}
 	
 	/**
 	 * Searches for entities which match the class expression.
@@ -186,6 +208,63 @@ public class BinaryOwlParser extends OntologyParser {
 		}
 		
 		return getEntities(resultset);
+	}
+	
+	
+	private OWLNamedIndividual createNamedIndividual(Individual individual) throws NoSuchAlgorithmException {
+		OWLDataFactory factory = manager.getOWLDataFactory();
+		Set<OWLAxiom> axioms = new TreeSet<OWLAxiom>();
+		OWLNamedIndividual namedIndividual = factory.getOWLNamedIndividual(
+			IRI.create(String.valueOf(individual.getProperties().hashCode()))
+		);
+		
+		for (String type : individual.getTypes()) {
+			OWLClass cls = factory.getOWLClass(IRI.create(type));
+			axioms.add(factory.getOWLClassAssertionAxiom(cls, namedIndividual));
+		}
+		
+		for (Property property : individual.getProperties()) {
+			IRI iri = IRI.create(property.getIri());
+			
+			for (String value : property.getValues()) {
+				if (getRootOntology().containsAnnotationPropertyInSignature(iri)) {
+					OWLAnnotationProperty annotationProperty = factory.getOWLAnnotationProperty(iri);
+					axioms.add(factory.getOWLAnnotationAssertionAxiom(
+						namedIndividual.getIRI(), factory.getOWLAnnotation(annotationProperty, getLiteralForValueAndClassName(value, property.getClassName()))
+					));
+				}
+				if (getRootOntology().containsDataPropertyInSignature(iri)) {
+					OWLDataProperty dataProperty = factory.getOWLDataProperty(iri);
+					axioms.add(factory.getOWLDataPropertyAssertionAxiom(
+						dataProperty, namedIndividual, getLiteralForValueAndClassName(value, property.getClassName())
+					));
+				}
+				if (getRootOntology().containsObjectPropertyInSignature(iri)) {
+					OWLObjectProperty objectProperty = factory.getOWLObjectProperty(iri);
+					axioms.add(factory.getOWLObjectPropertyAssertionAxiom(
+						objectProperty, namedIndividual, factory.getOWLNamedIndividual(IRI.create(value))
+					));
+				}
+			}
+		}
+		
+		manager.addAxioms(getRootOntology(), axioms);
+		
+		return namedIndividual;
+	}
+	
+	private OWLLiteral getLiteralForValueAndClassName(String value, String className) throws NoSuchAlgorithmException {
+		OWLDataFactory factory = manager.getOWLDataFactory();
+		
+		switch (className) {
+			case "int":     return factory.getOWLLiteral(Integer.valueOf(value));
+			case "boolean": return factory.getOWLLiteral(Boolean.valueOf(value));
+			case "double":  return factory.getOWLLiteral(Double.valueOf(value));
+			case "float":   return factory.getOWLLiteral(Float.valueOf(value));
+			default:
+				LoggerFactory.getLogger(MetaProjectResource.class).warn("No className was given.");
+				return factory.getOWLLiteral(value);
+		}
 	}
 	
 	

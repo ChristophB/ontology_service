@@ -2,7 +2,11 @@ package de.onto_med.webprotege_rest_api.resources;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.inject.Singleton;
 
 import de.onto_med.webprotege_rest_api.api.Entity;
+import de.onto_med.webprotege_rest_api.api.Individual;
 import de.onto_med.webprotege_rest_api.api.Project;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 import de.onto_med.webprotege_rest_api.views.ProjectTaxonomyView;
@@ -124,6 +129,24 @@ public class ProjectResource extends Resource {
 	}
 	
 
+	@POST
+	@Path("/{id}/classify")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response classifyIndividuals(@PathParam("id") String projectId, List<Individual> individuals) {
+		try {
+			ProjectManager pm = getProjectManager(projectId);
+			
+			for (Individual individual : individuals) {
+				individual.setClassification(pm.classifyIndividual(individual));
+			}
+			return Response.ok(individuals).build();
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+			throw new WebApplicationException(e.getMessage());
+		}
+	}
+	
 	/**
 	 * Reasons over the specified ontologies with supplied classexpression
 	 * @param id projectId of the project
