@@ -115,7 +115,7 @@
 										<#list result.annotationProperties?keys as key>
 											<a href="/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
 												${key?html}
-											</a>:
+											</a>
 											<ul>
 												<#list result.annotationProperties[key] as value>
 													<li>${value?html}</li>
@@ -133,7 +133,7 @@
 										<#list result.dataTypeProperties?keys as key>
 											<a href="/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
 												${key?html}
-											</a>:
+											</a>
 											<ul>
 												<#list result.dataTypeProperties[key] as value>
 													<li>${value?html}</li>
@@ -151,7 +151,7 @@
 										<#list result.objectProperties?keys as key>
 											<a href="/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
 												${key?html}
-											</a>:
+											</a>
 											<ul>
 												<#list result.objectProperties[key] as value>
 													<li>${value?html}</li>
