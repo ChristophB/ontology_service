@@ -4,7 +4,7 @@ This is a Dropwizard bases REST-API for WebProtegé. Specifications are not fixe
 
 # Installation
 
-* Java jre7 is required to start the service. (If you dont want to mess around with configurations consider using the Dockerfile below.)
+* Java jre8 is required to start the service. (If you dont want to mess around with configurations consider using the Dockerfile below.)
 * Use one of our released jar files or compile the Maven Project in Eclipse and create your own one.
 * Place a file *config.yml* in the same directory as the jar file. *config.yml* should contain all configurations such as the location of WebProteges data dictionary and ports (use the configuration file of this git repository as reference).
 * Run `java -jar service.jar server config.yml` on command line.
@@ -13,9 +13,9 @@ This is a Dropwizard bases REST-API for WebProtegé. Specifications are not fixe
 Use the following Dockerfile for an easy setup of our rest-api on a server with installed webprotege.
 
 ```Dockerfile
-FROM openjdk:7
+FROM openjdk:8-jre
 
-WORKDIR /home
+WORKDIR /data/webprotege-rest-api
 
 EXPOSE 8080 8081
 
@@ -29,7 +29,7 @@ Assumption:
 Run in a bash:
 ```bash
 > docker build -t webprotege-rest-api .
-> docker run --name webprotege-rest-api -d -p 8080:8080 -p 8081:8081 -v /data/webprotege:/data/webprotege -v /path/to/rest-api:/home webprotege-rest-api
+> docker run --name webprotege-rest-api -d -p 8080:8080 -p 8081:8081 -v /data/webprotege:/data/webprotege -v /path/to/rest-api:/data/weprotege-rest-api webprotege-rest-api
 ```
 
 # Usage
