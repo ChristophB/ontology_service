@@ -5,4 +5,5 @@ server:
   adminConnectors:
   - type: http
     port: 8081
+  rootPath: "/app/*"
 dataPath: "H:/Projekte/Leipzig Health Atlas/Development/Web-Service/data/webprotege/"
