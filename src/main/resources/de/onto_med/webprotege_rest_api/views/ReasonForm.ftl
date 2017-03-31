@@ -28,7 +28,7 @@
 					e.g.: class <i>Example</i> in ontology "http://example.com/example_ontology" becomes "example_ontology:Example".
 				</p>
 			
-				<form action="/reason" method="get" class="form" role="form">
+				<form action="/webprotege-rest-api/reason" method="get" class="form" role="form">
 					<div class="form-group row">
 						<label for="ce" class="col-md-2">Class Expression:</label>
 						<div class="col-md-6">

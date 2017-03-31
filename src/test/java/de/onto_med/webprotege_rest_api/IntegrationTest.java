@@ -28,6 +28,8 @@ public class IntegrationTest {
     	);
 
     private Client client;
+    
+    private final String url = "http://localhost:8080/webprotege-rest-api";
 
     @Before
     public void setUp() throws Exception {
@@ -42,14 +44,14 @@ public class IntegrationTest {
     @Test
     public void testProjectsList() throws Exception {
         Object response
-        	= client.target("http://localhost:8080/projects")
+        	= client.target(url + "/projects")
         	.request(MediaType.APPLICATION_JSON_TYPE)
         	.get(Object.class);
         
         assertThat(response).isExactlyInstanceOf(new ArrayList<ProjectManager>().getClass());
         
         response
-        	= client.target("http://localhost:8080/projects")
+        	= client.target(url + "/projects")
         	.request(MediaType.TEXT_HTML_TYPE)
         	.get(String.class);
         
@@ -60,7 +62,7 @@ public class IntegrationTest {
     @Test
     public void testDocumentation() throws Exception {
     	String response
-    		= client.target("http://localhost:8080")
+    		= client.target(url)
     		.request(MediaType.TEXT_HTML_TYPE)
     		.get(String.class);
     	
@@ -71,36 +73,36 @@ public class IntegrationTest {
     @Test
     public void testEntityForm() throws Exception {
     	String response
-    		= client.target("http://localhost:8080/entity-form")
+    		= client.target(url + "/entity-form")
     		.request(MediaType.TEXT_HTML_TYPE)
     		.get(String.class);
     	
     	assertThat(response).isExactlyInstanceOf(String.class);
-    	assertThat(response).contains("<form action=\"/entity\" method=\"get\"");
+    	assertThat(response).contains("<form action=\"/webprotege-rest-api/entity\" method=\"get\"");
     }
     
     @Test
     public void testReasonForm() throws Exception {
     	String response
-    		= client.target("http://localhost:8080/reason-form")
+    		= client.target(url + "/reason-form")
     		.request(MediaType.TEXT_HTML_TYPE)
     		.get(String.class);
     	
     	assertThat(response).isExactlyInstanceOf(String.class);
-    	assertThat(response).contains("<form action=\"/reason\" method=\"get\"");
+    	assertThat(response).contains("<form action=\"/webprotege-rest-api/reason\" method=\"get\"");
     }
     
     @Test
     public void testEntitySearch() throws Exception {
     	Object response
-    		= client.target("http://localhost:8080/entity")
+    		= client.target(url + "/entity")
             .request(MediaType.APPLICATION_JSON_TYPE)
             .get();
                 
         assertThat(((javax.ws.rs.core.Response) response).getStatus()).isNotEqualTo(Response.SC_FOUND);
     	
     	response
-    		= client.target("http://localhost:8080/entity")
+    		= client.target(url + "/entity")
     		.request(MediaType.TEXT_HTML_TYPE)
     		.get(String.class);
     	
@@ -110,14 +112,14 @@ public class IntegrationTest {
     @Test
     public void testReasoning() throws Exception {
     	Object response
-    		= client.target("http://localhost:8080/reason")
+    		= client.target(url + "/reason")
            	.request(MediaType.APPLICATION_JSON_TYPE)
            	.get();
             
         assertThat(((javax.ws.rs.core.Response) response).getStatus()).isNotEqualTo(Response.SC_FOUND);
         
         response
-        	= client.target("http://localhost:8080/reason")
+        	= client.target(url + "/reason")
     		.request(MediaType.TEXT_HTML_TYPE)
     		.get(String.class);
     	
@@ -127,14 +129,14 @@ public class IntegrationTest {
     @Test
     public void testBinaryOwlUtilsgetIriMethod() throws Exception {
     	Object response
-			= client.target("http://localhost:8080/project/http%3A%2F%2Fwww.lha.org%2Fduo")
+			= client.target(url + "/project/http%3A%2F%2Fwww.lha.org%2Fduo")
 			.request(MediaType.APPLICATION_OCTET_STREAM_TYPE)
 			.get();
         
     	assertThat(((javax.ws.rs.core.Response) response).getStatus()).isEqualTo(Response.SC_OK);
     
 	    response
-	    	= client.target("http://localhost:8080/entity")
+	    	= client.target(url + "/entity")
 	    	.queryParam("ontologies", "http://www.lha.org/duo")
 	    	.queryParam("name", "file")
 			.request(MediaType.APPLICATION_JSON_TYPE)
@@ -143,7 +145,7 @@ public class IntegrationTest {
 		assertThat((String) response).contains("http://www.lha.org/duo#File");
 		
 		response
-	    	= client.target("http://localhost:8080/reason")
+	    	= client.target(url + "/reason")
 	    	.queryParam("ontologies", "http://imise.uni-leipzig.de/inference-test")
 	    	.queryParam("ce", "inference-test:Normal")
 			.request(MediaType.APPLICATION_JSON_TYPE)

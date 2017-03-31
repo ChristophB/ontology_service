@@ -23,7 +23,7 @@
 			</div>
 			
 			<div class="row well">
-				<form action="<#if project??>/project/${project.projectId}</#if>/entity" method="get" class="form" role="form">
+				<form action="/webprotege-rest-api/entity" method="get" class="form" role="form">
 					<div class="form-group row">
 						<label for="type" class="col-md-2">Type:</label>
 						<div class="col-md-3">

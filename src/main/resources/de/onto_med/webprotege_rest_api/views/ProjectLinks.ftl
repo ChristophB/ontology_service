@@ -4,26 +4,26 @@
 	<div class="col-md-12 text-center">
 		<div class="list-inline list-group list-group-horizontal">
 			<a class="list-group-item <@active "Overview" />"
-			   href="/project/${project.projectId}/overview">
+			   href="/webprotege-rest-api/project/${project.projectId}/overview">
 				Overview
 			</a>
 			
 			<a class="list-group-item <@active "Query this Ontology" />"
-			   href="/entity-form?ontologies=${project.projectId}">
+			   href="/webprotege-rest-api/entity-form?ontologies=${project.projectId}">
 				Query this Ontology
 			</a>
 			
 			<a class="list-group-item <@active "Reason this Ontology" />"
-			   href="/reason-form?ontologies=${project.projectId}">
+			   href="/webprotege-rest-api/reason-form?ontologies=${project.projectId}">
 				Reason this Ontology
 			</a>
 			
 			<a class="list-group-item <@active "Taxonomy" />"
-			   href="/project/${project.projectId}/taxonomy">
+			   href="/webprotege-rest-api/project/${project.projectId}/taxonomy">
 			   	Taxonomy
 			</a>
 			
-			<a class="list-group-item" href="/project/${project.projectId}">
+			<a class="list-group-item" href="/webprotege-rest-api/project/${project.projectId}">
 				OWL File (RDF/XML)
 			</a>
 			

@@ -6,7 +6,7 @@
 
 <#macro class node>
 	<#if node.children??><a class="expander" href="#">[+]</a></#if>
-	<a href="/entity?ontologies=${project.projectId}&iri=${node.iri?url}&match=exact" target="_blank">
+	<a href="/webprotege-rest-api/entity?ontologies=${project.projectId}&iri=${node.iri?url}&match=exact" target="_blank">
 		${node.name} <#if node.individuals?? && (node.individuals > 0)>[${node.individuals}]</#if>
 	</a>
 	<#if node.children??>

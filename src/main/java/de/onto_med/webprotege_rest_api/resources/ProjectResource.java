@@ -98,7 +98,7 @@ public class ProjectResource extends Resource {
 			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(new Project(project)).build();
 			} else {
-				return Response.ok(new ProjectView(project, uriInfo.getBaseUri().getHost())).build();
+				return Response.ok(new ProjectView(project, uriInfo.getBaseUri().getHost() + "/webprotege")).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());

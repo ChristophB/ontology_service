@@ -33,7 +33,7 @@
 					
 					<tbody>
 						<#list projects as project>
-							<tr class="clickable-row" data-href="/project/${project.projectId}/overview" style="cursor:pointer">
+							<tr class="clickable-row" data-href="/webprotege-rest-api/project/${project.projectId}/overview" style="cursor:pointer">
 								<td>${project.projectId}</td>
 								<td>${project.name}</td>
 								<td>${project.description}</td>
