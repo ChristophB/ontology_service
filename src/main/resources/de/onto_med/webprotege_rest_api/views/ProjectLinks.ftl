@@ -1,3 +1,4 @@
+<#setting url_escaping_charset="UTF-8">
 <#macro active name><#if current_submenu == name>active</#if></#macro>
 
 <div class="row">
@@ -9,12 +10,12 @@
 			</a>
 			
 			<a class="list-group-item <@active "Query this Ontology" />"
-			   href="/webprotege-rest-api/entity-form?ontologies=${project.projectId}">
+			   href="/webprotege-rest-api/entity-form?ontologies=${project.projectIri?url}">
 				Query this Ontology
 			</a>
 			
 			<a class="list-group-item <@active "Reason this Ontology" />"
-			   href="/webprotege-rest-api/reason-form?ontologies=${project.projectId}">
+			   href="/webprotege-rest-api/reason-form?ontologies=${project.projectIri?url}">
 				Reason this Ontology
 			</a>
 			
