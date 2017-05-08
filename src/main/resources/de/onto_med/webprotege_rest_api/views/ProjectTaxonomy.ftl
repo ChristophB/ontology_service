@@ -5,7 +5,7 @@
 <#setting url_escaping_charset="UTF-8">
 
 <#macro class node>
-	<#if node.children??><a class="expander" href="#">[+]</a></#if>
+	<#if node.children??><a class="expander" href="#"><i class="fa fa-plus" style="color:black" aria-hidden="true"></i></a></#if>
 	<a href="/webprotege-rest-api/entity?ontologies=${project.projectId}&iri=${node.iri?url}&match=exact" target="_blank">
 		${node.name} <#if node.individuals?? && (node.individuals > 0)>[${node.individuals}]</#if>
 	</a>
@@ -46,6 +46,7 @@
 				$(document).ready(function() {
 					$('.list li .expander').click(function() {
         				$(this).parent().children('ul').toggle();
+        				$(this).children('i').toggleClass('fa-minus');
     				});
     			});
     		</#noparse>
