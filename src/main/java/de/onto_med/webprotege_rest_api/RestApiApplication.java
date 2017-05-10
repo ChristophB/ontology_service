@@ -7,6 +7,7 @@ import de.onto_med.webprotege_rest_api.resources.MetaProjectResource;
 import de.onto_med.webprotege_rest_api.resources.ProjectResource;
 import de.onto_med.webprotege_rest_api.resources.StaticResource;
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -33,6 +34,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	@Override
 	public void initialize(Bootstrap<RestApiConfiguration> bootstrap) { 
 		bootstrap.addBundle(new ViewBundle());
+		bootstrap.addBundle(new AssetsBundle());
 	}
 
 	
