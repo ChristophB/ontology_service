@@ -22,6 +22,7 @@ Run in a bash:
 
 # Usage
 
-* Access "[host ip]:[allocated port]" to get a list of possible queries.
+* The rootPath of the Dropwizard application is set to "/webprotege-rest-api"
+* Access "[host ip]:[allocated port]/webprotege-rest-api" to get a list of possible queries.
 
-e.g.: `localhost:8080` for the documentation, `localhost:8080/projects` for a list of available project ontologies and their ids.
+e.g.: `localhost:8080/webprotege-rest-api` for the documentation, `localhost:8080/webprotege-rest-api/projects` for a list of available project ontologies and their ids.
