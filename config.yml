@@ -7,3 +7,4 @@ server:
     port: 8081
   rootPath: /webprotege-rest-api/*
 dataPath: "/data/webprotege/"
+webprotegeRelativeToWebroot: "/webprotege"

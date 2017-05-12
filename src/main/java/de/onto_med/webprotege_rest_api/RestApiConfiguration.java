@@ -15,7 +15,7 @@ import io.dropwizard.Configuration;
  */
 public class RestApiConfiguration extends Configuration {
 	@NotEmpty private String dataPath;
-	
+	@NotEmpty private String webprotegeRelativeToWebroot;
 	
 	
 	@JsonProperty
@@ -25,7 +25,17 @@ public class RestApiConfiguration extends Configuration {
 	
 	
 	@JsonProperty
-	public void setDataPath(String path) {
-		dataPath = path;
+	public void setDataPath(String dataPath) {
+		this.dataPath = dataPath;
+	}
+	
+	@JsonProperty
+	public String getWebprotegeRelativeToWebroot() {
+		return webprotegeRelativeToWebroot;
+	}
+	
+	@JsonProperty
+	public void setWebprotegeRelativeToWebroot(String webprotegeRelativeToWebroot) {
+		this.webprotegeRelativeToWebroot = webprotegeRelativeToWebroot;
 	}
 }

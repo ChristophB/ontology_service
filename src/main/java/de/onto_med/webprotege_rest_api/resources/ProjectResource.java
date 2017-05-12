@@ -36,7 +36,11 @@ import de.onto_med.webprotege_rest_api.views.SimpleListView;
 @Path("/project")
 @Singleton
 public class ProjectResource extends Resource {
+	private String webprotegeRelativeToWebroot;
 	
+	public ProjectResource(String webprotegeRelativeToWebroot) {
+		this.webprotegeRelativeToWebroot = webprotegeRelativeToWebroot;
+	}
 	/**
 	 * Returns a list of imported ontologies for a specified project.
 	 * @param projectid ID of the WebProtegé project
@@ -98,7 +102,7 @@ public class ProjectResource extends Resource {
 			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(new Project(project)).build();
 			} else {
-				return Response.ok(new ProjectView(project, uriInfo.getBaseUri().getHost() + "/webprotege")).build();
+				return Response.ok(new ProjectView(project, uriInfo.getBaseUri().getHost() + webprotegeRelativeToWebroot)).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());

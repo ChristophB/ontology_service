@@ -4,15 +4,16 @@
 <#assign current_submenu = "Taxonomy">
 <#setting url_escaping_charset="UTF-8">
 
-<#macro class node>
-	<#if node.children??><a class="expander" href="#"><i class="fa fa-plus" style="color:black" aria-hidden="true"></i></a></#if>
-	<a href="/webprotege-rest-api/entity?ontologies=${project.projectId}&iri=${node.iri?url}&match=exact" target="_blank">
+<#macro class_node node>
+	<span class="class-node" iri="${node.iri}">
 		${node.name} <#if node.individuals?? && (node.individuals > 0)>[${node.individuals}]</#if>
-	</a>
+	</span>
+	
+	
 	<#if node.children??>
-		<ul class="children">
+		<ul>
 			<#list node.children as child>
-				<li><@class child /></li>
+				<li><@class_node child /></li>
 			</#list>
 		</ul>
 	</#if>
@@ -33,24 +34,31 @@
 			<#include "ProjectLinks.ftl">
 			
 			<div class="row">
-				<div class="list">
+				<div id="taxonomy-tree" class="well col-md-5">
 					<ul>
-						<li><@class taxonomy /></li>
+						<li class="jstree-open"><@class_node taxonomy /></li>
 					</ul>
 				</div>
+				
+				<div id="class-description" class="col-md-5"></div>
 			</div>
 		</div>
 		
 		<script type="text/javascript">
-			<#noparse>
-				$(document).ready(function() {
-					$('.list li .expander').click(function() {
-        				$(this).parent().children('ul').toggle();
-        				$(this).children('i').toggleClass('fa-minus');
-    				});
-    			});
-    		</#noparse>
-    	</script>
+			$('#taxonomy-tree').jstree();
+			
+			$('.class-node').on('click', function(e) {
+				var data = {
+					ontologies: '${project.projectId}',
+					iri:         e.target.getAttribute('iri'),
+					match:       'exact'
+				};
+				
+				$.getJSON('/webprotege-rest-api/entity', data, function(json) {
+					$('#class-description').html(JSON.stringify(json, null, 2));
+				}, 'application/json');
+			});
+		</script>
 	
 		<#include "Footer.ftl">
 	</body>

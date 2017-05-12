@@ -42,7 +42,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	public void run(RestApiConfiguration configuration, Environment environment) throws Exception {
 		environment.healthChecks().register("template", new WebProtegeHealthCheck(configuration));
 		MetaProjectResource metaProjectResource = new MetaProjectResource(configuration.getDataPath());
-		ProjectResource projectResource = new ProjectResource();
+		ProjectResource projectResource = new ProjectResource(configuration.getWebprotegeRelativeToWebroot());
 		
 		metaProjectResource.setProjectResource(projectResource);
 		projectResource.setMetaProjectManager(metaProjectResource.getMetaProjectManager());
