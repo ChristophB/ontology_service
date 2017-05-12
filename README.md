@@ -20,6 +20,38 @@ Run in a bash:
 > docker run --name webprotege-rest-api -d -p 8080:8080 -p 8081:8081 -v /data/webprotege:/data/webprotege christophbe/webprotege-rest-api
 ```
 
+##Or use docker-compose:
+```yml
+version: '2'
+
+services:
+  mongodb:
+    container_name: mongodb
+    image: 'mongo'
+    restart: always
+  webprotege:
+    container_name: webprotege
+    image: 'christophbe/webprotege'
+    restart: always
+    ports:
+     - '80:8080'
+    volumes:
+     - webprotege-data:/data/webprotege
+    links:
+     - mongodb
+  webprotege-rest-api:
+    container_name: webprotege-rest-api
+    image: 'christophbe/webprotege-rest-api'
+    restart: always
+    ports:
+     - '81:8080'
+    volumes:
+     - webprotege-data:/data/webprotege
+
+volumes:
+  webprotege-data:
+```
+
 # Usage
 
 * The rootPath of the Dropwizard application is set to "/webprotege-rest-api"
