@@ -3,13 +3,12 @@ package de.onto_med.webprotege_rest_api.views;
 import java.util.ArrayList;
 
 import de.onto_med.webprotege_rest_api.api.CondencedProject;
-import io.dropwizard.views.View;
 
-public class ProjectListView extends View {
+public class ProjectListView extends RestApiView {
 	private final ArrayList<CondencedProject> projects;
 	
-	public ProjectListView(ArrayList<CondencedProject> projectList) {
-		super("ProjectList.ftl");
+	public ProjectListView(ArrayList<CondencedProject> projectList, String rootPath) {
+		super("ProjectList.ftl", rootPath);
 		this.projects = projectList;
 	}
 	

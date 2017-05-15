@@ -43,13 +43,15 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		environment.healthChecks().register("template", new WebProtegeHealthCheck(configuration));
 		MetaProjectResource metaProjectResource = new MetaProjectResource(configuration.getDataPath());
 		ProjectResource projectResource = new ProjectResource(configuration.getWebprotegeRelativeToWebroot());
+		StaticResource staticResource = new StaticResource();
 		
-		metaProjectResource.setProjectResource(projectResource);
-		projectResource.setMetaProjectManager(metaProjectResource.getMetaProjectManager());
+		metaProjectResource.setProjectResource(projectResource).setRootPath(configuration.getRootPath());
+		projectResource.setMetaProjectManager(metaProjectResource.getMetaProjectManager()).setRootPath(configuration.getRootPath());
+		staticResource.setRootPath(configuration.getRootPath());
 		
 		environment.jersey().register(metaProjectResource);
 		environment.jersey().register(projectResource);
-		environment.jersey().register(new StaticResource());
+		environment.jersey().register(staticResource);
 //		environment.jersey().register(MultiPartFeature.class);
 	}
 

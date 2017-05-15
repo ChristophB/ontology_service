@@ -8,3 +8,4 @@ server:
   rootPath: /webprotege-rest-api/*
 dataPath: "/data/webprotege/"
 webprotegeRelativeToWebroot: "/webprotege"
+rootPath: /webprotege-rest-api/

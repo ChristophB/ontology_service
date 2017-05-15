@@ -13,10 +13,10 @@ public class EntityFormView extends FormView {
 
 	
 	public EntityFormView(
- 		String type, String name, String iri, String property,
+ 		String rootPath, String type, String name, String iri, String property,
  		String value, String match, String operator, String ontologies
  	) {
-		super("EntityForm.ftl");
+		super("EntityForm.ftl", rootPath);
 		this.type       = type;
 		this.name       = name;
 		this.iri        = iri;

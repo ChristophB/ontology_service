@@ -1,13 +1,11 @@
 package de.onto_med.webprotege_rest_api.views;
 
-import io.dropwizard.views.View;
-
-public class FormView extends View {
+public class FormView extends RestApiView {
 	private String error;
 	
 	
-	protected FormView(String templateName) {
-		super(templateName);
+	protected FormView(String templateName, String rootPath) {
+		super(templateName, rootPath);
 	}
 	
 	

@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import de.onto_med.webprotege_rest_api.views.DocumentationView;
 import de.onto_med.webprotege_rest_api.views.EntityFormView;
 import de.onto_med.webprotege_rest_api.views.ReasonFormView;
+import de.onto_med.webprotege_rest_api.views.RestApiView;
 
 /**
  * Resource class which handles all requests for documentations.
@@ -16,9 +17,16 @@ import de.onto_med.webprotege_rest_api.views.ReasonFormView;
  */
 @Path("/")
 public class StaticResource {
+	private String rootPath;
 	
 	public StaticResource() {
 		super();
+	}
+	
+	public StaticResource setRootPath(String rootPath) {
+		this.rootPath = rootPath;
+		
+		return this;
 	}
 
 	
@@ -30,7 +38,7 @@ public class StaticResource {
 	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
 	public DocumentationView getDocumentation() {
-		return new DocumentationView();
+		return new DocumentationView(rootPath);
 	}
 
 
@@ -47,7 +55,7 @@ public class StaticResource {
 		@QueryParam("operator") String operator,
 		@QueryParam("ontologies") String ontologies
 	) {
-		return new EntityFormView(type, name, iri, property, value, match, operator, ontologies);
+		return new EntityFormView(rootPath, type, name, iri, property, value, match, operator, ontologies);
 	}
 	
 	
@@ -55,7 +63,7 @@ public class StaticResource {
 	@Path("/reason-form")
 	@Produces(MediaType.TEXT_HTML)
 	public ReasonFormView getReasonForm(@QueryParam("ce") String ce, @QueryParam("ontologies") String ontologies) {
-		return new ReasonFormView(ce, ontologies);
+		return new ReasonFormView(rootPath, ce, ontologies);
 	}
 	
 }

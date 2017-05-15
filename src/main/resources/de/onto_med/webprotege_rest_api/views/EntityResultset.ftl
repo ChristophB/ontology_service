@@ -35,7 +35,7 @@
 									<td>Superclasses:</td>
 									<td>
 										<#list result.superclasses as superclass>
-											<a href="/webprotege-rest-api/entity?iri=${superclass?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${superclass?url}&match=exact&ontologies=${result.projectId}">
 												${superclass?html}
 											</a><br>
 										</#list>
@@ -48,7 +48,7 @@
 									<td>Subclasses:</td>
 									<td>
 										<#list result.subclasses as subclass>
-											<a href="/webprotege-rest-api/entity?iri=${subclass?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${subclass?url}&match=exact&ontologies=${result.projectId}">
 												${subclass?html}
 											</a><br>
 										</#list>
@@ -61,7 +61,7 @@
 									<td>Disjoint Classes:</td>
 									<td>
 										<#list result.disjointClasses as disjointClasses>
-											<a href="/webprotege-rest-api/entity?iri=${disjointClasses?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${disjointClasses?url}&match=exact&ontologies=${result.projectId}">
 												${disjointClasses?html}
 											</a><br>
 										</#list>
@@ -74,7 +74,7 @@
 									<td>Equivalent Classes:</td>
 									<td>
 										<#list result.equivalentClasses as equivalentClasses>
-											<a href="/webprotege-rest-api/entity?iri=${equivalentClasses?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${equivalentClasses?url}&match=exact&ontologies=${result.projectId}">
 												${equivalentClasses?html}
 											</a><br>
 										</#list>
@@ -87,7 +87,7 @@
 									<td>Types:</td>
 									<td>
 										<#list result.types as type>
-											<a href="/webprotege-rest-api/entity?iri=${type?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${type?url}&match=exact&ontologies=${result.projectId}">
 												${type?html}
 											</a><br>
 										</#list>
@@ -100,7 +100,7 @@
 									<td>Same Individuals:</td>
 									<td>
 										<#list result.sameIndividuals as sameIndividual>
-											<a href="/webprotege-rest-api/entity?iri=${sameIndividual?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${sameIndividual?url}&match=exact&ontologies=${result.projectId}">
 												${sameIndividual?html}
 											</a><br>
 										</#list>
@@ -113,7 +113,7 @@
 									<td>AnnotationProperties:</td>
 									<td>
 										<#list result.annotationProperties?keys as key>
-											<a href="/webprotege-rest-api/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
 												${key?html}
 											</a>
 											<ul>
@@ -131,7 +131,7 @@
 									<td>DataTypeProperties:</td>
 									<td>
 										<#list result.dataTypeProperties?keys as key>
-											<a href="/webprotege-rest-api/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
 												${key?html}
 											</a>
 											<ul>
@@ -149,7 +149,7 @@
 									<td>ObjectProperties:</td>
 									<td>
 										<#list result.objectProperties?keys as key>
-											<a href="/webprotege-rest-api/entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${key?url}&match=exact&ontologies=${result.projectId}">
 												${key?html}
 											</a>
 											<ul>
@@ -167,7 +167,7 @@
 									<td>Individuals:</td>
 									<td>
 										<#list result.individuals as individual>
-											<a href="/webprotege-rest-api/entity?iri=${individual?url}&match=exact&ontologies=${result.projectId}">
+											<a href="${rootPath}entity?iri=${individual?url}&match=exact&ontologies=${result.projectId}">
 												${individual?html}
 											</a><br>
 										</#list>

@@ -8,8 +8,8 @@ public class ProjectTaxonomyView extends ProjectView {
 	private static final String template = "ProjectTaxonomy.ftl";
 	
 	
-	public ProjectTaxonomyView(ProjectManager projectManager, String baseUri, TaxonomyNode taxonomy) {
-		super(template, projectManager, baseUri);
+	public ProjectTaxonomyView(ProjectManager projectManager, String rootPath, String baseUri, TaxonomyNode taxonomy) {
+		super(template, projectManager, rootPath, baseUri);
 		this.taxonomy = taxonomy;
 	}
 	

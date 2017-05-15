@@ -1,10 +1,8 @@
 package de.onto_med.webprotege_rest_api.views;
 
-import io.dropwizard.views.View;
-
-public class DocumentationView extends View {
+public class DocumentationView extends RestApiView {
 	
-	public DocumentationView() {
-		super("Documentation.ftl");
+	public DocumentationView(String rootPath) {
+		super("Documentation.ftl", rootPath);
 	}
 }

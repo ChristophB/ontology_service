@@ -56,10 +56,10 @@ public class MetaProjectResource extends Resource {
 	}
 	
 	
-	public ProjectResource setProjectResource(ProjectResource pr) {
+	public MetaProjectResource setProjectResource(ProjectResource pr) {
 		projectResource = pr;
 		
-		return projectResource;
+		return this;
 	}
 	
 	
@@ -72,7 +72,7 @@ public class MetaProjectResource extends Resource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response clearCache() {
 		metaProjectManager.clearCache();
-		return Response.seeOther(UriBuilder.fromUri("/webprotege-rest-api").build()).build();
+		return Response.seeOther(UriBuilder.fromUri(rootPath).build()).build();
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class MetaProjectResource extends Resource {
 			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(projectList).build();
 			} else {
-				return Response.ok(new ProjectListView(projectList)).build();
+				return Response.ok(new ProjectListView(projectList, rootPath)).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
@@ -138,7 +138,7 @@ public class MetaProjectResource extends Resource {
 				return Response.ok(e.getMessage()).build();
 			} else {
 				EntityFormView view = new EntityFormView(
-					type, name, iri, property, value, match, operator, ontologies
+					rootPath, type, name, iri, property, value, match, operator, ontologies
 				);
 				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
 				return Response.ok(view).build();
@@ -191,7 +191,7 @@ public class MetaProjectResource extends Resource {
 			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(e.getMessage()).build();
 			} else {
-				ReasonFormView view = new ReasonFormView(ce, ontologies);
+				ReasonFormView view = new ReasonFormView(rootPath, ce, ontologies);
 				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
 				return Response.ok(view).build();
 			}

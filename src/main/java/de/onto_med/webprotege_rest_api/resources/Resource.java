@@ -15,6 +15,7 @@ public abstract class Resource {
 	 * Path to WebProtegés data folder.
 	 */
 	protected MetaProjectManager metaProjectManager;
+	protected String rootPath;
 	
 	
 	protected ProjectManager getProjectManager(String projectId) throws Exception {
@@ -25,10 +26,16 @@ public abstract class Resource {
 		return headers.getAcceptableMediaTypes().contains(mediaType);
 	}
 	
-	public MetaProjectManager setMetaProjectManager(MetaProjectManager mpm) {
+	public Resource setMetaProjectManager(MetaProjectManager mpm) {
 		metaProjectManager = mpm;
 		
-		return metaProjectManager;
+		return this;
+	}
+	
+	public Resource setRootPath(String rootPath) {
+		this.rootPath = rootPath;
+		
+		return this;
 	}
 	
 }

@@ -5,8 +5,8 @@ public class ReasonFormView extends FormView {
 	private String ce;
 	private String ontologies;
 	
-	public ReasonFormView(String ce, String ontologies) {
-		super("ReasonForm.ftl");
+	public ReasonFormView(String rootPath, String ce, String ontologies) {
+		super("ReasonForm.ftl", rootPath);
 		this.ce = ce;
 		this.ontologies = ontologies;
 	}
