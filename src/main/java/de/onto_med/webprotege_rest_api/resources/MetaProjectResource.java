@@ -18,6 +18,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import com.google.inject.Singleton;
@@ -71,7 +72,7 @@ public class MetaProjectResource extends Resource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response clearCache() {
 		metaProjectManager.clearCache();
-		return Response.ok("Cache cleared!").build();
+		return Response.seeOther(UriBuilder.fromUri("/webprotege-rest-api").build()).build();
 	}
 	
 	/**

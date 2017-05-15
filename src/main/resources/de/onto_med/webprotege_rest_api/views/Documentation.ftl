@@ -27,7 +27,7 @@
 		    		<tbody>
 						
 						<tr>
-							<td colspan="2">/clear_cache</td>
+							<td colspan="2"><a href="/clear_cache">/clear_cache</a></td>
 							<td>Clears the ProjectManager cache to speed up the cognition of changes via WebProt&#233;g&#233;.</td>
 						</tr>
 						
