@@ -6,4 +6,4 @@ ADD service.jar .
 
 EXPOSE 8080 8081
 
-CMD java -jar service.jar server config.yml
+CMD [ 'sh', 'init.sh' ]

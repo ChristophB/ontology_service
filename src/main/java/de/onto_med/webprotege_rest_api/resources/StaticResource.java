@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import de.onto_med.webprotege_rest_api.views.DocumentationView;
 import de.onto_med.webprotege_rest_api.views.EntityFormView;
 import de.onto_med.webprotege_rest_api.views.ReasonFormView;
-import de.onto_med.webprotege_rest_api.views.RestApiView;
 
 /**
  * Resource class which handles all requests for documentations.
