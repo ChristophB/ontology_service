@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ "$ROOT_PATH" ]; then
     sed -i "s/rootPath: \/webprotege-rest-api\//rootPath: $ROOT_PATH/g" config.yml
 fi
