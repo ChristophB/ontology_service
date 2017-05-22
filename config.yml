@@ -6,6 +6,6 @@ server:
   - type: http
     port: 8081
   rootPath: /webprotege-rest-api/*
-dataPath: "/data/webprotege/"
+dataPath: "H:/Projekte/Leipzig Health Atlas/Development/Web-Service/data/webprotege/"
 webprotegeRelativeToWebroot: /webprotege
-rootPath: /webprotege-rest-api/
+rootPath: /webprotege-rest-api
