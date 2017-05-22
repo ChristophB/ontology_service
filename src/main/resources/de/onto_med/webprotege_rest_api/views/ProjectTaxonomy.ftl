@@ -46,11 +46,11 @@
 		
 		<script type="text/javascript">
 			$('#taxonomy-tree').jstree();
-			
-			$('.class-node').on('click', function(e) {
+		
+			$('#taxonomy-tree').bind('select_node.jstree', function(e, selected) {
 				var data = {
 					ontologies: '${project.projectId}',
-					iri:         e.target.getAttribute('iri'),
+					iri:         jQuery.parseHTML(selected.node.text)[0].getAttribute('iri'),
 					match:       'exact'
 				};
 				
