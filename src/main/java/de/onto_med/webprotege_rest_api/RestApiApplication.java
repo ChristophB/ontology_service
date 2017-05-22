@@ -1,5 +1,11 @@
 package de.onto_med.webprotege_rest_api;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.ws.rs.WebApplicationException;
+
 //import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import de.onto_med.webprotege_rest_api.health.WebProtegeHealthCheck;
@@ -41,6 +47,10 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	@Override
 	public void run(RestApiConfiguration configuration, Environment environment) throws Exception {
 		environment.healthChecks().register("template", new WebProtegeHealthCheck(configuration));
+		
+		if (Files.notExists(Paths.get(configuration.getDataPath())))
+			throw new WebApplicationException("The specified WebProtégé data folder does not exist.");
+		
 		MetaProjectResource metaProjectResource = new MetaProjectResource(configuration.getDataPath());
 		ProjectResource projectResource = new ProjectResource(configuration.getWebprotegeRelativeToWebroot());
 		StaticResource staticResource = new StaticResource();
