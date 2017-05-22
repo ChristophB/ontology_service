@@ -54,7 +54,7 @@
 					match:       'exact'
 				};
 				
-				$.getJSON('${rootPath}entity', data, function(json) {
+				$.getJSON('${rootPath}/entity', data, function(json) {
 					$('#class-description').html(JSON.stringify(json, null, 2));
 				}, 'application/json');
 			});

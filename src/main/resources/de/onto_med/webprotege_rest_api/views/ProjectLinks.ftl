@@ -5,26 +5,26 @@
 	<div class="col-md-12 text-center">
 		<div class="list-inline list-group list-group-horizontal">
 			<a class="list-group-item <@active "Overview" />"
-			   href="${rootPath}project/${project.projectId}/overview">
+			   href="${rootPath}/project/${project.projectId}/overview">
 				Overview
 			</a>
 			
 			<a class="list-group-item <@active "Query this Ontology" />"
-			   href="${rootPath}entity-form?ontologies=${project.projectIri?url}">
+			   href="${rootPath}/entity-form?ontologies=${project.projectIri?url}">
 				Query this Ontology
 			</a>
 			
 			<a class="list-group-item <@active "Reason this Ontology" />"
-			   href="${rootPath}reason-form?ontologies=${project.projectIri?url}">
+			   href="${rootPath}/reason-form?ontologies=${project.projectIri?url}">
 				Reason this Ontology
 			</a>
 			
 			<a class="list-group-item <@active "Taxonomy" />"
-			   href="${rootPath}project/${project.projectId}/taxonomy">
+			   href="${rootPath}/project/${project.projectId}/taxonomy">
 			   	Taxonomy
 			</a>
 			
-			<a class="list-group-item" href="${rootPath}project/${project.projectId}">
+			<a class="list-group-item" href="${rootPath}/project/${project.projectId}">
 				OWL File (RDF/XML)
 			</a>
 			
