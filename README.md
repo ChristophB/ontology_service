@@ -17,7 +17,7 @@ Assumption:
 
 Run in a bash:
 ```bash
-> docker run --name webprotege-rest-api -d -p 8080:8080 -p 8081:8081 -e ROOT_PATH="/webprotege-rest-api" -e WEBPROTEGE="/webprotege" -v /data/webprotege:/data/webprotege christophbe/webprotege-rest-api
+> docker run --name webprotege-rest-api -d -p 8080:8080 -p 8081:8081 -e ROOT_PATH="/webprotege-rest-api" -e WEBPROTEGE="/webprotege" -v /data/webprotege:/data/webprotege ontomed/webprotege-rest-api
 ```
 
 You can specify the following environment variables:
@@ -45,7 +45,7 @@ services:
       - mongodb
   webprotege-rest-api:
     container_name: webprotege-rest-api
-    image: 'christophbe/webprotege-rest-api'
+    image: 'ontomed/webprotege-rest-api'
     restart: always
     ports:
       - '81:8080'
