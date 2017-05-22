@@ -24,7 +24,7 @@ You can specify the following environment variables:
 * ROOT_PATH: path relative to webroot, where the rest-API will be running (default: /webprotege-rest-api)
 * WEBPROTEGE: path relative to webroot, where WebProtégé is running
 
-##Or use docker-compose:
+## Or use docker-compose:
 ```yml
 version: '2'
 
@@ -38,19 +38,22 @@ services:
     image: 'christophbe/webprotege'
     restart: always
     ports:
-     - '80:8080'
+      - '80:8080'
     volumes:
-     - webprotege-data:/data/webprotege
+      - webprotege-data:/data/webprotege
     links:
-     - mongodb
+      - mongodb
   webprotege-rest-api:
     container_name: webprotege-rest-api
     image: 'christophbe/webprotege-rest-api'
     restart: always
     ports:
-     - '81:8080'
+      - '81:8080'
     volumes:
-     - webprotege-data:/data/webprotege
+      - webprotege-data:/data/webprotege
+    environment:
+      - ROOT_PATH:/webprotege-rest-api
+      - WEBPROTEGE:/webprotege
 
 volumes:
   webprotege-data:
