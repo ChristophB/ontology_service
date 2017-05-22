@@ -40,7 +40,7 @@
 					</ul>
 				</div>
 				
-				<div id="class-description" class="col-md-5"></div>
+				<pre id="class-description" class="col-md-7"></pre>
 			</div>
 		</div>
 		
