@@ -77,7 +77,7 @@ public class ProjectResource extends Resource {
 			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(project.getTaxonomy()).build();
 			} else {
-				return Response.ok(new ProjectTaxonomyView(project, rootPath, uriInfo.getBaseUri().getHost(), project.getTaxonomy())).build();
+				return Response.ok(new ProjectTaxonomyView(project, rootPath, uriInfo.getBaseUri().getHost() + webprotegeRelativeToWebroot, project.getTaxonomy())).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
