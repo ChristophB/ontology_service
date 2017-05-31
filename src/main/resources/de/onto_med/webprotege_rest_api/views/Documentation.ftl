@@ -53,15 +53,35 @@
 						</tr>
 						
 						<tr>
-							<td rowspan="3">/project</td>
+							<td rowspan="4">/project/{id}</td>
 						</tr>
 						<tr>
-							<td>/{id}</td>
+							<td>/</td>
 							<td>Get full OWL document as RDF/XML.</td>
 						</tr>
 						
 						<tr>
-							<td>/{id}/overview</td>
+							<td>/classify</td>
+							<td>
+								<p>
+									Creates an individual from JSON and returns its infered classes. (only available via JSON request)<br>
+									JSON template:
+									<small>
+										<pre>
+[ { "types": [ "http://onto-med.de/auxology#patient" ],
+    "properties": [
+      { "iri":       "http://onto-med.de/auxology#bmi_sds",
+        "className": "float",
+        "values":    [ "-1.5f" ] }
+    ] }, ... 
+]</pre>
+    								</small>
+								</p>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>/overview</td>
 							<td><p>Short overview page for the specified project.</p></td>
 						</tr>
 						
