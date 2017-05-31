@@ -35,7 +35,7 @@ services:
     restart: always
   webprotege:
     container_name: webprotege
-    image: 'ontomed/webprotege'
+    image: 'christophbe/webprotege'
     restart: always
     ports:
       - '80:8080'
