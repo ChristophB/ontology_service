@@ -13,6 +13,7 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 //import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import de.onto_med.webprotege_rest_api.health.WebProtegeHealthCheck;
+import de.onto_med.webprotege_rest_api.resources.ExampleResource;
 import de.onto_med.webprotege_rest_api.resources.MetaProjectResource;
 import de.onto_med.webprotege_rest_api.resources.ProjectResource;
 import de.onto_med.webprotege_rest_api.resources.StaticResource;
@@ -81,10 +82,13 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		projectResource.setMetaProjectManager(metaProjectResource.getMetaProjectManager()).setRootPath(configuration.getRootPath());
 		staticResource.setRootPath(configuration.getRootPath());
 		
+		/*** Register resources here: ***/
 		environment.jersey().register(metaProjectResource);
 		environment.jersey().register(projectResource);
 		environment.jersey().register(staticResource);
-//		environment.jersey().register(MultiPartFeature.class);
+		// environment.jersey().register(MultiPartFeature.class);
+		
+		environment.jersey().register(new ExampleResource(metaProjectResource.getMetaProjectManager()));
 	}
 
 }

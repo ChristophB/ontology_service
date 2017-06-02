@@ -69,7 +69,6 @@ public class MetaProjectResource extends Resource {
 	 */
 	@GET
 	@Path("/clear_cache")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response clearCache() {
 		metaProjectManager.clearCache();
 		return Response.seeOther(UriBuilder.fromUri(rootPath).build()).build();

@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.binaryowl.owlapi.BinaryOWLOntologyDocumentParserFactory;
@@ -59,7 +61,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
-
 import de.onto_med.webprotege_rest_api.RestApiApplication;
 import de.onto_med.webprotege_rest_api.api.Entity;
 import de.onto_med.webprotege_rest_api.api.Individual;
@@ -104,6 +105,13 @@ public class BinaryOwlParser extends OntologyParser {
 		projectPath = dataPath + "/data-store/project-data/" + projectId;
 		rootPath    = projectPath + "/ontology-data/root-ontology.binary";
 		importsPath = projectPath + "/imports-cache";
+		
+		File projectDir = new File(projectPath);
+		if (!(projectDir.exists() && projectDir.isDirectory() && projectDir.canRead()))
+			throw new WebApplicationException(String.format(
+				"BinaryOwlParser could not access directory for project '%s'.", projectId
+			));
+		
 		manager = getOwlOntologyManager();
 	}
 	
