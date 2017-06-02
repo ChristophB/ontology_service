@@ -31,7 +31,7 @@ public class MetaProjectManager {
 	private String dataPath;
 	
 	private LoadingCache<String, ProjectManager> projectManagers = CacheBuilder.newBuilder()
-		.expireAfterWrite(10, TimeUnit.MINUTES)
+		.expireAfterAccess(10, TimeUnit.MINUTES)
 		.build(
 			new CacheLoader<String, ProjectManager>() {
 				@Override
@@ -98,6 +98,7 @@ public class MetaProjectManager {
 	 * @throws ExecutionException 
 	 */
 	public ProjectManager getProjectManager(String projectId) throws NoContentException, ExecutionException {
+		if (projectId == null) throw new NoContentException("projectId can not be null.");
 		return projectManagers.get(projectId);
 	}
 }

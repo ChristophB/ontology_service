@@ -1,7 +1,10 @@
 package de.onto_med.webprotege_rest_api.resources;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NoContentException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +20,13 @@ public abstract class Resource {
 	protected MetaProjectManager metaProjectManager;
 	protected String rootPath;
 	
+	public Resource() {}
 	
-	protected ProjectManager getProjectManager(String projectId) throws Exception {
+	public Resource(MetaProjectManager mpm) {
+		metaProjectManager = mpm;
+	}
+	
+	protected ProjectManager getProjectManager(String projectId) throws NoContentException, ExecutionException {
 		return metaProjectManager.getProjectManager(projectId);
 	}
 	

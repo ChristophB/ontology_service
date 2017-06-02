@@ -85,7 +85,7 @@ public class PprjParser extends OntologyParser {
 	
 	
 	/**
-	 * Checks if an project in WebProtegé is public.
+	 * Checks if a project in WebProtégé is public.
 	 * A project is public if it is not in trash
 	 * and if it has allowedOperation "Read" for allowedGroup "World"
 	 * @param project instance of class Project of the knowledgebase
