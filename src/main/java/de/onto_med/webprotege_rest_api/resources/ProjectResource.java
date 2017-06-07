@@ -55,7 +55,7 @@ public class ProjectResource extends Resource {
 			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(importedOntologyIds).build();
 			} else {
-				return Response.ok(new SimpleListView(importedOntologyIds, "Imported Ontologies")).build();
+				return Response.ok(new SimpleListView(rootPath, importedOntologyIds, "Imported Ontologies")).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());

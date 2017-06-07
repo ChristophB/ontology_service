@@ -1,14 +1,13 @@
 package de.onto_med.webprotege_rest_api.views;
 
 import java.util.ArrayList;
-import io.dropwizard.views.View;
 
-public class SimpleListView extends View {
+public class SimpleListView extends RestApiView {
 	private final ArrayList<String> resultset;
 	private final String column;
 	
-	public SimpleListView(ArrayList<String> resultset, String column) {
-		super("SimpleList.ftl");
+	public SimpleListView(String rootPath, ArrayList<String> resultset, String column) {
+		super("SimpleList.ftl", rootPath);
 		this.resultset = resultset;
 		this.column    = column;
 	}

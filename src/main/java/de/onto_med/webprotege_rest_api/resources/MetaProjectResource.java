@@ -147,7 +147,7 @@ public class MetaProjectResource extends Resource {
 		if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 			return Response.ok(result).build();
 		} else {
-			return Response.ok(new EntityResultsetView(result)).build();
+			return Response.ok(new EntityResultsetView(rootPath, result)).build();
 		}
 	}
 	
@@ -199,7 +199,7 @@ public class MetaProjectResource extends Resource {
 		if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 			return Response.ok(result).build();
 		} else {
-			return Response.ok(new EntityResultsetView(result)).build();
+			return Response.ok(new EntityResultsetView(rootPath, result)).build();
 		}
 	}
 	
