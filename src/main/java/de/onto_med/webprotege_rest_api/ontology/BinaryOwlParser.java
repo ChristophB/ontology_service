@@ -278,25 +278,25 @@ public class BinaryOwlParser extends OntologyParser {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Boolean hasProperty(OWLEntity entity, String property, String value, Boolean exact) {
-		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
-    	
-	    for (OWLDataProperty dataProperty : extractPropertyByNameFromSet(
-	    		property, getRootOntology().getDataPropertiesInSignature(Imports.INCLUDED), exact
-	    )) {
-			Collection<OWLObject> values = (Collection) EntitySearcher.getDataPropertyValues((OWLIndividual) entity, dataProperty, getRootOntology());
-	    	
-			if (values.isEmpty()) continue;
-	    	if (valueCollectionContains(values, value)) resultset.add(entity);
-	    }
-	    	
-	    for (OWLObjectProperty objectProperty : extractPropertyByNameFromSet(
-	    		property, getRootOntology().getObjectPropertiesInSignature(Imports.INCLUDED), exact
-	    )) {
-	    	Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) entity, objectProperty, getRootOntology());
-	    	
-	    	if (values.isEmpty()) continue;
-		    if (valueCollectionContains(values, value)) return true;
-	    }
+		if (entity.isOWLNamedIndividual()) {
+		    for (OWLDataProperty dataProperty : extractPropertyByNameFromSet(
+		    		property, getRootOntology().getDataPropertiesInSignature(Imports.INCLUDED), exact
+		    )) {
+				Collection<OWLObject> values = (Collection) EntitySearcher.getDataPropertyValues((OWLIndividual) entity, dataProperty, getRootOntology());
+		    	
+				if (values.isEmpty()) continue;
+		    	if (valueCollectionContains(values, value)) return true;
+		    }
+		    	
+		    for (OWLObjectProperty objectProperty : extractPropertyByNameFromSet(
+		    		property, getRootOntology().getObjectPropertiesInSignature(Imports.INCLUDED), exact
+		    )) {
+		    	Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) entity, objectProperty, getRootOntology());
+		    	
+		    	if (values.isEmpty()) continue;
+			    if (valueCollectionContains(values, value)) return true;
+		    }
+		}
 	    
 	    for (OWLAnnotationProperty annotationProperty : extractPropertyByNameFromSet(
 	    		property, getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED), exact
