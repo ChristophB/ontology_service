@@ -6,15 +6,19 @@
   <name>WebProtégé REST-full API</name>
   <description>REST-full API to access Ontologies developed and stored in WebProtégé.</description>
   <properties>
-    <dropwizard.version>1.0.7</dropwizard.version>
-    <jackson.version>2.8.7</jackson.version>
     <binaryowl.version>2.0.1</binaryowl.version>
     <owlapi.version>4.3.1</owlapi.version>
     <protege.version>3.5.1.1</protege.version>
     <hermit.version>1.3.8.413</hermit.version>
-    <hibernate.version>5.1.0.Final</hibernate.version>
+    
+    <dropwizard.version>1.1.1</dropwizard.version>
+    <jackson.version>2.8.7</jackson.version>
+    <hibernate.version>5.2.2.Final</hibernate.version>
+    <guava.version>20.0</guava.version>
+    <mockito.version>2.7.6</mockito.version>
+    
     <yamlbeans.version>1.11</yamlbeans.version>
-    <guava.version>19.0</guava.version>
+    
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
@@ -83,6 +87,12 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
     </dependency>
     <!--<dependency>
       <groupId>org.glassfish.jersey.media</groupId>
