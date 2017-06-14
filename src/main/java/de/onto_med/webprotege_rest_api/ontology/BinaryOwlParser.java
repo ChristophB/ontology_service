@@ -61,12 +61,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
-import de.onto_med.webprotege_rest_api.api.Entity;
-import de.onto_med.webprotege_rest_api.api.Individual;
-import de.onto_med.webprotege_rest_api.api.Property;
+
 import de.onto_med.webprotege_rest_api.api.TaxonomyNode;
 import de.onto_med.webprotege_rest_api.api.Timer;
+import de.onto_med.webprotege_rest_api.api.json.Entity;
+import de.onto_med.webprotege_rest_api.api.json.Individual;
+import de.onto_med.webprotege_rest_api.api.json.Property;
 
+/**
+ * Instances of this class are parsers for binary formated ontologies.
+ * @author Christoph Beger
+ */
 public class BinaryOwlParser extends OntologyParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BinaryOwlParser.class);
 	private static final Double MATCH_THRESHOLD = 0.8;
@@ -123,8 +128,7 @@ public class BinaryOwlParser extends OntologyParser {
 		List<String> classifications = new ArrayList<String>();
 		OWLNamedIndividual tempIndividual = createNamedIndividual(individual);
 		
-		@SuppressWarnings("deprecation")
-		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		OWLReasoner reasoner = getReasoner();
 		
 		for (Node<OWLClass> node : reasoner.getTypes(tempIndividual, true)) {
 			classifications.addAll(node.getEntities().stream().map(
@@ -140,10 +144,9 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @param string class expression as string
 	 * @return List of entities 
 	 */
-	public ArrayList<Entity> getEntityProperties(String string) {
-		@SuppressWarnings("deprecation")
-		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
-		OWLClassExpression ce = convertStringToClassExpression(string);
+	public List<Entity> getEntityPropertiesByClassExpression(String classExpression) {
+		OWLReasoner reasoner = getReasoner();
+		OWLClassExpression ce = convertStringToClassExpression(classExpression);
 		ArrayList<Entity> result = new ArrayList<Entity>();
 		
 		for (Node<OWLNamedIndividual> node : reasoner.getInstances(ce, false)) {
@@ -153,11 +156,30 @@ public class BinaryOwlParser extends OntologyParser {
 		return result;
 	}
 	
+	public List<Entity> annotate(String word, Boolean exact) throws NoSuchAlgorithmException {
+		return getEntityProperties(null, word, null, null, exact, false, OWLClass.class);
+	}
 	
-	public ArrayList<Entity> getEntityProperties(
+	public List<Entity> getEntityProperties(String iri) throws NoSuchAlgorithmException {
+		return getEntityProperties(iri, null, null, null, true, false, OWLEntity.class);
+	}
+	
+	public List<Entity> getEntityProperties(String name, Boolean exact) throws NoSuchAlgorithmException {
+		return getEntityProperties(null, name, null, null, exact, false, OWLEntity.class);
+	}
+	
+	public List<Entity> getEntityProperties(String name, String property, String value, Boolean exact, Boolean and) throws NoSuchAlgorithmException {
+		return getEntityProperties(null, name, property, value, exact, and, OWLEntity.class);
+	}
+	
+	public List<Entity> getEntityProperties(String iri, String name, String property, String value, Boolean exact, Boolean and) throws NoSuchAlgorithmException {
+		return getEntityProperties(iri, name, property, value, exact, and, OWLEntity.class);
+	}
+	
+	public List<Entity> getEntityProperties(
 		String iri, String name, String property, String value, Boolean exact, Boolean and, Class<?> cls
 	) throws NoSuchAlgorithmException {
-		ArrayList<OWLEntity> resultset = new ArrayList<OWLEntity>();
+		List<OWLEntity> resultset = new ArrayList<OWLEntity>();
 		
 		for (OWLEntity entity : getRootOntology().getSignature(Imports.INCLUDED)) {
 			Boolean iriMatch      = false;
@@ -335,8 +357,7 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @return ArrayList containing the taxonomy of this ontology.
 	 */
 	public TaxonomyNode getTaxonomy() {
-		@SuppressWarnings("deprecation")
-		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		OWLReasoner reasoner = getReasoner();
 		OWLClass topClass = reasoner.getTopClassNode().iterator().next();
 		
 		return getTaxonomyForOWLClass(topClass, reasoner);
@@ -394,10 +415,14 @@ public class BinaryOwlParser extends OntologyParser {
 	}
 	
 	public boolean isConsistent() {
-		@SuppressWarnings("deprecation")
-		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		OWLReasoner reasoner = getReasoner();
 		
 		return reasoner.isConsistent();
+	}
+	
+	@SuppressWarnings("deprecation")
+	public OWLReasoner getReasoner() {
+		return new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
 	}
 	
 	
@@ -464,8 +489,8 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @param entities set of OWLEntitys
 	 * @return List of OWLEntityProperties
 	 */
- 	private ArrayList<Entity> getEntities(ArrayList<OWLEntity> entities) {
-		ArrayList<Entity> properties = new ArrayList<Entity>();
+ 	private List<Entity> getEntities(List<OWLEntity> entities) {
+		List<Entity> properties = new ArrayList<Entity>();
 
 		for (OWLEntity entity : entities) {
 	    	properties.add(getEntity(entity));
@@ -480,9 +505,8 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @return properties as OWLEntityProperties
 	 */
 	private Entity getEntity(OWLEntity entity) {
-		Entity properties = new Entity();
-		@SuppressWarnings("deprecation")
-		OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(getRootOntology());
+		Entity properties    = new Entity();
+		OWLReasoner reasoner = getReasoner();
 		
 		properties.setProjectId(projectId);
     	properties.setIri(entity.getIRI().toString());

@@ -1,11 +1,14 @@
 package de.onto_med.webprotege_rest_api.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.NoContentException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +18,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.inject.Singleton;
 
 import de.onto_med.webprotege_rest_api.api.BinaryOwlUtils;
-import de.onto_med.webprotege_rest_api.api.CondencedProject;
 import de.onto_med.webprotege_rest_api.api.Timer;
+import de.onto_med.webprotege_rest_api.api.json.CondencedProject;
 import de.onto_med.webprotege_rest_api.ontology.PprjParser;
 import edu.stanford.smi.protege.model.Instance;
 
@@ -30,6 +33,11 @@ public class MetaProjectManager {
 	private PprjParser pprjParser;
 	private String dataPath;
 	
+	/**
+	 * This is the Cache, wich contains all previously loaded projectManagers.
+	 * Expiration time is set to 10 minutes after the last access.
+	 * If a a non existend key is used, the cache tries to instantiate a respective ProjectManager.
+	 */
 	private LoadingCache<String, ProjectManager> projectManagers = CacheBuilder.newBuilder()
 		.expireAfterAccess(10, TimeUnit.MINUTES)
 		.build(
@@ -69,7 +77,29 @@ public class MetaProjectManager {
 		pprjParser = new PprjParser(dataPath);
 	}
 	
+	/**
+	 * Parses a string of projectids separated by comma and returns a list of projectids.
+	 * If the string is empty, this function returns a list of all public projects.
+	 * @param ontologies String of projectids separated by comma
+	 * @return List of projectids
+	 * @throws NoContentException 
+	 * @throws ExecutionException 
+	 */
+	public List<String> parseOntologies(String projects) throws NoContentException, ExecutionException {
+		if (StringUtils.isBlank(projects)) {
+			List<String> projectList = new ArrayList<String>();
+			for (CondencedProject project : getProjectList()) {
+				projectList.add(project.getProjectId());
+			}
+			return projectList;
+		} else {
+			return Arrays.asList(projects.split(","));
+		}
+	}
 	
+	/**
+	 * Empties the ProjectManager cache immediatly.
+	 */
 	public void clearCache() {
 		projectManagers.invalidateAll();
 	}

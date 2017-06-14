@@ -18,14 +18,13 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import de.onto_med.webprotege_rest_api.api.Entity;
-import de.onto_med.webprotege_rest_api.api.Individual;
 import de.onto_med.webprotege_rest_api.api.TaxonomyNode;
+import de.onto_med.webprotege_rest_api.api.json.Entity;
+import de.onto_med.webprotege_rest_api.api.json.Individual;
 import de.onto_med.webprotege_rest_api.ontology.BinaryOwlParser;
 
 /**
  * Instances of this class can be used to query a specific project ontology of WebProtegé.
- * 
  * @author Christoph Beger
  */
 public class ProjectManager {
@@ -38,8 +37,8 @@ public class ProjectManager {
 	
 	/**
 	 * Constructor.
-	 * @param project Instance of class Project in WebProtegés metaproject
-	 * @param dataPath Absolute path to WebProtegés data folder.
+	 * @param project 	Instance of class Project in WebProtegés metaproject
+	 * @param dataPath 	Absolute path to WebProtegés data folder.
 	 * @throws OWLOntologyCreationException 
 	 */
 	public ProjectManager(String projectId, String dataPath) {
@@ -55,6 +54,10 @@ public class ProjectManager {
 		this.description = description;
 	}
 	
+	public BinaryOwlParser getBinaryOwlParser() {
+		return binaryOwlParser;
+	}
+	
 	
 	/**
 	 * Returns a list of imported ontology ids.
@@ -65,6 +68,10 @@ public class ProjectManager {
 	}
 	
 	
+	/**
+	 * Returns the top taxonomy node for this project.
+	 * @return Top most taxonomy node
+	 */
 	public TaxonomyNode getTaxonomy() {
 		return binaryOwlParser.getTaxonomy();
 	}
@@ -75,12 +82,24 @@ public class ProjectManager {
 	 * @param string class expression as string
 	 * @return List of entities
 	 */
-	public ArrayList<Entity> getEntityProperties(String ce) {
-		return binaryOwlParser.getEntityProperties(ce);
+	public List<Entity> getEntityProperties(String ce) {
+		return binaryOwlParser.getEntityPropertiesByClassExpression(ce);
 	}
 	
 	
-	public ArrayList<Entity> getEntityProperties(
+	/**
+	 * Returns a list of entities and their properties for a set of search parameters.
+	 * @param iri		IRI
+	 * @param name		localname 
+	 * @param property	name of a property the entity has
+	 * @param value		property value
+	 * @param match		matching method for strings: exact (default), loose
+	 * @param operator	logical opperator to connect name and property search: and (default), or
+	 * @param type		ontological type to search for: entity (default), class, individual
+	 * @return list of entities and their properties
+	 * @throws NoSuchAlgorithmException
+	 */
+	public List<Entity> getEntityProperties(
 		String iri, String name, String property, String value, String match, String operator, String type
 	) throws NoSuchAlgorithmException {
 		Class<?> cls;
@@ -99,6 +118,12 @@ public class ProjectManager {
 	}
 	
 
+	/**
+	 * Returns a list of matching superclasses for an individual.
+	 * @param individual Individual object parsed from JSON
+	 * @return List of found superclasses
+	 * @throws NoSuchAlgorithmException
+	 */
 	public List<String> classifyIndividual(Individual individual) throws NoSuchAlgorithmException {
 		return binaryOwlParser.classifyIndividual(individual);
 	}

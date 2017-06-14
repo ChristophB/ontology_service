@@ -2,7 +2,7 @@ package de.onto_med.webprotege_rest_api.views;
 
 import java.util.ArrayList;
 
-import de.onto_med.webprotege_rest_api.api.CondencedProject;
+import de.onto_med.webprotege_rest_api.api.json.CondencedProject;
 
 public class ProjectListView extends RestApiView {
 	private final ArrayList<CondencedProject> projects;

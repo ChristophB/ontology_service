@@ -8,15 +8,14 @@ import java.util.Map;
 import javax.ws.rs.WebApplicationException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 
-
 //import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import de.onto_med.webprotege_rest_api.health.WebProtegeHealthCheck;
-// import de.onto_med.webprotege_rest_api.resources.ExampleResource;
+import de.onto_med.webprotege_rest_api.resources.AnnotationResource;
 import de.onto_med.webprotege_rest_api.resources.MetaProjectResource;
 import de.onto_med.webprotege_rest_api.resources.ProjectResource;
 import de.onto_med.webprotege_rest_api.resources.StaticResource;
-import de.onto_med.webprotege_rest_api.task.ClearCacheTask;
+import de.onto_med.webprotege_rest_api.tasks.ClearCacheTask;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -25,7 +24,6 @@ import io.dropwizard.views.ViewBundle;
 
 /**
  * This is the main application of the WebProtegé Rest-API.
- * 
  * @author Christoph Beger
  */
 public class RestApiApplication extends Application<RestApiConfiguration>{
@@ -34,17 +32,29 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	private ProjectResource projectResource;
 	private StaticResource staticResource;
 	
+	/**
+	 * Main method, wich starts the service.
+	 * @param args Dropwizard arguments
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		new RestApiApplication().run(args);
 	}
 	
-	
+	/**
+	 * Returns the name of this service.
+	 */
 	@Override
 	public String getName() {
-		return "WebProtege REST-API";
+		return "WebProtégé REST-API";
 	}
 	
-	
+	/**
+	 * Initializes the service.
+	 * Add additional bundles here.
+	 * 
+	 * bootstrap.addBundle(new ExampleBundle(...);
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void initialize(Bootstrap<RestApiConfiguration> bootstrap) {
@@ -54,6 +64,9 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		bootstrap.addBundle(new AssetsBundle("/assets/vendors", rootPath + "/vendors", null, "vendors"));
 	}
 	
+	/**
+	 * This method calls the Dropwizard run method and sets the rootPath of the service.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run(String... arguments) throws Exception {
@@ -69,7 +82,10 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		super.run(arguments);
     }
 
-	
+	/**
+	 * Registers resources, healthchecks and tasks.
+	 * Initializes important resources like MetaProjectResource and ProjectResource.
+	 */
 	@Override
 	public void run(RestApiConfiguration configuration, Environment environment) throws Exception {
 		if (Files.notExists(Paths.get(configuration.getDataPath())))
@@ -87,8 +103,8 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		environment.jersey().register(metaProjectResource);
 		environment.jersey().register(projectResource);
 		environment.jersey().register(staticResource);
+		environment.jersey().register(new AnnotationResource(metaProjectResource.getMetaProjectManager()).setRootPath(configuration.getRootPath()));
 		// environment.jersey().register(MultiPartFeature.class);
-		// environment.jersey().register(new ExampleResource(metaProjectResource.getMetaProjectManager()));
 		
 		/*** Register health checks here: ***/
 		environment.healthChecks().register("template", new WebProtegeHealthCheck(configuration));

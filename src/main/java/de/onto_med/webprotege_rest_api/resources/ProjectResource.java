@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
 
-import de.onto_med.webprotege_rest_api.api.Entity;
-import de.onto_med.webprotege_rest_api.api.Individual;
-import de.onto_med.webprotege_rest_api.api.Project;
+import de.onto_med.webprotege_rest_api.api.json.Entity;
+import de.onto_med.webprotege_rest_api.api.json.Individual;
+import de.onto_med.webprotege_rest_api.api.json.Project;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 import de.onto_med.webprotege_rest_api.views.ProjectTaxonomyView;
 import de.onto_med.webprotege_rest_api.views.ProjectView;
@@ -160,7 +160,7 @@ public class ProjectResource extends Resource {
 	 * @param ce class expression
 	 * @return search result
 	 */
-	public ArrayList<Entity> reason(String projectId, String ce) {
+	public List<Entity> reason(String projectId, String ce) {
 		try {
 			ProjectManager manager = getProjectManager(projectId);
 			
@@ -188,7 +188,7 @@ public class ProjectResource extends Resource {
 	 * @param operator logical operator to combine name and property, defaults to 'and')
 	 * @return ArrayList of OWLEntityProperties or error message
 	 */
-	public ArrayList<Entity> searchOntologyEntities(
+	public List<Entity> searchOntologyEntities(
 		String projectId, String name, String iri, String property, String value,
 		String type, String match, String operator
 	) {

@@ -1,19 +1,19 @@
 package de.onto_med.webprotege_rest_api.views;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import de.onto_med.webprotege_rest_api.api.Entity;
+import de.onto_med.webprotege_rest_api.api.json.Entity;
 
 public class EntityResultsetView extends RestApiView {
 	
-	private final ArrayList<Entity> resultset;
+	private final List<Entity> resultset;
 	
-	public EntityResultsetView(String rootPath, ArrayList<Entity> resultset) {
+	public EntityResultsetView(String rootPath, List<Entity> resultset) {
 		super("EntityResultset.ftl", rootPath);
 		this.resultset = resultset;
 	}
 	
-	public ArrayList<Entity> getResultset() {
+	public List<Entity> getResultset() {
 		return resultset;
 	}
 

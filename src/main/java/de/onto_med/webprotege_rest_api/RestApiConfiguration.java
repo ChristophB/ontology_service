@@ -9,9 +9,7 @@ import io.dropwizard.Configuration;
 /**
  * This is the configuration class of the application,
  * which reads config.yml and sets all required parameter.
- * 
  * @author Christoph Beger
- *
  */
 public class RestApiConfiguration extends Configuration {
 	@NotEmpty private String dataPath;

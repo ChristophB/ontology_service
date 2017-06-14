@@ -9,11 +9,18 @@ import javax.ws.rs.core.NoContentException;
 import de.onto_med.webprotege_rest_api.manager.MetaProjectManager;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 
+/**
+ * Abstract class for Dropwizard resources
+ * @author Christoph Beger
+ */
 public abstract class Resource {
 	/**
 	 * Path to WebProtegés data folder.
 	 */
 	protected MetaProjectManager metaProjectManager;
+	/**
+	 * root path of this application (relative to hostname)
+	 */
 	protected String rootPath;
 	
 	public Resource() {}

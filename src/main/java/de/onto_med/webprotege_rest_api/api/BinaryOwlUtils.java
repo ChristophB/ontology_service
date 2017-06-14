@@ -12,7 +12,6 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 
 /**
  * This class is a simplified binaryowl parser.
- * 
  * @author Christoph Beger
  */
 public class BinaryOwlUtils {

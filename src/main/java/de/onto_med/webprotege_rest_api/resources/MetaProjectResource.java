@@ -1,8 +1,6 @@
 package de.onto_med.webprotege_rest_api.resources;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.Consumes;
@@ -26,10 +24,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
 
-import de.onto_med.webprotege_rest_api.api.CondencedProject;
-import de.onto_med.webprotege_rest_api.api.Entity;
-import de.onto_med.webprotege_rest_api.api.EntityQuery;
-import de.onto_med.webprotege_rest_api.api.ReasonQuery;
+import de.onto_med.webprotege_rest_api.api.json.CondencedProject;
+import de.onto_med.webprotege_rest_api.api.json.Entity;
+import de.onto_med.webprotege_rest_api.api.json.EntityQuery;
+import de.onto_med.webprotege_rest_api.api.json.ReasonQuery;
 import de.onto_med.webprotege_rest_api.manager.MetaProjectManager;
 import de.onto_med.webprotege_rest_api.views.EntityFormView;
 import de.onto_med.webprotege_rest_api.views.EntityResultsetView;
@@ -130,7 +128,7 @@ public class MetaProjectResource extends Resource {
 			if (StringUtils.isEmpty(name) && StringUtils.isEmpty(property) && StringUtils.isEmpty(iri))
 				throw new Exception("Neither query param 'name' nor 'iri', nor 'property' given.");
 			
-			for (String projectId : parseOntologies(ontologies)) {
+			for (String projectId : metaProjectManager.parseOntologies(ontologies)) {
 				result.addAll(projectResource.searchOntologyEntities(
 					projectId, name, iri, property, value, type, match, operator
 				));
@@ -186,7 +184,7 @@ public class MetaProjectResource extends Resource {
 			if (StringUtils.isEmpty(ce))
 				throw new Exception("No class expression given.");
 		
-			for (String projectId : parseOntologies(ontologies)) {
+			for (String projectId : metaProjectManager.parseOntologies(ontologies)) {
 				result.addAll(projectResource.reason(projectId, ce));
 			}
 		} catch (Exception e) {
@@ -216,27 +214,6 @@ public class MetaProjectResource extends Resource {
 	
 	public MetaProjectManager getMetaProjectManager() {
 		return metaProjectManager;
-	}
-	
-	
-	/**
-	 * Parses a string of projectids separated by comma and returns a list of projectids.
-	 * If the string is empty, this function returns a list of all public projects.
-	 * @param ontologies String of projectids separated by comma
-	 * @return List of projectids
-	 * @throws NoContentException 
-	 * @throws ExecutionException 
-	 */
-	private List<String> parseOntologies(String projects) throws NoContentException, ExecutionException {
-		if (StringUtils.isEmpty(projects)) {
-			List<String> projectList = new ArrayList<String>();
-			for (CondencedProject project : metaProjectManager.getProjectList()) {
-				projectList.add(project.getProjectId());
-			}
-			return projectList;
-		} else {
-			return Arrays.asList(projects.split(","));
-		}
 	}
 	
 }
