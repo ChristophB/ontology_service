@@ -18,6 +18,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
 
@@ -36,6 +38,7 @@ import de.onto_med.webprotege_rest_api.views.SimpleListView;
 @Path("/project")
 @Singleton
 public class ProjectResource extends Resource {
+	final static Logger logger = LoggerFactory.getLogger(ProjectResource.class);
 	private String webprotegeRelativeToWebroot;
 	
 	public ProjectResource(String webprotegeRelativeToWebroot) {

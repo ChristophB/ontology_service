@@ -61,15 +61,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
-import de.onto_med.webprotege_rest_api.RestApiApplication;
 import de.onto_med.webprotege_rest_api.api.Entity;
 import de.onto_med.webprotege_rest_api.api.Individual;
 import de.onto_med.webprotege_rest_api.api.Property;
 import de.onto_med.webprotege_rest_api.api.TaxonomyNode;
-import de.onto_med.webprotege_rest_api.resources.MetaProjectResource;
+import de.onto_med.webprotege_rest_api.api.Timer;
 
 public class BinaryOwlParser extends OntologyParser {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestApiApplication.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BinaryOwlParser.class);
 	private static final Double MATCH_THRESHOLD = 0.8;
 	
 	private String importsPath;
@@ -90,9 +89,9 @@ public class BinaryOwlParser extends OntologyParser {
 		OWLOntology ontology      = parser.getRootOntology();
 		OWLDataFactory factory    = parser.manager.getOWLDataFactory();
 		OWLNamedIndividual entity = factory.getOWLNamedIndividual(IRI.create("http://www.lha.org/pol#GSE61374_RAW"));
-		
 		// ...
 	}
+	
 
 	/**
 	 * Constructor
@@ -111,7 +110,6 @@ public class BinaryOwlParser extends OntologyParser {
 			throw new WebApplicationException(String.format(
 				"BinaryOwlParser could not access directory for project '%s'.", projectId
 			));
-		
 		manager = getOwlOntologyManager();
 	}
 	
@@ -270,7 +268,7 @@ public class BinaryOwlParser extends OntologyParser {
 			case "double":  return factory.getOWLLiteral(Double.valueOf(value));
 			case "float":   return factory.getOWLLiteral(Float.valueOf(value));
 			default:
-				LoggerFactory.getLogger(MetaProjectResource.class).warn("No className was given.");
+				LOGGER.warn("No className was given.");
 				return factory.getOWLLiteral(value);
 		}
 	}
@@ -534,7 +532,7 @@ public class BinaryOwlParser extends OntologyParser {
 	private OWLOntology getRootOntology() {
 		if (ontology != null) return ontology;
 		
-		LOGGER.info(String.format("Parsing project '%s' for the first time.", projectId));
+		Timer timer = new Timer();
 		
         ArrayList<File> documents = new ArrayList<File>(
         	Arrays.asList((new File(importsPath)).listFiles())
@@ -542,10 +540,7 @@ public class BinaryOwlParser extends OntologyParser {
         documents.removeIf(d -> d.isHidden() || d.isDirectory());
         
         try {
-	        int counter  = 0;
-	        int maxTries = documents.size();
-	        while (!documents.isEmpty() && counter <= maxTries) {
-	        	counter++;
+	        for (int i = 0; !documents.isEmpty() && i <= documents.size(); i++) {
 	        	for (File ontologyDocument : (ArrayList<File>) documents.clone()) {
 	        		try {
 	        			manager.loadOntologyFromOntologyDocument(ontologyDocument);
@@ -553,12 +548,14 @@ public class BinaryOwlParser extends OntologyParser {
 	        		} catch (UnparsableOntologyException e) {}
 	        	}
 	        }
-	      
+	        
+	        /** this is very slow for large ontologies. Any improvement possible? **/
 			ontology = manager.loadOntologyFromOntologyDocument(new File(rootPath));
         } catch (OWLOntologyCreationException e) {
         	e.printStackTrace();
         }
         
+        LOGGER.info(String.format("Parsed project '%s' for the first time. " + timer.getDiffFromStart(), projectId));
 		return ontology;
 	}
 	

@@ -34,20 +34,6 @@ public class PprjParser extends OntologyParser {
 	
 	
 	/**
-	 * Returns an ontological instance of a public project for a given projectid.
-	 * @param projectId id of an instance of class Project of the knowledgebase
-	 * @return Instance of class Project or null if no matching instance was found
-	 */
-	public Instance getProjectInstance(String projectId) {
-		for (Instance project : getProjectInstances())
-			if (project.getName().equals(projectId))
-				return project;
-		
-		return null;
-	}
-	
-	
-	/**
 	 * Returns the ontological instances of all public projects in WebProtegé.
 	 * @return list of instances of class Project of the knowledgebase
 	 */
@@ -64,7 +50,7 @@ public class PprjParser extends OntologyParser {
 	 * @return project manager
 	 */
 	public ProjectManager getProjectManager(String projectId) {
-		Instance instance = getProjectInstance(projectId);
+		Instance instance = knowledgeBaseSupplier.get().getInstance(projectId);
 		
 		if (instance == null) return null;
 		ProjectManager projectManager = new ProjectManager(projectId, dataPath);

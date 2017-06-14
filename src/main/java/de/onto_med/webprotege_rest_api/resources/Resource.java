@@ -13,7 +13,6 @@ import de.onto_med.webprotege_rest_api.manager.MetaProjectManager;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 
 public abstract class Resource {
-	final static Logger logger = LoggerFactory.getLogger(MetaProjectResource.class);
 	/**
 	 * Path to WebProtegés data folder.
 	 */

@@ -17,6 +17,7 @@ import com.google.inject.Singleton;
 import de.onto_med.webprotege_rest_api.RestApiApplication;
 import de.onto_med.webprotege_rest_api.api.BinaryOwlUtils;
 import de.onto_med.webprotege_rest_api.api.CondencedProject;
+import de.onto_med.webprotege_rest_api.api.Timer;
 import de.onto_med.webprotege_rest_api.ontology.PprjParser;
 import edu.stanford.smi.protege.model.Instance;
 
@@ -26,7 +27,7 @@ import edu.stanford.smi.protege.model.Instance;
  */
 @Singleton
 public class MetaProjectManager {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestApiApplication.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MetaProjectManager.class);
 	private PprjParser pprjParser;
 	private String dataPath;
 	
@@ -36,6 +37,7 @@ public class MetaProjectManager {
 			new CacheLoader<String, ProjectManager>() {
 				@Override
 				public ProjectManager load(String key) throws Exception {
+					Timer timer = new Timer();
 					ProjectManager projectManager = pprjParser.getProjectManager(key);
 					if (projectManager == null) {
 						for (Instance instance : pprjParser.getProjectInstances()) {
@@ -50,10 +52,10 @@ public class MetaProjectManager {
 						}
 						
 						if (projectManager == null)
-							throw new NoContentException("Could not find project by id: '" + key + "'");
+							throw new NoContentException("Could not find project by id: '" + key + "'.");
 					}
 					
-					LOGGER.info("Populated cache with '" + key + "'.");
+					LOGGER.info("Populated cache with '" + key + "'. " + timer.getDiff());
 					return projectManager;
 				}
 			}

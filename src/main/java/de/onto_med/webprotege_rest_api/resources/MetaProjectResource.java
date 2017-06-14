@@ -21,6 +21,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Singleton;
 
 import de.onto_med.webprotege_rest_api.api.CondencedProject;
@@ -43,7 +46,7 @@ import de.onto_med.webprotege_rest_api.views.ReasonFormView;
 @Singleton
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 public class MetaProjectResource extends Resource {
-	
+	final static Logger logger = LoggerFactory.getLogger(MetaProjectResource.class);
 	private ProjectResource projectResource;
 	
 	
