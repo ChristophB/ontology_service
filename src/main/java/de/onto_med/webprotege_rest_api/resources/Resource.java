@@ -6,9 +6,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NoContentException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.onto_med.webprotege_rest_api.manager.MetaProjectManager;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 

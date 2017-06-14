@@ -14,7 +14,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Singleton;
 
-import de.onto_med.webprotege_rest_api.RestApiApplication;
 import de.onto_med.webprotege_rest_api.api.BinaryOwlUtils;
 import de.onto_med.webprotege_rest_api.api.CondencedProject;
 import de.onto_med.webprotege_rest_api.api.Timer;

@@ -30,6 +30,7 @@ public class IntegrationTest {
     private Client client;
     
     private final String url = "http://localhost:8080/webprotege-rest-api";
+    private final String adminUrl = "http://localhost:8081/webprotege-rest-api";
 
     @Before
     public void setUp() throws Exception {
@@ -152,6 +153,16 @@ public class IntegrationTest {
 			.get(String.class);
 		
 		assertThat((String) response).contains("http://imise.uni-leipzig.de/inference-test#Max_Mustermann");
+    }
+    
+    @Test
+    public void testClearCacheTask() throws Exception {
+    	javax.ws.rs.core.Response response
+			= client.target(adminUrl + "/tasks/clear_cache")
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(null);
+    	
+    	assertThat(( response).getStatus()).isEqualTo(Response.SC_OK);
     }
     
 }
