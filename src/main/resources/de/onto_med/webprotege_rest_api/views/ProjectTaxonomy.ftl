@@ -6,7 +6,7 @@
 
 <#macro class_node node>
 	<span class="class-node" iri="${node.iri}">
-		${node.name} <#if node.individuals?? && (node.individuals > 0)>[${node.individuals}]</#if>
+		${node.name} <#if node.countInstances?? && (node.countInstances > 0)>[${node.countInstances}]</#if>
 	</span>
 	
 	
@@ -14,6 +14,14 @@
 		<ul>
 			<#list node.subclasses as subclass>
 				<li><@class_node subclass /></li>
+			</#list>
+		</ul>
+	</#if>
+	
+	<#if node.instances??>
+		<ul>
+			<#list node.instances as instance>
+				<li data-jstree='{"icon":"glyphicon glyphicon-leaf"}'><span class="instance-node" iri="${node.iri}">${instance.name}</span></li>
 			</#list>
 		</ul>
 	</#if>
@@ -40,7 +48,7 @@
 					</ul>
 				</div>
 				
-				<pre id="class-description" class="col-md-7"></pre>
+				<pre id="description" class="col-md-7"></pre>
 			</div>
 		</div>
 		
@@ -55,7 +63,7 @@
 				};
 				
 				$.getJSON('${rootPath}/entity', data, function(json) {
-					$('#class-description').html(JSON.stringify(json, null, 2));
+					$('#description').html(JSON.stringify(json, null, 2));
 				}, 'application/json');
 			});
 		</script>

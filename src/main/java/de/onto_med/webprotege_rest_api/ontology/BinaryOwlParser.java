@@ -267,84 +267,6 @@ public class BinaryOwlParser extends OntologyParser {
 	}
 	
 	
-	private OWLNamedIndividual createNamedIndividual(Individual individual) throws NoSuchAlgorithmException {
-		OWLDataFactory factory = manager.getOWLDataFactory();
-		Set<OWLAxiom> axioms = new TreeSet<OWLAxiom>();
-		OWLNamedIndividual namedIndividual = factory.getOWLNamedIndividual(
-			IRI.create(String.valueOf(individual.getProperties().hashCode()))
-		);
-		
-		for (String type : individual.getTypes()) {
-			OWLClass cls = factory.getOWLClass(IRI.create(type));
-			axioms.add(factory.getOWLClassAssertionAxiom(cls, namedIndividual));
-		}
-		
-		for (Property property : individual.getProperties()) {
-			IRI iri = IRI.create(property.getIri());
-			
-			for (String value : property.getValues()) {
-				if (getRootOntology().containsAnnotationPropertyInSignature(iri)) {
-					OWLAnnotationProperty annotationProperty = factory.getOWLAnnotationProperty(iri);
-					axioms.add(factory.getOWLAnnotationAssertionAxiom(
-						namedIndividual.getIRI(), factory.getOWLAnnotation(annotationProperty, OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager))
-					));
-				}
-				if (getRootOntology().containsDataPropertyInSignature(iri)) {
-					OWLDataProperty dataProperty = factory.getOWLDataProperty(iri);
-					axioms.add(factory.getOWLDataPropertyAssertionAxiom(
-						dataProperty, namedIndividual, OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
-					));
-				}
-				if (getRootOntology().containsObjectPropertyInSignature(iri)) {
-					OWLObjectProperty objectProperty = factory.getOWLObjectProperty(iri);
-					axioms.add(factory.getOWLObjectPropertyAssertionAxiom(
-						objectProperty, namedIndividual, factory.getOWLNamedIndividual(IRI.create(value))
-					));
-				}
-			}
-		}
-		
-		manager.addAxioms(getRootOntology(), axioms);
-		
-		return namedIndividual;
-	}
-	
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private Boolean hasProperty(OWLEntity entity, String property, String value, Boolean exact) {
-		if (entity.isOWLNamedIndividual()) {
-		    for (OWLDataProperty dataProperty : extractPropertyByNameFromSet(
-		    		property, getRootOntology().getDataPropertiesInSignature(Imports.INCLUDED), exact
-		    )) {
-				Collection<OWLObject> values = (Collection) EntitySearcher.getDataPropertyValues((OWLIndividual) entity, dataProperty, getRootOntology());
-		    	
-				if (values.isEmpty()) continue;
-		    	if (valueCollectionContains(values, value)) return true;
-		    }
-		    	
-		    for (OWLObjectProperty objectProperty : extractPropertyByNameFromSet(
-		    		property, getRootOntology().getObjectPropertiesInSignature(Imports.INCLUDED), exact
-		    )) {
-		    	Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) entity, objectProperty, getRootOntology());
-		    	
-		    	if (values.isEmpty()) continue;
-			    if (valueCollectionContains(values, value)) return true;
-		    }
-		}
-	    
-	    for (OWLAnnotationProperty annotationProperty : extractPropertyByNameFromSet(
-	    		property, getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED), exact
-	    )) {
-	    	Collection<OWLObject> values = (Collection) EntitySearcher.getAnnotations(entity, getRootOntology(), annotationProperty);
-	    		
-	    	if (values.isEmpty()) continue;
-	    	if (valueCollectionContains(values, value)) return true;
-	    }
-		
-		return false;
-	}
-	
-	
 	/**
 	 * Returns a multidimensional Array of class labels/names.
 	 * @return ArrayList containing the taxonomy of this ontology.
@@ -413,18 +335,98 @@ public class BinaryOwlParser extends OntologyParser {
 		return reasoner.isConsistent();
 	}
 	
+	private OWLNamedIndividual createNamedIndividual(Individual individual) throws NoSuchAlgorithmException {
+		OWLDataFactory factory = manager.getOWLDataFactory();
+		Set<OWLAxiom> axioms = new TreeSet<OWLAxiom>();
+		OWLNamedIndividual namedIndividual = factory.getOWLNamedIndividual(
+			IRI.create(String.valueOf(individual.getProperties().hashCode()))
+		);
+		
+		for (String type : individual.getTypes()) {
+			OWLClass cls = factory.getOWLClass(IRI.create(type));
+			axioms.add(factory.getOWLClassAssertionAxiom(cls, namedIndividual));
+		}
+		
+		for (Property property : individual.getProperties()) {
+			IRI iri = IRI.create(property.getIri());
+			
+			for (String value : property.getValues()) {
+				if (getRootOntology().containsAnnotationPropertyInSignature(iri)) {
+					OWLAnnotationProperty annotationProperty = factory.getOWLAnnotationProperty(iri);
+					axioms.add(factory.getOWLAnnotationAssertionAxiom(
+						namedIndividual.getIRI(), factory.getOWLAnnotation(annotationProperty, OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager))
+					));
+				}
+				if (getRootOntology().containsDataPropertyInSignature(iri)) {
+					OWLDataProperty dataProperty = factory.getOWLDataProperty(iri);
+					axioms.add(factory.getOWLDataPropertyAssertionAxiom(
+						dataProperty, namedIndividual, OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
+					));
+				}
+				if (getRootOntology().containsObjectPropertyInSignature(iri)) {
+					OWLObjectProperty objectProperty = factory.getOWLObjectProperty(iri);
+					axioms.add(factory.getOWLObjectPropertyAssertionAxiom(
+						objectProperty, namedIndividual, factory.getOWLNamedIndividual(IRI.create(value))
+					));
+				}
+			}
+		}
+		
+		manager.addAxioms(getRootOntology(), axioms);
+		
+		return namedIndividual;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Boolean hasProperty(OWLEntity entity, String property, String value, Boolean exact) {
+		if (entity.isOWLNamedIndividual()) {
+		    for (OWLDataProperty dataProperty : extractPropertyByNameFromSet(
+		    		property, getRootOntology().getDataPropertiesInSignature(Imports.INCLUDED), exact
+		    )) {
+				Collection<OWLObject> values = (Collection) EntitySearcher.getDataPropertyValues((OWLIndividual) entity, dataProperty, getRootOntology());
+		    	
+				if (values.isEmpty()) continue;
+		    	if (valueCollectionContains(values, value)) return true;
+		    }
+		    	
+		    for (OWLObjectProperty objectProperty : extractPropertyByNameFromSet(
+		    		property, getRootOntology().getObjectPropertiesInSignature(Imports.INCLUDED), exact
+		    )) {
+		    	Collection<OWLObject> values = (Collection) EntitySearcher.getObjectPropertyValues((OWLIndividual) entity, objectProperty, getRootOntology());
+		    	
+		    	if (values.isEmpty()) continue;
+			    if (valueCollectionContains(values, value)) return true;
+		    }
+		}
+	    
+	    for (OWLAnnotationProperty annotationProperty : extractPropertyByNameFromSet(
+	    		property, getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED), exact
+	    )) {
+	    	Collection<OWLObject> values = (Collection) EntitySearcher.getAnnotations(entity, getRootOntology(), annotationProperty);
+	    		
+	    	if (values.isEmpty()) continue;
+	    	if (valueCollectionContains(values, value)) return true;
+	    }
+		
+		return false;
+	}
+	
 	
 	private TaxonomyNode getTaxonomyForOWLClass(OWLClass cls, OWLReasoner reasoner) {
 		TaxonomyNode taxonomy = new TaxonomyNode(
 			StringUtils.defaultString(OwlApiUtils.getLabel(cls, getRootOntology()), XMLUtils.getNCNameSuffix(cls.getIRI())),
-			cls.getIRI().toString(),
-			reasoner.getInstances(cls, true).getNodes().size()
+			cls.getIRI().toString()
 		);
 		
 		for (Node<OWLClass> node : reasoner.getSubClasses(cls, true)) {
 			OWLClass subClass = node.iterator().next();
 			if (subClass.isBottomEntity()) continue;
 			taxonomy.addSubclassNode(getTaxonomyForOWLClass(subClass, reasoner));
+		}
+		
+		for (Node<OWLNamedIndividual> node : reasoner.getInstances(cls, true)) {
+			OWLNamedIndividual instance = node.iterator().next();
+			taxonomy.addInstance(OwlApiUtils.getLabel(instance, getRootOntology()), instance.getIRI().toString());
 		}
 		
 		return taxonomy;
