@@ -128,34 +128,6 @@ public class IntegrationTest {
     }
     
     @Test
-    public void testBinaryOwlUtilsgetIriMethod() throws Exception {
-    	Object response
-			= client.target(url + "/project/http%3A%2F%2Fwww.lha.org%2Fduo")
-			.request(MediaType.APPLICATION_OCTET_STREAM_TYPE)
-			.get();
-        
-    	assertThat(((javax.ws.rs.core.Response) response).getStatus()).isEqualTo(Response.SC_OK);
-    
-	    response
-	    	= client.target(url + "/entity")
-	    	.queryParam("ontologies", "http://www.lha.org/duo")
-	    	.queryParam("name", "file")
-			.request(MediaType.APPLICATION_JSON_TYPE)
-			.get(String.class);
-		
-		assertThat((String) response).contains("http://www.lha.org/duo#File");
-		
-		response
-	    	= client.target(url + "/reason")
-	    	.queryParam("ontologies", "http://imise.uni-leipzig.de/inference-test")
-	    	.queryParam("ce", "inference-test:Normal")
-			.request(MediaType.APPLICATION_JSON_TYPE)
-			.get(String.class);
-		
-		assertThat((String) response).contains("http://imise.uni-leipzig.de/inference-test#Max_Mustermann");
-    }
-    
-    @Test
     public void testClearCacheTask() throws Exception {
     	javax.ws.rs.core.Response response
 			= client.target(adminUrl + "/tasks/clear_cache")

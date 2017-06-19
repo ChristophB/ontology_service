@@ -7,8 +7,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Christoph Beger
  */
 public class AnnotationQuery {
+	/**
+	 * The text which will be annotated.
+	 */
 	@JsonProperty
 	private String text;
+	/**
+	 * A string containing project ids or ontology iris, which will be used for the annotation.
+	 * If the string is empty, all ontologies will be used.
+	 */
 	@JsonProperty
 	private String ontologies;
 	

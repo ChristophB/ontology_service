@@ -12,8 +12,17 @@ import io.dropwizard.Configuration;
  * @author Christoph Beger
  */
 public class RestApiConfiguration extends Configuration {
+	/**
+	 * Path to the WebProtégé data folder
+	 */
 	@NotEmpty private String dataPath;
+	/**
+	 * Relative uri to the WebProtégé instance.
+	 */
 	@NotEmpty private String webprotegeRelativeToWebroot;
+	/**
+	 * Root path of the service.
+	 */
 	@NotEmpty private String rootPath;
 	
 	@JsonProperty

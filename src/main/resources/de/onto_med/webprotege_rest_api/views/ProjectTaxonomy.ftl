@@ -10,10 +10,10 @@
 	</span>
 	
 	
-	<#if node.children??>
+	<#if node.subclasses??>
 		<ul>
-			<#list node.children as child>
-				<li><@class_node child /></li>
+			<#list node.subclasses as subclass>
+				<li><@class_node subclass /></li>
 			</#list>
 		</ul>
 	</#if>
