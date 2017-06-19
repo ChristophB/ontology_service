@@ -82,17 +82,13 @@
     </dependency>
   </dependencies>
   <properties>
-    <guava.version>20.0</guava.version>
+    <mockito.version>2.7.6</mockito.version>
     <dropwizard.version>1.1.1</dropwizard.version>
-    <owlapi.version>4.3.1</owlapi.version>
-    <binaryowl.version>2.0.1</binaryowl.version>
-    <hermit.version>1.3.8.413</hermit.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <yamlbeans.version>1.11</yamlbeans.version>
     <hibernate.version>5.2.2.Final</hibernate.version>
+    <guava.version>20.0</guava.version>
     <jackson.version>2.8.7</jackson.version>
-    <mockito.version>2.7.6</mockito.version>
-    <protege.version>3.5.1.1</protege.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>
 
