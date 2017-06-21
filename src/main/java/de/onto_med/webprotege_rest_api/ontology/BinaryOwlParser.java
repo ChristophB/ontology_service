@@ -53,8 +53,8 @@ import de.onto_med.webprotege_rest_api.api.Timer;
 import de.onto_med.webprotege_rest_api.api.json.Entity;
 import de.onto_med.webprotege_rest_api.api.json.Individual;
 import de.onto_med.webprotege_rest_api.api.json.Property;
-import owlapi_utils.binaryowl.BinaryOwlUtils;
-import owlapi_utils.owlapi.OwlApiUtils;
+import de.onto_med.owlapi_utils.binaryowl.BinaryOwlUtils;
+import de.onto_med.owlapi_utils.owlapi.OwlApiUtils;
 
 /**
  * Instances of this class are parsers for binary formated ontologies.

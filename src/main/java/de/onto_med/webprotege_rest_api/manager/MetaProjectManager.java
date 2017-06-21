@@ -21,7 +21,7 @@ import de.onto_med.webprotege_rest_api.api.Timer;
 import de.onto_med.webprotege_rest_api.api.json.CondencedProject;
 import de.onto_med.webprotege_rest_api.ontology.PprjParser;
 import edu.stanford.smi.protege.model.Instance;
-import owlapi_utils.binaryowl.BinaryOwlUtils;
+import de.onto_med.owlapi_utils.binaryowl.BinaryOwlUtils;
 
 /**
  * This class provides information about existing projects in WebProtegé.
