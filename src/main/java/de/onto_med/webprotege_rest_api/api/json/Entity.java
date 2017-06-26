@@ -1,6 +1,5 @@
 package de.onto_med.webprotege_rest_api.api.json;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -104,30 +103,26 @@ public class Entity {
 		}
 	}
 	
-	public void addDataProperty(OWLDataPropertyExpression property, Collection<OWLLiteral> values) {
-		if (values.isEmpty()) return;
+	public void addDataProperty(OWLDataPropertyExpression property, OWLLiteral value) {
+		if (value == null) return;
 		if (dataTypeProperties == null) dataTypeProperties = new HashMap<String, Set<String>>();
 		
 		String propertyIRI = property.asOWLDataProperty().getIRI().toString();
 		if (!dataTypeProperties.containsKey(propertyIRI)) {
 			dataTypeProperties.put(propertyIRI, new HashSet<String>());
 		}
-		for (OWLLiteral literal : values) {
-			dataTypeProperties.get(propertyIRI).add(literal.getLiteral());
-		}
+		dataTypeProperties.get(propertyIRI).add(value.getLiteral());
 	}
 	
-	public void addObjectProperty(OWLObjectPropertyExpression property, Collection<OWLIndividual> values) {
-		if (values.isEmpty()) return;
+	public void addObjectProperty(OWLObjectPropertyExpression property, OWLIndividual individual) {
+		if (individual == null) return;
 		if (objectProperties == null) objectProperties = new HashMap<String, Set<String>>();
 		
 		String propertyIRI = property.asOWLObjectProperty().getIRI().toString();
 		if (!objectProperties.containsKey(propertyIRI)) {
 			objectProperties.put(propertyIRI, new HashSet<String>());
 		}
-		for (OWLIndividual individual : values) {
-			objectProperties.get(propertyIRI).add(individual.toString().replaceAll("^.*?\"|\"\\^.*$", ""));
-		}
+		objectProperties.get(propertyIRI).add(individual.toString().replaceAll("^.*?\"|\"\\^.*$", ""));
 	}
 	
 	public void addDisjointClasses(NodeSet<OWLClass> disjointClasses) {

@@ -1,6 +1,6 @@
 package de.onto_med.webprotege_rest_api.api.json;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
 
@@ -18,7 +18,7 @@ public class Project extends CondencedProject {
 	private int countObjectProperties;
 	private int countAnnotationProperties;
 	private boolean isConsistent;
-	private ArrayList<String> importedOntologyIds;
+	private List<String> importedOntologyIds;
 	
 	public Project(ProjectManager project) {
 		super(project);
@@ -97,11 +97,11 @@ public class Project extends CondencedProject {
 		this.countAnnotationProperties = countAnnotationProperties;
 	}
 
-	public ArrayList<String> getImportedOntologyIds() {
+	public List<String> getImportedOntologyIds() {
 		return importedOntologyIds;
 	}
 
-	public void setImportedOntologyIds(ArrayList<String> importedOntologyIds) {
+	public void setImportedOntologyIds(List<String> importedOntologyIds) {
 		this.importedOntologyIds = importedOntologyIds;
 	}
 

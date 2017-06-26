@@ -1,8 +1,7 @@
 package de.onto_med.webprotege_rest_api.resources;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -54,7 +53,7 @@ public class ProjectResource extends Resource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response getOntologyImportsJson(@Context HttpHeaders headers, @PathParam("id") String projectId) {
 		try {
-			ArrayList<String> importedOntologyIds = getProjectManager(projectId).getImportedOntologyIds();
+			List<String> importedOntologyIds = getProjectManager(projectId).getImportedOntologyIds();
 			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(importedOntologyIds).build();
 			} else {
@@ -165,7 +164,7 @@ public class ProjectResource extends Resource {
 			ProjectManager manager = getProjectManager(projectId);
 			
 			/* TODO: remove this workaround */
-			HashMap<String, String> shortFormMap = manager.getOntologyIris();
+			Map<String, String> shortFormMap = manager.getOntologyIris();
 			for (String shortForm : shortFormMap.keySet()) {
 				ce = ce.replaceAll(shortForm + ":([\\w_\\-]+)", "<" + shortFormMap.get(shortForm) + "#$1>");
 			}

@@ -21,7 +21,7 @@
 	<#if node.instances??>
 		<ul>
 			<#list node.instances as instance>
-				<li data-jstree='{"icon":"glyphicon glyphicon-leaf"}'><span class="instance-node" iri="${node.iri}">${instance.name}</span></li>
+				<li data-jstree='{"icon":"glyphicon glyphicon-leaf"}'><span class="instance-node" iri="${instance.iri}">${instance.name}</span></li>
 			</#list>
 		</ul>
 	</#if>

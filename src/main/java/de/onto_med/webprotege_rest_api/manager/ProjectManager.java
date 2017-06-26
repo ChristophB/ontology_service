@@ -1,9 +1,8 @@
 package de.onto_med.webprotege_rest_api.manager;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.owlapi.io.XMLUtils;
@@ -63,7 +62,7 @@ public class ProjectManager {
 	 * Returns a list of imported ontology ids.
 	 * @return List of imported ontology ids
 	 */
-	public ArrayList<String> getImportedOntologyIds() {
+	public List<String> getImportedOntologyIds() {
 		return binaryOwlParser.getImportedOntologyIds();
 	}
 	
@@ -204,7 +203,7 @@ public class ProjectManager {
 	 * @return HashMap with key: shortform and value: iri
 	 * @throws OWLOntologyCreationException 
 	 */
-	public HashMap<String, String> getOntologyIris() throws OWLOntologyCreationException {
+	public Map<String, String> getOntologyIris() throws OWLOntologyCreationException {
 		return binaryOwlParser.getOntologyIris();
 	}
 

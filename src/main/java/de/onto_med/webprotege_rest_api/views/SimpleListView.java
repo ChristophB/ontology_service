@@ -1,19 +1,19 @@
 package de.onto_med.webprotege_rest_api.views;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleListView extends RestApiView {
-	private final ArrayList<String> resultset;
+	private final List<String> resultset;
 	private final String column;
 	
-	public SimpleListView(String rootPath, ArrayList<String> resultset, String column) {
+	public SimpleListView(String rootPath, List<String> resultset, String column) {
 		super("SimpleList.ftl", rootPath);
 		this.resultset = resultset;
 		this.column    = column;
 	}
 	
 	
-	public ArrayList<String> getResultset() {
+	public List<String> getResultset() {
 		return resultset;
 	}
 
