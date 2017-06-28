@@ -129,7 +129,7 @@ public class BinaryOwlParser extends OntologyParser {
 		
 		return OwlApiUtils.getHermiTReasoner(getRootOntology())
 			.getInstances(ce, false).getFlattened().parallelStream()
-			.map(i -> getEntity(i)).collect(Collectors.toList());
+			.map(this::getEntity).collect(Collectors.toList());
 	}
 	
 	
@@ -221,7 +221,7 @@ public class BinaryOwlParser extends OntologyParser {
 				);
 			})
 			.filter(entity -> cls.equals(OWLEntity.class) || (cls.equals(OWLClass.class) && entity.isOWLClass()) || (cls.equals(OWLIndividual.class) && entity.isOWLNamedIndividual()))
-			.map(entity -> getEntity(entity))
+			.map(this::getEntity)
 			.collect(Collectors.toList());
 	}
 	
@@ -384,7 +384,7 @@ public class BinaryOwlParser extends OntologyParser {
 	 */
  	@SuppressWarnings("unused")
 	private List<Entity> getEntities(List<OWLEntity> entities) {
-		return entities.parallelStream().map(entity -> getEntity(entity)).collect(Collectors.toList());
+		return entities.parallelStream().map(this::getEntity).collect(Collectors.toList());
 	}
 	
 	
@@ -406,24 +406,24 @@ public class BinaryOwlParser extends OntologyParser {
     	);
     	
     	if (entity.isOWLClass()) {
-    		properties.addSuperClassExpressions(reasoner.getSuperClasses(entity.asOWLClass(), true));
-    		properties.addSubClassExpressions(reasoner.getSubClasses(entity.asOWLClass(), true));
-			properties.addIndividuals(reasoner.getInstances(entity.asOWLClass(), true));
-    		properties.addDisjointClasses(reasoner.getDisjointClasses(entity.asOWLClass()));
-    		properties.addEquivalentClasses(reasoner.getEquivalentClasses(entity.asOWLClass()));
+    		properties.addSuperClassExpressions(reasoner.getSuperClasses(entity.asOWLClass(), true).getFlattened());
+    		properties.addSubClassExpressions(reasoner.getSubClasses(entity.asOWLClass(), true).getFlattened());
+			properties.addIndividuals(reasoner.getInstances(entity.asOWLClass(), true).getFlattened());
+    		properties.addDisjointClasses(reasoner.getDisjointClasses(entity.asOWLClass()).getFlattened());
+    		properties.addEquivalentClasses(reasoner.getEquivalentClasses(entity.asOWLClass()).getEntities());
     	}
     	
     	if (entity.isOWLNamedIndividual()) {
-	    	EntitySearcher.getDataPropertyValues(entity.asOWLNamedIndividual(), getRootOntology()).entries().parallelStream().forEach(property ->
-				properties.addDataProperty(property.getKey(), property.getValue())
+	    	EntitySearcher.getDataPropertyValues(entity.asOWLNamedIndividual(), getRootOntology()).entries().parallelStream().forEach(
+	    		property ->	properties.addDataProperty(property.getKey(), property.getValue())
 			);
 			
-			EntitySearcher.getObjectPropertyValues(entity.asOWLNamedIndividual(), getRootOntology()).entries().parallelStream().forEach(property ->
-				properties.addObjectProperty(property.getKey(), property.getValue())
+			EntitySearcher.getObjectPropertyValues(entity.asOWLNamedIndividual(), getRootOntology()).entries().parallelStream().forEach(
+				property ->	properties.addObjectProperty(property.getKey(), property.getValue())
 			);
 			
-			properties.addTypes(reasoner.getTypes(entity.asOWLNamedIndividual(), true));
-			properties.addSameIndividuals(reasoner.getSameIndividuals(entity.asOWLNamedIndividual()));
+			properties.addTypes(reasoner.getTypes(entity.asOWLNamedIndividual(), true).getFlattened());
+			properties.addSameIndividuals(reasoner.getSameIndividuals(entity.asOWLNamedIndividual()).getEntities());
     	}
     	
     	reasoner.dispose();

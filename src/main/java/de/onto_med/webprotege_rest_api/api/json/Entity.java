@@ -2,7 +2,7 @@ package de.onto_med.webprotege_rest_api.api.json;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -13,8 +13,6 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.reasoner.Node;
-import org.semanticweb.owlapi.reasoner.NodeSet;
 
 /**
  * Instnces of this class represent ontological entities.
@@ -24,20 +22,19 @@ public class Entity {
 	private String projectId;
 	private String iri;
 	private String javaClass;
-	private HashSet<String> individuals;
-	private HashSet<String> superclasses;
-	private HashSet<String> subclasses;
-	private HashSet<String> types;
-	private HashSet<String> disjointClasses;
-	private HashSet<String> equivalentClasses;
-	private HashSet<String> sameIndividuals;
-	private HashMap<String, Set<String>> annotationProperties;
-	private HashMap<String, Set<String>> dataTypeProperties;
-	private HashMap<String, Set<String>> objectProperties;
+	private Set<String> individuals       = new HashSet<String>();
+	private Set<String> superclasses      = new HashSet<String>();
+	private Set<String> subclasses        = new HashSet<String>();
+	private Set<String> types             = new HashSet<String>();
+	private Set<String> disjointClasses   = new HashSet<String>();
+	private Set<String> equivalentClasses = new HashSet<String>();
+	private Set<String> sameIndividuals   = new HashSet<String>();
+	private Map<String, Set<String>> annotationProperties = new HashMap<String, Set<String>>();
+	private Map<String, Set<String>> dataTypeProperties   = new HashMap<String, Set<String>>();
+	private Map<String, Set<String>> objectProperties     = new HashMap<String, Set<String>>();
 	
 	public void addAnnotationProperty(OWLAnnotationProperty property, OWLAnnotationValue value) {
 		if (property == null || value == null) return;
-		if (annotationProperties == null) annotationProperties = new HashMap<String, Set<String>>();
 		
 		String propertyIRI = property.getIRI().toString();
 		if (!annotationProperties.containsKey(propertyIRI)) {
@@ -51,61 +48,42 @@ public class Entity {
 		}
 	}
 	
-	public void addIndividuals(NodeSet<OWLNamedIndividual> individuals) {
-		if (individuals.isEmpty()) return;
-		if (this.individuals == null) this.individuals = new HashSet<String>();
-		
-		for (Node<OWLNamedIndividual> individual : individuals) {
-			this.individuals.add(individual.iterator().next().getIRI().toString());
-		}
+	public void addIndividuals(Set<OWLNamedIndividual> individuals) {
+		individuals.parallelStream().forEach(
+			individual -> this.individuals.add(individual.getIRI().toString())
+		);
 	}
 	
-	public void addSuperClassExpressions(NodeSet<OWLClass> superClasses) {
-		if (superClasses.isEmpty()) return;
-		if (this.superclasses == null) this.superclasses = new HashSet<String>();
-		
-    	for (Node<OWLClass> node : superClasses) {
-    		this.superclasses.add(node.iterator().next().getIRI().toString());
-    	}
+	public void addSuperClassExpressions(Set<OWLClass> superClasses) {
+    	superClasses.parallelStream().forEach(
+    		cls -> this.superclasses.add(cls.getIRI().toString())
+    	);
 	}
 	
-	public void addSubClassExpressions(NodeSet<OWLClass> subclasses) {
-		if (subclasses.isEmpty()) return;
-		if (this.subclasses == null) this.subclasses = new HashSet<String>();
-		
-    	for (Node<OWLClass> node : subclasses) {
-    		this.subclasses.add(node.iterator().next().getIRI().toString());
-    	}
+	public void addSubClassExpressions(Set<OWLClass> subclasses) {
+    	subclasses.parallelStream().forEach(
+    		cls -> this.subclasses.add(cls.getIRI().toString())
+    	);
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Entity)) 
-			return false;
-		return iri.equals(((Entity)object).iri);
+		return object instanceof Entity && iri.equals(((Entity)object).iri);
 	}
 	
-	public void addTypes(NodeSet<OWLClass> types) {
-		if (types.isEmpty()) return;
-		if (this.types == null) this.types = new HashSet<String>();
-		
-		for (Node<OWLClass> node : types) {
-			this.types.add(node.iterator().next().getIRI().toString());
-		}
+	public void addTypes(Set<OWLClass> types) {
+		types.parallelStream().forEach(
+			type -> this.types.add(type.getIRI().toString())
+		);
 	}
 	
-	public void addSameIndividuals(Node<OWLNamedIndividual> sameIndividuals) {
-		if (sameIndividuals.getSize() == 0) return;
-		if (this.sameIndividuals == null) this.sameIndividuals = new HashSet<String>();
-		
-		Iterator<OWLNamedIndividual> iterator = sameIndividuals.iterator();
-		while (iterator.hasNext()) {
-			this.sameIndividuals.add(iterator.next().getIRI().toString());
-		}
+	public void addSameIndividuals(Set<OWLNamedIndividual> sameIndividuals) {
+		sameIndividuals.parallelStream().forEach(
+			individual -> this.sameIndividuals.add(individual.getIRI().toString())
+		);
 	}
 	
 	public void addDataProperty(OWLDataPropertyExpression property, OWLLiteral value) {
 		if (value == null) return;
-		if (dataTypeProperties == null) dataTypeProperties = new HashMap<String, Set<String>>();
 		
 		String propertyIRI = property.asOWLDataProperty().getIRI().toString();
 		if (!dataTypeProperties.containsKey(propertyIRI)) {
@@ -116,7 +94,6 @@ public class Entity {
 	
 	public void addObjectProperty(OWLObjectPropertyExpression property, OWLIndividual individual) {
 		if (individual == null) return;
-		if (objectProperties == null) objectProperties = new HashMap<String, Set<String>>();
 		
 		String propertyIRI = property.asOWLObjectProperty().getIRI().toString();
 		if (!objectProperties.containsKey(propertyIRI)) {
@@ -125,23 +102,16 @@ public class Entity {
 		objectProperties.get(propertyIRI).add(individual.toString().replaceAll("^.*?\"|\"\\^.*$", ""));
 	}
 	
-	public void addDisjointClasses(NodeSet<OWLClass> disjointClasses) {
-		if (disjointClasses.isEmpty()) return;
-		if (this.disjointClasses == null) this.disjointClasses = new HashSet<String>();
-		
-		for (Node<OWLClass> node : disjointClasses) {
-			this.disjointClasses.add(node.iterator().next().getIRI().toString());
-		}
+	public void addDisjointClasses(Set<OWLClass> disjointClasses) {
+		disjointClasses.parallelStream().forEach(
+			cls -> this.disjointClasses.add(cls.getIRI().toString())
+		);
 	}
 	
-	public void addEquivalentClasses(Node<OWLClass> equivalentClasses) {
-		if (equivalentClasses.getSize() == 0) return;
-		if (this.equivalentClasses == null) this.equivalentClasses = new HashSet<String>();
-		
-		Iterator<OWLClass> iterator = equivalentClasses.iterator();
-		while (iterator.hasNext()) {
-			this.equivalentClasses.add(iterator.next().getIRI().toString());
-		}
+	public void addEquivalentClasses(Set<OWLClass> equivalentClasses) {
+		equivalentClasses.parallelStream().forEach(
+			cls -> this.equivalentClasses.add(cls.getIRI().toString())
+		);
 	}
 	
 	public int hashCode() {
@@ -213,43 +183,43 @@ public class Entity {
 		return javaClass;
 	}
 	
-	public HashSet<String> getIndividuals() {
+	public Set<String> getIndividuals() {
 		return individuals;
 	}
 	
-	public HashSet<String> getSuperclasses() {
+	public Set<String> getSuperclasses() {
 		return superclasses;
 	}
 	
-	public HashSet<String> getSubclasses() {
+	public Set<String> getSubclasses() {
 		return subclasses;
 	}
 	
-	public HashSet<String> getTypes() {
+	public Set<String> getTypes() {
 		return types;
 	}
 	
-	public HashSet<String> getSameIndivduals() {
+	public Set<String> getSameIndivduals() {
 		return sameIndividuals;
 	}
 	
-	public HashSet<String> getDisjointClasses() {
+	public Set<String> getDisjointClasses() {
 		return disjointClasses;
 	}
 	
-	public HashSet<String> getEquivalentClasses() {
+	public Set<String> getEquivalentClasses() {
 		return equivalentClasses;
 	}
 
-	public HashMap<String, Set<String>> getAnnotationProperties() {
+	public Map<String, Set<String>> getAnnotationProperties() {
 		return annotationProperties;
 	}
 	
-	public HashMap<String, Set<String>> getDataTypeProperties() {
+	public Map<String, Set<String>> getDataTypeProperties() {
 		return dataTypeProperties;
 	}
 	
-	public HashMap<String, Set<String>> getObjectProperties() {
+	public Map<String, Set<String>> getObjectProperties() {
 		return objectProperties;
 	}
 

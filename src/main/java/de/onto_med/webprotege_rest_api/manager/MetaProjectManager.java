@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.NoContentException;
 
@@ -86,15 +87,10 @@ public class MetaProjectManager {
 	 * @throws ExecutionException 
 	 */
 	public List<String> parseOntologies(String projects) throws NoContentException, ExecutionException {
-		if (StringUtils.isBlank(projects)) {
-			List<String> projectList = new ArrayList<String>();
-			for (CondencedProject project : getProjectList()) {
-				projectList.add(project.getProjectId());
-			}
-			return projectList;
-		} else {
+		if (StringUtils.isBlank(projects))
+			return getProjectList().parallelStream().map(p -> p.getProjectId()).collect(Collectors.toList());
+		else
 			return Arrays.asList(projects.split(","));
-		}
 	}
 	
 	/**

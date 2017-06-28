@@ -1,6 +1,7 @@
 package de.onto_med.webprotege_rest_api.api;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.semanticweb.owlapi.io.XMLUtils;
 
@@ -20,11 +21,11 @@ public class TaxonomyNode {
 	/** 
 	 * List of subclasses.
 	 */
-	private ArrayList<TaxonomyNode> subclasses;
+	private List<TaxonomyNode> subclasses = new ArrayList<TaxonomyNode>();
 	/**
 	 * List of instances.
 	 */
-	private ArrayList<TaxonomyNode> instances;
+	private List<TaxonomyNode> instances = new ArrayList<TaxonomyNode>();
 
 	
 	/**
@@ -61,11 +62,11 @@ public class TaxonomyNode {
 		return instances == null ? 0 : instances.size();
 	}
 	
-	public ArrayList<TaxonomyNode> getSubclasses() {
+	public List<TaxonomyNode> getSubclasses() {
 		return subclasses;
 	}
 	
-	public ArrayList<TaxonomyNode> getInstances() {
+	public List<TaxonomyNode> getInstances() {
 		return instances;
 	}
 	
@@ -76,7 +77,6 @@ public class TaxonomyNode {
 	 * @param individuals	number of individuals, wich instantiate the class
 	 */
 	public void addSubclass(String name, String iri) {
-		if (subclasses == null) subclasses = new ArrayList<TaxonomyNode>();
 		subclasses.add(new TaxonomyNode(name, iri));
 	}
 	
@@ -85,7 +85,6 @@ public class TaxonomyNode {
 	 * @param child	the TaxonomyNode
 	 */
 	public void addSubclassNode(TaxonomyNode subclassNode) {
-		if (subclasses == null) subclasses = new ArrayList<TaxonomyNode>();
 		subclasses.add(subclassNode);
 	}
 	
@@ -95,7 +94,6 @@ public class TaxonomyNode {
 	 * @param iri IRI of the instance
 	 */
 	public void addInstance(String name, String iri) {
-		if (instances == null) instances = new ArrayList<TaxonomyNode>();
 		instances.add(new TaxonomyNode(name, iri));
 	}
 	
@@ -104,7 +102,6 @@ public class TaxonomyNode {
 	 * @param instance an instance node
 	 */
 	public void addInstance(TaxonomyNode instanceNode) {
-		if (instances == null) instances = new ArrayList<TaxonomyNode>();
 		instances.add(instanceNode);
 	}
 	
