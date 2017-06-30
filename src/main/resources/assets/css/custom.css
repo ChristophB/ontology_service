@@ -18,3 +18,6 @@
 	height: 70%;
 	overflow: auto;
 }
+.entity-result {
+	padding-bottom: 0px;
+}

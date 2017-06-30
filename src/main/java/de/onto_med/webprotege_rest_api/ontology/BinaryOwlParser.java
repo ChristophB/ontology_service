@@ -17,7 +17,6 @@ import javax.ws.rs.WebApplicationException;
 import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.io.XMLUtils;
-import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -142,7 +141,7 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public List<Entity> annotate(String name, Boolean exact) throws NoSuchAlgorithmException {
-		return getEntityProperties(null, name, null, null, exact, false, OWLNamedIndividual.class);
+		return getEntityProperties(null, name, null, null, exact, false, OWLClass.class);
 	}
 	
 	/**
@@ -184,7 +183,7 @@ public class BinaryOwlParser extends OntologyParser {
 	public List<Entity> getEntityProperties(
 		String iri, String name, String property, String value, Boolean exact, Boolean and, Class<?> cls
 	) throws NoSuchAlgorithmException {
-		if (!cls.equals(OWLEntity.class) && !cls.equals(EntityType.CLASS) && !cls.equals(EntityType.NAMED_INDIVIDUAL))
+		if (!cls.equals(OWLEntity.class) && !cls.equals(OWLClass.class) && !cls.equals(OWLNamedIndividual.class))
 			throw new NoSuchAlgorithmException("Error: class " + cls.getName() + " is not supported by this method.");
 		
 		if (StringUtils.isBlank(iri) && StringUtils.isBlank(name) && StringUtils.isBlank(property))

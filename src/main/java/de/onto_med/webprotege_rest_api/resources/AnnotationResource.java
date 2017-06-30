@@ -108,6 +108,7 @@ public class AnnotationResource extends Resource {
 			
 			return classes;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new WebApplicationException(e.getLocalizedMessage());
 		}
 	}

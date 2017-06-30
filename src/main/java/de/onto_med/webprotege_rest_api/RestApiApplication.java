@@ -62,6 +62,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		bootstrap.addBundle(new AssetsBundle("/assets/css", rootPath + "/css", null, "css"));
 		bootstrap.addBundle(new AssetsBundle("/assets/js", rootPath + "/js", null, "js"));
 		bootstrap.addBundle(new AssetsBundle("/assets/vendors", rootPath + "/vendors", null, "vendors"));
+		bootstrap.addBundle(new AssetsBundle("/favicon.ico", rootPath + "/favicon.ico", null, "favicon"));
 	}
 	
 	/**

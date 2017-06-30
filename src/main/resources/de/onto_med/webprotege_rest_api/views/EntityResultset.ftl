@@ -17,9 +17,9 @@
 		<div class="container">
 			<div class="row">
 				<#list resultset as result>
-					<fieldset class="well" style="padding-bottom: 0px">
+					<fieldset class="entity-result well">
 						<#if result.iri??>
-							<h4><b>${result.iri?html}<b></h4>
+							<h4><b>${result.iri?html}<b><#if result.projectId??> - ${result.projectId}</#if></h4>
 						</#if>
 						
 						<table class="table">
