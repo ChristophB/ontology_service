@@ -107,4 +107,13 @@ public class IntegrationTest extends AbstractTest {
     	assertThat(response).contains("Patient [1]", "Normal [1]");
     }
     
+//    @Test
+//    public void testImports() throws Exception {
+//    	String response
+//			= client.target(url + "/project/702fdf23-882e-41cf-9d8d-0f589e7632a0/overview")
+//			.request(MediaType.TEXT_HTML_TYPE)
+//			.get(String.class);
+//    	assertThat(response).contains("http://www.lha.org/duo");
+//    }
+    
 }

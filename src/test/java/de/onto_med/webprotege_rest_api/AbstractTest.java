@@ -13,7 +13,7 @@ public abstract class AbstractTest {
 	@ClassRule
     public static final DropwizardAppRule<RestApiConfiguration> RULE
     	= new DropwizardAppRule<RestApiConfiguration>(
-    		RestApiApplication.class, "config.yml"
+    		RestApiApplication.class, "config_test.yml"
     	);
 
     protected Client client;

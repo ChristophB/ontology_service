@@ -1,0 +1,12 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 8080
+  rootPath: /webprotege-rest-api/*
+  adminConnectors:
+  - type: http
+    port: 8081
+  adminContextPath: /webprotege-rest-api
+dataPath: "src/test/resources/data/webprotege/"
+webprotegeRelativeToWebroot: /webprotege
+rootPath: /webprotege-rest-api

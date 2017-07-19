@@ -1,0 +1,555 @@
+; Wed Jul 19 14:31:05 CEST 2017
+; 
+;+ (version "3.5")
+;+ (build "Build 660")
+
+([614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a] of  Project
+
+	(allowedGroupOperation
+		[metaproject_Class70037]
+		[metaproject_Class70038]
+		[metaproject_Class70039]
+		[metaproject_Class70040]
+		[metaproject_Class70036])
+	(description "test")
+	(displayName "GFO")
+	(inTrash FALSE)
+	(name "614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a")
+	(properties [metaproject_Class70035]))
+
+([614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Commenters] of  Group
+
+	(name "614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Commenters"))
+
+([614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_None] of  Group
+
+	(name "614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_None"))
+
+([614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Readers] of  Group
+
+	(name "614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Readers"))
+
+([614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Writers] of  Group
+
+	(name "614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Writers"))
+
+([e2906cf8-ae16-4162-989c-66b83291b5cf] of  Project
+
+	(allowedGroupOperation
+		[metaproject_Class80018]
+		[metaproject_Class80019]
+		[metaproject_Class80016]
+		[metaproject_Class80017]
+		[metaproject_Class80015])
+	(description "Inference Test")
+	(displayName "BMI-SDS Assessment")
+	(inTrash FALSE)
+	(name "e2906cf8-ae16-4162-989c-66b83291b5cf"))
+
+([e2906cf8-ae16-4162-989c-66b83291b5cf_Commenters] of  Group
+
+	(name "e2906cf8-ae16-4162-989c-66b83291b5cf_Commenters"))
+
+([e2906cf8-ae16-4162-989c-66b83291b5cf_None] of  Group
+
+	(name "e2906cf8-ae16-4162-989c-66b83291b5cf_None"))
+
+([e2906cf8-ae16-4162-989c-66b83291b5cf_Readers] of  Group
+
+	(name "e2906cf8-ae16-4162-989c-66b83291b5cf_Readers"))
+
+([e2906cf8-ae16-4162-989c-66b83291b5cf_Writers] of  Group
+
+	(name "e2906cf8-ae16-4162-989c-66b83291b5cf_Writers"))
+
+([metaproject_Class10000] of  PropertyValue
+
+	(propertyName "projectType")
+	(propertyValue "OWL Project"))
+
+([metaproject_Class10005] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class10006] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class10007] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class10008] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class10009] of  GroupOperation
+)
+
+([metaproject_Class10010] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0]))
+
+([metaproject_Class2] of  ProjectAppliedOperation
+
+	(description "The operation of displaying the project in the project list.\n\nThis is used to control the projects displayed when a user connects to a server.")
+	(name "DisplayInProjectList"))
+
+([metaproject_Class20000] of  PropertyValue
+
+	(propertyName "projectType")
+	(propertyValue "OWL Project"))
+
+([metaproject_Class20001] of  PropertyValue
+
+	(propertyName "projectType")
+	(propertyValue "OWL Project"))
+
+([metaproject_Class20003] of  Group
+
+	(description "The group of adminsitrators of the Protege server.")
+	(name "AdminGroup"))
+
+([metaproject_Class20004] of  ServerAppliedOperation
+
+	(description "A super-right: a user who has this right can kill other users' sessions, stop and start server projects without having these rights set for each ptoject individually.")
+	(name "AdministerServer"))
+
+([metaproject_Class20005] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class20006] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class20007] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class20008] of  GroupOperation
+)
+
+([metaproject_Class20009] of  Server
+
+	(description "The server on which the policies apply.\nCurrent implementaion does not take into account the hostname, so all the policies (allowed group operations) are applied to this one instance.")
+	(name "MyServer"))
+
+([metaproject_Class30000] of  GroupAppliedOperation
+
+	(description "The operation of adding or removing users to a group.")
+	(name "EditGroup"))
+
+([metaproject_Class30006] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class30007] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class30008] of  GroupOperation
+)
+
+([metaproject_Class30009] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class30010] of  PropertyValue
+
+	(propertyName "projectType")
+	(propertyValue "OWL Project"))
+
+([metaproject_Class30016] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class30017] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class30018] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class30019] of  GroupOperation
+)
+
+([metaproject_Class30020] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0]))
+
+([metaproject_Class40000] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class40001] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class40002] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class40003] of  GroupOperation
+)
+
+([metaproject_Class40004] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0]))
+
+([metaproject_Class40009] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class50010] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class50011] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class50012] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class50013] of  GroupOperation
+)
+
+([metaproject_Class50014] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class60010] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class60012] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class60013] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class60014] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class60015] of  GroupOperation
+)
+
+([metaproject_Class60016] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0]))
+
+([metaproject_Class60017] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class60018] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class60019] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class60020] of  GroupOperation
+)
+
+([metaproject_Class60021] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class60022] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class60023] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class60024] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class60025] of  GroupOperation
+)
+
+([metaproject_Class60026] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class60027] of  PropertyValue
+
+	(propertyName "projectType")
+	(propertyValue "OWL Project"))
+
+([metaproject_Class60028] of  PropertyValue
+
+	(propertyName "projectType")
+	(propertyValue "OWL Project"))
+
+([metaproject_Class70011] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class70012] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class70013] of  GroupOperation
+)
+
+([metaproject_Class70014] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0]))
+
+([metaproject_Class70015] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class70016] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class70017] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class70018] of  GroupOperation
+)
+
+([metaproject_Class70019] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0]))
+
+([metaproject_Class70025] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class70026] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class70027] of  GroupOperation
+
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class70028] of  GroupOperation
+)
+
+([metaproject_Class70029] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class70035] of  PropertyValue
+
+	(propertyName "projectType")
+	(propertyValue "OWL Project"))
+
+([metaproject_Class70036] of  GroupOperation
+
+	(allowedGroup [614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Readers])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class70037] of  GroupOperation
+
+	(allowedGroup [614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Commenters])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class70038] of  GroupOperation
+
+	(allowedGroup [614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_Writers])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class70039] of  GroupOperation
+
+	(allowedGroup [614d4dc3-a4f7-40e0-be58-fdf2dbdc8e3a_None]))
+
+([metaproject_Class70040] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class80000] of  ProjectAppliedOperation
+
+	(description "Specifies a comment operation.  This is not the same as an arbitrary write.")
+	(name "Comment"))
+
+([metaproject_Class80015] of  GroupOperation
+
+	(allowedGroup [e2906cf8-ae16-4162-989c-66b83291b5cf_Readers])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Class80016] of  GroupOperation
+
+	(allowedGroup [e2906cf8-ae16-4162-989c-66b83291b5cf_Commenters])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class80000]
+		[metaproject_Class2]))
+
+([metaproject_Class80017] of  GroupOperation
+
+	(allowedGroup [e2906cf8-ae16-4162-989c-66b83291b5cf_Writers])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[nci_metaproject_Instance_60010]
+		[metaproject_Class2]))
+
+([metaproject_Class80018] of  GroupOperation
+
+	(allowedGroup [e2906cf8-ae16-4162-989c-66b83291b5cf_None]))
+
+([metaproject_Class80019] of  GroupOperation
+
+	(allowedGroup [metaproject_Instance_0])
+	(allowedOperation
+		[nci_metaproject_Instance_60009]
+		[metaproject_Class2]))
+
+([metaproject_Instance_0] of  Group
+
+	(description "This group is intended to represent all the users.\n\nNewly created users are added to this group by default.")
+	(name "World"))
+
+([nci_metaproject_Instance_60009] of  ProjectAppliedOperation
+
+	(description "The operation of reading an ontology project.\n\nThis controls who can open a remote project.")
+	(name "Read"))
+
+([nci_metaproject_Instance_60010] of  ProjectAppliedOperation
+
+	(description "The operation of writing to an ontology project.\n\n(Enforcement not implemented yet)")
+	(name "Write"))
