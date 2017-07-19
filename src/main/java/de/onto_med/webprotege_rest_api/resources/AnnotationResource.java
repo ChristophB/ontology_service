@@ -52,7 +52,6 @@ public class AnnotationResource extends Resource {
 	 * @return
 	 */
 	@GET
-	@Path("/")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response get(@Context HttpHeaders headers, @QueryParam("text") String text, @QueryParam("ontologies") String ontologies) {
 		List<Entity> resultset = annotate(text, ontologies);
@@ -72,7 +71,6 @@ public class AnnotationResource extends Resource {
 	 * @return
 	 */
 	@POST
-	@Path("/")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response post(@Context HttpHeaders headers, AnnotationQuery query) {
 		List<Entity> resultset = annotate(query.getText(), query.getOntologies());

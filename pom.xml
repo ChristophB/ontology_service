@@ -83,6 +83,12 @@
       <groupId>de.onto_med</groupId>
       <artifactId>owlapi_utils</artifactId>
       <version>0.0.1-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+    	  <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   

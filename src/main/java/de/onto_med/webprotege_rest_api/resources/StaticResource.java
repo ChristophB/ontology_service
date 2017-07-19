@@ -34,7 +34,6 @@ public class StaticResource {
 	 * @return List of possible relative paths and parameters
 	 */
 	@GET
-	@Path("/")
 	@Produces(MediaType.TEXT_HTML)
 	public DocumentationView getDocumentation() {
 		return new DocumentationView(rootPath);

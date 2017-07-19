@@ -1,46 +1,17 @@
 package de.onto_med.webprotege_rest_api;
 
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.jetty.server.Response;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 
-import de.onto_med.webprotege_rest_api.RestApiApplication;
-import de.onto_med.webprotege_rest_api.RestApiConfiguration;
 import de.onto_med.webprotege_rest_api.manager.ProjectManager;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 
-public class IntegrationTest {
-    @ClassRule
-    public static final DropwizardAppRule<RestApiConfiguration> RULE
-    	= new DropwizardAppRule<RestApiConfiguration>(
-    		RestApiApplication.class, "config.yml"
-    	);
-
-    private Client client;
-    
-    private final String url = "http://localhost:8080/webprotege-rest-api";
-    private final String adminUrl = "http://localhost:8081/webprotege-rest-api";
-
-    @Before
-    public void setUp() throws Exception {
-        client = ClientBuilder.newClient();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        client.close();
-    }
+public class IntegrationTest extends AbstractTest {
 
     @Test
     public void testProjectsList() throws Exception {
@@ -125,16 +96,6 @@ public class IntegrationTest {
     		.get(String.class);
     	
     	assertThat((String) response).contains("No class expression given.");
-    }
-    
-    @Test
-    public void testClearCacheTask() throws Exception {
-    	javax.ws.rs.core.Response response
-			= client.target(adminUrl + "/tasks/clear_cache")
-			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(null);
-    	
-    	assertThat(( response).getStatus()).isEqualTo(Response.SC_OK);
     }
     
 }
