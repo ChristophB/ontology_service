@@ -65,6 +65,18 @@ public class ProjectResource extends Resource {
 		}
 	}
 	
+	/**
+	 * Transforms the projects ontologies into GraphmML and returns the result as string.
+	 * @param projectId ID of the WebProtégé project
+	 * @return GraphML
+	 */
+	@GET
+	@Path("/{id}/graphml")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getGraphMl(@Context HttpHeaders headers, @PathParam("id") String projectId) {
+		return "";
+	}
+	
 
 	/**
 	 * Returns project's ontology as simple taxonomy.

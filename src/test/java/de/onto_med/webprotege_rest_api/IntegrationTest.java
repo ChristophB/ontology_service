@@ -98,4 +98,13 @@ public class IntegrationTest extends AbstractTest {
     	assertThat((String) response).contains("No class expression given.");
     }
     
+    @Test
+    public void testTaxonomy() throws Exception {
+    	String response
+    		= client.target(url + "/project/e2906cf8-ae16-4162-989c-66b83291b5cf/taxonomy")
+    		.request(MediaType.TEXT_HTML_TYPE)
+    		.get(String.class);
+    	assertThat(response).contains("Patient [1]", "Normal [1]");
+    }
+    
 }

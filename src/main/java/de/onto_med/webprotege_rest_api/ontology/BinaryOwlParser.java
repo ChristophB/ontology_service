@@ -356,11 +356,11 @@ public class BinaryOwlParser extends OntologyParser {
 			cls.getIRI().toString()
 		);
 		
-		reasoner.getSubClasses(cls, true).getFlattened().parallelStream().filter(
+		reasoner.getSubClasses(cls, true).getFlattened().stream().filter(
 			subclass -> !subclass.isBottomEntity()
 		).forEach(subclass -> taxonomy.addSubclassNode(getTaxonomyForOWLClass(subclass, reasoner)));
 		
-		reasoner.getInstances(cls, true).getFlattened().parallelStream().forEach(
+		reasoner.getInstances(cls, true).getFlattened().forEach(
 			instance ->	taxonomy.addInstance(OwlApiUtils.getLabel(instance, getRootOntology()), instance.getIRI().toString())
 		);
 		

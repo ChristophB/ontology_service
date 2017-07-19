@@ -28,6 +28,10 @@
 				OWL File (RDF/XML)
 			</a>
 			
+			<a class="list-group-item" href="${rootPath}/project/${project.projectId}/graphml">
+				GraphML
+			</a>
+			
 			<a class="list-group-item" href="${webProtegeUri}" target="_blank">
 				Open in WebProt&#233;g&#233;
 			</a>
