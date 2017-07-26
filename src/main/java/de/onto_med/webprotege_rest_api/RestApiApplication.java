@@ -13,6 +13,7 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import de.onto_med.webprotege_rest_api.health.WebProtegeHealthCheck;
 import de.onto_med.webprotege_rest_api.resources.AnnotationResource;
 import de.onto_med.webprotege_rest_api.resources.MetaProjectResource;
+import de.onto_med.webprotege_rest_api.resources.PhenotypeResource;
 import de.onto_med.webprotege_rest_api.resources.ProjectResource;
 import de.onto_med.webprotege_rest_api.resources.StaticResource;
 import de.onto_med.webprotege_rest_api.tasks.ClearCacheTask;
@@ -30,7 +31,6 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	private String rootPath = "";
 	private MetaProjectResource metaProjectResource;
 	private ProjectResource projectResource;
-	private StaticResource staticResource;
 	
 	/**
 	 * Main method, wich starts the service.
@@ -94,17 +94,16 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		
 		metaProjectResource = new MetaProjectResource(configuration.getDataPath());
 		projectResource     = new ProjectResource(configuration.getWebprotegeRelativeToWebroot());
-		staticResource      = new StaticResource();
 		
 		metaProjectResource.setProjectResource(projectResource).setRootPath(configuration.getRootPath());
 		projectResource.setMetaProjectManager(metaProjectResource.getMetaProjectManager()).setRootPath(configuration.getRootPath());
-		staticResource.setRootPath(configuration.getRootPath());
 		
 		/*** Register resources here: ***/
 		environment.jersey().register(metaProjectResource);
 		environment.jersey().register(projectResource);
-		environment.jersey().register(staticResource);
+		environment.jersey().register(new StaticResource(configuration.getRootPath()));
 		environment.jersey().register(new AnnotationResource(metaProjectResource.getMetaProjectManager()).setRootPath(configuration.getRootPath()));
+		environment.jersey().register(new PhenotypeResource(configuration.getRootPath()));
 		// environment.jersey().register(MultiPartFeature.class);
 		
 		/*** Register health checks here: ***/

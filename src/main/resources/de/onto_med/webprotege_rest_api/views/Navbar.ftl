@@ -8,6 +8,7 @@
 			<li<@active "Projects" />><a href="${rootPath}/projects">Projects</a></li>
 			<li<@active "Query Entities" />><a href="${rootPath}/entity-form">Query Entities</a></li>
 			<li<@active "Reasoning" />><a href="${rootPath}/reason-form">Reasoning</a></li>
+			<li<@active "Phenotypes" />><a href="${rootPath}/phenotype">Phenotypes</a></li>
 		</ul>
 	</div>
 </nav>

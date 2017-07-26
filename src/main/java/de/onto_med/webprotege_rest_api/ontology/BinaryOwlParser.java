@@ -206,8 +206,12 @@ public class BinaryOwlParser extends OntologyParser {
 					if (exact && iri.equals(entity.getIRI().toString()))
 						nameMatch = true;
 					else if (!exact && (
-						StringUtils.getJaroWinklerDistance(name, StringUtils.defaultString(OwlApiUtils.getLabel(entity, getRootOntology()), "")) >= MATCH_THRESHOLD
-						|| StringUtils.getJaroWinklerDistance(name, XMLUtils.getNCNameSuffix(entity.getIRI())) >= MATCH_THRESHOLD
+						StringUtils.getJaroWinklerDistance(
+							name, StringUtils.defaultString(OwlApiUtils.getLabel(entity, getRootOntology()), "")
+						) >= MATCH_THRESHOLD
+						|| StringUtils.getJaroWinklerDistance(
+							name, XMLUtils.getNCNameSuffix(entity.getIRI())
+						) >= MATCH_THRESHOLD
 					)) nameMatch = true;
 				}
 				
@@ -215,12 +219,16 @@ public class BinaryOwlParser extends OntologyParser {
 					propertyMatch = true; 
 				
 				return (and
-					? (StringUtils.isBlank(iri) || iriMatch) && (StringUtils.isBlank(name) || nameMatch) && (StringUtils.isBlank(property) || propertyMatch)
+					? (StringUtils.isBlank(iri) || iriMatch)
+					&& (StringUtils.isBlank(name) || nameMatch)
+					&& (StringUtils.isBlank(property) || propertyMatch)
 					: iriMatch || nameMatch || propertyMatch
 				);
 			})
-			.filter(entity -> cls.equals(OWLEntity.class) || (cls.equals(OWLClass.class) && entity.isOWLClass()) || (cls.equals(OWLIndividual.class) && entity.isOWLNamedIndividual()))
-			.map(this::getEntity)
+			.filter(entity -> cls.equals(OWLEntity.class)
+				|| (cls.equals(OWLClass.class) && entity.isOWLClass())
+				|| (cls.equals(OWLIndividual.class) && entity.isOWLNamedIndividual())
+			).map(this::getEntity)
 			.collect(Collectors.toList());
 	}
 	
@@ -300,18 +308,23 @@ public class BinaryOwlParser extends OntologyParser {
 				if (getRootOntology().containsAnnotationPropertyInSignature(iri))
 					axioms.add(factory.getOWLAnnotationAssertionAxiom(
 						namedIndividual.getIRI(), factory.getOWLAnnotation(
-							factory.getOWLAnnotationProperty(iri), OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
+							factory.getOWLAnnotationProperty(iri),
+							OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
 						)
 					));
 				
 				if (getRootOntology().containsDataPropertyInSignature(iri))
 					axioms.add(factory.getOWLDataPropertyAssertionAxiom(
-						factory.getOWLDataProperty(iri), namedIndividual, OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
+						factory.getOWLDataProperty(iri),
+						namedIndividual,
+						OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
 					));
 				
 				if (getRootOntology().containsObjectPropertyInSignature(iri))
 					axioms.add(factory.getOWLObjectPropertyAssertionAxiom(
-							factory.getOWLObjectProperty(iri), namedIndividual, factory.getOWLNamedIndividual(IRI.create(value))
+							factory.getOWLObjectProperty(iri),
+							namedIndividual,
+							factory.getOWLNamedIndividual(IRI.create(value))
 					));
 			}
 		});

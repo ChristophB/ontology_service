@@ -29,6 +29,10 @@ public abstract class Resource {
 		metaProjectManager = mpm;
 	}
 	
+	public Resource(String rootPath) {
+		this.rootPath = rootPath;
+	}
+	
 	protected ProjectManager getProjectManager(String projectId) throws NoContentException, ExecutionException {
 		return metaProjectManager.getProjectManager(projectId);
 	}

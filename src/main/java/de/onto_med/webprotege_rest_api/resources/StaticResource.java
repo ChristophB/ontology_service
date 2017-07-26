@@ -18,14 +18,8 @@ import de.onto_med.webprotege_rest_api.views.ReasonFormView;
 public class StaticResource {
 	private String rootPath;
 	
-	public StaticResource() {
-		super();
-	}
-	
-	public StaticResource setRootPath(String rootPath) {
+	public StaticResource(String rootPath) {
 		this.rootPath = rootPath;
-		
-		return this;
 	}
 
 	

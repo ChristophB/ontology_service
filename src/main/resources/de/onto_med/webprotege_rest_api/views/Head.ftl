@@ -9,6 +9,7 @@
 	<script src="${rootPath}/vendors/jquery/jquery.min.js"></script>
 	<script src="${rootPath}/vendors/bootstrap/js/bootstrap.min.js"></script>
 	<script src="${rootPath}/vendors/vakata-jstree/dist/jstree.min.js"></script>
+	<script src="${rootPath}/js/custom.js"></script>
 	
 	<link rel="shortcut icon" href="${rootPath}/favicon.ico" type="image/x-icon" />
 </head>
