@@ -4,7 +4,7 @@ public class FormView extends RestApiView {
 	private String error;
 	
 	
-	protected FormView(String templateName, String rootPath) {
+	public FormView(String templateName, String rootPath) {
 		super(templateName, rootPath);
 	}
 	

@@ -30,6 +30,9 @@
 .affix {
 	top: 70px; min-width: 262px;
 }
-.form-group .control-label {
+.form-group label.control-label {
 	margin-top: 5px;
+}
+.form-group .checkbox .control-label {
+	margin-top: 0px;
 }

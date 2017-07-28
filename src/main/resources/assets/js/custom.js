@@ -1,25 +1,30 @@
 function toggleValueDefinition() {
 	var selectedValue = $('#datatype').val();
-	$('#datatype-specification>div').hide();
+	$('#datatype-specification>div').each(function() {
+		if (!$(this).hasClass('hidden')) $(this).addClass('hidden');
+	});
 	$('#formula, #expression').removeAttr('required');
 
 	if (selectedValue == 'expression') {
-		$('#expression-form-group, #boolean-form-group').show();
+		$('#expression-form-group, #boolean-form-group').removeClass('hidden');
 		$('#expression').attr('required', true);
 	} else if (selectedValue == 'formula') {
-		$('#formula-form-group, #ucum-form-group, #range-form-group').show();
+		$('#formula-form-group, #ucum-form-group, #range-form-group').removeClass('hidden');
 		$('#formula').attr('required', true);
 	} else if (selectedValue == 'integer' || selectedValue == 'double') {
-		$('#ucum-form-group, #range-form-group').show();
+		$('#ucum-form-group, #range-form-group').removeClass('hidden');
 	} else if (selectedValue == 'string') {
-		$('#enum-form-group').show();
+		$('#enum-form-group').removeClass('hidden');
 	}
 }
 
 function toggleNewCategoryField() {
-	if ($('#category').val() == 'new_category')
-		$('#new-category-form-group').show();
-	else $('#new-category-form-group').hide();
+	var div = $('#new-category-div');
+	if ($('#category').val() == 'new_category') {
+		div.removeClass('hidden');
+	} else {
+		if (!div.hasClass('hidden')) div.addClass('hidden');
+	}
 }
 
 function addTextField(parent, name, placeholder) {
@@ -27,9 +32,9 @@ function addTextField(parent, name, placeholder) {
 }
 
 function addRow(id) {
-	var row = $('#' + id + ' .row.hidden').clone();
+	var row = $(id + ' .hidden').clone();
 	row.removeClass('hidden');
-	$('#' + id).append(row);
+	$(id).append(row);
 }
 
 function createPhenotypeTree(id, url) {
@@ -80,11 +85,15 @@ function createPhenotypeTree(id, url) {
 
 function toggleSuperPhenotype() {
 	var div = $('#super-phenotype-div');
+	var help = $('#has-super-phenotype-help');
 	if ($('#has-super-phenotype').prop('checked') === true) {
 		div.removeClass('hidden');
+		if (!help.hasClass('hidden')) help.addClass('hidden');
 	} else {
 		$('#super-phenotype').val(null);
 		if (!div.hasClass('hidden')) div.addClass('hidden');
+		help.removeClass('hidden');
+		
 	}
 }
 

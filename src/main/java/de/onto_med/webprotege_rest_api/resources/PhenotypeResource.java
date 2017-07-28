@@ -10,10 +10,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import de.onto_med.webprotege_rest_api.views.PhenotypeFormView;
+import de.onto_med.webprotege_rest_api.views.FormView;
+import de.onto_med.webprotege_rest_api.views.PhenotypeView;
+import de.onto_med.webprotege_rest_api.views.RestApiView;
 
 @Path("/phenotype")
 public class PhenotypeResource extends Resource {
@@ -23,10 +27,16 @@ public class PhenotypeResource extends Resource {
 	}
 	
 	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public Response getPhenotypeView() {
+		return Response.ok(new RestApiView("PhenotypeView.ftl", rootPath)).build();
+	}
+	
+	@GET
 	@Path("/all")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	@SuppressWarnings("serial")
-	public Response getPhenotypeTaxonomy() {
+	public Response getPhenotypeTaxonomy(@Context HttpHeaders headers) {
 		List<TaxonomyNode> taxonomyNodes = new ArrayList<TaxonomyNode>() {{
 			add(new TaxonomyNode("Category_1", new Attributes("category"), new ArrayList<TaxonomyNode>() {{
 				add(new TaxonomyNode("Integer_Phenotype", new Attributes("integer")));
@@ -39,14 +49,25 @@ public class PhenotypeResource extends Resource {
 			add(new TaxonomyNode("Double_Phenotype", new Attributes("double")));
 		}};
 		
-		return Response.ok(taxonomyNodes).build();
+		if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
+			return Response.ok(taxonomyNodes).build();
+		} else {
+			return Response.ok(new RestApiView("AllPhenotypes.ftl", rootPath)).build();
+		}
 	}
 	
 	@GET
-	@Path("/form")
+	@Path("/simplephenotype_form")
 	@Produces(MediaType.TEXT_HTML)
-	public Response getPhenotypeForm() {
-		return Response.ok(new PhenotypeFormView(rootPath)).build();
+	public Response getSimplePhenotypeForm() {
+		return Response.ok(new FormView("SimplePhenotypeForm.ftl", rootPath)).build();
+	}
+	
+	@GET
+	@Path("/compositphenotype_form")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getCompositPhenotypeForm() {
+		return Response.ok(new FormView("CompositPhenotypeForm.ftl", rootPath)).build();
 	}
 	
 	@POST
@@ -54,16 +75,15 @@ public class PhenotypeResource extends Resource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createPhenotype(
-		@NotNull @FormParam("label-en") String label_en,
-		@FormParam("label-de") String label_de,
-		@FormParam("alias-en[]") List<String> aliases_en,
-		@FormParam("alias-de[]") List<String> aliases_de,
+		@NotNull @FormParam("id") String id,
+		@FormParam("label[]") List<String> label,
+		@FormParam("label-language[]") List<String> labelLanguage,
 		@FormParam("has-super-phenotype") Boolean hasSuperPhenotype,
 		@FormParam("super-phenotype") String superPhenotype,
 		@FormParam("category") String category,
 		@FormParam("new-category") String newCategory,
-		@FormParam("definition-en") String definition_en,
-		@FormParam("definition-de") String definition_de,
+		@FormParam("definition[]") List<String> definition,
+		@FormParam("definition-language[]") List<String> definitionLanguage,
 		@NotNull @FormParam("datatype") String datatype,
 		@FormParam("ucum") String ucum,
 		@FormParam("range-min[]") List<String> rangeMins,
@@ -79,21 +99,16 @@ public class PhenotypeResource extends Resource {
 		@FormParam("relation[]") List<String> relations
 	) {
 		String request
-			= formatMultiLangFields("Label", label_en, label_de)
-			+ formatMultiLangFields("Defintion", definition_en, definition_de)
-			+ formatMultiLangFields("Aliases", aliases_en, aliases_de)
+			= "ID: " + id + "\n"
+			+ String.format("Labels: %s (%s)\n", label, labelLanguage)
 			+ String.format("Has Super Phenotype: %s => '%s'\n", hasSuperPhenotype, superPhenotype)
 			+ "Category: " + category + "\n"
 			+ "New-Category: " + newCategory + "\n"
-			+ formatMultiLangFields("Definition", definition_en, definition_de)
+			+ String.format("Defintions: %s (%s)\n", definition, definitionLanguage)
 			+ "Datatype: " + datatype + "\n"
 			+ "Relations: " + relations; 
 		
 		return Response.ok(request).build();
-	}
-	
-	private String formatMultiLangFields(String label, Object v1, Object v2) {
-		return String.format("%s: '%s' (en), '%s' (de)\n", label, v1, v2);
 	}
 	
 	class TaxonomyNode {
