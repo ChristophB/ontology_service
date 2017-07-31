@@ -1,17 +1,15 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.EntityFormView" -->
 <#assign title = "Query Entities">
 <#assign current = "Query Entities">
+<#assign heading = "Query Entities">
+<#assign subHeading ="<!-- Description -->">
 
 <html>
 	<#include "partials/Head.ftl">
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-		
-		<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>Query Entities</h2>
-			<p><!-- Description --></p>
-		</div>
+		<#include "partials/Heading.ftl">
 		
 		<div class="container">
 			<div class="row">

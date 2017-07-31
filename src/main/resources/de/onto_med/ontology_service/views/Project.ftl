@@ -2,6 +2,8 @@
 <#assign title = project.name?html>
 <#assign current = "Projects">
 <#assign current_submenu = "Overview">
+<#assign heading = "${project.name?html}">
+<#assign subHeading ="${project.description}">
 
 <#macro coloredBoolean boolean><#if boolean><font color="green">true</font><#else><font color="red">false</font></#if></#macro>
 
@@ -10,11 +12,7 @@
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-		
-		<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>${project.name?html}</h2>
-			<p>${project.description}</p>
-		</div>
+		<#include "partials/Heading.ftl">
 		
 		<div class="container">
 			<#include "partials/ProjectLinks.ftl">

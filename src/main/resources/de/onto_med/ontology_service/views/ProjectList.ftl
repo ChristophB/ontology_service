@@ -1,6 +1,8 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.ProjectListView" -->
 <#assign title = "Project List">
 <#assign current = "Projects">
+<#assign heading = "WebProt&#233;g&#233; Project List">
+<#assign subHeading ="The following table contains all public readable projects/ontologies of the locally running WebProt&#233;g&#233; instance.">
 
 <html>
 	<#include "partials/Head.ftl">
@@ -8,10 +10,7 @@
 	<body>
 		<#include "partials/Navbar.ftl">
 		
-		<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>WebProt&#233;g&#233; Project List</h2>
-			<p>The following table contains all public readable projects/ontologies of the locally running WebProt&#233;g&#233; instance.</p>
-		</div>
+		<#include "partials/Heading.ftl">
 		
 		<script>
 			jQuery(document).ready(function($) {

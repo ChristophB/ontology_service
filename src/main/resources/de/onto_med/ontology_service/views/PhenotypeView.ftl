@@ -1,6 +1,8 @@
 <#assign title = "Phenotypes">
 <#assign current = "Phenotypes">
 <#assign current_submenu = "overview">
+<#assign heading = "Phenotypes">
+<#assign subHeading ="Create New Phenotypes or View Existing Ones">
 
 <#macro active name><#if current_submenu == name>active</#if></#macro>
 
@@ -9,12 +11,7 @@
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-    	
-    	<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>Phenotypes</h2>
-			<p>Create New Phenotypes or View Existing Ones</p>
-		</div>
-		
+    	<#include "partials/Heading.ftl">
 		<#include "partials/PhenotypeLinks.ftl">
 		
     	<div class="container">

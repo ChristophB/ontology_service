@@ -1,17 +1,15 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.SimpleListView" -->
 <#assign title = "Resultset">
 <#assign current = "Projects">
+<#assign heading = "Resultset">
+<#assign subHeading ="Set of ${column?html}.">
 
 <html>
 	<#include "partials/Head.ftl">
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-		
-		<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>Resultset</h2>
-			<p>Set of ${column?html}.</p>
-		</div>
+		<#include "partials/Heading.ftl">
 		
 		<div class="container">
 			<div class="row">

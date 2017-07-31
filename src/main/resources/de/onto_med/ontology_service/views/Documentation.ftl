@@ -1,17 +1,15 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.DocumentationView" -->
 <#assign current = "Documentation">
 <#assign title = "Documentation">
+<#assign heading = "Documentation of the Ontology Service">
+<#assign subHeading ="This page contains a list of all available RESTfull functions with respective URL and query/JSON parameters.">
 
 <html>
 	<#include "partials/Head.ftl">
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-		
-		<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>Documentation of the Ontology Service</h2>
-			<p>This page contains a list of all available RESTfull functions with respective URL and query/JSON parameters.</p>
-		</div>
+		<#include "partials/Heading.ftl">
     	
     	<div class="container">
     		<div class="row">

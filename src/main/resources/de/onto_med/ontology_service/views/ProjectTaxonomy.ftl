@@ -3,6 +3,8 @@
 <#assign current = "Projects">
 <#assign current_submenu = "Taxonomy">
 <#setting url_escaping_charset="UTF-8">
+<#assign heading = "${project.name?html}">
+<#assign subHeading ="${project.description}">
 
 <#macro class_node node>
 	<span class="class-node" iri="${node.iri}">
@@ -32,11 +34,7 @@
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-		
-		<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>${project.name?html}</h2>
-			<p>${project.description}</p>
-		</div>
+		<#include "partials/Heading.ftl">
 		
 		<div class="container">
 			<#include "partials/ProjectLinks.ftl">

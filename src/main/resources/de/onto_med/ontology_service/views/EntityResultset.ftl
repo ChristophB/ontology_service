@@ -2,17 +2,15 @@
 <#assign title = "Resultset">
 <#assign current = "">
 <#setting url_escaping_charset="UTF-8">
+<#assign heading = "Resultset">
+<#assign subHeading ="Set of OWL entities.">
 
 <html>
 	<#include "partials/Head.ftl">
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-		
-		<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>Resultset</h2>
-			<p>Set of OWL entities.</p>
-		</div>
+		<#include "partials/Heading.ftl">
 		
 		<div class="container">
 			<div class="row">

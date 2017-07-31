@@ -4,21 +4,18 @@
 <#assign title = "Composit Phenotype Create Form">
 <#assign current = "Phenotypes">
 <#assign current_submenu = "compositphenotype_form">
+<#assign heading = "Composit Phenotype-Definition Form">
+<#assign subHeading ="On this page you can define a new <strong>composit phenotype</strong> with all required metadata and properties.">
 
 <html>
 	<#include "partials/Head.ftl">
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-
-		<main class="container">
-			<section id="banner" class="row jumbotron text-center">
-				<h2>Composit Phenotype-Definition Form</h2>
-				<p class="text-muted">On this page you can define a new <strong>composit phenotype</strong> with all required metadata and properties.</p>
-			</section>
-			
-			<#include "partials/PhenotypeLinks.ftl">
-			
+		<#include "partials/Heading.ftl">
+		<#include "partials/PhenotypeLinks.ftl">
+		
+		<main class="container">	
 			<!-- The single phenotype form -->
 			<section name="content" class="row">
 				<div class="col-md-9">
