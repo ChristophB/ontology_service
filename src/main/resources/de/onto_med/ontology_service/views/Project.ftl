@@ -6,10 +6,10 @@
 <#macro coloredBoolean boolean><#if boolean><font color="green">true</font><#else><font color="red">false</font></#if></#macro>
 
 <html>
-	<#include "Head.ftl">
+	<#include "partials/Head.ftl">
 	
 	<body>
-		<#include "Navbar.ftl">
+		<#include "partials/Navbar.ftl">
 		
 		<div class="jumbotron text-center" style="padding: 10 0 10">
 			<h2>${project.name?html}</h2>
@@ -17,7 +17,7 @@
 		</div>
 		
 		<div class="container">
-			<#include "ProjectLinks.ftl">
+			<#include "partials/ProjectLinks.ftl">
 			
 			<div class="row">
 				<table class="table">
@@ -52,6 +52,6 @@
 			</#if>
 		</div>
 		
-		<#include "Footer.ftl">
+		<#include "partials/Footer.ftl">
 	</body>
 </html>

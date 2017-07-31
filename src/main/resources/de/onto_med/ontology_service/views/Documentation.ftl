@@ -3,10 +3,10 @@
 <#assign title = "Documentation">
 
 <html>
-	<#include "Head.ftl">
+	<#include "partials/Head.ftl">
 	
 	<body>
-		<#include "Navbar.ftl">
+		<#include "partials/Navbar.ftl">
 		
 		<div class="jumbotron text-center" style="padding: 10 0 10">
 			<h2>Documentation of the Ontology Service</h2>
@@ -111,6 +111,6 @@
 		    </div>
 	    </div>
 	    
-	    <#include "Footer.ftl">
+	    <#include "partials/Footer.ftl">
 	</body>
 </html>

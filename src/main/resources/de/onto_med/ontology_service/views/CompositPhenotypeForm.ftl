@@ -6,10 +6,10 @@
 <#assign current_submenu = "compositphenotype_form">
 
 <html>
-	<#include "Head.ftl">
+	<#include "partials/Head.ftl">
 	
 	<body>
-		<#include "Navbar.ftl">
+		<#include "partials/Navbar.ftl">
 
 		<main class="container">
 			<section id="banner" class="row jumbotron text-center">
@@ -17,7 +17,7 @@
 				<p class="text-muted">On this page you can define a new <strong>composit phenotype</strong> with all required metadata and properties.</p>
 			</section>
 			
-			<#include "PhenotypeLinks.ftl">
+			<#include "partials/PhenotypeLinks.ftl">
 			
 			<!-- The single phenotype form -->
 			<section name="content" class="row">
@@ -257,7 +257,7 @@
 			</section>
 		</main>
 
-		<#include "Footer.ftl">
+		<#include "partials/Footer.ftl">
 		
 		<!-- <footer>
 			<div class="navbar navbar-default navbar-bottom">

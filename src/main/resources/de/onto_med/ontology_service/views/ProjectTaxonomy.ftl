@@ -28,10 +28,10 @@
 </#macro>
 
 <html>
-	<#include "Head.ftl">
+	<#include "partials/Head.ftl">
 	
 	<body>
-		<#include "Navbar.ftl">
+		<#include "partials/Navbar.ftl">
 		
 		<div class="jumbotron text-center" style="padding: 10 0 10">
 			<h2>${project.name?html}</h2>
@@ -39,7 +39,7 @@
 		</div>
 		
 		<div class="container">
-			<#include "ProjectLinks.ftl">
+			<#include "partials/ProjectLinks.ftl">
 			
 			<div class="row">
 				<div id="taxonomy-tree" class="well col-md-5">
@@ -68,6 +68,6 @@
 			});
 		</script>
 	
-		<#include "Footer.ftl">
+		<#include "partials/Footer.ftl">
 	</body>
 </html>

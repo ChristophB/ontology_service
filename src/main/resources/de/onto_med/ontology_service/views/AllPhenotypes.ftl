@@ -5,17 +5,17 @@
 <#macro active name><#if current_submenu == name>active</#if></#macro>
 
 <html>
-	<#include "Head.ftl">
+	<#include "partials/Head.ftl">
 	
 	<body>
-		<#include "Navbar.ftl">
+		<#include "partials/Navbar.ftl">
     	
     	<div class="jumbotron text-center" style="padding: 10 0 10">
 			<h2>Show All Phenotypes</h2>
 			<p>A List of All Defined Phenotypes</p>
 		</div>
 		
-		<#include "PhenotypeLinks.ftl">
+		<#include "partials/PhenotypeLinks.ftl">
 		
     	<div class="container">
     		<div class="row">
@@ -29,7 +29,7 @@
 			</div>
     	</div>
 	    
-	    <#include "Footer.ftl">
+	    <#include "partials/Footer.ftl">
 	    
 	    <script type="text/javascript">
 			$(document).ready(function() {
