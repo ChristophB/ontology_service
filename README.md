@@ -45,7 +45,7 @@ services:
       - mongodb
   ontology-service:
     container_name: ontology-service
-    image: 'ontomed/ontology-service'
+    image: 'ontomed/webprotege-rest-api'
     restart: always
     ports:
       - '81:8080'
