@@ -2,11 +2,11 @@ server:
   applicationConnectors:
   - type: http
     port: 8080
-  rootPath: /webprotege-rest-api/*
+  rootPath: /ontology-service/*
   adminConnectors:
   - type: http
     port: 8081
-  adminContextPath: /webprotege-rest-api
+  adminContextPath: /ontology-service
 dataPath: "/data/webprotege/"
 webprotegeRelativeToWebroot: /webprotege
-rootPath: /webprotege-rest-api
+rootPath: /ontology-service

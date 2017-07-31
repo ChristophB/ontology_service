@@ -50,7 +50,7 @@ public class IntegrationTest extends AbstractTest {
     		.get(String.class);
     	
     	assertThat(response).isExactlyInstanceOf(String.class);
-    	assertThat(response).contains("<form action=\"/webprotege-rest-api/entity\" method=\"get\"");
+    	assertThat(response).contains("<form action=\"/ontology-service/entity\" method=\"get\"");
     }
     
     @Test
@@ -61,7 +61,7 @@ public class IntegrationTest extends AbstractTest {
     		.get(String.class);
     	
     	assertThat(response).isExactlyInstanceOf(String.class);
-    	assertThat(response).contains("<form action=\"/webprotege-rest-api/reason\" method=\"get\"");
+    	assertThat(response).contains("<form action=\"/ontology-service/reason\" method=\"get\"");
     }
     
     @Test

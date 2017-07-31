@@ -18,8 +18,8 @@ public abstract class AbstractTest {
 
     protected Client client;
     
-    protected final String url = "http://localhost:8080/webprotege-rest-api";
-    protected final String adminUrl = "http://localhost:8081/webprotege-rest-api";
+    protected final String url = "http://localhost:8080/ontology-service";
+    protected final String adminUrl = "http://localhost:8081/ontology-service";
 
     @Before
     public void setUp() throws Exception {

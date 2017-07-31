@@ -16,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import de.onto_med.webprotege_rest_api.views.FormView;
-import de.onto_med.webprotege_rest_api.views.PhenotypeView;
 import de.onto_med.webprotege_rest_api.views.RestApiView;
 
 @Path("/phenotype")
