@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.EntityFormView" -->
-<#assign title = "Phenotype Create Form">
+<#assign title = "Composit Phenotype Create Form">
 <#assign current = "Phenotypes">
-<#assign current_submenu = "simplephenotype_form">
-<#assign heading = "Simple Phenotype-Definition Form">
-<#assign subHeading = "On this page you can define a new <strong>simple phenotype</strong> with all required metadata and properties.">
+<#assign current_submenu = "compositphenotype_form">
+<#assign heading = "Composit Phenotype-Definition Form">
+<#assign subHeading ="On this page you can define a new <strong>composit phenotype</strong> with all required metadata and properties.">
 
 <html>
 	<#include "partials/Head.ftl">
@@ -14,7 +14,8 @@
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
 		<#include "partials/PhenotypeLinks.ftl">
-
+		<#include "partials/Messages.ftl">
+		
 		<main class="container">
 			<section name="content" class="row">
 				<div class="col-md-9">
@@ -26,15 +27,17 @@
 						<#include "partials/phenotype/Category.ftl">
 						<#include "partials/phenotype/Definitions.ftl">
 
-						<#assign datatypes = [ 'integer', 'Number', 'double', 'Floating Number', 'string', 'String' ]>
-								
+						<#assign datatypes = [ 'formula', 'Numeric Formula', 'expression', 'Boolean Expression' ]>
+						
 						<div class="form-group">
 							<#include "partials/phenotype/Datatype.ftl">
 							<div class="row">
 								<div class="col-sm-10 col-sm-offset-2" id="datatype-specification">
-									<#include "partials/phenotype/Enum.ftl">
+									<#include "partials/phenotype/Formula.ftl">
 									<#include "partials/phenotype/Ucum.ftl">
-									<#include "partials/phenotype/Ranges.ftl">								
+									<#include "partials/phenotype/Ranges.ftl">
+									<#include "partials/phenotype/BooleanExpression.ftl">
+									<#include "partials/phenotype/Boolean.ftl">								
 								</div>
 							</div>
 						</div>
@@ -57,6 +60,21 @@
 		</main>
 
 		<#include "partials/Footer.ftl">
+		
+		<!-- <footer>
+			<div class="navbar navbar-default navbar-bottom">
+					<div class="container">
+						<p class="text-muted navbar-text">
+							Provided by the <a href="http://www.onto-med.de">Onto-Med Research Group</a>
+						</p>
+						<p class="text-muted navbar-text pull-right">
+							<a href="#">Help</a>
+						</p>
+					</div>
+			</div>
+		</footer>-->
+
+		
 
 		<script type="text/javascript">
 			$(document).ready(function() {

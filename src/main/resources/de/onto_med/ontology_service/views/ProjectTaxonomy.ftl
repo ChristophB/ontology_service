@@ -36,7 +36,7 @@
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
 		<#include "partials/ProjectLinks.ftl">
-		<#include "partials/ProjectLinks.ftl">
+		<#include "partials/Messages.ftl">
 		
 		<div class="container">
 			<div class="row">
