@@ -10,6 +10,7 @@
 	<body>
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
+		<#include "partials/Messages.ftl">
     	
     	<div class="container">
     		<div class="row">
@@ -23,7 +24,6 @@
 		    		</thead>
 		    		
 		    		<tbody>
-						
 						<tr>
 							<td colspan="2"><a href="${rootPath}/clear_cache">/clear_cache</a></td>
 							<td>Clears the ProjectManager cache to speed up the cognition of changes via WebProt&#233;g&#233;.</td>

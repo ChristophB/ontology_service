@@ -35,10 +35,10 @@
 	<body>
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
+		<#include "partials/ProjectLinks.ftl">
+		<#include "partials/ProjectLinks.ftl">
 		
 		<div class="container">
-			<#include "partials/ProjectLinks.ftl">
-			
 			<div class="row">
 				<div id="taxonomy-tree" class="well col-md-5">
 					<ul>
@@ -49,6 +49,8 @@
 				<pre id="description" class="col-md-7"></pre>
 			</div>
 		</div>
+	
+		<#include "partials/Footer.ftl">
 		
 		<script type="text/javascript">
 			$('#taxonomy-tree').jstree();
@@ -65,7 +67,5 @@
 				}, 'application/json');
 			});
 		</script>
-	
-		<#include "partials/Footer.ftl">
 	</body>
 </html>

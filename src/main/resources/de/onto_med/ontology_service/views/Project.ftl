@@ -13,10 +13,10 @@
 	<body>
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
+		<#include "partials/ProjectLinks.ftl">
+		<#include "partials/Messages.ftl">
 		
 		<div class="container">
-			<#include "partials/ProjectLinks.ftl">
-			
 			<div class="row">
 				<table class="table">
 					<tbody>

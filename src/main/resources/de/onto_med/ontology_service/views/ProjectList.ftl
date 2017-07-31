@@ -9,16 +9,9 @@
 	
 	<body>
 		<#include "partials/Navbar.ftl">
-		
 		<#include "partials/Heading.ftl">
+		<#include "partials/ProjectLinks.ftl">
 		
-		<script>
-			jQuery(document).ready(function($) {
-    			$(".clickable-row").click(function() {
-        			window.document.location = $(this).data("href");
-    			});
-			});
-		</script>
 		<div class="container">
 			<div class="row">
 				<table class="table table-hover">
@@ -44,5 +37,13 @@
 		</div>
 		
 		<#include "partials/Footer.ftl">
+		
+		<script>
+			jQuery(document).ready(function($) {
+    			$(".clickable-row").click(function() {
+        			window.document.location = $(this).data("href");
+    			});
+			});
+		</script>
 	</body>
 </html>

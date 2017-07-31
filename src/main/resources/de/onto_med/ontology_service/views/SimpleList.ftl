@@ -10,6 +10,7 @@
 	<body>
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
+		<#include "partials/ProjectLinks.ftl">
 		
 		<div class="container">
 			<div class="row">

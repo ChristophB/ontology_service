@@ -10,16 +10,9 @@
 	<body>
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
+		<#include "partials/Messages.ftl">
 		
 		<div class="container">
-			<div class="row">
-				<#if errorMessage??>
-					<div class="alert alert-danger">
-						<strong>Error:</strong> ${errorMessage}
-					</div>
-				</#if>
-			</div>
-			
 			<div class="row well">
 				<form action="${rootPath}/reason" method="get" class="form" role="form">
 					<div class="form-group row">

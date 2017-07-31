@@ -14,6 +14,7 @@
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
 		<#include "partials/PhenotypeLinks.ftl">
+		<#include "partials/ProjectLinks.ftl">
 
 		<main class="container">
 			<!-- The single phenotype form -->

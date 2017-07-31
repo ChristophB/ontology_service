@@ -13,6 +13,7 @@
 		<#include "partials/Navbar.ftl">
     	<#include "partials/Heading.ftl">
 		<#include "partials/PhenotypeLinks.ftl">
+		<#include "partials/Messages.ftl">
 		
     	<div class="container">
     		<div class="row">
