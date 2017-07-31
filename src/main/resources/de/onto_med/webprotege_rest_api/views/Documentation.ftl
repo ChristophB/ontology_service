@@ -9,7 +9,7 @@
 		<#include "Navbar.ftl">
 		
 		<div class="jumbotron text-center" style="padding: 10 0 10">
-			<h2>Documentation of WebProt&#233;g&#233; REST-Interface</h2>
+			<h2>Documentation of the Ontology Service</h2>
 			<p>This page contains a list of all available RESTfull functions with respective URL and query/JSON parameters.</p>
 		</div>
     	

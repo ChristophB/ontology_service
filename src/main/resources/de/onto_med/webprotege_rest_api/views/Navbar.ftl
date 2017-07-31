@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
-		<a class="navbar-brand" href="https://github.com/ChristophB/webprotege-rest-api">WebProt&#233;g&#233; REST-API User Interface</a>
+		<a class="navbar-brand" href="https://github.com/ChristophB/webprotege-rest-api">Ontology Service</a>
 		<ul class="nav navbar-nav navbar-right">
 			<li<@active "Documentation" />><a href="${rootPath}">Documentation</a></li>
 			<li<@active "Projects" />><a href="${rootPath}/projects">Projects</a></li>

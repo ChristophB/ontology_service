@@ -1,5 +1,5 @@
 <head>
-	<title>${title} | WebProt&#233;g&#233; REST-Interface</title>
+	<title>${title} | Ontology Service</title>
 	
 	<link rel="stylesheet" href="${rootPath}/vendors/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="${rootPath}/vendors/font-awesome/css/font-awesome.min.css">
