@@ -1,4 +1,3 @@
-<#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.DocumentationView" -->
 <#assign current = "Documentation">
 <#assign title = "Documentation">
 
