@@ -16,7 +16,6 @@
 		<#include "partials/PhenotypeLinks.ftl">
 
 		<main class="container">
-			<!-- The single phenotype form -->
 			<section name="content" class="row">
 				<div class="col-md-9">
 					<form id="composit-phenotype-form" class="" role="form" action="${rootPath}/phenotype/create" method="post" accept-charset="UTF-8">
