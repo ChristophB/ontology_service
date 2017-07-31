@@ -21,9 +21,7 @@
 					<div id="phenotype-tree" class="well pre-scrollable " style="height:60%"></div>
 				</div>
 				
-				<div class="well col-sm-6" id="description-container" style="height:60%">
-				
-				</div>
+				<pre class="well col-sm-6" id="description-container" style="height:60%"></pre>
 			</div>
     	</div>
 	    
@@ -31,7 +29,26 @@
 	    
 	    <script type="text/javascript">
 			$(document).ready(function() {
-				createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/all');
+				$.getJSON('${rootPath}/phenotype/all', function(data) {
+					data.forEach(function(node) {
+						preProcessPhenotype(node); 
+					});
+					
+					$('#' + 'phenotype-tree').jstree({
+						core : {
+							multiple : false,
+							data : data
+						}
+					});
+				});
+				
+				$('#phenotype-tree').bind('select_node.jstree', function(e, selected) {
+					var iri = selected.node.a_attr.iri;
+					
+					$.getJSON('${rootPath}/phenotype/' + encodeURIComponent(iri), function(json) {
+						$('#description-container').html(JSON.stringify(json, null, 2));
+					}, 'application/json');
+				});
 			});
 		</script>
 	</body>

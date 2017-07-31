@@ -2,7 +2,7 @@ package de.onto_med.ontology_service.views;
 
 import java.util.List;
 
-import de.onto_med.ontology_service.api.json.Entity;
+import de.onto_med.ontology_service.data_models.Entity;
 
 public class EntityResultsetView extends RestApiView {
 	

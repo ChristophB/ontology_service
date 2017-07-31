@@ -18,8 +18,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.onto_med.ontology_service.api.json.AnnotationQuery;
-import de.onto_med.ontology_service.api.json.Entity;
+import de.onto_med.ontology_service.data_models.AnnotationQuery;
+import de.onto_med.ontology_service.data_models.Entity;
 import de.onto_med.ontology_service.manager.MetaProjectManager;
 import de.onto_med.ontology_service.manager.ProjectManager;
 import de.onto_med.ontology_service.ontology.BinaryOwlParser;

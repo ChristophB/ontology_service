@@ -1,4 +1,4 @@
-package de.onto_med.ontology_service.api.json;
+package de.onto_med.ontology_service.data_models;
 
 import de.onto_med.ontology_service.manager.ProjectManager;
 

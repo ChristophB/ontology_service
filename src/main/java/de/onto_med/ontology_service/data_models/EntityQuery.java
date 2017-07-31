@@ -1,4 +1,4 @@
-package de.onto_med.ontology_service.api.json;
+package de.onto_med.ontology_service.data_models;
 
 import javax.ws.rs.DefaultValue;
 import com.fasterxml.jackson.annotation.JsonProperty;

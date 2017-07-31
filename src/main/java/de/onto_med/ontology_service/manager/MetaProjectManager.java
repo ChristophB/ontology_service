@@ -20,7 +20,7 @@ import com.google.inject.Singleton;
 
 import edu.stanford.smi.protege.model.Instance;
 import de.onto_med.ontology_service.api.Timer;
-import de.onto_med.ontology_service.api.json.CondencedProject;
+import de.onto_med.ontology_service.data_models.CondencedProject;
 import de.onto_med.ontology_service.ontology.PprjParser;
 import de.onto_med.owlapi_utils.binaryowl.BinaryOwlUtils;
 

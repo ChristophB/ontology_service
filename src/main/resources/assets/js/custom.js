@@ -37,19 +37,19 @@ function addRow(id) {
 	$(id).append(row);
 }
 
+function preProcessPhenotype(node) {
+	if (node.children) {
+		node.children.forEach(preProcessPhenotype);
+	}
+	if (!node.a_attr || node.a_attr.type != 'category') {
+		node.icon = 'glyphicon glyphicon-leaf';
+		node.a_attr.type = 'phenotype';
+	}
+}
+
 function createPhenotypeTree(id, url) {
 	$.getJSON(url, function(data) {
-		data.forEach(function(node) {
-			if (node.a_attr && node.a_attr.type === 'category' && node.children) {
-				node.children.forEach(function(node) {
-					node.icon = 'glyphicon glyphicon-leaf';
-					node.a_attr.type = 'phenotype';
-				})
-			} else {
-				node.icon = 'glyphicon glyphicon-leaf';
-				node.a_attr.type = 'phenotype';
-			} 
-		});
+		data.forEach(preProcessPhenotype);
 		$('#' + id).jstree({
 			core : {
 				multiple : false,

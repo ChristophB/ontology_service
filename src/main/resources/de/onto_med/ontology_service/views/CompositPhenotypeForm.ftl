@@ -93,6 +93,10 @@
 				$('#formula').change(function() {
 					$('#formula').scrollTop($('#formula')[0].scrollHeight);
 				});
+				
+				toggleSuperPhenotype();
+				toggleNewCategoryField();
+				toggleValueDefinition();
 			});
 		</script>
 	</body>

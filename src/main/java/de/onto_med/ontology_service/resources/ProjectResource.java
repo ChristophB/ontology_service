@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
 
-import de.onto_med.ontology_service.api.json.Entity;
-import de.onto_med.ontology_service.api.json.Individual;
-import de.onto_med.ontology_service.api.json.Project;
+import de.onto_med.ontology_service.data_models.Entity;
+import de.onto_med.ontology_service.data_models.Individual;
+import de.onto_med.ontology_service.data_models.Project;
 import de.onto_med.ontology_service.manager.ProjectManager;
 import de.onto_med.ontology_service.views.ProjectTaxonomyView;
 import de.onto_med.ontology_service.views.ProjectView;

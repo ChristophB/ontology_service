@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import de.onto_med.ontology_service.api.TaxonomyNode;
 import de.onto_med.ontology_service.api.Timer;
-import de.onto_med.ontology_service.api.json.Entity;
-import de.onto_med.ontology_service.api.json.Individual;
+import de.onto_med.ontology_service.data_models.Entity;
+import de.onto_med.ontology_service.data_models.Individual;
 import de.onto_med.owlapi_utils.binaryowl.BinaryOwlUtils;
 import de.onto_med.owlapi_utils.owlapi.OwlApiUtils;
 

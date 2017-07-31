@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
 
-import de.onto_med.ontology_service.api.json.CondencedProject;
-import de.onto_med.ontology_service.api.json.Entity;
-import de.onto_med.ontology_service.api.json.EntityQuery;
-import de.onto_med.ontology_service.api.json.ReasonQuery;
+import de.onto_med.ontology_service.data_models.CondencedProject;
+import de.onto_med.ontology_service.data_models.Entity;
+import de.onto_med.ontology_service.data_models.EntityQuery;
+import de.onto_med.ontology_service.data_models.ReasonQuery;
 import de.onto_med.ontology_service.manager.MetaProjectManager;
 import de.onto_med.ontology_service.views.EntityFormView;
 import de.onto_med.ontology_service.views.EntityResultsetView;
