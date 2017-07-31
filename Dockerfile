@@ -1,6 +1,6 @@
 FROM openjdk:8-jre
 
-WORKDIR /data/webprotege-rest-api
+WORKDIR /data/ontology-service
 ADD config.yml .
 ADD target/service.jar .
 ADD init.sh .

@@ -1,6 +1,6 @@
-# webprotege-rest-api
+# Ontology Service for WebProtégé
 
-This is a Dropwizard bases REST-API for WebProtégé. Specifications are not fixed yet, but the service should enable the user to query ontologies which are stored in WebProtégé as binary-OWL files.
+This is a Dropwizard bases API for WebProtégé. Specifications are not fixed yet, but the service should enable the user to query ontologies which are stored in WebProtégé as binary-OWL files.
 
 # Installation
 
@@ -17,11 +17,11 @@ Assumption:
 
 Run in a bash:
 ```bash
-> docker run --name webprotege-rest-api -d -p 8080:8080 -p 8081:8081 -e ROOT_PATH="/webprotege-rest-api" -e WEBPROTEGE="/webprotege" -v /data/webprotege:/data/webprotege ontomed/webprotege-rest-api
+> docker run --name ontology-service -d -p 8080:8080 -p 8081:8081 -e ROOT_PATH="/ontology-service" -e WEBPROTEGE="/webprotege" -v /data/webprotege:/data/webprotege ontomed/ontology-service
 ```
 
 You can specify the following environment variables:
-* ROOT_PATH: path relative to webroot, where the rest-API will be running (default: /webprotege-rest-api)
+* ROOT_PATH: path relative to webroot, where the rest-API will be running (default: /ontology-service)
 * WEBPROTEGE: path relative to webroot, where WebProtégé is running
 
 ## Or use docker-compose:
@@ -43,16 +43,16 @@ services:
       - webprotege-data:/data/webprotege
     links:
       - mongodb
-  webprotege-rest-api:
-    container_name: webprotege-rest-api
-    image: 'ontomed/webprotege-rest-api'
+  ontology-service:
+    container_name: ontology-service
+    image: 'ontomed/ontology-service'
     restart: always
     ports:
       - '81:8080'
     volumes:
       - webprotege-data:/data/webprotege
     environment:
-      - ROOT_PATH:/webprotege-rest-api
+      - ROOT_PATH:/ontology-service
       - WEBPROTEGE:/webprotege
 
 volumes:
@@ -61,7 +61,7 @@ volumes:
 
 # Usage
 
-* The rootPath of the Dropwizard application is set to "/webprotege-rest-api"
-* Access "[host ip]:[allocated port]/webprotege-rest-api" to get a list of possible queries.
+* The rootPath of the Dropwizard application is set to "/ontology-service"
+* Access "[host ip]:[allocated port]/ontology-service" to get a list of possible queries.
 
-e.g.: `localhost:8080/webprotege-rest-api` for the documentation, `localhost:8080/webprotege-rest-api/projects` for a list of available project ontologies and their ids.
+e.g.: `localhost:8080/ontology-service` for the documentation, `localhost:8080/ontology-service/projects` for a list of available project ontologies and their ids.

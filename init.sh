@@ -3,7 +3,7 @@
 set -e
 
 if [ "$ROOT_PATH" ]; then
-    sed -i "s|rootPath: /webprotege-rest-api|rootPath: $ROOT_PATH|g" config.yml
+    sed -i "s|rootPath: /ontology-service|rootPath: $ROOT_PATH|g" config.yml
 fi
 
 if [ "$WEBPROTEGE" ]; then
