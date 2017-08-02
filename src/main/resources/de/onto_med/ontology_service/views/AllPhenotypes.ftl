@@ -24,6 +24,20 @@
 	    <#include "partials/Footer.ftl">
 	    
 	    <script type="text/javascript">
+	    	function customMenu(node) {
+				var items = {
+					getDecisionTree : {
+						label  : 'Get Decision Tree',
+						action : function() { window.open('${rootPath}/phenotype/decision-tree?phenotype=' + encodeURIComponent(node.a_attr.iri), '_self'); }
+					},
+				};
+				
+				if (node.a_attr.type == 'category') {
+					delete items.getDecisionTree;
+				}
+				return items;
+			}
+
 			$(document).ready(function() {
 				$.getJSON('${rootPath}/phenotype/all', function(data) {
 					data.forEach(function(node) {
@@ -34,7 +48,9 @@
 						core : {
 							multiple : false,
 							data : data
-						}
+						},
+						plugins : [ 'contextmenu' ],
+						contextmenu : { items : customMenu }
 					});
 				});
 				

@@ -50,7 +50,7 @@
 						</tr>
 						
 						<tr>
-							<td rowspan="8">/phenotype</td>
+							<td rowspan="7">/phenotype</td>
 						</tr>
 						
 						<tr>
@@ -111,11 +111,6 @@
 								Generates a decision tree for the specified phenotype.
 								<ul><li><b>phenotype:</b> The phenotype identifier for which a decision tree will be generated.</li></ul>
 							</td>
-						</tr>
-						
-						<tr>
-							<td>/decision-tree-form</td>
-							<td>A form to select a phenotype which will be sent to the <i>/decision-tree endpoint</i>.</td>
 						</tr>
 						
 						<tr>

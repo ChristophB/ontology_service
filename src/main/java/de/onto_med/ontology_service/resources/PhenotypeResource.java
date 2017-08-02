@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.onto_med.ontology_service.data_models.Individual;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.data_models.PhenotypeFormData;
 import de.onto_med.ontology_service.views.PhenotypeFormView;
@@ -125,8 +126,8 @@ public class PhenotypeResource extends Resource {
 	@POST
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response createPhenotype(@BeanParam PhenotypeFormData phenotype) {
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response createPhenotype(@Context HttpHeaders headers, @BeanParam PhenotypeFormData phenotype) {
 		// TODO: implement OWLClass creation for provided phenotype
 		// redirect to form after creation succeded or failed and show message
 		
@@ -140,7 +141,22 @@ public class PhenotypeResource extends Resource {
 			+ "Datatype: " + phenotype.getDatatype() + "\n"
 			+ "Relations: " + phenotype.getRelations(); 
 		
-		return Response.ok(request).build();
+		RestApiView view = new RestApiView("PhenotypeView.ftl", rootPath);
+		view.addMessage("success", request);
+		
+		return Response.ok(view).build();
+	}
+	
+	@POST
+	@Path("/reason")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response classifyIndividuals(List<Individual> individuals) {
+		for (Individual individual : individuals) {
+			// TODO: implement reasoning in COP.owl
+			individual.setClassification(new ArrayList<String>());
+		}
+		return Response.ok(individuals).build();
 	}
 	
 	class TaxonomyNode {

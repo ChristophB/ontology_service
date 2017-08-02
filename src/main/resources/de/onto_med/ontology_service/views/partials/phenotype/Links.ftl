@@ -18,10 +18,6 @@
 			<a class="list-group-item <@active "all" />" href="${rootPath}/phenotype/all">
 				Show All
 			</a>
-			
-			<a class="list-group-item <@active "decision-tree-form" />" href="${rootPath}/phenotype/decision-tree-form">
-				Generate Decision Tree
-			</a>
 		</div>
 	</div>
 </div>
