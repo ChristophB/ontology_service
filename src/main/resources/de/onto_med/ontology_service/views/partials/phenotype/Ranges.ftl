@@ -34,7 +34,7 @@
 		</div>
 	
 		<div class="col-sm-4">
-			<input type="text" class="form-control" name="enum" placeholder="Label">
+			<input type="text" class="form-control" name="enum-label" placeholder="Label">
 		</div>
 	</div>
 </div>

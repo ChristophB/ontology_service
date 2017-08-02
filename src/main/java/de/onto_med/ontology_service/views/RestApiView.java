@@ -1,46 +1,32 @@
 package de.onto_med.ontology_service.views;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.dropwizard.views.View;
 
 public class RestApiView extends View {
 	protected String rootPath;
-	protected List<String> errorMessages   = new ArrayList<String>();
-	protected List<String> successMessages = new ArrayList<String>();
-	protected List<String> infoMessages    = new ArrayList<String>();
+	protected Map<String, List<String>> messages;
 	
 	public RestApiView(String template, String rootPath) {
 		super(template);
 		this.rootPath = rootPath;
+		messages = new HashMap<String, List<String>>();
 	}
 	
 	public String getRootPath() {
 		return rootPath;
 	}
 	
-	public void addErrorMessage(String message) {
-		errorMessages.add(message);
- 	}
- 	
- 	public List<String> getErrorMessages() {
- 		return errorMessages;
- 	}
- 	
- 	public void addSuccessMessage(String message) {
- 		successMessages.add(message);
- 	}
- 	
- 	public List<String> getSuccessMessages() {
- 		return successMessages;
- 	}
-
-	public void addInfoMessage(String message) {
-		infoMessages.add(message);
+	public void addMessage(String type, String message) {
+		messages.putIfAbsent(type, new ArrayList<String>());
+		messages.get(type).add(message);
 	}
 	
-	public List<String> getInfoMessages() {
-		return infoMessages;
+	public Map<String, List<String>> getMessages() {
+		return messages;
 	}
 }

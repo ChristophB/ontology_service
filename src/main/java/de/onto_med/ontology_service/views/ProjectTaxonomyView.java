@@ -16,12 +16,4 @@ public class ProjectTaxonomyView extends ProjectView {
 	public TaxonomyNode getTaxonomy() {
 		return taxonomy;
 	}
-	
-	public String getWebProtegeUri() {
-		return String.format("http://%s/#Edit:projectId=%s", baseUri, getProject().getProjectId());
-	}
-	
-	public ProjectManager getProject() {
-		return projectManager;
-	}
 }

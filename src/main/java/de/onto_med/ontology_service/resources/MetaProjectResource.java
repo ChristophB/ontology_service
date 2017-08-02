@@ -140,7 +140,7 @@ public class MetaProjectResource extends Resource {
 				EntityFormView view = new EntityFormView(
 					rootPath, type, name, iri, property, value, match, operator, ontologies
 				);
-				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
+				view.addMessage("danger", e.getMessage().replaceAll("\\n", "<br>"));
 				return Response.ok(view).build();
 			}
 		}
@@ -192,7 +192,7 @@ public class MetaProjectResource extends Resource {
 				return Response.ok(e.getMessage()).build();
 			} else {
 				ReasonFormView view = new ReasonFormView(rootPath, ce, ontologies);
-				view.addErrorMessage(e.getMessage().replaceAll("\\n", "<br>"));
+				view.addMessage("danger", e.getMessage().replaceAll("\\n", "<br>"));
 				return Response.ok(view).build();
 			}
 		}

@@ -5,10 +5,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import de.onto_med.ontology_service.views.DocumentationView;
 import de.onto_med.ontology_service.views.EntityFormView;
 import de.onto_med.ontology_service.views.ReasonFormView;
+import de.onto_med.ontology_service.views.RestApiView;
 
 /**
  * Resource class which handles all requests for documentations.
@@ -29,8 +30,8 @@ public class StaticResource {
 	 */
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	public DocumentationView getDocumentation() {
-		return new DocumentationView(rootPath);
+	public Response getDocumentation() {
+		return Response.ok(new RestApiView("Documentation.ftl", rootPath)).build();
 	}
 
 
