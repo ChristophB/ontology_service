@@ -70,17 +70,17 @@ public class PhenotypeResource extends Resource {
 		// TODO: implement taxonomy extraction from cop.owl
 		
 		List<TaxonomyNode> taxonomyNodes = new ArrayList<TaxonomyNode>() {{
-			add(new TaxonomyNode("Category_1", new Attributes("http://example.org/example#Category_1", "category"), new ArrayList<TaxonomyNode>() {{
-				add(new TaxonomyNode("Integer_Phenotype", new Attributes("http://example.org/example#Integer_Phenotype", "integer"), new ArrayList<TaxonomyNode>() {{
-					add(new TaxonomyNode("String_Phenotype", new Attributes("http://example.org/example#String_Phenotype_1", "string")));
+			add(new TaxonomyNode("Category_1", new Attributes("Category_1", "category"), new ArrayList<TaxonomyNode>() {{
+				add(new TaxonomyNode("Integer_Phenotype", new Attributes("Integer_Phenotype", "integer"), new ArrayList<TaxonomyNode>() {{
+					add(new TaxonomyNode("String_Phenotype", new Attributes("String_Phenotype_1", "string")));
 				}}));
-				add(new TaxonomyNode("String_Phenotype", new Attributes("http://example.org/example#String_phenotype_1", "string")));
+				add(new TaxonomyNode("String_Phenotype", new Attributes("String_phenotype_1", "string")));
 			}}));
-			add(new TaxonomyNode("Category_2", new Attributes("http://example.org/example#Category_2", "category"), new ArrayList<TaxonomyNode>() {{
-				add(new TaxonomyNode("Numeric_Phenotype", new Attributes("http://example.org/example#Numeric_Phenotype", "formula")));
-				add(new TaxonomyNode("Boolean_Phenotype", new Attributes("http://example.org/example#Boolean_Phenotype", "expression")));
+			add(new TaxonomyNode("Category_2", new Attributes("Category_2", "category"), new ArrayList<TaxonomyNode>() {{
+				add(new TaxonomyNode("Numeric_Phenotype", new Attributes("Numeric_Phenotype", "formula")));
+				add(new TaxonomyNode("Boolean_Phenotype", new Attributes("Boolean_Phenotype", "expression")));
 			}}));
-			add(new TaxonomyNode("Double_Phenotype", new Attributes("http://example.org/example#Double_Phenotype", "double")));
+			add(new TaxonomyNode("Double_Phenotype", new Attributes("Double_Phenotype", "double")));
 		}};
 		
 		if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
@@ -177,10 +177,10 @@ public class PhenotypeResource extends Resource {
 	
 	class Attributes {
 		public String type;
-		public String iri;
+		public String id;
 		
-		public Attributes(String iri, String type) {
-			this.iri  = iri;
+		public Attributes(String id, String type) {
+			this.id  = id;
 			this.type = type;
 		}
 	}

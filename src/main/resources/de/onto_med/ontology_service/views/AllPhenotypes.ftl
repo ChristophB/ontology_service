@@ -55,9 +55,9 @@
 				});
 				
 				$('#phenotype-tree').bind('select_node.jstree', function(e, selected) {
-					var iri = selected.node.a_attr.iri;
+					var id = selected.node.a_attr.id;
 					
-					$.getJSON('${rootPath}/phenotype/' + encodeURIComponent(iri), function(json) {
+					$.getJSON('${rootPath}/phenotype/' + encodeURIComponent(id), function(json) {
 						$('#description').html(JSON.stringify(json, null, 2));
 					}, 'application/json');
 				});
