@@ -3,28 +3,33 @@ package de.onto_med.ontology_service.resources;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.data_models.PhenotypeFormData;
-import de.onto_med.ontology_service.views.FormView;
 import de.onto_med.ontology_service.views.PhenotypeFormView;
 import de.onto_med.ontology_service.views.RestApiView;
 
 @Path("/phenotype")
 public class PhenotypeResource extends Resource {
+	
+	final static Logger logger = LoggerFactory.getLogger(PhenotypeResource.class);
 	
 	public PhenotypeResource(String rootPath) {
 		super(rootPath);
@@ -39,7 +44,9 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/{iri}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("serial")
 	public Response getPhenotype(@PathParam("iri") String iri) {
+		// TODO: implement retrival of phenotype data for given iri (?)
 		return Response.ok(new ArrayList<String>() {{ add("Some descriptions for " + iri); }}).build();
 	}
 	
@@ -47,7 +54,20 @@ public class PhenotypeResource extends Resource {
 	@Path("/all")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	@SuppressWarnings("serial")
-	public Response getPhenotypeTaxonomy(@Context HttpHeaders headers) {
+	public Response getPhenotypeTaxonomy(@Context HttpHeaders headers, @QueryParam("type") String type) {
+		switch (StringUtils.defaultString(type, "all")) {
+			case "category":
+				logger.info("only return categories");
+				break;
+			case "boolean":
+				logger.info("only return boolean expressions, used for decisiontree generation view");
+				break;
+			default:
+				logger.info("use all phenotypes");
+		}
+		
+		// TODO: implement taxonomy extraction from cop.owl
+		
 		List<TaxonomyNode> taxonomyNodes = new ArrayList<TaxonomyNode>() {{
 			add(new TaxonomyNode("Category_1", new Attributes("http://example.org/example#Category_1", "category"), new ArrayList<TaxonomyNode>() {{
 				add(new TaxonomyNode("Integer_Phenotype", new Attributes("http://example.org/example#Integer_Phenotype", "integer"), new ArrayList<TaxonomyNode>() {{
@@ -70,15 +90,33 @@ public class PhenotypeResource extends Resource {
 	}
 	
 	@GET
-	@Path("/simplephenotype_form")
-	@Produces(MediaType.TEXT_HTML)
-	public Response getSimplePhenotypeForm() {
-		PhenotypeFormView view = new PhenotypeFormView("SimplePhenotypeForm.ftl", rootPath);
-		return Response.ok(view).build();
+	@Path("/decision-tree")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getDecisionTree(@QueryParam("phenotype") String phenotype, @QueryParam("language") String language) {
+		if (StringUtils.isBlank(phenotype)) throw new WebApplicationException("Query parameter 'phenotype' missing.");
+		
+		// TODO: generate GraphML representation of the phenotypes decision tree
+		// StringUtils.defaultString(language, "en");
+		
+		return Response.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + phenotype + "_decisiontree.GraphML'").build();
 	}
 	
 	@GET
-	@Path("/compositphenotype_form")
+	@Path("/decision-tree-form")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getDecisionTreeForm() {
+		return Response.ok(new RestApiView("DecisionTreeForm.ftl", rootPath)).build();
+	}
+	
+	@GET
+	@Path("/simplephenotype-form")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getSimplePhenotypeForm(@BeanParam Phenotype phenotype) {
+		return Response.ok(new PhenotypeFormView("SimplePhenotypeForm.ftl", rootPath, phenotype)).build();
+	}
+	
+	@GET
+	@Path("/compositphenotype-form")
 	@Produces(MediaType.TEXT_HTML)
 	public Response getCompositPhenotypeForm(@BeanParam Phenotype phenotype) {
 		return Response.ok(new PhenotypeFormView("CompositPhenotypeForm.ftl", rootPath, phenotype)).build();
@@ -89,6 +127,9 @@ public class PhenotypeResource extends Resource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createPhenotype(@BeanParam PhenotypeFormData phenotype) {
+		// TODO: implement OWLClass creation for provided phenotype
+		// redirect to form after creation succeded or failed and show message
+		
 		String request
 			= "ID: " + phenotype.getId() + "\n"
 			+ String.format("Labels: %s (%s)\n", phenotype.getLabels(), phenotype.getLabelLanguages())

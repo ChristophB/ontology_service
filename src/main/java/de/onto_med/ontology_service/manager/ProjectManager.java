@@ -85,6 +85,10 @@ public class ProjectManager {
 		return binaryOwlParser.getEntityPropertiesByClassExpression(ce);
 	}
 	
+	public String getGraphMl() {
+		return "";
+	}
+	
 	
 	/**
 	 * Returns a list of entities and their properties for a set of search parameters.

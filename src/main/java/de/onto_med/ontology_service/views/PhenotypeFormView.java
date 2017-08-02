@@ -2,7 +2,7 @@ package de.onto_med.ontology_service.views;
 
 import de.onto_med.ontology_service.data_models.Phenotype;
 
-public class PhenotypeFormView extends FormView {
+public class PhenotypeFormView extends RestApiView {
 	private Phenotype phenotype;
 	
 	public PhenotypeFormView(String templateName, String rootPath) {

@@ -1,6 +1,6 @@
 package de.onto_med.ontology_service.views;
 
-public class ReasonFormView extends FormView {
+public class ReasonFormView extends RestApiView {
 	
 	private String ce;
 	private String ontologies;

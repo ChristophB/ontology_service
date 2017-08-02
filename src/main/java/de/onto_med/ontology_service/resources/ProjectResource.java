@@ -2,7 +2,6 @@ package de.onto_med.ontology_service.resources;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -72,11 +71,36 @@ public class ProjectResource extends Resource {
 	 */
 	@GET
 	@Path("/{id}/graphml")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String getGraphMl(@Context HttpHeaders headers, @PathParam("id") String projectId) {
-		return "";
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getGraphMl(
+		@Context HttpHeaders headers, @PathParam("id") String id // options ...
+	) {
+		ProjectManager manager;
+		try {
+			manager = getProjectManager(id);
+		} catch (Exception e) { throw new WebApplicationException(e.getMessage()); }
+		
+		// TODO: implement GraphML generation for given projectId/iri and options
+		return Response.ok(manager.getGraphMl()).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + manager.getProjectIri() + ".GraphML'").build();
 	}
 	
+	/**
+	 * Show form to specify options for GraphML generation.
+	 * @param id ID or IRI of the WebProtégé project
+	 * @return HTML page
+	 */
+	@GET
+	@Path("{id}/graphml-form")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getGraphMlForm(@Context UriInfo uriInfo, @PathParam("id") String id) {
+		ProjectManager manager;
+		try {
+			manager = getProjectManager(id);
+		} catch (Exception e) { throw new WebApplicationException(e.getMessage()); }
+		
+		// TODO: add form fields according to the GraphML plugin, maybe with class tree
+		return Response.ok(new ProjectView("ProjectGraphMlForm.ftl", manager, rootPath, uriInfo.getBaseUri().getHost())).build();
+	}
 
 	/**
 	 * Returns project's ontology as simple taxonomy.

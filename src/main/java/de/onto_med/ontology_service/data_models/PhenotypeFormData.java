@@ -3,8 +3,6 @@ package de.onto_med.ontology_service.data_models;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
-import javax.ws.rs.QueryParam;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PhenotypeFormData {

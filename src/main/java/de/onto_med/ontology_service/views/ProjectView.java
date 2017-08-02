@@ -7,7 +7,7 @@ public class ProjectView extends RestApiView {
 	protected final String baseUri;
 	private static final String template = "Project.ftl";
 	
-	protected ProjectView(String template, ProjectManager projectManager, String rootPath, String baseUri) {
+	public ProjectView(String template, ProjectManager projectManager, String rootPath, String baseUri) {
 		super(template, rootPath);
 		this.projectManager = projectManager;
 		this.baseUri = baseUri;

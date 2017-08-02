@@ -3,7 +3,7 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.EntityFormView" -->
 <#assign title = "Composit Phenotype Create Form">
 <#assign current = "Phenotypes">
-<#assign current_submenu = "compositphenotype_form">
+<#assign current_submenu = "compositphenotype-form">
 <#assign heading = "Composit Phenotype-Definition Form">
 <#assign subHeading ="On this page you can define a new <strong>composit phenotype</strong> with all required metadata and properties.">
 
@@ -13,7 +13,7 @@
 	<body>
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
-		<#include "partials/PhenotypeLinks.ftl">
+		<#include "partials/phenotype/Links.ftl">
 		<#include "partials/Messages.ftl">
 		
 		<main class="container">

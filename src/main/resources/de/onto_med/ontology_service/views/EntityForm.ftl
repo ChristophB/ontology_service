@@ -1,4 +1,3 @@
-<#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.EntityFormView" -->
 <#assign title = "Query Entities">
 <#assign current = "Query Entities">
 <#assign heading = "Query Entities">

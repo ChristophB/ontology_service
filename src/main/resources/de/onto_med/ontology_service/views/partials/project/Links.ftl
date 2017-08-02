@@ -4,23 +4,19 @@
 <div class="row">
 	<div class="col-md-12 text-center">
 		<div class="list-inline list-group list-group-horizontal">
-			<a class="list-group-item <@active "Overview" />"
-			   href="${rootPath}/project/${project.projectId}/overview">
+			<a class="list-group-item <@active "Overview" />" href="${rootPath}/project/${project.projectId}/overview">
 				Overview
 			</a>
 			
-			<a class="list-group-item <@active "Query this Ontology" />"
-			   href="${rootPath}/entity-form?ontologies=${project.projectIri?url}">
+			<a class="list-group-item <@active "Query this Ontology" />" href="${rootPath}/entity-form?ontologies=${project.projectIri?url}">
 				Query this Ontology
 			</a>
 			
-			<a class="list-group-item <@active "Reason this Ontology" />"
-			   href="${rootPath}/reason-form?ontologies=${project.projectIri?url}">
+			<a class="list-group-item <@active "Reason this Ontology" />" href="${rootPath}/reason-form?ontologies=${project.projectIri?url}">
 				Reason this Ontology
 			</a>
 			
-			<a class="list-group-item <@active "Taxonomy" />"
-			   href="${rootPath}/project/${project.projectId}/taxonomy">
+			<a class="list-group-item <@active "Taxonomy" />" href="${rootPath}/project/${project.projectId}/taxonomy">
 			   	Taxonomy
 			</a>
 			
@@ -28,7 +24,7 @@
 				OWL File (RDF/XML)
 			</a>
 			
-			<a class="list-group-item" href="${rootPath}/project/${project.projectId}/graphml">
+			<a class="list-group-item <@active "graphml-form" />" href="${rootPath}/project/${project.projectId}/graphml-form">
 				GraphML
 			</a>
 			

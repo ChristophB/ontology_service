@@ -4,24 +4,20 @@
 <#assign heading = "Show All Phenotypes">
 <#assign subHeading ="A List of All Defined Phenotypes">
 
-<#macro active name><#if current_submenu == name>active</#if></#macro>
-
 <html>
 	<#include "partials/Head.ftl">
 	
 	<body>
 		<#include "partials/Navbar.ftl">
     	<#include "partials/Heading.ftl">
-		<#include "partials/PhenotypeLinks.ftl">
+		<#include "partials/phenotype/Links.ftl">
 		<#include "partials/Messages.ftl">
 		
     	<div class="container">
     		<div class="row">
-	    		<div class="col-sm-6">
-					<div id="phenotype-tree" class="well pre-scrollable " style="height:60%"></div>
-				</div>
+	    		<div id="phenotype-tree" class="well col-sm-6"></div>
 				
-				<pre class="well col-sm-6" id="description-container" style="height:60%"></pre>
+				<pre class="well col-sm-6" id="description"></pre>
 			</div>
     	</div>
 	    
@@ -46,7 +42,7 @@
 					var iri = selected.node.a_attr.iri;
 					
 					$.getJSON('${rootPath}/phenotype/' + encodeURIComponent(iri), function(json) {
-						$('#description-container').html(JSON.stringify(json, null, 2));
+						$('#description').html(JSON.stringify(json, null, 2));
 					}, 'application/json');
 				});
 			});

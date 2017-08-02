@@ -7,16 +7,20 @@
 				Overview
 			</a>
 			
-			<a class="list-group-item <@active "simplephenotype_form" />" href="${rootPath}/phenotype/simplephenotype_form">
+			<a class="list-group-item <@active "simplephenotype-form" />" href="${rootPath}/phenotype/simplephenotype-form">
 				Create Simple Phenotype
 			</a>
 			
-			<a class="list-group-item <@active "compositphenotype_form" />" href="${rootPath}/phenotype/compositphenotype_form">
+			<a class="list-group-item <@active "compositphenotype-form" />" href="${rootPath}/phenotype/compositphenotype-form">
 				Create Composit Phenotype
 			</a>
 			
 			<a class="list-group-item <@active "all" />" href="${rootPath}/phenotype/all">
 				Show All
+			</a>
+			
+			<a class="list-group-item <@active "decision-tree-form" />" href="${rootPath}/phenotype/decision-tree-form">
+				Generate Decision Tree
 			</a>
 		</div>
 	</div>

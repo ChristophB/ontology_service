@@ -14,15 +14,12 @@
 	border-top-right-radius:4px;
 	border-bottom-left-radius:0;
 }
-#description, #taxonomy-tree {
-	height: 70%;
+#description, #taxonomy-tree, #phenotype-tree {
+	height: 60%;
 	overflow: auto;
 }
 .entity-result {
 	padding-bottom: 0px;
-}
-#phenotype-tree {
-	max-height: 100%;
 }
 #super-phenotype-tree {
 	height: 200px; overflow: auto;

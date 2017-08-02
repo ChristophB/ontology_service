@@ -1,6 +1,6 @@
 package de.onto_med.ontology_service.views;
 
-public class EntityFormView extends FormView {
+public class EntityFormView extends RestApiView {
 	
  	private String type;
 	private String name;

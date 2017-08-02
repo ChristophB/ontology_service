@@ -1,8 +1,8 @@
-<#assign title = "Phenotypes">
+<#assign title = "Decision Tree">
 <#assign current = "Phenotypes">
-<#assign current_submenu = "overview">
-<#assign heading = "Phenotypes">
-<#assign subHeading ="Create New Phenotypes or View Existing Ones">
+<#assign current_submenu = "decision-tree-form">
+<#assign heading = "Generate Decision Tree">
+<#assign subHeading ="<!-- Some Description -->">
 
 <html>
 	<#include "partials/Head.ftl">
@@ -14,9 +14,9 @@
 		<#include "partials/Messages.ftl">
 		
     	<div class="container">
-			<p class="text-center">
-				Phenotype definition... And description of both kinds of phenotypes...
-			</p>
+    		<div class="row">
+	    		<!-- TODO: create form -->
+			</div>
     	</div>
 	    
 	    <#include "partials/Footer.ftl">
