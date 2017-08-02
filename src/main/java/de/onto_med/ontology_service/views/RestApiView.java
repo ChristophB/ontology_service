@@ -32,15 +32,15 @@ public class RestApiView extends View {
  		successMessages.add(message);
  	}
  	
- 	public List<String> getSuccessMessage(String message) {
+ 	public List<String> getSuccessMessages() {
  		return successMessages;
  	}
 
-	public List<String> getInfoMessages() {
-		return infoMessages;
-	}
-
 	public void addInfoMessage(String message) {
 		infoMessages.add(message);
+	}
+	
+	public List<String> getInfoMessages() {
+		return infoMessages;
 	}
 }

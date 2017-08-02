@@ -1,19 +1,19 @@
 <div class="container">
-	<#if errorMessage??>
+	<#list errorMessages as message>
 		<div class="alert alert-danger">
-			<strong>Error:</strong> ${errorMessage}
+			<strong>Error:</strong> ${message}
 		</div>
-	</#if>
+	</#list>
 	
-	<#if successMessage??>
+	<#list successMessages as message>
 		<div class="alert alert-success">
-			<strong>Error:</strong> ${successMessage}
+			<strong>Success:</strong> ${message}
 		</div>
-	</#if>
+	</#list>
 	
-	<#if infoMessage??>
+	<#list infoMessages as message>
 		<div class="alert alert-info">
-			<strong>Error:</strong> ${infoMessage}
+			<strong>Info:</strong> ${message}
 		</div>
-	</#if>
+	</#list>
 </div>
