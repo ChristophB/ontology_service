@@ -96,6 +96,20 @@
   	  <artifactId>OWL2GRAPHML_View</artifactId>
   	  <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    
+    <dependency>
+	  <groupId>org.lha</groupId>
+	  <artifactId>phenoman</artifactId>
+	  <version>0.0.1</version>
+	  <scope>system</scope>
+  	  <systemPath>${basedir}/lib/phenoman-0.0.1.jar</systemPath>
+  	  <exclusions>
+  	  	<exclusion>
+  	  	  <groupId>org.slf4j</groupId>
+  	  	  <artifactId>impl</artifactId>
+  	  	</exclusion>
+  	  </exclusions>
+	</dependency>
   </dependencies>
   
   <build>
