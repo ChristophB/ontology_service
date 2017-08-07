@@ -32,6 +32,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="R:/LeipzigHealthAtlas/AP1/AP1.2/PhenOMan/phenoman-0.0.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
