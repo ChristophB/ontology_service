@@ -7,6 +7,7 @@ server:
   - type: http
     port: 8081
   adminContextPath: /ontology-service
-dataPath: "/data/webprotege/"
+dataPath: /data/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
+phenotypePath: /data/ontology-service/
