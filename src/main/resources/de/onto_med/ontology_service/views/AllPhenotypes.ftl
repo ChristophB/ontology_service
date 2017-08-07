@@ -31,7 +31,6 @@
 						action : function() { window.open('${rootPath}/phenotype/decision-tree?phenotype=' + encodeURIComponent(node.a_attr.iri), '_self'); }
 					},
 				};
-				console.log(node.a_attr);
 				if (node.a_attr.type != 'expression') {
 					delete items.getDecisionTree;
 				}

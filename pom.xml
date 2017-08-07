@@ -90,6 +90,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    
+    <dependency>
+      <groupId>OWL2GRAPHML_View</groupId>
+  	  <artifactId>OWL2GRAPHML_View</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   
   <build>

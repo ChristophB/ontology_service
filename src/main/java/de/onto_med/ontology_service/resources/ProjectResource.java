@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
 
+import de.imise.owl2graphml_view.onto.MainOntology;
 import de.onto_med.ontology_service.data_models.Entity;
 import de.onto_med.ontology_service.data_models.Individual;
 import de.onto_med.ontology_service.data_models.Project;
@@ -73,15 +75,50 @@ public class ProjectResource extends Resource {
 	@Path("/{id}/graphml")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getGraphMl(
-		@Context HttpHeaders headers, @PathParam("id") String id // options ...
+		@Context HttpHeaders headers, @PathParam("id") String id,
+		@QueryParam("start-class") String startClassIri,
+		@QueryParam("taxonomy-direction") String taxonomyDirection,
+		@QueryParam("taxonomy-depth") int taxonomyDepth,
+		@QueryParam("has-restriction-super-classes") String hasRestrictionSuperClasses,
+		@QueryParam("has-grayscale") boolean hasGreyScale, @QueryParam("has-taxonomy") boolean hasTaxonomy,
+		@QueryParam("has-annotations") boolean hasAnnotations, @QueryParam("has-property-definitions") boolean hasPropertyDefinitions,
+		@QueryParam("has-anonymous-super-classes") boolean hasAnonymousSuperClasses, @QueryParam("has-equivalent-classes") boolean hasEquivalentClasses,
+		@QueryParam("has-individuals") boolean hasIndividuals, @QueryParam("has-individual-types") boolean hasIndividualTypes,
+		@QueryParam("has-individual-assertions") boolean hasIndividualAssertions
 	) {
 		ProjectManager manager;
 		try {
 			manager = getProjectManager(id);
 		} catch (Exception e) { throw new WebApplicationException(e.getMessage()); }
 		
-		// TODO: implement GraphML generation for given projectId/iri and options
-		return Response.ok(manager.getGraphMl()).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + manager.getProjectIri() + ".GraphML'").build();
+		MainOntology graphMlOntology = manager.getGraphMl(startClassIri, taxonomyDirection, taxonomyDepth);
+		
+		graphMlOntology.setHasGrayscale(hasGreyScale);
+		graphMlOntology.setHasRestrictionSuperClassesWithType("with type".equals(hasRestrictionSuperClasses));
+		
+		if (hasTaxonomy)
+			graphMlOntology.addTaxonomy();
+		if (hasAnnotations)
+			graphMlOntology.addAnnotations();
+		if (!"No".equals(hasRestrictionSuperClasses))
+			graphMlOntology.addPropertyRestrictionSuperClasses();
+		if (hasAnonymousSuperClasses)
+			graphMlOntology.addAnonymousSuperClasses("No".equals(hasRestrictionSuperClasses));
+		if (hasEquivalentClasses)
+			graphMlOntology.addEquivalentClasses();
+		if (hasIndividuals)
+			graphMlOntology.addIndividuals();
+		if (hasIndividualTypes)
+			graphMlOntology.addIndividualTypes();
+		if (hasIndividualAssertions)
+			graphMlOntology.addIndividualAssertions();
+		if (hasPropertyDefinitions)
+			graphMlOntology.addProperyDefinitions();
+		
+		return Response
+			.ok(graphMlOntology.toXml().toString())
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + manager.getProjectIri() + ".GraphML'")
+			.build();
 	}
 	
 	/**

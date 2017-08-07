@@ -289,6 +289,10 @@ public class BinaryOwlParser extends OntologyParser {
 		return OwlApiUtils.getHermiTReasoner(getRootOntology()).isConsistent();
 	}
 	
+	public OWLOntology getOntology() {
+		return getRootOntology();
+	}
+	
 	private OWLNamedIndividual createNamedIndividual(Individual individual) throws NoSuchAlgorithmException {
 		OWLDataFactory factory = manager.getOWLDataFactory();
 		Set<OWLAxiom> axioms   = new TreeSet<OWLAxiom>();

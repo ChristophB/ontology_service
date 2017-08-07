@@ -41,10 +41,7 @@ function preProcessPhenotype(node) {
 	if (node.children) {
 		node.children.forEach(preProcessPhenotype);
 	}
-	if (node.a_attr.type != 'category') {
-		node.icon = 'glyphicon glyphicon-leaf';
-		// node.a_attr.type = 'phenotype';
-	}
+	if (node.a_attr.type != 'category')	node.icon = 'glyphicon glyphicon-leaf';
 }
 
 function createPhenotypeTree(id, url) {

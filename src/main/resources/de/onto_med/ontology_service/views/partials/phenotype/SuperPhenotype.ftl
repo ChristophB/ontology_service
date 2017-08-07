@@ -1,7 +1,7 @@
 <div class="form-group row">
 	<label class="control-label col-sm-2">Super-Phenotype</label>
 	<div class="checkbox col-sm-3">
-		<label for="has-super-phenotype"  class="control-label">
+		<label for="has-super-phenotype" class="control-label">
 			<input type="checkbox" id="has-super-phenotype" name="has-super-phenotype" onchange="toggleSuperPhenotype()" value="true"
 				<#if phenotype?? & phenotype.hasSuperPhenotype?? & phenotype.hasSuperPhenotype>checked</#if>
 			>Has Super-Phenotype
