@@ -101,7 +101,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 		environment.jersey().register(projectResource);
 		environment.jersey().register(new StaticResource(configuration.getRootPath()));
 		environment.jersey().register(new AnnotationResource(metaProjectResource.getMetaProjectManager()).setRootPath(configuration.getRootPath()));
-		environment.jersey().register(new PhenotypeResource(configuration.getRootPath()));
+		environment.jersey().register(new PhenotypeResource(configuration.getRootPath(), configuration.getPhenotypePath()));
 		// environment.jersey().register(MultiPartFeature.class);
 		
 		/*** Register health checks here: ***/

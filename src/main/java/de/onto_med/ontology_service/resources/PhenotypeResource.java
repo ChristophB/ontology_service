@@ -27,13 +27,22 @@ import de.onto_med.ontology_service.data_models.PhenotypeFormData;
 import de.onto_med.ontology_service.views.PhenotypeFormView;
 import de.onto_med.ontology_service.views.RestApiView;
 
+import org.lha.phenoman.man.PhenotypeOntologyManager;
+import org.lha.phenoman.model.AbstractBooleanPhenotype;
+import org.lha.phenoman.model.AbstractCalculationPhenotype;
+import org.lha.phenoman.model.AbstractSinglePhenotype;
+import org.lha.phenoman.model.top_level.AbstractPhenotype;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
+
 @Path("/phenotype")
 public class PhenotypeResource extends Resource {
-	
 	final static Logger logger = LoggerFactory.getLogger(PhenotypeResource.class);
 	
-	public PhenotypeResource(String rootPath) {
+	private String phenotypePath;
+	
+	public PhenotypeResource(String rootPath, String phenotypePath) {
 		super(rootPath);
+		this.phenotypePath = phenotypePath;
 	}
 	
 	@GET
@@ -48,6 +57,7 @@ public class PhenotypeResource extends Resource {
 	@SuppressWarnings("serial")
 	public Response getPhenotype(@PathParam("iri") String iri) {
 		// TODO: implement retrival of phenotype data for given iri (?)
+		
 		return Response.ok(new ArrayList<String>() {{ add("Some descriptions for " + iri); }}).build();
 	}
 	
@@ -127,23 +137,82 @@ public class PhenotypeResource extends Resource {
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response createPhenotype(@Context HttpHeaders headers, @BeanParam PhenotypeFormData phenotype) {
-		// TODO: implement OWLClass creation for provided phenotype
-		// redirect to form after creation succeded or failed and show message
-		
-		String request
-			= "ID: " + phenotype.getId() + "\n"
-			+ String.format("Labels: %s (%s)\n", phenotype.getLabels(), phenotype.getLabelLanguages())
-			+ String.format("Has Super Phenotype: %s => '%s'\n", phenotype.getHasSuperPhenotype(), phenotype.getSuperPhenotype())
-			+ "Category: " + phenotype.getCategory() + "\n"
-			+ "New-Category: " + phenotype.getNewCategory() + "\n"
-			+ String.format("Defintions: %s (%s)\n", phenotype.getDefinitions(), phenotype.getDefinitionLanguages())
-			+ "Datatype: " + phenotype.getDatatype() + "\n"
-			+ "Relations: " + phenotype.getRelations(); 
-		
+	public Response createPhenotype(@Context HttpHeaders headers, @BeanParam PhenotypeFormData formData) {
+		// TODO: redirect to form after creation succeded or failed and show message
 		RestApiView view = new RestApiView("PhenotypeView.ftl", rootPath);
-		view.addMessage("success", request);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(phenotypePath, true);
 		
+		if (StringUtils.isBlank(formData.getId()) || StringUtils.isBlank(formData.getDatatype())) {
+			view.addMessage("danger", "ID and/or Datatype is missing.");
+			return Response.ok(view).build();
+		}
+		
+		AbstractPhenotype phenotype;
+		switch (formData.getDatatype()) {
+		case "integer":
+			phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_INTEGER);
+			break;
+		case "double":
+			phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DOUBLE);
+			break;
+		case "string":
+			phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING);
+			break;
+		case "expression":
+			if (StringUtils.isBlank(formData.getFormula())) {
+				view.addMessage("danger", "Phenotype with Datatype 'Boolean Expression' requires an expression.");
+				return Response.ok(view).build();
+			}
+			phenotype = new AbstractBooleanPhenotype(formData.getId());
+			break;
+		case "formula":
+			if (StringUtils.isBlank(formData.getFormula())) {
+				view.addMessage("danger", "Phenotype with Datatype 'Formula' requires a formula.");
+				return Response.ok(view).build();
+			}
+			phenotype = new AbstractCalculationPhenotype(formData.getId(), formData.getFormula());
+			break;
+		default:
+			view.addMessage("danger", "Could not determine Datatype.");
+			return Response.ok(view).build();
+		}
+		
+		for (int i = 0; i < formData.getLabels().size(); i++) {
+			String label = formData.getLabels().get(i);
+			if (StringUtils.isBlank(label)) continue;
+			String language = formData.getLabelLanguages().get(i);
+			if (StringUtils.isNoneBlank(language)) phenotype.addLabel(label, language);
+			else phenotype.addLabel(label);
+		}
+		
+		if (formData.getHasSuperPhenotype() && StringUtils.isNoneBlank(formData.getSuperPhenotype())) {
+			// not used
+		}
+		
+		String category = formData.getCategory();
+		if (StringUtils.isNoneBlank(category)) {
+			if (!category.equals("new_category"))
+				phenotype.setPhenotypeClasses(category);
+			else if (StringUtils.isNoneBlank(formData.getNewCategory()))
+				manager.addPhenotypeClass(formData.getNewCategory());
+		}
+
+//		for (int i = 0; i < formData.getDefinitions().size(); i++) {
+//			String definition = formData.getDefinitions().get(i);
+//			if (StringUtils.isBlank(definition)) continue;
+//			String language = formData.getDefinitionLanguages().get(i);
+//			if (StringUtils.isNoneBlank(definition)) phenotype.addDefinition(definition, language);
+//			else phenotype.addLabel(definition);
+//		}
+		
+//		for (Stirng relation : formData.getRelations()) {
+//			if (StringUtils.isNoneBlank(relation))
+//				phenotype.addRelation(relation);
+//		}
+		
+		
+		manager.write();
+		view.addMessage("success", "Phenotype '" + formData.getId() + "' created.");
 		return Response.ok(view).build();
 	}
 	

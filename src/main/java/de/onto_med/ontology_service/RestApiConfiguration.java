@@ -24,6 +24,10 @@ public class RestApiConfiguration extends Configuration {
 	 * Root path of the service.
 	 */
 	@NotEmpty private String rootPath;
+	/**
+	 * Path to the cop.owl file, which is used to store phenotypes.
+	 */
+	@NotEmpty private String phenotypePath;
 	
 	@JsonProperty
 	public String getDataPath() {
@@ -53,6 +57,16 @@ public class RestApiConfiguration extends Configuration {
 	@JsonProperty
 	public void setRootPath(String rootPath) {
 		this.rootPath = rootPath;
+	}
+	
+	@JsonProperty
+	public String getPhenotypePath() {
+		return phenotypePath;
+	}
+	
+	@JsonProperty
+	public void setPhenotypePath(String phenotypePath) {
+		this.phenotypePath = phenotypePath;
 	}
 	
 }
