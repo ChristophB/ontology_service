@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -101,7 +102,7 @@ public class BinaryOwlParser extends OntologyParser {
 		return getRootOntology().getOntologyID().getOntologyIRI().get().toString();
 	}
 	
-	public int countEntities(Class<?> cls) {
+	public long countEntities(Class<?> cls) {
 		return OwlApiUtils.countEntities(cls, getRootOntology());
 	}
 	
@@ -113,7 +114,7 @@ public class BinaryOwlParser extends OntologyParser {
 	 */
 	public List<String> classifyIndividual(Individual individual) throws NoSuchAlgorithmException {
 		return OwlApiUtils.getHermiTReasoner(getRootOntology())
-			.getTypes(createNamedIndividual(individual), true).getFlattened().parallelStream()
+			.getTypes(createNamedIndividual(individual), true).entities().parallel()
 			.map(e -> e.getIRI().toString())
 			.collect(Collectors.toList());
 	}
@@ -127,7 +128,7 @@ public class BinaryOwlParser extends OntologyParser {
 		OWLClassExpression ce = OwlApiUtils.convertStringToClassExpression(classExpression, getRootOntology());
 		
 		return OwlApiUtils.getHermiTReasoner(getRootOntology())
-			.getInstances(ce, false).getFlattened().parallelStream()
+			.getInstances(ce, false).entities().parallel()
 			.map(this::getEntity).collect(Collectors.toList());
 	}
 	
@@ -189,7 +190,7 @@ public class BinaryOwlParser extends OntologyParser {
 		if (StringUtils.isBlank(iri) && StringUtils.isBlank(name) && StringUtils.isBlank(property))
 			return null;
 		
-		return getRootOntology().getSignature(Imports.INCLUDED).parallelStream()
+		return getRootOntology().signature(Imports.INCLUDED).parallel()
 			.filter(entity -> {
 				Boolean iriMatch      = false;
 				Boolean nameMatch     = false;
@@ -269,7 +270,7 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @return List of imported ontology ids
 	 */
 	public List<String> getImportedOntologyIds() {
-		return getRootOntology().getImports().parallelStream()
+		return getRootOntology().imports().parallel()
 			.map(o -> o.getOntologyID().toString()).collect(Collectors.toList());
 	}
 	
@@ -280,7 +281,7 @@ public class BinaryOwlParser extends OntologyParser {
 	 */
 	public Map<String, String> getOntologyIris() {
 		getRootOntology();
-		return manager.getOntologies().parallelStream()
+		return manager.ontologies().parallel()
 			.map(o -> o.getOntologyID().getOntologyIRI().get())
 			.collect(Collectors.toMap(i -> i.getShortForm(), i -> i.toString()));
 	}
@@ -333,7 +334,7 @@ public class BinaryOwlParser extends OntologyParser {
 			}
 		});
 		
-		manager.addAxioms(getRootOntology(), axioms);
+		manager.addAxioms(getRootOntology(), axioms.stream());
 		
 		return namedIndividual;
 	}
@@ -351,18 +352,18 @@ public class BinaryOwlParser extends OntologyParser {
 	private Boolean hasProperty(OWLEntity entity, String property, String value, Boolean exact) {
 		return
 			entity.isOWLNamedIndividual()
-			&& (extractPropertyByNameFromSet(property, getRootOntology().getDataPropertiesInSignature(Imports.INCLUDED), exact)
+			&& (extractPropertyByNameFromStream(property, getRootOntology().dataPropertiesInSignature(Imports.INCLUDED), exact)
 					.parallelStream().anyMatch(dataProperty -> {
-						return valueCollectionContains(EntitySearcher.getDataPropertyValues(entity.asOWLNamedIndividual(), dataProperty, getRootOntology()), value);
+						return valueStreamContains(EntitySearcher.getDataPropertyValues(entity.asOWLNamedIndividual(), dataProperty, getRootOntology()), value);
 					})
-				|| extractPropertyByNameFromSet(property, getRootOntology().getObjectPropertiesInSignature(Imports.INCLUDED), exact)
+				|| extractPropertyByNameFromStream(property, getRootOntology().objectPropertiesInSignature(Imports.INCLUDED), exact)
 		    		.parallelStream().anyMatch(objectProperty -> {
-		    			return valueCollectionContains(EntitySearcher.getObjectPropertyValues(entity.asOWLNamedIndividual(), objectProperty, getRootOntology()), value);
+		    			return valueStreamContains(EntitySearcher.getObjectPropertyValues(entity.asOWLNamedIndividual(), objectProperty, getRootOntology()), value);
 		    		})
 		    )
-			|| extractPropertyByNameFromSet(property, getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED), exact)
+			|| extractPropertyByNameFromStream(property, getRootOntology().annotationPropertiesInSignature(Imports.INCLUDED), exact)
 	    		.parallelStream().anyMatch(annotationProperty -> {
-	    			return valueCollectionContains(EntitySearcher.getAnnotations(entity, getRootOntology(), annotationProperty), value);
+	    			return valueStreamContains(EntitySearcher.getAnnotations(entity, getRootOntology(), annotationProperty), value);
 	    		});
 	}
 	
@@ -373,11 +374,11 @@ public class BinaryOwlParser extends OntologyParser {
 			cls.getIRI().toString()
 		);
 		
-		reasoner.getSubClasses(cls, true).getFlattened().stream().filter(
+		reasoner.getSubClasses(cls, true).entities().filter(
 			subclass -> !subclass.isBottomEntity()
 		).forEach(subclass -> taxonomy.addSubclassNode(getTaxonomyForOWLClass(subclass, reasoner)));
 		
-		reasoner.getInstances(cls, true).getFlattened().forEach(
+		reasoner.getInstances(cls, true).entities().forEach(
 			instance ->	taxonomy.addInstance(OwlApiUtils.getLabel(instance, getRootOntology()), instance.getIRI().toString())
 		);
 		
@@ -385,8 +386,16 @@ public class BinaryOwlParser extends OntologyParser {
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private <T> List<T> extractPropertyByNameFromSet(String name, Set<T> properties, Boolean exact) {
 		return properties.parallelStream().filter(property ->
+			exact && XMLUtils.getNCNameSuffix(((OWLNamedObject) property).getIRI()).equals(name)
+			|| StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(((OWLNamedObject) property).getIRI()), name) >= MATCH_THRESHOLD
+		).collect(Collectors.toList());
+	}
+	
+	private <T> List<T> extractPropertyByNameFromStream(String name, Stream<T> properties, Boolean exact) {
+		return properties.parallel().filter(property ->
 			exact && XMLUtils.getNCNameSuffix(((OWLNamedObject) property).getIRI()).equals(name)
 			|| StringUtils.getJaroWinklerDistance(XMLUtils.getNCNameSuffix(((OWLNamedObject) property).getIRI()), name) >= MATCH_THRESHOLD
 		).collect(Collectors.toList());
@@ -417,16 +426,16 @@ public class BinaryOwlParser extends OntologyParser {
     	properties.setIri(entity.getIRI().toString());
     	properties.setJavaClass(entity.getClass().getName());
     	
-    	EntitySearcher.getAnnotationAssertionAxioms(entity, getRootOntology()).parallelStream().forEach(
+    	EntitySearcher.getAnnotationAssertionAxioms(entity, getRootOntology()).parallel().forEach(
     		property -> properties.addAnnotationProperty(property.getProperty(), property.getValue())
     	);
     	
     	if (entity.isOWLClass()) {
-    		properties.addSuperClassExpressions(reasoner.getSuperClasses(entity.asOWLClass(), true).getFlattened());
-    		properties.addSubClassExpressions(reasoner.getSubClasses(entity.asOWLClass(), true).getFlattened());
-			properties.addIndividuals(reasoner.getInstances(entity.asOWLClass(), true).getFlattened());
-    		properties.addDisjointClasses(reasoner.getDisjointClasses(entity.asOWLClass()).getFlattened());
-    		properties.addEquivalentClasses(reasoner.getEquivalentClasses(entity.asOWLClass()).getEntities());
+    		properties.addSuperClassExpressions(reasoner.getSuperClasses(entity.asOWLClass(), true).entities());
+    		properties.addSubClassExpressions(reasoner.getSubClasses(entity.asOWLClass(), true).entities());
+			properties.addIndividuals(reasoner.getInstances(entity.asOWLClass(), true).entities());
+    		properties.addDisjointClasses(reasoner.getDisjointClasses(entity.asOWLClass()).entities());
+    		properties.addEquivalentClasses(reasoner.getEquivalentClasses(entity.asOWLClass()).entities());
     	}
     	
     	if (entity.isOWLNamedIndividual()) {
@@ -438,8 +447,8 @@ public class BinaryOwlParser extends OntologyParser {
 				property ->	properties.addObjectProperty(property.getKey(), property.getValue())
 			);
 			
-			properties.addTypes(reasoner.getTypes(entity.asOWLNamedIndividual(), true).getFlattened());
-			properties.addSameIndividuals(reasoner.getSameIndividuals(entity.asOWLNamedIndividual()).getEntities());
+			properties.addTypes(reasoner.getTypes(entity.asOWLNamedIndividual(), true).entities());
+			properties.addSameIndividuals(reasoner.getSameIndividuals(entity.asOWLNamedIndividual()).entities());
     	}
     	
     	reasoner.dispose();
@@ -494,8 +503,27 @@ public class BinaryOwlParser extends OntologyParser {
 	 * @param value value to search for
 	 * @return true if valueSet contains value or value is null, else false
 	 */
+	@SuppressWarnings("unused")
 	private <T> boolean valueCollectionContains(Collection<T> values, String value) {
 		for (T curValue : values) {
+    		if (StringUtils.isEmpty(value)
+    			|| curValue.toString().replaceAll("^.*?\"|\"\\^.*$", "").equals(value)
+    		) {
+    			return true;
+    		}
+    	}
+		return false;
+	}
+	
+	/**
+	 * Checks if set of values contains a value or value is null.
+	 * @param <T> a stream type
+	 * @param values value set
+	 * @param value value to search for
+	 * @return true if valueSet contains value or value is null, else false
+	 */
+	private <T> boolean valueStreamContains(Stream<T> values, String value) {
+		for (T curValue : values.collect(Collectors.toList())) {
     		if (StringUtils.isEmpty(value)
     			|| curValue.toString().replaceAll("^.*?\"|\"\\^.*$", "").equals(value)
     		) {

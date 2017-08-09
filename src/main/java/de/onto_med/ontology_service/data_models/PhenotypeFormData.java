@@ -13,7 +13,7 @@ public class PhenotypeFormData {
 	@FormParam("label-language[]") @JsonProperty("label-language[]")
 	private List<String> labelLanguages;
 	@FormParam("has-super-phenotype") @JsonProperty("has-super-phenotype")
-	private Boolean hasSuperPhenotype;
+	private boolean hasSuperPhenotype = false;
 	@FormParam("super-phenotype") @JsonProperty("super-phenotype")
 	private String superPhenotype;
 	@FormParam("category") @JsonProperty("category")
@@ -75,11 +75,11 @@ public class PhenotypeFormData {
 		this.labelLanguages = labelLanguage;
 	}
 
-	public Boolean getHasSuperPhenotype() {
+	public boolean getHasSuperPhenotype() {
 		return hasSuperPhenotype;
 	}
 
-	public void setHasSuperPhenotype(Boolean hasSuperPhenotype) {
+	public void setHasSuperPhenotype(boolean hasSuperPhenotype) {
 		this.hasSuperPhenotype = hasSuperPhenotype;
 	}
 

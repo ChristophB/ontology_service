@@ -14,7 +14,7 @@ public class Phenotype {
 	@QueryParam("label-language[]") @JsonProperty("label-language[]")
 	private List<String> labelLanguages;
 	@QueryParam("has-super-phenotype") @JsonProperty("has-super-phenotype")
-	private Boolean hasSuperPhenotype;
+	private Boolean hasSuperPhenotype = false;
 	@QueryParam("super-phenotype") @JsonProperty("super-phenotype")
 	private String superPhenotype;
 	@QueryParam("category") @JsonProperty("category")

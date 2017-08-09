@@ -10,13 +10,13 @@ import de.onto_med.ontology_service.manager.ProjectManager;
  */
 public class Project extends CondencedProject {
 	private String iri;
-	private int countAxioms;
-	private int countLogicalAxioms;
-	private int countClasses;
-	private int countIndividuals;
-	private int countDataProperties;
-	private int countObjectProperties;
-	private int countAnnotationProperties;
+	private long countAxioms;
+	private long countLogicalAxioms;
+	private long countClasses;
+	private long countIndividuals;
+	private long countDataProperties;
+	private long countObjectProperties;
+	private long countAnnotationProperties;
 	private boolean isConsistent;
 	private List<String> importedOntologyIds;
 	
@@ -41,59 +41,59 @@ public class Project extends CondencedProject {
 		this.iri = iri;
 	}
 
-	public int getCountAxioms() {
+	public long getCountAxioms() {
 		return countAxioms;
 	}
 
-	public void setCountAxioms(int countAxioms) {
+	public void setCountAxioms(long countAxioms) {
 		this.countAxioms = countAxioms;
 	}
 
-	public int getCountLogicalAxioms() {
+	public long getCountLogicalAxioms() {
 		return countLogicalAxioms;
 	}
 
-	public void setCountLogicalAxioms(int countLogicalAxioms) {
+	public void setCountLogicalAxioms(long countLogicalAxioms) {
 		this.countLogicalAxioms = countLogicalAxioms;
 	}
 
-	public int getCountClasses() {
+	public long getCountClasses() {
 		return countClasses;
 	}
 
-	public void setCountClasses(int countClasses) {
+	public void setCountClasses(long countClasses) {
 		this.countClasses = countClasses;
 	}
 
-	public int getCountIndividuals() {
+	public long getCountIndividuals() {
 		return countIndividuals;
 	}
 
-	public void setCountIndividuals(int countIndividuals) {
+	public void setCountIndividuals(long countIndividuals) {
 		this.countIndividuals = countIndividuals;
 	}
 
-	public int getCountDataProperties() {
+	public long getCountDataProperties() {
 		return countDataProperties;
 	}
 
-	public void setCountDataProperties(int countDataProperties) {
+	public void setCountDataProperties(long countDataProperties) {
 		this.countDataProperties = countDataProperties;
 	}
 
-	public int getCountObjectProperties() {
+	public long getCountObjectProperties() {
 		return countObjectProperties;
 	}
 
-	public void setCountObjectProperties(int countObjectProperties) {
+	public void setCountObjectProperties(long countObjectProperties) {
 		this.countObjectProperties = countObjectProperties;
 	}
 
-	public int getCountAnnotationProperties() {
+	public long getCountAnnotationProperties() {
 		return countAnnotationProperties;
 	}
 
-	public void setCountAnnotationProperties(int countAnnotationProperties) {
+	public void setCountAnnotationProperties(long countAnnotationProperties) {
 		this.countAnnotationProperties = countAnnotationProperties;
 	}
 

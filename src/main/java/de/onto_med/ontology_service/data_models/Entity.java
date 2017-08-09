@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
@@ -48,20 +49,20 @@ public class Entity {
 		}
 	}
 	
-	public void addIndividuals(Set<OWLNamedIndividual> individuals) {
-		individuals.parallelStream().forEach(
+	public void addIndividuals(Stream<OWLNamedIndividual> individuals) {
+		individuals.parallel().forEach(
 			individual -> this.individuals.add(individual.getIRI().toString())
 		);
 	}
 	
-	public void addSuperClassExpressions(Set<OWLClass> superClasses) {
-    	superClasses.parallelStream().forEach(
+	public void addSuperClassExpressions(Stream<OWLClass> superClasses) {
+    	superClasses.parallel().forEach(
     		cls -> this.superclasses.add(cls.getIRI().toString())
     	);
 	}
 	
-	public void addSubClassExpressions(Set<OWLClass> subclasses) {
-    	subclasses.parallelStream().forEach(
+	public void addSubClassExpressions(Stream<OWLClass> subclasses) {
+    	subclasses.parallel().forEach(
     		cls -> this.subclasses.add(cls.getIRI().toString())
     	);
 	}
@@ -70,14 +71,14 @@ public class Entity {
 		return object instanceof Entity && iri.equals(((Entity)object).iri);
 	}
 	
-	public void addTypes(Set<OWLClass> types) {
-		types.parallelStream().forEach(
+	public void addTypes(Stream<OWLClass> types) {
+		types.parallel().forEach(
 			type -> this.types.add(type.getIRI().toString())
 		);
 	}
 	
-	public void addSameIndividuals(Set<OWLNamedIndividual> sameIndividuals) {
-		sameIndividuals.parallelStream().forEach(
+	public void addSameIndividuals(Stream<OWLNamedIndividual> sameIndividuals) {
+		sameIndividuals.parallel().forEach(
 			individual -> this.sameIndividuals.add(individual.getIRI().toString())
 		);
 	}
@@ -102,14 +103,14 @@ public class Entity {
 		objectProperties.get(propertyIRI).add(individual.toString().replaceAll("^.*?\"|\"\\^.*$", ""));
 	}
 	
-	public void addDisjointClasses(Set<OWLClass> disjointClasses) {
-		disjointClasses.parallelStream().forEach(
+	public void addDisjointClasses(Stream<OWLClass> disjointClasses) {
+		disjointClasses.parallel().forEach(
 			cls -> this.disjointClasses.add(cls.getIRI().toString())
 		);
 	}
 	
-	public void addEquivalentClasses(Set<OWLClass> equivalentClasses) {
-		equivalentClasses.parallelStream().forEach(
+	public void addEquivalentClasses(Stream<OWLClass> equivalentClasses) {
+		equivalentClasses.parallel().forEach(
 			cls -> this.equivalentClasses.add(cls.getIRI().toString())
 		);
 	}

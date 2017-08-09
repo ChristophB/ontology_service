@@ -32,6 +32,7 @@ import org.lha.phenoman.model.AbstractBooleanPhenotype;
 import org.lha.phenoman.model.AbstractCalculationPhenotype;
 import org.lha.phenoman.model.AbstractSinglePhenotype;
 import org.lha.phenoman.model.top_level.AbstractPhenotype;
+import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 @Path("/phenotype")
@@ -54,47 +55,19 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/{iri}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@SuppressWarnings("serial")
 	public Response getPhenotype(@PathParam("iri") String iri) {
-		// TODO: implement retrival of phenotype data for given iri (?)
-		
-		return Response.ok(new ArrayList<String>() {{ add("Some descriptions for " + iri); }}).build();
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(phenotypePath, false);
+		return Response.ok(manager.getPhenotype(XMLUtils.getNCNameSuffix(iri))).build();
 	}
 	
 	@GET
 	@Path("/all")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	@SuppressWarnings("serial")
 	public Response getPhenotypeTaxonomy(@Context HttpHeaders headers, @QueryParam("type") String type) {
-		switch (StringUtils.defaultString(type, "all")) {
-			case "category":
-				logger.info("only return categories");
-				break;
-			case "boolean":
-				logger.info("only return boolean expressions, used for decisiontree generation view");
-				break;
-			default:
-				logger.info("use all phenotypes");
-		}
-		
-		// TODO: implement taxonomy extraction from cop.owl
-		
-		List<TaxonomyNode> taxonomyNodes = new ArrayList<TaxonomyNode>() {{
-			add(new TaxonomyNode("Category_1", new Attributes("Category_1", "category"), new ArrayList<TaxonomyNode>() {{
-				add(new TaxonomyNode("Integer_Phenotype", new Attributes("Integer_Phenotype", "integer"), new ArrayList<TaxonomyNode>() {{
-					add(new TaxonomyNode("String_Phenotype", new Attributes("String_Phenotype_1", "string")));
-				}}));
-				add(new TaxonomyNode("String_Phenotype", new Attributes("String_phenotype_1", "string")));
-			}}));
-			add(new TaxonomyNode("Category_2", new Attributes("Category_2", "category"), new ArrayList<TaxonomyNode>() {{
-				add(new TaxonomyNode("Numeric_Phenotype", new Attributes("Numeric_Phenotype", "formula")));
-				add(new TaxonomyNode("Boolean_Phenotype", new Attributes("Boolean_Phenotype", "expression")));
-			}}));
-			add(new TaxonomyNode("Double_Phenotype", new Attributes("Double_Phenotype", "double")));
-		}};
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(phenotypePath, false);
 		
 		if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
-			return Response.ok(taxonomyNodes).build();
+			return Response.ok(manager.getPhenotypeCategoryTree()).build();
 		} else {
 			return Response.ok(new RestApiView("AllPhenotypes.ftl", rootPath)).build();
 		}
@@ -192,9 +165,9 @@ public class PhenotypeResource extends Resource {
 		String category = formData.getCategory();
 		if (StringUtils.isNoneBlank(category)) {
 			if (!category.equals("new_category"))
-				phenotype.setPhenotypeClasses(category);
+				phenotype.setPhenotypeCategories(category);
 			else if (StringUtils.isNoneBlank(formData.getNewCategory()))
-				manager.addPhenotypeClass(formData.getNewCategory());
+				manager.addPhenotypeCategory(formData.getNewCategory());
 		}
 
 //		for (int i = 0; i < formData.getDefinitions().size(); i++) {
@@ -210,7 +183,9 @@ public class PhenotypeResource extends Resource {
 //				phenotype.addRelation(relation);
 //		}
 		
-		
+		if (phenotype instanceof AbstractSinglePhenotype) {
+			manager.addAbstractSinglePhenotype((AbstractSinglePhenotype) phenotype);
+		}
 		manager.write();
 		view.addMessage("success", "Phenotype '" + formData.getId() + "' created.");
 		return Response.ok(view).build();

@@ -36,17 +36,27 @@
 				}
 				return items;
 			}
+			
+			function transformToPhenotypeTree(node) {
+				var tree = { text: node.name, children: [], a_attr: { id: node.attributes.iri, type: node.attributes.datatype } };
+				
+				node.children.forEach(function(child) {
+					tree.children.add(transformToPhenotypeTree(child));
+				});
+				
+				return tree;
+			}
 
 			$(document).ready(function() {
 				$.getJSON('${rootPath}/phenotype/all', function(data) {
-					data.forEach(function(node) {
+					/* data.forEach(function(node) {
 						preProcessPhenotype(node); 
-					});
+					}); */
 					
 					$('#' + 'phenotype-tree').jstree({
 						core : {
 							multiple : false,
-							data : data
+							data : transformToPhenotypeTree(data)
 						},
 						plugins : [ 'contextmenu' ],
 						contextmenu : { items : customMenu }

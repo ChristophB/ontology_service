@@ -163,37 +163,37 @@ public class ProjectManager {
 	}
 	
 	
-	public int getCountAxioms() {
+	public long getCountAxioms() {
 		return binaryOwlParser.countEntities(OWLAxiom.class);
 	}
 	
 	
-	public int getCountLogicalAxioms() {
+	public long getCountLogicalAxioms() {
 		return binaryOwlParser.countEntities(OWLLogicalAxiom.class);
 	}
 	
 	
-	public int getCountClasses() {
+	public long getCountClasses() {
 		return binaryOwlParser.countEntities(OWLClass.class);
 	}
 	
 	
-	public int getCountIndividuals() {
+	public long getCountIndividuals() {
 		return binaryOwlParser.countEntities(OWLIndividual.class);
 	}
 	
 	
-	public int getCountDataProperties() {
+	public long getCountDataProperties() {
 		return binaryOwlParser.countEntities(OWLDataProperty.class);
 	}
 	
 	
-	public int getCountObjectProperties() {
+	public long getCountObjectProperties() {
 		return binaryOwlParser.countEntities(OWLObjectProperty.class);
 	}
 	
 	
-	public int getCountAnnotationProperties() {
+	public long getCountAnnotationProperties() {
 		return binaryOwlParser.countEntities(OWLAnnotationProperty.class);
 	}
 	
