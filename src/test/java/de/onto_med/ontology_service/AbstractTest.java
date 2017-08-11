@@ -20,8 +20,8 @@ public abstract class AbstractTest {
 
     protected Client client;
     
-    protected final String url = "http://localhost:8080/ontology-service";
-    protected final String adminUrl = "http://localhost:8081/ontology-service";
+    protected final String url = "http://localhost:8080" + RULE.getConfiguration().getRootPath();
+    protected final String adminUrl = "http://localhost:8081" + RULE.getConfiguration().getRootPath();
 
     @Before
     public void setUp() throws Exception {

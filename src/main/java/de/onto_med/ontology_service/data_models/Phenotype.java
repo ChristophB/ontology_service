@@ -2,56 +2,67 @@ package de.onto_med.ontology_service.data_models;
 
 import java.util.List;
 
-import javax.ws.rs.QueryParam;
-
+import javax.ws.rs.FormParam;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Phenotype {
-	@QueryParam("id") @JsonProperty("id")
+	@FormParam("type") @JsonProperty("type")
+	private String type;
+	@FormParam("id") @JsonProperty("id")
 	private String id;
-	@QueryParam("label[]") @JsonProperty("label[]")
+	@FormParam("label[]") @JsonProperty("label[]")
 	private List<String> labels;
-	@QueryParam("label-language[]") @JsonProperty("label-language[]")
+	@FormParam("label-language[]") @JsonProperty("label-language[]")
 	private List<String> labelLanguages;
-	@QueryParam("has-super-phenotype") @JsonProperty("has-super-phenotype")
-	private Boolean hasSuperPhenotype = false;
-	@QueryParam("super-phenotype") @JsonProperty("super-phenotype")
+	@FormParam("has-super-phenotype") @JsonProperty("has-super-phenotype")
+	private boolean hasSuperPhenotype = false;
+	@FormParam("super-phenotype") @JsonProperty("super-phenotype")
 	private String superPhenotype;
-	@QueryParam("category") @JsonProperty("category")
+	@FormParam("category") @JsonProperty("category")
 	private String category;
-	@QueryParam("new-category") @JsonProperty("new-category")
+	@FormParam("new-category") @JsonProperty("new-category")
 	private String newCategory;
-	@QueryParam("definition[]") @JsonProperty("definition[]")
+	@FormParam("definition[]") @JsonProperty("definition[]")
 	private List<String> definitions;
-	@QueryParam("definition-language[]") @JsonProperty("definition-language[]")
+	@FormParam("definition-language[]") @JsonProperty("definition-language[]")
 	private List<String> definitionLanguages;
-	@QueryParam("datatype") @JsonProperty("datatype")
+	@FormParam("datatype") @JsonProperty("datatype")
 	private String datatype;
-	@QueryParam("ucum") @JsonProperty("ucum")
+	@FormParam("ucum") @JsonProperty("ucum")
 	private String ucum;
-	@QueryParam("range-min[]") @JsonProperty("range-min[]")
+	@FormParam("range-min[]") @JsonProperty("range-min[]")
 	private List<String> rangeMins;
-	@QueryParam("range-min-operator[]") @JsonProperty("range-min-operator[]")
+	@FormParam("range-min-operator[]") @JsonProperty("range-min-operator[]")
 	private List<String> rangeMinOperators;
-	@QueryParam("range-max[]") @JsonProperty("range-max[]")
+	@FormParam("range-max[]") @JsonProperty("range-max[]")
 	private List<String> rangeMaxs;
-	@QueryParam("range-max-operator[]") @JsonProperty("range-max-operator[]")
+	@FormParam("range-max-operator[]") @JsonProperty("range-max-operator[]")
 	private List<String> rangeMaxOperators;
-	@QueryParam("enum-value[]") @JsonProperty("enum-value[]")
+	@FormParam("range-label[]") @JsonProperty("range-label[]")
+	private List<String> rangeLabels;
+	@FormParam("enum-value[]") @JsonProperty("enum-value[]")
 	private List<String> enumValues;
-	@QueryParam("enum-label[]") @JsonProperty("enum-label[]")
+	@FormParam("enum-label[]") @JsonProperty("enum-label[]")
 	private List<String> enumLabels;
-	@QueryParam("formula") @JsonProperty("formula")
+	@FormParam("formula") @JsonProperty("formula")
 	private String formula;
-	@QueryParam("expression") @JsonProperty("expression")
+	@FormParam("expression") @JsonProperty("expression")
 	private String expression;
-	@QueryParam("boolean-true-label") @JsonProperty("boolean-true-label")
+	@FormParam("boolean-true-label") @JsonProperty("boolean-true-label")
 	private String booleanTrueLabel;
-	@QueryParam("boolean-false-label") @JsonProperty("boolean-false-label")
+	@FormParam("boolean-false-label") @JsonProperty("boolean-false-label")
 	private String boolenFalseLabel;
-	@QueryParam("relation[]") @JsonProperty("relation[]")
+	@FormParam("relation[]") @JsonProperty("relation[]")
 	private List<String> relations;
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -76,11 +87,11 @@ public class Phenotype {
 		this.labelLanguages = labelLanguage;
 	}
 
-	public Boolean getHasSuperPhenotype() {
+	public boolean getHasSuperPhenotype() {
 		return hasSuperPhenotype;
 	}
 
-	public void setHasSuperPhenotype(Boolean hasSuperPhenotype) {
+	public void setHasSuperPhenotype(boolean hasSuperPhenotype) {
 		this.hasSuperPhenotype = hasSuperPhenotype;
 	}
 
@@ -170,6 +181,14 @@ public class Phenotype {
 
 	public void setRangeMaxOperators(List<String> rangeMaxOperators) {
 		this.rangeMaxOperators = rangeMaxOperators;
+	}
+	
+	public List<String> getRangeLabels() {
+		return rangeLabels;
+	}
+
+	public void setRangeLabels(List<String> rangeLabels) {
+		this.rangeLabels = rangeLabels;
 	}
 
 	public List<String> getEnumValues() {

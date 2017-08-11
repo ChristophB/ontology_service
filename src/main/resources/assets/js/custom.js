@@ -44,13 +44,24 @@ function preProcessPhenotype(node) {
 	if (node.a_attr.type != 'category')	node.icon = 'glyphicon glyphicon-leaf';
 }
 
+function transformToPhenotypeTree(node) {
+	var tree = { text: node.name, children: [], a_attr: { id: node.attributes.iri, type: node.attributes.datatype } };
+	
+	if (node.attributes.nodeType != 0) tree.icon = 'glyphicon glyphicon-leaf';
+	
+	node.children.forEach(function(child) {
+		tree.children.push(transformToPhenotypeTree(child));
+	});
+	
+	return tree;
+}
+
 function createPhenotypeTree(id, url) {
 	$.getJSON(url, function(data) {
-		data.forEach(preProcessPhenotype);
 		$('#' + id).jstree({
 			core : {
 				multiple : false,
-				data : data
+				data : transformToPhenotypeTree(data)
 			},
 			plugins : [ 'contextmenu', 'dnd' ],
 			contextmenu : { items : customMenu }
@@ -106,7 +117,7 @@ function customMenu(node) {
 		}
 	};
 	
-	if (node.a_attr.type == 'category') {
+	if (node.a_attr.type == null) {
 		delete items.asSuperPhenotypeItem;
 	} else {
 		delete items.asCategory;

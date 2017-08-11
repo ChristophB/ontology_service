@@ -20,10 +20,11 @@
 			<section name="content" class="row">
 				<div class="col-md-9">
 					<form id="composit-phenotype-form" class="" role="form" action="${rootPath}/phenotype/create" method="post" accept-charset="UTF-8">
+						<input type="hidden" name="type" value="composit">
 						
 						<#include "partials/phenotype/Id.ftl">
 						<#include "partials/phenotype/Labels.ftl">
-						<#include "partials/phenotype/SuperPhenotype.ftl">
+						<!-- <#include "partials/phenotype/SuperPhenotype.ftl"> -->
 						<#include "partials/phenotype/Category.ftl">
 						<#include "partials/phenotype/Definitions.ftl">
 
@@ -50,12 +51,7 @@
 					</form>
 				</div>
 
-				<!-- Form sidebar for additional information -->
-				<div class="col-md-3">
-					<div data-spy="affix" data-offset-top="200">
-						<div id="phenotype-tree" class="well pre-scrollable "></div>
-					</div>
-				</div>
+				<#include "partials/phenotype/Sidebar.ftl">
 			</section>
 		</main>
 

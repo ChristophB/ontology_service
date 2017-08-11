@@ -12,8 +12,8 @@
 		<div class="col-sm-2" style="padding-right:0">
 			<select class="form-control" name="range-min-operator[]">
 				<option />
-				<option value="=">=</option>
-				<option value="&ge;">&ge;</option>
+				<!-- <option value="=">=</option> -->
+				<option value="&gt;=">&ge;</option>
 				<option value="&gt;">&gt;</option>
 			</select>
 		</div>
@@ -25,8 +25,8 @@
 			<select class="form-control" name="range-max-operator[]">
 				<option />
 				<option value="&lt;">&lt;</option>
-				<option value="&le;">&le;</option>
-				<option value="=">=</option>
+				<option value="&lt;=">&le;</option>
+				<!-- <option value="=">=</option> -->
 			</select>
 		</div>
 		<div class="col-sm-2" style="padding-left:0">
@@ -34,7 +34,7 @@
 		</div>
 	
 		<div class="col-sm-4">
-			<input type="text" class="form-control" name="enum-label" placeholder="Label">
+			<input type="text" class="form-control" name="range-label[]" placeholder="Label">
 		</div>
 	</div>
 </div>

@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.lha.org/cop#"
+     xml:base="http://www.lha.org/cop"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:cop="http://www.lha.org/cop#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.lha.org/cop"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.lha.org/cop#datatype -->
+
+
+    <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#datatype"/>
+    
+
+
+    <!-- http://www.lha.org/cop#related_concept -->
+
+
+    <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#related_concept"/>
+    
+
+
+    <!-- http://www.lha.org/cop#unit -->
+
+
+    <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#unit"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.lha.org/cop#has_part -->
+
+
+    <owl:ObjectProperty rdf:about="http://www.lha.org/cop#has_part">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.lha.org/cop#has_value -->
+
+
+    <owl:DatatypeProperty rdf:about="http://www.lha.org/cop#has_value">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.lha.org/cop#Boolean_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Boolean_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Complex_Phenotype"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Calculation_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Calculation_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Complex_Phenotype"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Complex_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Complex_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Integer_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Integer_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <related_concept rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IRI 1</related_concept>
+        <related_concept rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IRI 2</related_concept>
+        <unit rdf:datatype="http://www.w3.org/2001/XMLSchema#string">m^2</unit>
+        <rdfs:comment xml:lang="de">Definition DE</rdfs:comment>
+        <rdfs:comment xml:lang="en">Definition DE</rdfs:comment>
+        <rdfs:comment xml:lang="en">Definition EN</rdfs:comment>
+        <rdfs:label xml:lang="de">Label DE</rdfs:label>
+        <rdfs:label xml:lang="en">Label EN</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Phenotype_Category -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Phenotype_Category">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Range_1 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Range_1">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Integer_Phenotype"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</xsd:minInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Integer_Phenotype"/>
+        <datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Range_2 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Range_2">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Integer_Phenotype"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</xsd:minExclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Integer_Phenotype"/>
+        <datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Single_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Single_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 5.1.1.2017-07-25T19:40:45Z) https://github.com/owlcs/owlapi/ -->
+
+

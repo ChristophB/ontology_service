@@ -51,7 +51,7 @@ public class IntegrationTest extends AbstractTest {
     		.get(String.class);
     	
     	assertThat(response).isExactlyInstanceOf(String.class);
-    	assertThat(response).contains("<form action=\"/ontology-service/entity\" method=\"get\"");
+    	assertThat(response).contains("<form action=\"" + RULE.getConfiguration().getRootPath() + "/entity\" method=\"get\"");
     }
     
     @Test
@@ -62,7 +62,7 @@ public class IntegrationTest extends AbstractTest {
     		.get(String.class);
     	
     	assertThat(response).isExactlyInstanceOf(String.class);
-    	assertThat(response).contains("<form action=\"/ontology-service/reason\" method=\"get\"");
+    	assertThat(response).contains("<form action=\"" + RULE.getConfiguration().getRootPath() + "/reason\" method=\"get\"");
     }
     
     @Test
