@@ -7,15 +7,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 
-import de.onto_med.ontology_service.RestApiApplication;
-import de.onto_med.ontology_service.RestApiConfiguration;
+import de.onto_med.ontology_service.OntologyServiceApplication;
+import de.onto_med.ontology_service.OntologyServiceConfiguration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 
 public abstract class AbstractTest {
 	@ClassRule
-    public static final DropwizardAppRule<RestApiConfiguration> RULE
-    	= new DropwizardAppRule<RestApiConfiguration>(
-    		RestApiApplication.class, "config_test.yml"
+    public static final DropwizardAppRule<OntologyServiceConfiguration> RULE
+    	= new DropwizardAppRule<OntologyServiceConfiguration>(
+    		OntologyServiceApplication.class, "config_test.yml"
     	);
 
     protected Client client;

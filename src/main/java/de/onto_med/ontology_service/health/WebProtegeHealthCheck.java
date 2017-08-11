@@ -6,12 +6,12 @@ import java.nio.file.Path;
 
 import com.codahale.metrics.health.HealthCheck;
 
-import de.onto_med.ontology_service.RestApiConfiguration;
+import de.onto_med.ontology_service.OntologyServiceConfiguration;
 
 public class WebProtegeHealthCheck extends HealthCheck {
-	private RestApiConfiguration configuration;
+	private OntologyServiceConfiguration configuration;
 	
-	public WebProtegeHealthCheck(RestApiConfiguration configuration) {
+	public WebProtegeHealthCheck(OntologyServiceConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	

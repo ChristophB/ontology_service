@@ -85,13 +85,7 @@
       <artifactId>phenoman</artifactId>
       <version>0.0.1</version>
       <scope>system</scope>
-      <systemPath>C:\Users\cbeger.IMISE\workspace\rest-api/lib/phenoman-0.0.1.jar</systemPath>
-      <exclusions>
-        <exclusion>
-          <artifactId>impl</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-      </exclusions>
+      <systemPath>C:\Users\cbeger.IMISE\workspace\ontology-service/lib/phenoman-0.0.1.jar</systemPath>
     </dependency>
   </dependencies>
   <properties>

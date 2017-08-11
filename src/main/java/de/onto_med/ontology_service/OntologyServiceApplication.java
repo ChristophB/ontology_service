@@ -25,7 +25,7 @@ import io.dropwizard.views.ViewBundle;
  * This is the main application of the WebProtegé Rest-API.
  * @author Christoph Beger
  */
-public class RestApiApplication extends Application<RestApiConfiguration>{
+public class OntologyServiceApplication extends Application<OntologyServiceConfiguration>{
 	private String rootPath = "";
 	private MetaProjectResource metaProjectResource;
 	private ProjectResource projectResource;
@@ -36,7 +36,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		new RestApiApplication().run(args);
+		new OntologyServiceApplication().run(args);
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void initialize(Bootstrap<RestApiConfiguration> bootstrap) {
+	public void initialize(Bootstrap<OntologyServiceConfiguration> bootstrap) {
 		bootstrap.addBundle(new ViewBundle());
 		bootstrap.addBundle(new AssetsBundle("/assets/css", rootPath + "/css", null, "css"));
 		bootstrap.addBundle(new AssetsBundle("/assets/js", rootPath + "/js", null, "js"));
@@ -86,7 +86,7 @@ public class RestApiApplication extends Application<RestApiConfiguration>{
 	 * Initializes important resources like MetaProjectResource and ProjectResource.
 	 */
 	@Override
-	public void run(RestApiConfiguration configuration, Environment environment) throws Exception {
+	public void run(OntologyServiceConfiguration configuration, Environment environment) throws Exception {
 		if (Files.notExists(Paths.get(configuration.getDataPath())))
 			throw new WebApplicationException("The specified WebProtégé data folder does not exist.");
 		

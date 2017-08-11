@@ -11,7 +11,7 @@ import io.dropwizard.Configuration;
  * which reads config.yml and sets all required parameter.
  * @author Christoph Beger
  */
-public class RestApiConfiguration extends Configuration {
+public class OntologyServiceConfiguration extends Configuration {
 	/**
 	 * Path to the WebProtégé data folder
 	 */
