@@ -1,7 +1,8 @@
 /target/*
-/lib
 !/target/service.jar
 /logs/
 .classpath
 .project
 .settings
+/bin/
+/target/
