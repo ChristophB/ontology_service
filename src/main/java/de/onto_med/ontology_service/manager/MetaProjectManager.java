@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.core.NoContentException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,16 +36,16 @@ public class MetaProjectManager {
 	private String dataPath;
 	
 	/**
-	 * This is the Cache, wich contains all previously loaded projectManagers.
+	 * This is the Cache, which contains all previously loaded projectManagers.
 	 * Expiration time is set to 10 minutes after the last access.
-	 * If a a non existend key is used, the cache tries to instantiate a respective ProjectManager.
+	 * If a a non existent key is used, the cache tries to instantiate a respective ProjectManager.
 	 */
 	private LoadingCache<String, ProjectManager> projectManagers = CacheBuilder.newBuilder()
 		.expireAfterAccess(10, TimeUnit.MINUTES)
 		.build(
 			new CacheLoader<String, ProjectManager>() {
 				@Override
-				public ProjectManager load(String key) throws Exception {
+				public ProjectManager load(@Nonnull String key) throws Exception {
 					Timer timer = new Timer();
 					ProjectManager projectManager = pprjParser.getProjectManager(key);
 					if (projectManager == null) {
@@ -71,7 +72,7 @@ public class MetaProjectManager {
 	
 	/**
 	 * Constructor
-	 * @param dataPath Path to WebProtegés data folder.
+	 * @param dataPath Path to WebProtégé's data folder.
 	 */
 	public MetaProjectManager(String dataPath) {
 		this.dataPath = dataPath;
@@ -79,22 +80,20 @@ public class MetaProjectManager {
 	}
 	
 	/**
-	 * Parses a string of projectids separated by comma and returns a list of projectids.
+	 * Parses a string of project ids separated by comma and returns a list of project ids.
 	 * If the string is empty, this function returns a list of all public projects.
-	 * @param ontologies String of projectids separated by comma
-	 * @return List of projectids
-	 * @throws NoContentException 
-	 * @throws ExecutionException 
+	 * @param projects String of project ids separated by comma
+	 * @return List of project ids
 	 */
 	public List<String> parseOntologies(String projects) throws NoContentException, ExecutionException {
 		if (StringUtils.isBlank(projects))
-			return getProjectList().parallelStream().map(p -> p.getProjectId()).collect(Collectors.toList());
+			return getProjectList().parallelStream().map(CondencedProject::getProjectId).collect(Collectors.toList());
 		else
 			return Arrays.asList(projects.split(","));
 	}
 	
 	/**
-	 * Empties the ProjectManager cache immediatly.
+	 * Empties the ProjectManager cache immediately.
 	 */
 	public void clearCache() {
 		projectManagers.invalidateAll();
@@ -104,11 +103,9 @@ public class MetaProjectManager {
 	/**
 	 * Returns a list of all available public readable projects, stored in WebProtegé.
 	 * @return List of projects
-	 * @throws NoContentException 
-	 * @throws ExecutionException 
 	 */
 	public ArrayList<CondencedProject> getProjectList() throws NoContentException, ExecutionException {
-		ArrayList<CondencedProject> projectList = new ArrayList<CondencedProject>();
+		ArrayList<CondencedProject> projectList = new ArrayList<>();
 		for (Instance instance : pprjParser.getProjectInstances()) {
 			projectList.add(new CondencedProject(projectManagers.get(instance.getName())));
 		}
@@ -122,7 +119,7 @@ public class MetaProjectManager {
 	 * @param projectId id of a project
 	 * @return OntologyManager for project with specified id
 	 * @throws NoContentException If no public project with matching id was found or ontology was not parsable
-	 * @throws ExecutionException 
+	 * @throws ExecutionException If get() on cached project managers failed
 	 */
 	public ProjectManager getProjectManager(String projectId) throws NoContentException, ExecutionException {
 		if (projectId == null) throw new NoContentException("projectId can not be null.");
