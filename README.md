@@ -4,6 +4,7 @@ This is a Dropwizard bases API for WebProtégé. Specifications are not fixed ye
 
 # Installation
 
+* OWL2GraphML is required, but it is not yet available for public use. 
 * Java jre8 is required to start the service. (If you dont want to mess around with configurations consider using the Dockerfile below.)
 * Use one of our released jar files or compile the Maven Project in Eclipse and create your own one.
 * Place a file *config.yml* in the same directory as the jar file. *config.yml* should contain all configurations such as the location of WebProtégés data dictionary and ports (use the configuration file of this git repository as reference).
