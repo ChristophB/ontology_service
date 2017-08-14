@@ -18,7 +18,7 @@
 		<main class="container">
 			<section name="content" class="row">
 				<div class="col-md-9">
-					<form id="composit-phenotype-form" class="" role="form" action="${rootPath}/phenotype/create" method="post" accept-charset="UTF-8">
+					<form id="single-phenotype-form" class="" role="form" action="${rootPath}/phenotype/create" method="post" accept-charset="UTF-8">
 						<input type="hidden" name="type" value="single">
 						
 						<#include "partials/phenotype/Id.ftl">

@@ -6,7 +6,7 @@
 			<a class="list-group-item <@active "overview" />" href="${rootPath}/phenotype">
 				Overview
 			</a>
-			
+
 			<a class="list-group-item <@active "singlephenotype-form" />" href="${rootPath}/phenotype/singlephenotype-form">
 				Create Simple Phenotype
 			</a>

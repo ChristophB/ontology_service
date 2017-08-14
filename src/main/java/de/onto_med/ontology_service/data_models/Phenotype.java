@@ -6,22 +6,16 @@ import javax.ws.rs.FormParam;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Phenotype {
-	@FormParam("type") @JsonProperty("type")
-	private String type;
 	@FormParam("id") @JsonProperty("id")
 	private String id;
 	@FormParam("label[]") @JsonProperty("label[]")
 	private List<String> labels;
 	@FormParam("label-language[]") @JsonProperty("label-language[]")
 	private List<String> labelLanguages;
-	@FormParam("has-super-phenotype") @JsonProperty("has-super-phenotype")
-	private boolean hasSuperPhenotype = false;
 	@FormParam("super-phenotype") @JsonProperty("super-phenotype")
 	private String superPhenotype;
 	@FormParam("category") @JsonProperty("category")
 	private String category;
-	@FormParam("new-category") @JsonProperty("new-category")
-	private String newCategory;
 	@FormParam("definition[]") @JsonProperty("definition[]")
 	private List<String> definitions;
 	@FormParam("definition-language[]") @JsonProperty("definition-language[]")
@@ -30,20 +24,16 @@ public class Phenotype {
 	private String datatype;
 	@FormParam("ucum") @JsonProperty("ucum")
 	private String ucum;
-	@FormParam("range-min[]") @JsonProperty("range-min[]")
+	@FormParam("range-min") @JsonProperty("range-min")
 	private List<String> rangeMins;
-	@FormParam("range-min-operator[]") @JsonProperty("range-min-operator[]")
+	@FormParam("range-min-operator") @JsonProperty("range-min-operator")
 	private List<String> rangeMinOperators;
-	@FormParam("range-max[]") @JsonProperty("range-max[]")
+	@FormParam("range-max") @JsonProperty("range-max")
 	private List<String> rangeMaxs;
-	@FormParam("range-max-operator[]") @JsonProperty("range-max-operator[]")
+	@FormParam("range-max-operator") @JsonProperty("range-max-operator")
 	private List<String> rangeMaxOperators;
-	@FormParam("range-label[]") @JsonProperty("range-label[]")
-	private List<String> rangeLabels;
 	@FormParam("enum-value[]") @JsonProperty("enum-value[]")
 	private List<String> enumValues;
-	@FormParam("enum-label[]") @JsonProperty("enum-label[]")
-	private List<String> enumLabels;
 	@FormParam("formula") @JsonProperty("formula")
 	private String formula;
 	@FormParam("expression") @JsonProperty("expression")
@@ -54,13 +44,16 @@ public class Phenotype {
 	private String booleanFalseLabel;
 	@FormParam("relation[]") @JsonProperty("relation[]")
 	private List<String> relations;
+	@FormParam("isDecimal") @JsonProperty("isDecimal")
+	private boolean isDecimal;
 
-	public String getType() {
-		return type;
+
+	public boolean getIsDecimal() {
+		return isDecimal;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setIsDecimal(boolean isDecimal) {
+		this.isDecimal = isDecimal;
 	}
 	
 	public String getId() {
@@ -87,14 +80,6 @@ public class Phenotype {
 		this.labelLanguages = labelLanguage;
 	}
 
-	public boolean getHasSuperPhenotype() {
-		return hasSuperPhenotype;
-	}
-
-	public void setHasSuperPhenotype(boolean hasSuperPhenotype) {
-		this.hasSuperPhenotype = hasSuperPhenotype;
-	}
-
 	public String getSuperPhenotype() {
 		return superPhenotype;
 	}
@@ -109,14 +94,6 @@ public class Phenotype {
 
 	public void setCategory(String category) {
 		this.category = category;
-	}
-
-	public String getNewCategory() {
-		return newCategory;
-	}
-
-	public void setNewCategory(String newCategory) {
-		this.newCategory = newCategory;
 	}
 
 	public List<String> getDefinitions() {
@@ -182,14 +159,6 @@ public class Phenotype {
 	public void setRangeMaxOperators(List<String> rangeMaxOperators) {
 		this.rangeMaxOperators = rangeMaxOperators;
 	}
-	
-	public List<String> getRangeLabels() {
-		return rangeLabels;
-	}
-
-	public void setRangeLabels(List<String> rangeLabels) {
-		this.rangeLabels = rangeLabels;
-	}
 
 	public List<String> getEnumValues() {
 		return enumValues;
@@ -197,14 +166,6 @@ public class Phenotype {
 
 	public void setEnumValues(List<String> enumValues) {
 		this.enumValues = enumValues;
-	}
-
-	public List<String> getEnumLabels() {
-		return enumLabels;
-	}
-
-	public void setEnumLabels(List<String> enumLabels) {
-		this.enumLabels = enumLabels;
 	}
 
 	public String getFormula() {

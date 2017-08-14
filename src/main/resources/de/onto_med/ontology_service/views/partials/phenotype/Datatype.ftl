@@ -1,6 +1,6 @@
 <#macro selected string><#if phenotype?? & phenotype.datatype?? & phenotype.datatype == string>selected</#if></#macro>
 
-<div class="row">
+<div class="form-group row">
 	<label for="datatype" class="control-label col-sm-2">Datatype*</label>
 	
 	<div class="col-sm-3">

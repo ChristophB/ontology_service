@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -28,6 +29,7 @@ import de.onto_med.ontology_service.views.RestApiView;
 
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.*;
+import org.lha.phenoman.model.category_tree.PhenotypeAttributes;
 import org.lha.phenoman.model.reasoner_result.RestrictedBooleanPhenotypeResult;
 import org.lha.phenoman.model.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.top_level.RestrictedPhenotype;
@@ -94,12 +96,14 @@ public class PhenotypeResource extends Resource {
 		return Response.ok(new RestApiView("DecisionTreeForm.ftl", rootPath)).build();
 	}
 
-//	@GET
-//	@Path("/numeric-phenotype-form")
-//	@Produces(MediaType.TEXT_HTML)
-//	public Response getNumericPhenotypeForm() {
-//		return Response.ok(new PhenotypeFormView("NumericPhenotypeForm.ftl", rootPath)).build();
-//	}
+	@GET
+	@Path("/phenotype-form")
+	@Produces(MediaType.TEXT_HTML)
+	public Response getPhenotypeForm(@QueryParam("type") String type, @QueryParam("id") String id) {
+		PhenotypeAttributes phenotype = manager.getPhenotype(id);
+
+		return Response.ok(new PhenotypeFormView("PhenotypeForm.ftl", rootPath, phenotype)).build();
+	}
 
 	@GET
 	@Path("/singlephenotype-form")
@@ -114,14 +118,51 @@ public class PhenotypeResource extends Resource {
 	public Response getCompositePhenotypeForm() { // TODO: add @BeanParam Phenotype phenotype
 		return Response.ok(new PhenotypeFormView("CompositePhenotypeForm.ftl", rootPath)).build();
 	}
-	
+
+	@POST
+	@Path("/create-abstract-phenotype")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response createAbstractPhenotype(@BeanParam Phenotype formData) {
+		PhenotypeFormView view = new PhenotypeFormView("PhenotypeForm.ftl", rootPath, formData);
+
+		AbstractPhenotype phenotype;
+		switch (formData.getDatatype()) {
+			case "numeric":
+				phenotype = formData.getIsDecimal()
+					? new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DOUBLE)
+					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_INTEGER);
+				if (StringUtils.isNoneBlank(formData.getUcum())) phenotype.setUnit(formData.getUcum());
+				break;
+			case "string":
+				phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING);
+				break;
+			case "date":
+				phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DATE_TIME);
+				break;
+			case "boolean":
+				phenotype = new AbstractBooleanPhenotype(formData.getId());
+				break;
+			case "calculated":
+				phenotype = new AbstractCalculationPhenotype(formData.getId(), formData.getFormula());
+				break;
+			default:
+				view.addMessage("danger", "Could not determine Datatype.");
+				return Response.ok(view).build();
+		}
+
+		// TODO: add metadata to phenotype
+
+		view.addMessage("success", "Phenotype '" + phenotype.getName() + "' created.");
+		return Response.ok(view).build();
+	}
+
 	@POST
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response createPhenotype(@Context HttpHeaders headers, @BeanParam Phenotype formData) {
-		// TODO: redirect to form after creation succeded or failed and show message
-		RestApiView view = new RestApiView(formData.getType().equals("single") ? "SinglePhenotypeForm.ftl" : "CompositePhenotypeForm.ftl", rootPath);
+		RestApiView view = new RestApiView("PhenotypeForm.ftl", rootPath);
 		
 		/* form data validation */
 		if (StringUtils.isBlank(formData.getId()) || StringUtils.isBlank(formData.getDatatype())) {
@@ -130,17 +171,15 @@ public class PhenotypeResource extends Resource {
 		}
 		
 		switch (formData.getDatatype()) {
-			case "integer":
-				createIntegerPhenotype(formData);
-				break;
-			case "double":
-				createDoublePhenotype(formData);
+			case "numeric":
+				if (formData.getIsDecimal()) createDoublePhenotype(formData);
+				else createIntegerPhenotype(formData);
 				break;
 			case "string":
-				createStringPhenotype(formData);
+//				createStringPhenotype(formData);
 				break;
 			case "date":
-				createDatePhenotype(formData);
+//				createDatePhenotype(formData);
 				break;
 			case "expression":
 				if (StringUtils.isBlank(formData.getFormula())) {
@@ -154,7 +193,7 @@ public class PhenotypeResource extends Resource {
 					view.addMessage("danger", "Phenotype with Datatype 'Formula' requires a formula.");
 					return Response.ok(view).build();
 				}
-				createCalculatedPhenotype(formData);
+//				createCalculatedPhenotype(formData);
 				break;
 			default:
 				view.addMessage("danger", "Could not determine Datatype.");
@@ -178,11 +217,25 @@ public class PhenotypeResource extends Resource {
 		return Response.ok(individuals).build();
 	}
 	
-	private void createIntegerPhenotype(Phenotype formData) {
-		AbstractSinglePhenotype phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_INTEGER);
-		
+//	private void createIntegerPhenotype(Phenotype formData) {
+//		AbstractSinglePhenotype phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_INTEGER);
+//
+//		setPhenotypeBasicData(phenotype, formData);
+//		if (StringUtils.isNoneBlank(formData.getUcum())) phenotype.setUnit(formData.getUcum());
+//		manager.addAbstractSinglePhenotype(phenotype);
+//
+//		setRestrictedPhenotypeRanges(
+//			phenotype, formData.getRangeMins(), formData.getRangeMinOperators(),
+//			formData.getRangeMaxs(), formData.getRangeMaxOperators(), formData.getRangeLabels()
+//		);
+//		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
+//	}
+
+	private void createDoublePhenotype(PhenotypeAttributes formData) {
+		AbstractSinglePhenotype phenotype = new AbstractSinglePhenotype(formData.getName(), OWL2Datatype.XSD_DOUBLE);
+
 		setPhenotypeBasicData(phenotype, formData);
-		if (StringUtils.isNoneBlank(formData.getUcum())) phenotype.setUnit(formData.getUcum());
+		if (StringUtils.isNoneBlank(formData.getUnit())) phenotype.setUnit(formData.getUnit());
 		manager.addAbstractSinglePhenotype(phenotype);
 
 		setRestrictedPhenotypeRanges(
@@ -192,66 +245,52 @@ public class PhenotypeResource extends Resource {
 		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
 	}
 
-	private void createDoublePhenotype(Phenotype formData) {
-		AbstractSinglePhenotype phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DOUBLE);
-		
-		setPhenotypeBasicData(phenotype, formData);
-		if (StringUtils.isNoneBlank(formData.getUcum())) phenotype.setUnit(formData.getUcum());
-		manager.addAbstractSinglePhenotype(phenotype);
-
-		setRestrictedPhenotypeRanges(
-			phenotype, formData.getRangeMins(), formData.getRangeMinOperators(),
-			formData.getRangeMaxs(), formData.getRangeMaxOperators(), formData.getRangeLabels()
-		);
-		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
-	}
-
-	private void createDatePhenotype(Phenotype formData) {
-		AbstractSinglePhenotype phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DATE_TIME);
-
-		setPhenotypeBasicData(phenotype, formData);
-		manager.addAbstractSinglePhenotype(phenotype);
-
-		setRestrictedPhenotypeRanges(
-			phenotype, formData.getRangeMins(), formData.getRangeMinOperators(),
-			formData.getRangeMaxs(), formData.getRangeMaxOperators(), formData.getRangeLabels()
-		);
-		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
-	}
+//	private void createDatePhenotype(Phenotype formData) {
+//		AbstractSinglePhenotype phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DATE_TIME);
+//
+//		setPhenotypeBasicData(phenotype, formData);
+//		manager.addAbstractSinglePhenotype(phenotype);
+//
+//		setRestrictedPhenotypeRanges(
+//			phenotype, formData.getRangeMins(), formData.getRangeMinOperators(),
+//			formData.getRangeMaxs(), formData.getRangeMaxOperators(), formData.getRangeLabels()
+//		);
+//		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
+//	}
 	
-	private void createStringPhenotype(Phenotype formData) {
-		AbstractSinglePhenotype phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING);
-
-		setPhenotypeBasicData(phenotype, formData);
-		manager.addAbstractSinglePhenotype(phenotype);
-
-		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
-	}
+//	private void createStringPhenotype(Phenotype formData) {
+//		AbstractSinglePhenotype phenotype = new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING);
+//
+//		setPhenotypeBasicData(phenotype, formData);
+//		manager.addAbstractSinglePhenotype(phenotype);
+//
+//		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
+//	}
 	
-	private void createCalculatedPhenotype(Phenotype formData) {
-		AbstractCalculationPhenotype phenotype = new AbstractCalculationPhenotype(formData.getId(), formData.getFormula());
-
-		setPhenotypeLabels(phenotype, formData.getLabels(), formData.getLabelLanguages());
-		setPhenotypeDefinitions(phenotype, formData.getDefinitions(), formData.getDefinitionLanguages());
-		setPhenotypeCategories(phenotype, formData);
-		setPhenotypeRelations(phenotype, formData.getRelations());
-		if (StringUtils.isNoneBlank(formData.getUcum())) phenotype.setUnit(formData.getUcum());
-
-		manager.addAbstractCalculationPhenotype(phenotype);
-
-		setRestrictedPhenotypeRanges(
-			phenotype, formData.getRangeMins(), formData.getRangeMinOperators(),
-			formData.getRangeMaxs(), formData.getRangeMaxOperators(), formData.getRangeLabels()
-		);
-		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
-	}
+//	private void createCalculatedPhenotype(Phenotype formData) {
+//		AbstractCalculationPhenotype phenotype = new AbstractCalculationPhenotype(formData.getId(), formData.getFormula());
+//
+//		setPhenotypeLabels(phenotype, formData.getLabels(), formData.getLabelLanguages());
+//		setPhenotypeDefinitions(phenotype, formData.getDefinitions(), formData.getDefinitionLanguages());
+//		setPhenotypeCategories(phenotype, formData.getCategory());
+//		setPhenotypeRelations(phenotype, formData.getRelations());
+//		if (StringUtils.isNoneBlank(formData.getUcum())) phenotype.setUnit(formData.getUcum());
+//
+//		manager.addAbstractCalculationPhenotype(phenotype);
+//
+//		setRestrictedPhenotypeRanges(
+//			phenotype, formData.getRangeMins(), formData.getRangeMinOperators(),
+//			formData.getRangeMaxs(), formData.getRangeMaxOperators(), formData.getRangeLabels()
+//		);
+//		setRestrictedPhenotypeEnums(phenotype, formData.getEnumValues(), formData.getEnumLabels());
+//	}
 	
 	private void createBooleanPhenotype(Phenotype formData) {
 		AbstractBooleanPhenotype phenotype = new AbstractBooleanPhenotype(formData.getId());
 
 		setPhenotypeLabels(phenotype, formData.getLabels(), formData.getLabelLanguages());
 		setPhenotypeDefinitions(phenotype, formData.getDefinitions(), formData.getDefinitionLanguages());
-		setPhenotypeCategories(phenotype, formData);
+		setPhenotypeCategories(phenotype, formData.getCategory());
 		setPhenotypeRelations(phenotype, formData.getRelations());
 
 		manager.addAbstractBooleanPhenotype(phenotype);
@@ -262,7 +301,7 @@ public class PhenotypeResource extends Resource {
 	private void setPhenotypeBasicData(AbstractPhenotype phenotype, Phenotype formData) {
 		setPhenotypeLabels(phenotype, formData.getLabels(), formData.getLabelLanguages());
 		setPhenotypeDefinitions(phenotype, formData.getDefinitions(), formData.getDefinitionLanguages());
-		setPhenotypeCategories(phenotype, formData);
+		setPhenotypeCategories(phenotype, formData.getCategory());
 		setPhenotypeRelations(phenotype, formData.getRelations());
 	}
 
@@ -286,17 +325,9 @@ public class PhenotypeResource extends Resource {
 		}
 	}
 	
-	private void setPhenotypeCategories(AbstractPhenotype phenotype, Phenotype formData) { // TODO: do not use formData
-		String category    = formData.getCategory();
-		String newCategory = formData.getNewCategory(); 
-		if (StringUtils.isNoneBlank(category)) {
-			if (!category.equals("new_category"))
-				phenotype.setPhenotypeCategories(category);
-			else if (StringUtils.isNoneBlank(newCategory)) {
-				manager.addPhenotypeCategory(newCategory);
-				phenotype.setPhenotypeCategories(newCategory);
-			}
-		}
+	private void setPhenotypeCategories(AbstractPhenotype phenotype, String category) {
+		if (StringUtils.isNoneBlank(category))
+			phenotype.setPhenotypeCategories(category);
 	}
 	
 	private void setPhenotypeRelations(AbstractPhenotype phenotype, List<String> relations) {
