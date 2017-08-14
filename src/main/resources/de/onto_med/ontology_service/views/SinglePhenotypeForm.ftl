@@ -27,15 +27,15 @@
 						<#include "partials/phenotype/Category.ftl">
 						<#include "partials/phenotype/Definitions.ftl">
 
-						<#assign datatypes = [ 'integer', 'Number', 'double', 'Floating Number', 'string', 'String' ]>
+						<#assign datatypes = [ 'integer', 'Number', 'double', 'Floating Number', 'date', 'Date', 'string', 'String' ]>
 								
 						<div class="form-group">
 							<#include "partials/phenotype/Datatype.ftl">
 							<div class="row">
 								<div class="col-sm-10 col-sm-offset-2" id="datatype-specification">
-									<#include "partials/phenotype/Enum.ftl">
 									<#include "partials/phenotype/Ucum.ftl">
-									<#include "partials/phenotype/Ranges.ftl">								
+									<#include "partials/phenotype/Ranges.ftl">
+									<#include "partials/phenotype/Enum.ftl">
 								</div>
 							</div>
 						</div>

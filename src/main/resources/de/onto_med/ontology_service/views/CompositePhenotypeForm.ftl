@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 
-<#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.EntityFormView" -->
-<#assign title = "Composit Phenotype Create Form">
+<#assign title = "Composite Phenotype Create Form">
 <#assign current = "Phenotypes">
-<#assign current_submenu = "compositphenotype-form">
-<#assign heading = "Composit Phenotype-Definition Form">
-<#assign subHeading ="On this page you can define a new <strong>composit phenotype</strong> with all required metadata and properties.">
+<#assign current_submenu = "compositephenotype-form">
+<#assign heading = "Composite Phenotype-Definition Form">
+<#assign subHeading ="On this page you can define a new <strong>composite phenotype</strong> with all required metadata and properties.">
 
 <html>
 	<#include "partials/Head.ftl">
@@ -19,8 +18,8 @@
 		<main class="container">
 			<section name="content" class="row">
 				<div class="col-md-9">
-					<form id="composit-phenotype-form" class="" role="form" action="${rootPath}/phenotype/create" method="post" accept-charset="UTF-8">
-						<input type="hidden" name="type" value="composit">
+					<form id="composite-phenotype-form" class="" role="form" action="${rootPath}/phenotype/create" method="post" accept-charset="UTF-8">
+						<input type="hidden" name="type" value="composite">
 						
 						<#include "partials/phenotype/Id.ftl">
 						<#include "partials/phenotype/Labels.ftl">
@@ -37,6 +36,7 @@
 									<#include "partials/phenotype/Formula.ftl">
 									<#include "partials/phenotype/Ucum.ftl">
 									<#include "partials/phenotype/Ranges.ftl">
+									<#include "partials/phenotype/Enum.ftl">
 									<#include "partials/phenotype/BooleanExpression.ftl">
 									<#include "partials/phenotype/Boolean.ftl">								
 								</div>

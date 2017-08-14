@@ -11,8 +11,8 @@
 				Create Simple Phenotype
 			</a>
 			
-			<a class="list-group-item <@active "compositphenotype-form" />" href="${rootPath}/phenotype/compositphenotype-form">
-				Create Composit Phenotype
+			<a class="list-group-item <@active "compositephenotype-form" />" href="${rootPath}/phenotype/compositephenotype-form">
+				Create Composite Phenotype
 			</a>
 			
 			<a class="list-group-item <@active "all" />" href="${rootPath}/phenotype/all">

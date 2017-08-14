@@ -9,10 +9,12 @@ function toggleValueDefinition() {
 		$('#expression-form-group, #boolean-form-group').removeClass('hidden');
 		$('#expression').attr('required', true);
 	} else if (selectedValue == 'formula') {
-		$('#formula-form-group, #ucum-form-group, #range-form-group').removeClass('hidden');
+		$('#formula-form-group, #ucum-form-group, #range-form-group, #enum-form-group').removeClass('hidden');
 		$('#formula').attr('required', true);
 	} else if (selectedValue == 'integer' || selectedValue == 'double') {
-		$('#ucum-form-group, #range-form-group').removeClass('hidden');
+		$('#ucum-form-group, #range-form-group, #enum-form-group').removeClass('hidden');
+	} else if (selectedValue == 'date') {
+	    $('#enum-form-group, #range-form-group').removeClass('hidden');
 	} else if (selectedValue == 'string') {
 		$('#enum-form-group').removeClass('hidden');
 	}

@@ -4,11 +4,11 @@
 		<i class="fa fa-plus" aria-hidden="true"></i>
 	</a><br>
 	<small class="form-text text-muted">
-		Define specific values and add appropriate labels.
+		Define specific values and add appropriate labels. Multiple values can be entered for one label, by using ";" as separator.
 	</small>
 	<div class="row hidden">
 		<div class="col-sm-5">
-			<input type="text" class="form-control" name="enum-value[]" placeholder="Value">
+			<input type="text" class="form-control" name="enum-value[]" placeholder="Value(s)">
 		</div>
 		<div class="col-sm-1" style="margin-top:5px">=></div>
 		<div class="col-sm-6">

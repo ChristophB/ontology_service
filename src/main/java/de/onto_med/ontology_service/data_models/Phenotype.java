@@ -51,7 +51,7 @@ public class Phenotype {
 	@FormParam("boolean-true-label") @JsonProperty("boolean-true-label")
 	private String booleanTrueLabel;
 	@FormParam("boolean-false-label") @JsonProperty("boolean-false-label")
-	private String boolenFalseLabel;
+	private String booleanFalseLabel;
 	@FormParam("relation[]") @JsonProperty("relation[]")
 	private List<String> relations;
 
@@ -231,12 +231,12 @@ public class Phenotype {
 		this.booleanTrueLabel = booleanTrueLabel;
 	}
 
-	public String getBoolenFalseLabel() {
-		return boolenFalseLabel;
+	public String getBooleanFalseLabel() {
+		return booleanFalseLabel;
 	}
 
-	public void setBoolenFalseLabel(String boolenFalseLabel) {
-		this.boolenFalseLabel = boolenFalseLabel;
+	public void setBooleanFalseLabel(String boolenFalseLabel) {
+		this.booleanFalseLabel = boolenFalseLabel;
 	}
 
 	public List<String> getRelations() {
