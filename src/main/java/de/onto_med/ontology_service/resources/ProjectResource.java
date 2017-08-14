@@ -32,13 +32,13 @@ import de.onto_med.ontology_service.views.ProjectView;
 import de.onto_med.ontology_service.views.SimpleListView;
 
 /**
- * This class provids all ontology specific tasks.
+ * This class provides all ontology specific tasks.
  * @author Christoph Beger
  */
 @Path("/project")
 @Singleton
 public class ProjectResource extends Resource {
-	final static Logger logger = LoggerFactory.getLogger(ProjectResource.class);
+	private final static Logger logger = LoggerFactory.getLogger(ProjectResource.class);
 	private String webprotegeRelativeToWebroot;
 	
 	public ProjectResource(String webprotegeRelativeToWebroot) {
@@ -46,7 +46,8 @@ public class ProjectResource extends Resource {
 	}
 	/**
 	 * Returns a list of imported ontologies for a specified project.
-	 * @param projectid ID of the WebProtegé project
+	 * @param headers Headers of the HTTP request
+	 * @param projectId ID of the WebProtegé project
 	 * @return List of imported ontologies or error message
 	 */
 	@GET
@@ -68,7 +69,7 @@ public class ProjectResource extends Resource {
 	
 	/**
 	 * Transforms the projects ontologies into GraphmML and returns the result as string.
-	 * @param projectId ID of the WebProtégé project
+	 * @param id ID of the WebProtégé project
 	 * @return GraphML
 	 */
 	@GET
@@ -163,9 +164,9 @@ public class ProjectResource extends Resource {
 	
 	/**
 	 * Returns some generic information about project's ontology
-	 * @param headers
-	 * @param uriInfo
-	 * @param projectId
+	 * @param headers HTTP headers of the request
+	 * @param uriInfo Info about called URI
+	 * @param projectId ID of the WebProtégé project
 	 * @return HTML page or JSON list of generic information
 	 */
 	@GET
@@ -188,8 +189,8 @@ public class ProjectResource extends Resource {
 	
 	/**
 	 * Returns full OWL document as RDF/XML.
-	 * @param projectid ID of the WebProtegé project
-	 * @return
+	 * @param projectId ID of the WebProtegé project
+	 * @return JSON response
 	 */
 	@GET
 	@Path("/{id}")
@@ -228,7 +229,7 @@ public class ProjectResource extends Resource {
 	
 	/**
 	 * Reasons over the specified ontologies with supplied classexpression
-	 * @param id projectId of the project
+	 * @param projectId projectId of the project
 	 * @param ce class expression
 	 * @return search result
 	 */
@@ -250,12 +251,13 @@ public class ProjectResource extends Resource {
 	
 	
 	/**
-	 * Searches for mathing entities in this ontology.
+	 * Searches for matching entities in this ontology.
 	 * @param name localName part of an entity
 	 * @param property property the searched entity is annotated with
 	 * @param value property value
 	 * @param type entity, class or individual
-	 * @param ontologies list of projectids separated by comma
+	 * @param projectId ID of the project to search in
+	 * @param iri IRI to search for
 	 * @param match matching method for name ('exact' or 'loose'), defaults to 'loose'
 	 * @param operator logical operator to combine name and property, defaults to 'and')
 	 * @return ArrayList of OWLEntityProperties or error message

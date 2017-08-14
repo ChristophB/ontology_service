@@ -1,42 +1,28 @@
 package de.onto_med.ontology_service.resources;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang3.StringUtils;
-
 import de.onto_med.ontology_service.data_models.Individual;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.views.PhenotypeFormView;
 import de.onto_med.ontology_service.views.RestApiView;
-
+import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.*;
 import org.lha.phenoman.model.category_tree.PhenotypeAttributes;
-import org.lha.phenoman.model.reasoner_result.RestrictedBooleanPhenotypeResult;
 import org.lha.phenoman.model.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.top_level.RestrictedPhenotype;
-import org.semanticweb.binaryowl.owlobject.serializer.OWLDataCardinalityRestrictionSerializer;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Path("/phenotype")
 public class PhenotypeResource extends Resource {

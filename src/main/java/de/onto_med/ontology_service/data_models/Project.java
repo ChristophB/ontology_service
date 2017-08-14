@@ -26,6 +26,7 @@ public class Project extends CondencedProject {
 		setCountAxioms(project.getCountAxioms());
 		setCountLogicalAxioms(project.getCountLogicalAxioms());
 		setCountClasses(project.getCountClasses());
+		setCountIndividuals(project.getCountIndividuals());
 		setCountDataProperties(project.getCountDataProperties());
 		setCountObjectProperties(project.getCountObjectProperties());
 		setCountAnnotationProperties(project.getCountAnnotationProperties());
