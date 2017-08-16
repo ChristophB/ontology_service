@@ -2,11 +2,12 @@
 
 <div class="form-group row">
 	<label for="category" class="control-label col-sm-2">Category</label>
-	<div class="col-sm-3">
-		<select id="category" name="category" class="form-control">
-			<option />
-			<option value="Category_1" <@selected "Category_1" />>Category 1</option>
-			<option value="Category_2" <@selected "Category_2" />>Category 2</option>
-		</select>
+	<div class="col-sm-4">
+		<input type="text" class="form-control" id="categories" name="categories"
+		    value="<#if phenotype?? & phenotype.categories??>${phenotype.categories}</#if>"
+		>
 	</div>
+	<small class="form-text text-muted col-sm-4">
+	    Insert multiple categories for this phenotype separated with semicolon.
+	</small>
 </div>

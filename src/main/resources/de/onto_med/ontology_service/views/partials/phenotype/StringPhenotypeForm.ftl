@@ -1,10 +1,9 @@
-<form id="string-phenotype-form" action="${rootPath}/phenotype/create" method="post" accept-charset="UTF-8" class="hidden">
+<form id="string-phenotype-form" action="${rootPath}/phenotype/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<input type="hidden" name="datatype" value="string">
 
 	<#include "Id.ftl">
 	<#include "Labels.ftl">
 	<#include "SuperPhenotype.ftl">
-	<#include "Category.ftl">
     <#include "Definitions.ftl">
     <#include "Relations.ftl">
 

@@ -1,7 +1,7 @@
 <div class="form-group row">
 	<div class="col-sm-2">
 		<label class="control-label">Labels</label>
-		<a class="btn btn-primary btn-xs" onclick="addRow('#labels-div')" data-toggle="tooltip" title="Add a Label" data-placement="right">
+		<a class="btn btn-primary btn-xs pull-right" onclick="addRow('#labels-div')" data-toggle="tooltip" title="Add a Label" data-placement="right">
 			<i class="fa fa-plus" aria-hidden="true"></i>
 		</a>
 	</div>

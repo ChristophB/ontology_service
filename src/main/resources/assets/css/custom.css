@@ -33,3 +33,7 @@
 .form-group .checkbox .control-label {
 	margin-top: 0px;
 }
+.operator-select {
+    padding-left: 5px;
+    padding-right: 0px;
+}

@@ -1,4 +1,4 @@
-<form id="abstract-phenotype-form" action="${rootPath}/phenotype/create" method="post" accept-charset="UTF-8" class="hidden">
+<form id="abstract-phenotype-form" action="${rootPath}/phenotype/create-abstract-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<#include "Id.ftl">
 	<#include "Labels.ftl">
 	<#include "Category.ftl">
@@ -14,6 +14,7 @@
     ]>
     <#include "Datatype.ftl">
 
+    <#include "Formula.ftl">
     <#include "Ucum.ftl">
     <#include "IsDecimal.ftl">
 

@@ -1,9 +1,16 @@
 package de.onto_med.ontology_service.data_models;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
+import org.lha.phenoman.model.phenotype.RestrictedBooleanPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.Category;
+import org.lha.phenoman.model.phenotype.top_level.TextLang;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import javax.ws.rs.FormParam;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class Phenotype {
 	@FormParam("id") @JsonProperty("id")
@@ -14,8 +21,10 @@ public class Phenotype {
 	private List<String> labelLanguages;
 	@FormParam("super-phenotype") @JsonProperty("super-phenotype")
 	private String superPhenotype;
-	@FormParam("category") @JsonProperty("category")
-	private String category;
+	@FormParam("categories") @JsonProperty("categories")
+	private String categories;
+	@FormParam("super-category") @JsonProperty("super-category")
+	private String superCategory;
 	@FormParam("definition[]") @JsonProperty("definition[]")
 	private List<String> definitions;
 	@FormParam("definition-language[]") @JsonProperty("definition-language[]")
@@ -25,13 +34,13 @@ public class Phenotype {
 	@FormParam("ucum") @JsonProperty("ucum")
 	private String ucum;
 	@FormParam("range-min") @JsonProperty("range-min")
-	private List<String> rangeMins;
+	private String rangeMin;
 	@FormParam("range-min-operator") @JsonProperty("range-min-operator")
-	private List<String> rangeMinOperators;
+	private String rangeMinOperator;
 	@FormParam("range-max") @JsonProperty("range-max")
-	private List<String> rangeMaxs;
+	private String rangeMax;
 	@FormParam("range-max-operator") @JsonProperty("range-max-operator")
-	private List<String> rangeMaxOperators;
+	private String rangeMaxOperator;
 	@FormParam("enum-value[]") @JsonProperty("enum-value[]")
 	private List<String> enumValues;
 	@FormParam("formula") @JsonProperty("formula")
@@ -46,7 +55,64 @@ public class Phenotype {
 	private List<String> relations;
 	@FormParam("isDecimal") @JsonProperty("isDecimal")
 	private boolean isDecimal;
+	@FormParam("score") @JsonProperty("score")
+	private double score;
 
+
+	public Phenotype() { super(); }
+
+	public Phenotype(Category attributes) {
+		this();
+		if (attributes == null) return;
+
+		setId(attributes.getName());
+		setRelations(attributes.getRelatedConcepts());
+
+		if (attributes.isAbstractSinglePhenotype()) {
+			AbstractSinglePhenotype phenotype = attributes.asAbstractSinglePhenotype();
+			setDatatype(owl2DatatypeToString(phenotype.getDatatype()));
+			setUcum(attributes.asAbstractSinglePhenotype().getUnit());
+		} else if (attributes.isAbstractBooleanPhenotype() || attributes.isRestrictedBooleanPhenotype()) {
+			setDatatype("boolean");
+			if (attributes.isRestrictedBooleanPhenotype()) {
+				RestrictedBooleanPhenotype phenotype = attributes.asRestrictedBooleanPhenotype();
+				setExpression(phenotype.getManchesterSyntaxExpression());
+				setScore(phenotype.getScore());
+			}
+		} else if (attributes.isAbstractCalculationPhenotype() || attributes.isRestrictedCalculationPhenotype()) {
+			setDatatype("formula");
+			if (attributes.isAbstractCalculationPhenotype()) {
+				setFormula(attributes.asAbstractCalculationPhenotype().getFormula());
+				setUcum(attributes.asAbstractCalculationPhenotype().getUnit());
+				// TODO: set ranges and operators
+			}
+		}
+
+		for (TextLang textLang : attributes.getDefinitions()) {
+			addDefinition(textLang.getText());
+			addDefinitionLanguage(textLang.getLang());
+		}
+		for (TextLang textLang : attributes.getLabels()) {
+			addLabel(textLang.getText());
+			addLabelLanguage(textLang.getText());
+		}
+	}
+
+	public double getScore() {
+		return score;
+	}
+
+	public void setScore(double score) {
+		this.score = score;
+	}
+
+	public String getSuperCategory() {
+		return superCategory;
+	}
+
+	public void setSuperCategory(String superCategory) {
+		this.superCategory = superCategory;
+	}
 
 	public boolean getIsDecimal() {
 		return isDecimal;
@@ -88,12 +154,12 @@ public class Phenotype {
 		this.superPhenotype = superPhenotype;
 	}
 
-	public String getCategory() {
-		return category;
+	public String getCategories() {
+		return categories;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void setCategories(String categories) {
+		this.categories = categories;
 	}
 
 	public List<String> getDefinitions() {
@@ -128,36 +194,36 @@ public class Phenotype {
 		this.ucum = ucum;
 	}
 
-	public List<String> getRangeMins() {
-		return rangeMins;
+	public String getRangeMin() {
+		return rangeMin;
 	}
 
-	public void setRangeMins(List<String> rangeMins) {
-		this.rangeMins = rangeMins;
+	public void setRangeMin(String rangeMin) {
+		this.rangeMin = rangeMin;
 	}
 
-	public List<String> getRangeMinOperators() {
-		return rangeMinOperators;
+	public String getRangeMinOperator() {
+		return rangeMinOperator;
 	}
 
-	public void setRangeMinOperators(List<String> rangeMinOperators) {
-		this.rangeMinOperators = rangeMinOperators;
+	public void setRangeMinOperator(String rangeMinOperator) {
+		this.rangeMinOperator = rangeMinOperator;
 	}
 
-	public List<String> getRangeMaxs() {
-		return rangeMaxs;
+	public String getRangeMax() {
+		return rangeMax;
 	}
 
-	public void setRangeMaxs(List<String> rangeMaxs) {
-		this.rangeMaxs = rangeMaxs;
+	public void setRangeMax(String rangeMax) {
+		this.rangeMax = rangeMax;
 	}
 
-	public List<String> getRangeMaxOperators() {
-		return rangeMaxOperators;
+	public String getRangeMaxOperator() {
+		return rangeMaxOperator;
 	}
 
-	public void setRangeMaxOperators(List<String> rangeMaxOperators) {
-		this.rangeMaxOperators = rangeMaxOperators;
+	public void setRangeMaxOperator(String rangeMaxOperator) {
+		this.rangeMaxOperator = rangeMaxOperator;
 	}
 
 	public List<String> getEnumValues() {
@@ -206,6 +272,42 @@ public class Phenotype {
 
 	public void setRelations(List<String> relations) {
 		this.relations = relations;
+	}
+
+	public void setRelations(Set<String> relations) {
+		this.relations = new ArrayList<>();
+		this.relations.addAll(relations);
+	}
+
+	public void addDefinition(String definition) {
+		List<String> definitions = getDefinitions() != null ? getDefinitions() : new ArrayList<>();
+		definitions.add(definition);
+	}
+
+	public void addDefinitionLanguage(String definitionLanguage) {
+		List<String> definitionLanguages = getDefinitionLanguages() != null ? getDefinitionLanguages() : new ArrayList<>();
+		definitionLanguages.add(definitionLanguage);
+	}
+
+	public void addLabel(String label) {
+		List<String> labels = getLabels() != null ? getLabels() : new ArrayList<>();
+		labels.add(label);
+	}
+
+	public void addLabelLanguage(String labelLanguage) {
+		List<String> labelLanguages = getLabelLanguages() != null ? getLabelLanguages() : new ArrayList<>();
+		labelLanguages.add(labelLanguage);
+	}
+
+	private String owl2DatatypeToString(OWL2Datatype datatype) {
+		if (OWL2Datatype.XSD_INTEGER.equals(datatype)|| OWL2Datatype.XSD_DOUBLE.equals(datatype))
+			return "numeric";
+		else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype))
+			return "date";
+		else if (OWL2Datatype.XSD_STRING.equals(datatype))
+			return "string";
+
+		return null;
 	}
 
 }

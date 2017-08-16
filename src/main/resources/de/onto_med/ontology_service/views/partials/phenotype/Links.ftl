@@ -7,16 +7,8 @@
 				Overview
 			</a>
 
-			<a class="list-group-item <@active "singlephenotype-form" />" href="${rootPath}/phenotype/singlephenotype-form">
-				Create Simple Phenotype
-			</a>
-			
-			<a class="list-group-item <@active "compositephenotype-form" />" href="${rootPath}/phenotype/compositephenotype-form">
-				Create Composite Phenotype
-			</a>
-			
-			<a class="list-group-item <@active "all" />" href="${rootPath}/phenotype/all">
-				Show All
+			<a class="list-group-item <@active "phenotype-form" />" href="${rootPath}/phenotype/phenotype-form">
+				Create Phenotype
 			</a>
 		</div>
 	</div>

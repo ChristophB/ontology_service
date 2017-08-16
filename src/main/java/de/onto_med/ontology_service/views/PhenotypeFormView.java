@@ -1,24 +1,24 @@
 package de.onto_med.ontology_service.views;
 
-import org.lha.phenoman.model.category_tree.PhenotypeAttributes;
+import de.onto_med.ontology_service.data_models.Phenotype;
 
 public class PhenotypeFormView extends RestApiView {
-	private PhenotypeAttributes phenotype;
+	private Phenotype phenotype;
 	
-	public PhenotypeFormView(String templateName, String rootPath) {
-		super(templateName, rootPath);
+	public PhenotypeFormView(String rootPath) {
+		super("PhenotypeForm.ftl", rootPath);
 	}
 	
-	public PhenotypeFormView(String templateName, String rootPath, PhenotypeAttributes phenotype) {
-		this(templateName, rootPath);
+	public PhenotypeFormView(String rootPath, Phenotype phenotype) {
+		this(rootPath);
 		this.phenotype = phenotype;
 	}
 	
-	public void setPhenotype(PhenotypeAttributes phenotype) {
+	public void setPhenotype(Phenotype phenotype) {
 		this.phenotype = phenotype;
 	}
 	
-	public PhenotypeAttributes getPhenotype() {
+	public Phenotype getPhenotype() {
 		return phenotype;
 	}
 

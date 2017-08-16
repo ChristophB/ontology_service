@@ -1,9 +1,10 @@
 function toggleValueDefinition() {
-	$('#ucum-form-group, #is-decimal-form-group').addClass('hidden');
+	$('#ucum-form-group, #is-decimal-form-group, #formula-form-group').addClass('hidden');
 
-	if ($('#datatype').val() == 'numeric' || $('#datatype').val() == 'calculated') {
+	if ($('#datatype').val() == 'numeric' || $('#datatype').val() == 'calculated')
 		$('#ucum-form-group, #is-decimal-form-group').removeClass('hidden');
-	}
+	if ($('#datatype').val() == 'calculated')
+	    $('#formula-form-group').removeClass('hidden');
 }
 
 function addTextField(parent, name, placeholder) {
@@ -11,9 +12,9 @@ function addTextField(parent, name, placeholder) {
 }
 
 function addRow(id) {
-	var row = $(id + ' .hidden').clone();
+	var row = $('form:not(.hidden) ' + id + ' .hidden').clone();
 	row.removeClass('hidden');
-	$(id).append(row);
+	$('form:not(.hidden) ' + id).append(row);
 }
 
 function preProcessPhenotype(node) {
@@ -108,7 +109,7 @@ function customMenu(node) {
 		    action : function() {
 		        hidePhenotypeForms();
 		        $('#abstract-phenotype-form').removeClass('hidden');
-		        $('#category').val(node.text); // TODO
+		        $('#categories').val(node.text);
 		    }
 		},
 		showRestrictedPhenotypeForm : {
@@ -120,7 +121,7 @@ function customMenu(node) {
 		            case 'XSD_INTEGER': $('#numeric-phenotype-form').removeClass('hidden'); break;
 		            case 'XSD_DOUBLE': $('#numeric-phenotype-form').removeClass('hidden'); break;
 		            case 'XSD_BOOLEAN': $('#boolean-phenotype-form').removeClass('hidden'); break;
-		            case 'formula': $('#formula-phenotype-form').removeClass('hidden'); break; // TODO
+		            case 'formula': $('#formula-phenotype-form').removeClass('hidden'); break; // TODO: node type is null
 		            default: return;
 		        }
 

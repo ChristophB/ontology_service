@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<rdf:RDF xmlns="http://www.lha.org/cop#"
-     xml:base="http://www.lha.org/cop"
+<rdf:RDF xmlns="http://www.lha.org/iphon#"
+     xml:base="http://www.lha.org/iphon"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:cop="http://www.lha.org/cop#"
@@ -23,10 +23,31 @@
     
 
 
+    <!-- http://www.lha.org/cop#category -->
+
+
+    <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#category"/>
+    
+
+
     <!-- http://www.lha.org/cop#datatype -->
 
 
     <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#datatype"/>
+    
+
+
+    <!-- http://www.lha.org/cop#formula -->
+
+
+    <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#formula"/>
+    
+
+
+    <!-- http://www.lha.org/cop#phenotype -->
+
+
+    <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#phenotype"/>
     
 
 
@@ -37,10 +58,24 @@
     
 
 
+    <!-- http://www.lha.org/cop#score -->
+
+
+    <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#score"/>
+    
+
+
     <!-- http://www.lha.org/cop#unit -->
 
 
     <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#unit"/>
+    
+
+
+    <!-- http://www.lha.org/cop#variable -->
+
+
+    <owl:AnnotationProperty rdf:about="http://www.lha.org/cop#variable"/>
     
 
 
@@ -98,6 +133,116 @@
     
 
 
+    <!-- http://www.lha.org/cop#Abstract_Integer_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Abstract_Integer_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Category_1"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Category_2"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Medicine"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Phenotype_Category"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <cop:related_concept rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IRI 1</cop:related_concept>
+        <cop:related_concept rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IRI 2</cop:related_concept>
+        <cop:unit rdf:datatype="http://www.w3.org/2001/XMLSchema#string">m^2</cop:unit>
+        <rdfs:comment xml:lang="de">Definition DE</rdfs:comment>
+        <rdfs:comment xml:lang="en">Definition EN</rdfs:comment>
+        <rdfs:label xml:lang="de">Label DE</rdfs:label>
+        <rdfs:label xml:lang="en">Label EN</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Age -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Age">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Anthropometry"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Anthropometry -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Anthropometry">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Medicine"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Age"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#BMI"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Height"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Sex"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Sex_Age_Weight"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Weight"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Appendicitis -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Appendicitis">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Boolean_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Appendicitis_Case1 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Appendicitis_Case1">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Appendicitis"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case1</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Appendicitis_Case2 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Appendicitis_Case2">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Appendicitis"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case2</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Appendicitis_Case3 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Appendicitis_Case3">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Appendicitis"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Case3</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Appendicitis_Exclude -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Appendicitis_Exclude">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Appendicitis"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exclude</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#BMI -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#BMI">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Calculation_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Anthropometry"/>
+        <cop:formula rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight/(Height^2)</cop:formula>
+        <cop:variable rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Height</cop:variable>
+        <cop:variable rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight</cop:variable>
+    </owl:Class>
+    
+
+
     <!-- http://www.lha.org/cop#Boolean_Phenotype -->
 
 
@@ -125,20 +270,285 @@
     
 
 
-    <!-- http://www.lha.org/cop#Integer_Phenotype -->
+    <!-- http://www.lha.org/cop#Creatinine -->
 
 
-    <owl:Class rdf:about="http://www.lha.org/cop#Integer_Phenotype">
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine">
         <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
-        <datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
-        <related_concept rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IRI 1</related_concept>
-        <related_concept rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IRI 2</related_concept>
-        <unit rdf:datatype="http://www.w3.org/2001/XMLSchema#string">m^2</unit>
-        <rdfs:comment xml:lang="de">Definition DE</rdfs:comment>
-        <rdfs:comment xml:lang="en">Definition DE</rdfs:comment>
-        <rdfs:comment xml:lang="en">Definition EN</rdfs:comment>
-        <rdfs:label xml:lang="de">Label DE</rdfs:label>
-        <rdfs:label xml:lang="en">Label EN</rdfs:label>
+        <cop:category rdf:resource="http://www.lha.org/cop#Lab"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+        <cop:related_concept rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.aaa.org/onto1#crea1</cop:related_concept>
+        <cop:related_concept rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.bbb.org/onto2#crea2</cop:related_concept>
+        <cop:unit rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mg/dL</cop:unit>
+        <rdfs:comment xml:lang="en">Crea def 1</rdfs:comment>
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Crea def 2</rdfs:comment>
+        <rdfs:label xml:lang="en">Creatinine</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_Score -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_Score">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Boolean_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Lab"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_Score_1 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_Score_1">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine_Score"/>
+        <cop:score rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.0</cop:score>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_Score_2 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_Score_2">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine_Score"/>
+        <cop:score rdf:datatype="http://www.w3.org/2001/XMLSchema#double">2.0</cop:score>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_Score_3 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_Score_3">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine_Score"/>
+        <cop:score rdf:datatype="http://www.w3.org/2001/XMLSchema#double">3.0</cop:score>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_Score_4 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_Score_4">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine_Score"/>
+        <cop:score rdf:datatype="http://www.w3.org/2001/XMLSchema#double">4.0</cop:score>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_ge_1_2_le_1_9 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_ge_1_2_le_1_9">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Creatinine"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.2</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.9</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_ge_2_0_le_3_4 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_ge_2_0_le_3_4">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Creatinine"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">2.0</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">3.4</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_ge_3_5_le_4_9 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_ge_3_5_le_4_9">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Creatinine"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">3.5</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">4.9</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Creatinine_ge_5_0 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Creatinine_ge_5_0">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Creatinine"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">5.0</xsd:minInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Diagnoses_of_appendicitis -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Diagnoses_of_appendicitis">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diagnoses of appendicitis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Disease -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Disease">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Medicine"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Appendicitis"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Diagnoses_of_appendicitis"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Incidental_Appendectomy"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Interventional_Radiology"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Positive_result_of_post_surgical_biopsy_report"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Presence_of_a_Comorbidity_in_same_encounter"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Presence_of_a_Pathology_Report"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Reported_History_of_Appendicitis"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#SOFA"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Systemic_Antibiotics"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Height -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Height">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Anthropometry"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Incidental_Appendectomy -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Incidental_Appendectomy">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Incidental Appendectomy</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Interventional_Radiology -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Interventional_Radiology">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Interventional Radiology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Lab -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Lab">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Medicine"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_Score"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Medicine -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Medicine">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Phenotype_Category"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Abstract_Integer_Phenotype"/>
     </owl:Class>
     
 
@@ -148,66 +558,92 @@
 
     <owl:Class rdf:about="http://www.lha.org/cop#Phenotype_Category">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Abstract_Integer_Phenotype"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#dateP"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#douP"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#intP"/>
     </owl:Class>
     
 
 
-    <!-- http://www.lha.org/cop#Range_1 -->
+    <!-- http://www.lha.org/cop#Positive_result_of_post_surgical_biopsy_report -->
 
 
-    <owl:Class rdf:about="http://www.lha.org/cop#Range_1">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.lha.org/cop#Integer_Phenotype"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
-                        <owl:someValuesFrom>
-                            <rdfs:Datatype>
-                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
-                                <owl:withRestrictions rdf:parseType="Collection">
-                                    <rdf:Description>
-                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</xsd:minInclusive>
-                                    </rdf:Description>
-                                </owl:withRestrictions>
-                            </rdfs:Datatype>
-                        </owl:someValuesFrom>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Integer_Phenotype"/>
-        <datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <owl:Class rdf:about="http://www.lha.org/cop#Positive_result_of_post_surgical_biopsy_report">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Positive result of post surgical biopsy report</rdfs:label>
     </owl:Class>
     
 
 
-    <!-- http://www.lha.org/cop#Range_2 -->
+    <!-- http://www.lha.org/cop#Presence_of_a_Comorbidity_in_same_encounter -->
 
 
-    <owl:Class rdf:about="http://www.lha.org/cop#Range_2">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.lha.org/cop#Integer_Phenotype"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
-                        <owl:someValuesFrom>
-                            <rdfs:Datatype>
-                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
-                                <owl:withRestrictions rdf:parseType="Collection">
-                                    <rdf:Description>
-                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</xsd:minExclusive>
-                                    </rdf:Description>
-                                </owl:withRestrictions>
-                            </rdfs:Datatype>
-                        </owl:someValuesFrom>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Integer_Phenotype"/>
-        <datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <owl:Class rdf:about="http://www.lha.org/cop#Presence_of_a_Comorbidity_in_same_encounter">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Presence of a Comorbidity in same encounter</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Presence_of_a_Pathology_Report -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Presence_of_a_Pathology_Report">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Presence of a Pathology Report</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Reported_History_of_Appendicitis -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Reported_History_of_Appendicitis">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reported History of Appendicitis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#SOFA -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#SOFA">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Calculation_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:formula rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Creatinine_Score + Age</cop:formula>
+        <cop:variable rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Age</cop:variable>
+        <cop:variable rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Creatinine_Score</cop:variable>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Sex -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Sex">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Anthropometry"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Sex_Age_Weight -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Sex_Age_Weight">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Boolean_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Anthropometry"/>
     </owl:Class>
     
 
@@ -218,6 +654,1178 @@
     <owl:Class rdf:about="http://www.lha.org/cop#Single_Phenotype">
         <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Systemic_Antibiotics -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Systemic_Antibiotics">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Disease"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Systemic Antibiotics</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Weight -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Weight">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Anthropometry"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#dateP -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#dateP">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Phenotype_Category"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#dateP1 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#dateP1">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#dateP"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502887545641</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#dateP"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#dateP2 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#dateP2">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#dateP"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:oneOf>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#long">111111</rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502887545641</rdf:first>
+                                                <rdf:rest>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#long">222222</rdf:first>
+                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                    </rdf:Description>
+                                                </rdf:rest>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </owl:oneOf>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#dateP"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#dateP3 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#dateP3">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#dateP"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#long">222222</xsd:minExclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502887545641</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#dateP"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#dia_n -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#dia_n">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Diagnoses_of_appendicitis"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Diagnoses_of_appendicitis"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">no</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#dia_y -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#dia_y">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Diagnoses_of_appendicitis"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Diagnoses_of_appendicitis"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#douP -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#douP">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Phenotype_Category"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#douP_e_222_222 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#douP_e_222_222">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#douP"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#double">222.222</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#douP"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#female -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#female">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Sex"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">F</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Sex"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#female_young_light -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#female_young_light">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Sex_Age_Weight"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#female_young_medium -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#female_young_medium">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Sex_Age_Weight"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#heavy -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#heavy">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Weight"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">100.0</xsd:minExclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Weight"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#inc_ap_n -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#inc_ap_n">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Incidental_Appendectomy"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Incidental_Appendectomy"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">no</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#inc_ap_y -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#inc_ap_y">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Incidental_Appendectomy"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Incidental_Appendectomy"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#intP -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#intP">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Single_Phenotype"/>
+        <cop:category rdf:resource="http://www.lha.org/cop#Phenotype_Category"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#intP_e_111 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#intP_e_111">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#intP"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">111</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#intP"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#intP_g_50_le_100 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#intP_g_50_le_100">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#intP"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">50</xsd:minExclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">100</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#intP"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#intP_in_111_222_333 -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#intP_in_111_222_333">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#intP"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:oneOf>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">111</rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">222</rdf:first>
+                                                <rdf:rest>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">333</rdf:first>
+                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                    </rdf:Description>
+                                                </rdf:rest>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </owl:oneOf>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#intP"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#int_ra_n -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#int_ra_n">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Interventional_Radiology"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Interventional_Radiology"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">no</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#int_ra_y -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#int_ra_y">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Interventional_Radiology"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Interventional_Radiology"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#light -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#light">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Weight"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">50.0</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Weight"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#male -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#male">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Sex"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">M</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Sex"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#male_middle_light -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#male_middle_light">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Sex_Age_Weight"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#male_old_medium -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#male_old_medium">
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Sex_Age_Weight"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#medium -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#medium">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Weight"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">50.0</xsd:minExclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#double">100.0</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Weight"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#middle -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#middle">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Age"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</xsd:minExclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">60</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Age"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#old -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#old">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Age"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">60</xsd:minExclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Age"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#pos_bi_n -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#pos_bi_n">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Positive_result_of_post_surgical_biopsy_report"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Positive_result_of_post_surgical_biopsy_report"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">no</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#pos_bi_y -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#pos_bi_y">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Positive_result_of_post_surgical_biopsy_report"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Positive_result_of_post_surgical_biopsy_report"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#pre_co_n -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#pre_co_n">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Presence_of_a_Comorbidity_in_same_encounter"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Presence_of_a_Comorbidity_in_same_encounter"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">no</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#pre_co_y -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#pre_co_y">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Presence_of_a_Comorbidity_in_same_encounter"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Presence_of_a_Comorbidity_in_same_encounter"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#pre_pa_n -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#pre_pa_n">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Presence_of_a_Pathology_Report"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Presence_of_a_Pathology_Report"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">no</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#pre_pa_y -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#pre_pa_y">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Presence_of_a_Pathology_Report"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Presence_of_a_Pathology_Report"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#rep_hi_n -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#rep_hi_n">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Reported_History_of_Appendicitis"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Reported_History_of_Appendicitis"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">no</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#rep_hi_y -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#rep_hi_y">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Reported_History_of_Appendicitis"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Reported_History_of_Appendicitis"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#sys_ab_n -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#sys_ab_n">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Systemic_Antibiotics"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Systemic_Antibiotics"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">no</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#sys_ab_y -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#sys_ab_y">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Systemic_Antibiotics"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Systemic_Antibiotics"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">yes</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#young -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#young">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.lha.org/cop#Age"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Age"/>
+        <cop:datatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    <rdf:Description rdf:about="http://www.lha.org/cop#Category_1">
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Abstract_Integer_Phenotype"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.lha.org/cop#Category_2">
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Abstract_Integer_Phenotype"/>
+    </rdf:Description>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.lha.org/cop#Creatinine_Score"/>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#Age"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#SOFA"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#int_ra_y"/>
+                            </owl:Restriction>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#sys_ab_n"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#sys_ab_y"/>
+                    </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#dia_y"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#pre_co_n"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#pre_pa_n"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Appendicitis_Case2"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#Height"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#Weight"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#BMI"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#dia_n"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#inc_ap_n"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#rep_hi_y"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Appendicitis_Case3"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#dia_y"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#pos_bi_y"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#pre_pa_y"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Appendicitis_Case1"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#female"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#light"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#young"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#female_young_light"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#female"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#medium"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#young"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#female_young_medium"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#light"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#male"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#middle"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#male_middle_light"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#male"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#medium"/>
+            </owl:Restriction>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#old"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#male_old_medium"/>
+    </owl:Class>
+    <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#inc_ap_y"/>
+                                    </owl:Restriction>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#rep_hi_y"/>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                                <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#rep_hi_n"/>
+                            </owl:Restriction>
+                        </owl:unionOf>
+                    </owl:Class>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#dia_n"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#dia_y"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#int_ra_n"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#pre_co_n"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#pre_pa_n"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#sys_ab_n"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#dia_y"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#pos_bi_n"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+                        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#pre_pa_y"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:unionOf>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Appendicitis_Exclude"/>
+    </owl:Class>
+    <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#Creatinine_ge_1_2_le_1_9"/>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine_Score_1"/>
+    </owl:Restriction>
+    <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#Creatinine_ge_2_0_le_3_4"/>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine_Score_2"/>
+    </owl:Restriction>
+    <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#Creatinine_ge_3_5_le_4_9"/>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine_Score_3"/>
+    </owl:Restriction>
+    <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.lha.org/cop#has_part"/>
+        <owl:someValuesFrom rdf:resource="http://www.lha.org/cop#Creatinine_ge_5_0"/>
+        <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Creatinine_Score_4"/>
+    </owl:Restriction>
 </rdf:RDF>
 
 

@@ -1,7 +1,7 @@
 <div class="form-group row">
 	<div class="col-sm-2">
 		<label class="control-label">Definitions</label>
-		<a class="btn btn-primary btn-xs" onclick="addRow('#definition-div')" data-toggle="tooltip" title="Add a Definition" data-placement="right">
+		<a class="btn btn-primary btn-xs pull-right" onclick="addRow('#definition-div')" data-toggle="tooltip" title="Add a Definition" data-placement="right">
 			<i class="fa fa-plus" aria-hidden="true"></i>
 		</a>
 	</div>
