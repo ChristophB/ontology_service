@@ -1,6 +1,6 @@
 package de.onto_med.ontology_service.manager;
 
-import de.imise.owl2graphml_view.onto.MainOntology;
+//import de.imise.owl2graphml_view.onto.MainOntology;
 import de.onto_med.ontology_service.api.TaxonomyNode;
 import de.onto_med.ontology_service.data_models.Entity;
 import de.onto_med.ontology_service.data_models.Individual;
@@ -76,9 +76,9 @@ public class ProjectManager {
 		return binaryOwlParser.getEntityPropertiesByClassExpression(ce);
 	}
 	
-	public MainOntology getGraphMl(String startClassIri, String taxonomyDirection, int taxonomyDepth) {
-        return new MainOntology(binaryOwlParser.getOntology(), startClassIri, taxonomyDirection, taxonomyDepth);
-	}
+//	public MainOntology getGraphMl(String startClassIri, String taxonomyDirection, int taxonomyDepth) {
+//        return new MainOntology(binaryOwlParser.getOntology(), startClassIri, taxonomyDirection, taxonomyDepth);
+//	}
 	
 	
 	/**

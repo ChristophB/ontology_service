@@ -29,6 +29,7 @@
                     <#include "partials/phenotype/NumericPhenotypeForm.ftl">
                     <#include "partials/phenotype/StringPhenotypeForm.ftl">
                     <#include "partials/phenotype/BooleanPhenotypeForm.ftl">
+                    <#include "partials/phenotype/CalculationPhenotypeForm.ftl">
                     <#include "partials/phenotype/DatePhenotypeForm.ftl">
 				</div>
 			</section>

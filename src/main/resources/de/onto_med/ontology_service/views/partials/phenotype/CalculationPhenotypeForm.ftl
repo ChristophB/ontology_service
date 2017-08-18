@@ -1,5 +1,5 @@
 <form id="string-phenotype-form" action="${rootPath}/phenotype/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
-	<input type="hidden" name="datatype" value="formula">
+	<input type="hidden" name="datatype" value="calculation">
 
 	<#include "Id.ftl">
 	<#include "Labels.ftl">

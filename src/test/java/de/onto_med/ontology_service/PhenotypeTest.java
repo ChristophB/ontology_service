@@ -6,11 +6,9 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.lha.phenoman.man.Formula;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
-import org.lha.phenoman.model.phenotype.AbstractBooleanPhenotype;
-import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
-import org.lha.phenoman.model.phenotype.RestrictedBooleanPhenotype;
-import org.lha.phenoman.model.phenotype.RestrictedSinglePhenotype;
+import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
@@ -31,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PhenotypeTest extends AbstractTest {
 	private final String CREATE_ABSTRACT_PHENOTYPE_PATH = "/phenotype/create-abstract-phenotype";
 	private final String CREATE_RESTRICTED_PHENOTYPE_PATH = "/phenotype/create-restricted-phenotype";
-	private final String CREATE_CATEGORY_PATH = "/phenotype/create-category";
 
 	@After
 	public void cleanUp() throws Exception {
@@ -40,7 +37,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void aTestCategoryCreation() throws Exception {
+	public void test1CategoryCreation() throws Exception {
 		String id = "Category_1";
 		Form form = new Form();
 
@@ -48,31 +45,31 @@ public class PhenotypeTest extends AbstractTest {
 			.param("label[]", "Label EN").param("label-language[]", "en")
 			.param("label[]", "Label DE").param("label-language[]", "de")
 			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition None").param("definition-language[]", "")
+			.param("definition[]", "Definition NONE").param("definition-language[]", "")
 			.param("relation[]", "IRI 1").param("relation[]", "IRI 2");
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_CATEGORY_PATH)
+			= client.target(url + "/phenotype/create-category")
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
-		Category actual = manager.getCategory(id);
+		Category actual = manager.getCategory(id); // TODO: does not return all properties when ontology was overwritten
 
 		Category expected = new Category(id);
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition None"); // without language
-		expected.addRelatedConcept("IRI 2"); // reverse order
+		expected.addDefinition("Definition NONE");
+		expected.addRelatedConcept("IRI 2");
 		expected.addRelatedConcept("IRI 1");
 
 		assertThat(actual).isEqualTo(expected);
 	}
 
 	@Test
-	public void testIntegerPhenotypeCreation() throws Exception {
+	public void test2IntegerPhenotypeCreation() throws Exception {
 		testAbstractIntegerPhenotypeCreation();
 		testRestrictedIntegerPhenotypeCreation();
 	}
@@ -100,12 +97,12 @@ public class PhenotypeTest extends AbstractTest {
 		testAbstractBooleanPhenotypeCreation();
 		testRestrictedBooleanPhenotypeCreation();
 	}
-//
-//	@Test
-//	public void testCalculationPhenotypeCreation() throws Exception {
-//		testAbstractCalculationPhenotypeCreation();
-//		testRestrictedCalculationPhenotypeCreation();
-//	}
+
+	@Test
+	public void testCalculationPhenotypeCreation() throws Exception {
+		testAbstractCalculationPhenotypeCreation();
+		testRestrictedCalculationPhenotypeCreation();
+	}
 
 
 
@@ -307,7 +304,7 @@ public class PhenotypeTest extends AbstractTest {
 		Form form = new Form();
 
 		form.param("id", id)
-			.param("datatype", "numeric")
+			.param("datatype", "calculation")
 			.param("label[]", "Label EN").param("label-language[]", "en")
 			.param("label[]", "Label DE").param("label-language[]", "de")
 			.param("definition[]", "Definition EN").param("definition-language[]", "en")
@@ -315,8 +312,8 @@ public class PhenotypeTest extends AbstractTest {
 			.param("relation[]", "IRI 1")
 			.param("relation[]", "IRI 2")
 			.param("categories", "Category_1")
-			.param("ucum", "kg")
-			.param("is-decimal", "true");
+			.param("ucum", "cm")
+			.param("formula", "Abstract_Integer_Phenotype");
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
@@ -328,8 +325,10 @@ public class PhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_DOUBLE, "Category_1");
-		expected.setUnit("kg");
+		AbstractCalculationPhenotype expected = new AbstractCalculationPhenotype(
+			id, manager.getFormula("Abstract_Integer_Phenotype"), "Category_1"
+		);
+		expected.setUnit("cm");
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
 		expected.addLabel("Label EN", "en");
@@ -337,8 +336,7 @@ public class PhenotypeTest extends AbstractTest {
 		expected.addRelatedConcept("IRI 1");
 		expected.addRelatedConcept("IRI 2");
 
-		assertThat(actual.isAbstractSinglePhenotype()).isTrue();
-		assertThat(actual.asAbstractSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DOUBLE);
+		assertThat(actual.isAbstractCalculationPhenotype()).isTrue();
 		assertThat(actual).isEqualTo(expected);
 	}
 
@@ -514,7 +512,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
 		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_LONG);
-		assertThat(actual).isEqualTo(expected);
+		assertThat(actual).isEqualTo(expected); // TODO: is not equal but string representation is equal
 	}
 
 	private void testRestrictedBooleanPhenotypeCreation() throws Exception {
@@ -530,7 +528,7 @@ public class PhenotypeTest extends AbstractTest {
 			.param("relation[]", "IRI 1")
 			.param("relation[]", "IRI 2")
 			.param("super-phenotype", "Abstract_Boolean_Phenotype")
-			.param("expression", "Category_1")
+			.param("expression", "Restricted_Integer_Phenotype")
 			.param("score", "15.4");
 
 		javax.ws.rs.core.Response response
@@ -541,11 +539,11 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
-		Category actual = manager.getPhenotype(id); // TODO: null pointer exception
+		Category actual = manager.getPhenotype(id);
 
 		RestrictedBooleanPhenotype expected = new RestrictedBooleanPhenotype(
 			id, "Abstract_Boolean_Phenotype",
-			manager.getManchesterSyntaxExpression("Category_1"));
+			manager.getManchesterSyntaxExpression("Restricted_Integer_Phenotype")); // TODO: is not resolved to manchester syntax
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
 		expected.addLabel("Label EN", "en");
@@ -563,14 +561,14 @@ public class PhenotypeTest extends AbstractTest {
 		Form form = new Form();
 
 		form.param("id", id)
-			.param("datatype", "double")
+			.param("datatype", "calculation")
 			.param("label[]", "Label EN").param("label-language[]", "en")
 			.param("label[]", "Label DE").param("label-language[]", "de")
 			.param("definition[]", "Definition EN").param("definition-language[]", "en")
 			.param("definition[]", "Definition DE").param("definition-language[]", "de")
 			.param("relation[]", "IRI 1")
 			.param("relation[]", "IRI 2")
-			.param("super-phenotype", "Abstract_Double_Phenotype")
+			.param("super-phenotype", "Abstract_Calculation_Phenotype")
 			.param("range-min", "5.3").param("range-min-operator", ">=")
 			.param("range-max", "10.7").param("range-max-operator", "<");
 
@@ -584,8 +582,8 @@ public class PhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
 
-		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_Double_Phenotype",
+		RestrictedCalculationPhenotype expected = new RestrictedCalculationPhenotype(
+			id, "Abstract_Calculation_Phenotype",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
@@ -594,8 +592,7 @@ public class PhenotypeTest extends AbstractTest {
 		expected.addRelatedConcept("IRI 1");
 		expected.addRelatedConcept("IRI 2");
 
-		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
-		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DOUBLE);
+		assertThat(actual.isRestrictedCalculationPhenotype()).isTrue();
 		assertThat(actual).isEqualTo(expected);
 	}
 

@@ -126,7 +126,7 @@ public class PhenotypeResource extends Resource {
 					? new AbstractBooleanPhenotype(formData.getId())
 					: new AbstractBooleanPhenotype(formData.getId(), formData.getCategories().split(";"));
 				break;
-			case "calculated":
+			case "calculation":
 				if (StringUtils.isBlank(formData.getFormula())) {
 					view.addMessage("danger", "Formula for abstract calculated phenotype is missing.");
 					return Response.ok(view).build();
@@ -193,9 +193,9 @@ public class PhenotypeResource extends Resource {
 					formData.getId(), formData.getSuperPhenotype(),
 					manager.getManchesterSyntaxExpression(formData.getExpression())
 				);
-				((RestrictedBooleanPhenotype) phenotype).setScore(formData.getScore());
+				phenotype.asRestrictedBooleanPhenotype().setScore(formData.getScore());
 				break;
-			case "formula":
+			case "calculation":
 				phenotype = new RestrictedCalculationPhenotype(
 					formData.getId(), formData.getSuperPhenotype(),
 					Optional.ofNullable(getRestrictedPhenotypeRange(
@@ -203,7 +203,6 @@ public class PhenotypeResource extends Resource {
 						formData.getRangeMax(), formData.getRangeMaxOperator()
 					)).orElse(getRestrictedPhenotypeRange(datatype, formData.getEnumValues()))
 				);
-				((RestrictedCalculationPhenotype) phenotype).setScore(formData.getScore());
 				break;
 			default:
 				view.addMessage("danger", "Could not determine Datatype.");
@@ -396,18 +395,18 @@ public class PhenotypeResource extends Resource {
 	 * @param phenotype A phenotype which will be added to the manager.
 	 */
 	private void addPhenotype(Category phenotype) {
-		if (phenotype.isAbstractSinglePhenotype()) {
-			manager.addAbstractSinglePhenotype(phenotype.asAbstractSinglePhenotype());
-		} else if (phenotype.isAbstractBooleanPhenotype()) {
+		if (phenotype.isAbstractBooleanPhenotype()) {
 			manager.addAbstractBooleanPhenotype(phenotype.asAbstractBooleanPhenotype());
 		} else if (phenotype.isAbstractCalculationPhenotype()) {
 			manager.addAbstractCalculationPhenotype(phenotype.asAbstractCalculationPhenotype());
+		} else if (phenotype.isAbstractSinglePhenotype()) {
+			manager.addAbstractSinglePhenotype(phenotype.asAbstractSinglePhenotype());
 		} else if (phenotype.isRestrictedCalculationPhenotype()) {
 			manager.addRestrictedCalculationPhenotype(phenotype.asRestrictedCalculationPhenotype());
-		} else if (phenotype.isRestrictedSinglePhenotype()) {
-			manager.addRestrictedSinglePhenotype(phenotype.asRestrictedSinglePhenotype());
 		} else if (phenotype.isRestrictedBooleanPhenotype()) {
 			manager.addRestrictedBooleanPhenotype(phenotype.asRestrictedBooleanPhenotype());
+		} else if (phenotype.isRestrictedSinglePhenotype()) {
+			manager.addRestrictedSinglePhenotype(phenotype.asRestrictedSinglePhenotype());
 		}
 	}
 
