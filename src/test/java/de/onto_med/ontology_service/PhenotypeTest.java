@@ -495,9 +495,11 @@ public class PhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(id);
 
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(15, Calendar.MARCH, 2, 0, 0, 0);
+		calendar.set(2015, Calendar.MARCH, 2, 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		Date min = calendar.getTime();
-		calendar.set(17, Calendar.OCTOBER,15, 0, 0, 0);
+		calendar.set(2017, Calendar.OCTOBER,15, 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		Date max = calendar.getTime();
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(

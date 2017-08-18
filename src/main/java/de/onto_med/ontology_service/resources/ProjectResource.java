@@ -91,12 +91,12 @@ public class ProjectResource extends Resource {
 		try {
 			manager = getProjectManager(id);
 		} catch (Exception e) { throw new WebApplicationException(e.getMessage()); }
-		
+
 		MainOntology graphMlOntology = manager.getGraphMl(startClassIri, taxonomyDirection, taxonomyDepth);
-		
+
 		graphMlOntology.setHasGrayscale(hasGreyScale);
 		graphMlOntology.setHasRestrictionSuperClassesWithType("with type".equals(hasRestrictionSuperClasses));
-		
+
 		if (hasTaxonomy)
 			graphMlOntology.addTaxonomy();
 		if (hasAnnotations)
@@ -115,7 +115,7 @@ public class ProjectResource extends Resource {
 			graphMlOntology.addIndividualAssertions();
 		if (hasPropertyDefinitions)
 			graphMlOntology.addProperyDefinitions();
-		
+
 		return Response
 			.ok(graphMlOntology.toXml().toString())
 			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + manager.getProjectIri() + ".GraphML'")
