@@ -53,10 +53,10 @@ public class Phenotype {
 	private String booleanFalseLabel;
 	@FormParam("relation[]") @JsonProperty("relation[]")
 	private List<String> relations;
-	@FormParam("isDecimal") @JsonProperty("isDecimal")
+	@FormParam("is-decimal") @JsonProperty("is-decimal")
 	private boolean isDecimal;
 	@FormParam("score") @JsonProperty("score")
-	private double score;
+	private Double score;
 
 
 	public Phenotype() { super(); }
@@ -98,11 +98,11 @@ public class Phenotype {
 		}
 	}
 
-	public double getScore() {
+	public Double getScore() {
 		return score;
 	}
 
-	public void setScore(double score) {
+	public void setScore(Double score) {
 		this.score = score;
 	}
 

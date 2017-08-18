@@ -25,9 +25,14 @@ function preProcessPhenotype(node) {
 }
 
 function transformToPhenotypeTree(node) {
-	var tree = { text: node.name, children: [], a_attr: { id: node.attributes.iri, type: node.attributes.datatype } };
-	
-	if (node.attributes.nodeType != 0) tree.icon = 'glyphicon glyphicon-leaf';
+	var tree = { text: node.name, children: [], a_attr: { id: node.name, type: null } };
+
+	if (node.category != null) {
+	    if (node.category.abstractBooleanPhenotype || node.category.abstractCalculationPhenotype || node.category.abstractSinglePhenotype)
+	        tree.icon = 'glyphicon glyphicon-leaf text-primary';
+	    else if (node.category.restrictedBooleanPhenotype || node.category.restrictedCalculationPhenotype || node.category.restrictedSinglePhenotype)
+	        tree.icon = 'glyphicon glyphicon-leaf text-success';
+	}
 	
 	node.children.forEach(function(child) {
 		tree.children.push(transformToPhenotypeTree(child));
@@ -84,7 +89,6 @@ function toggleSuperPhenotype() {
 		$('#super-phenotype').val(null);
 		if (!div.hasClass('hidden')) div.addClass('hidden');
 		help.removeClass('hidden');
-		
 	}
 }
 

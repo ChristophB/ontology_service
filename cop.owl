@@ -133,6 +133,54 @@
     
 
 
+    <!-- http://www.lha.org/cop#Abstract_Boolean_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Abstract_Boolean_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Appendicitis"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_Score"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Sex_Age_Weight"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Abstract_Calculation_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Abstract_Calculation_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#BMI"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#SOFA"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Abstract_Single_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Abstract_Single_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Age"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Diagnoses_of_appendicitis"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Height"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Incidental_Appendectomy"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Interventional_Radiology"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Positive_result_of_post_surgical_biopsy_report"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Presence_of_a_Comorbidity_in_same_encounter"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Presence_of_a_Pathology_Report"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Reported_History_of_Appendicitis"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Sex"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Systemic_Antibiotics"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Weight"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#dateP"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#douP"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#intP"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.lha.org/cop#Age -->
 
 
@@ -215,7 +263,7 @@
     <owl:Class rdf:about="http://www.lha.org/cop#BMI">
         <rdfs:subClassOf rdf:resource="http://www.lha.org/cop#Calculation_Phenotype"/>
         <cop:category rdf:resource="http://www.lha.org/cop#Anthropometry"/>
-        <cop:formula rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight/(Height^2)</cop:formula>
+        <cop:formula rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight/Height^2</cop:formula>
         <cop:variable rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Height</cop:variable>
         <cop:variable rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Weight</cop:variable>
     </owl:Class>
@@ -591,6 +639,80 @@
     
 
 
+    <!-- http://www.lha.org/cop#Restricted_Boolean_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Restricted_Boolean_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Appendicitis_Case1"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Appendicitis_Case2"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Appendicitis_Case3"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Appendicitis_Exclude"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_Score_1"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_Score_2"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_Score_3"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_Score_4"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#female_young_light"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#female_young_medium"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#male_middle_light"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#male_old_medium"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Restricted_Calculation_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Restricted_Calculation_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.lha.org/cop#Restricted_Single_Phenotype -->
+
+
+    <owl:Class rdf:about="http://www.lha.org/cop#Restricted_Single_Phenotype">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_ge_1_2_le_1_9"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_ge_2_0_le_3_4"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_ge_3_5_le_4_9"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#Creatinine_ge_5_0"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#dateP1"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#dateP2"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#dateP3"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#dia_n"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#dia_y"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#douP_e_222_222"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#female"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#heavy"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#inc_ap_n"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#inc_ap_y"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#intP_e_111"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#intP_g_50_le_100"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#intP_in_111_222_333"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#int_ra_n"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#int_ra_y"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#light"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#male"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#medium"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#middle"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#old"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#pos_bi_n"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#pos_bi_y"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#pre_co_n"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#pre_co_y"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#pre_pa_n"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#pre_pa_y"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#rep_hi_n"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#rep_hi_y"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#sys_ab_n"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#sys_ab_y"/>
+        <cop:phenotype rdf:resource="http://www.lha.org/cop#young"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.lha.org/cop#SOFA -->
 
 
@@ -678,7 +800,7 @@
                     <rdf:Description rdf:about="http://www.lha.org/cop#dateP"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://www.lha.org/cop#has_value"/>
-                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502887545641</owl:hasValue>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502968506074</owl:hasValue>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -708,7 +830,7 @@
                                         <rdf:rest>
                                             <rdf:Description>
                                                 <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502887545641</rdf:first>
+                                                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502968506090</rdf:first>
                                                 <rdf:rest>
                                                     <rdf:Description>
                                                         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
@@ -750,7 +872,7 @@
                                         <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#long">222222</xsd:minExclusive>
                                     </rdf:Description>
                                     <rdf:Description>
-                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502887545641</xsd:maxInclusive>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1502968506090</xsd:maxInclusive>
                                     </rdf:Description>
                                 </owl:withRestrictions>
                             </rdfs:Datatype>
