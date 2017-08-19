@@ -35,6 +35,7 @@ public class PhenotypeManager {
 	 * @return The found phenotype as Category object.
 	 */
 	public Category getPhenotype(String id) {
+		if (StringUtils.isBlank(id)) return null;
 		return manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
 	}
 

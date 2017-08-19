@@ -1,4 +1,4 @@
-<div id="expression-form-group" class="hidden">
+<div id="expression-form-group">
 	<label for="expression" class="control-label">Boolean-Expression*</label>
 	<input type="button" value="AND">
 	<input type="button" value="OR">

@@ -25,15 +25,26 @@ function preProcessPhenotype(node) {
 }
 
 function transformToPhenotypeTree(node) {
-	var tree = { text: node.name, children: [], a_attr: { id: node.name, type: null } };
+    console.log(node);
+	var tree = { text: node.name, children: [], a_attr: { id: node.name, phenotype: node.category.phenotype } };
 
 	if (node.category != null) {
-	    if (node.category.abstractBooleanPhenotype || node.category.abstractCalculationPhenotype || node.category.abstractSinglePhenotype)
+	    if (node.category.abstractPhenotype)
 	        tree.icon = 'glyphicon glyphicon-leaf text-primary';
-	    else if (node.category.restrictedBooleanPhenotype || node.category.restrictedCalculationPhenotype || node.category.restrictedSinglePhenotype)
+	    else if (node.category.restrictedPhenotype)
 	        tree.icon = 'glyphicon glyphicon-leaf text-success';
 	}
-	
+
+	if (node.category.abstractSinglePhenotype || node.category.restrictedSinglePhenotype) { // TODO: infer correct type
+	    tree.a_attr.type = "numeric";
+	    tree.a_attr.type = "string";
+	    tree.a_attr.type = "date";
+	} else if (node.category.abstractBooleanPhenotype || node.category.restrictedBooleanPhenotype) {
+	    tree.a_attr.type = "boolean";
+	} else if (node.category.abstractCalculationPhenotype || node.category.restrictedCalculationPhenotype) {
+	    tree.a_attr.type = "calculation";
+	}
+
 	node.children.forEach(function(child) {
 		tree.children.push(transformToPhenotypeTree(child));
 	});
@@ -79,19 +90,6 @@ function createPhenotypeTree(id, url) {
 	});
 }
 
-function toggleSuperPhenotype() {
-	var div = $('#super-phenotype-div');
-	var help = $('#has-super-phenotype-help');
-	if ($('#has-super-phenotype').prop('checked') === true) {
-		div.removeClass('hidden');
-		if (!help.hasClass('hidden')) help.addClass('hidden');
-	} else {
-		$('#super-phenotype').val(null);
-		if (!div.hasClass('hidden')) div.addClass('hidden');
-		help.removeClass('hidden');
-	}
-}
-
 function hidePhenotypeForms() {
     $('#abstract-phenotype-form, #phenotype-category-form').addClass('hidden');
     $('#numeric-phenotype-form, #string-phenotype-form, #date-phenotype-form').addClass('hidden');
@@ -121,20 +119,20 @@ function customMenu(node) {
 		    action : function() {
 		        hidePhenotypeForms();
 		        switch (node.a_attr.type) {
-		            case 'XSD_STRING': $('#string-phenotype-form').removeClass('hidden'); break;
-		            case 'XSD_INTEGER': $('#numeric-phenotype-form').removeClass('hidden'); break;
-		            case 'XSD_DOUBLE': $('#numeric-phenotype-form').removeClass('hidden'); break;
-		            case 'XSD_BOOLEAN': $('#boolean-phenotype-form').removeClass('hidden'); break;
-		            case 'formula': $('#formula-phenotype-form').removeClass('hidden'); break; // TODO: node type is null
+		            case 'date': $('#date-phenotype-form').removeClass('hidden'); break;
+		            case 'string': $('#string-phenotype-form').removeClass('hidden'); break;
+		            case 'numeric': $('#numeric-phenotype-form').removeClass('hidden'); break;
+		            case 'boolean': $('#boolean-phenotype-form').removeClass('hidden'); break;
+		            case 'calculation': $('#formula-phenotype-form').removeClass('hidden'); break;
 		            default: return;
 		        }
 
-                $('#super-phenotype').val(node.text);
+                $('form:not(.hidden) #super-phenotype').val(node.text);
 		    }
 		}
 	};
 	
-	if (node.a_attr.type == null) {
+	if (!node.a_attr.phenotype) {
 		delete items.showRestrictedPhenotypeForm;
 	} else {
 		delete items.showCategoryForm;
