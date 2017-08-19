@@ -2,11 +2,10 @@ package de.onto_med.ontology_service;
 
 import org.eclipse.jetty.server.Response;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.lha.phenoman.man.Formula;
+import org.lha.phenoman.man.ManchesterSyntaxExpression;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
@@ -20,8 +19,7 @@ import javax.ws.rs.core.MediaType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,7 +53,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
-		Category actual = manager.getCategory(id); // TODO: does not return all properties when ontology was overwritten
+		Category actual = manager.getCategory(id);
 
 		Category expected = new Category(id);
 		expected.addLabel("Label EN", "en");
@@ -102,6 +100,24 @@ public class PhenotypeTest extends AbstractTest {
 	public void testCalculationPhenotypeCreation() throws Exception {
 		testAbstractCalculationPhenotypeCreation();
 		testRestrictedCalculationPhenotypeCreation();
+	}
+
+	@Test
+	public void testManchesterSyntaxGeneration() throws Exception {
+		String path = "src/test/resources/ontology-service/cop2.owl";
+		String abstractName   = "Abstract_Single_Phenotype";
+		String restrictedName = "Restricted_Single_Phenotype";
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(path, true);
+
+		manager.addAbstractSinglePhenotype(new AbstractSinglePhenotype(abstractName, OWL2Datatype.XSD_INTEGER));
+		manager.addRestrictedSinglePhenotype(new RestrictedSinglePhenotype(restrictedName, abstractName, new PhenotypeRange(1, 2)));
+		manager.write();
+
+		manager = new PhenotypeOntologyManager(path, false);
+		org.lha.phenoman.man.ManchesterSyntaxExpression expression = manager.getManchesterSyntaxExpression(restrictedName);
+		System.out.println(expression.get());
+
+		if (Files.exists(Paths.get(path))) Files.delete(Paths.get(path));
 	}
 
 
@@ -384,6 +400,11 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
 		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_INTEGER);
 		assertThat(actual).isEqualTo(expected);
+
+		// TODO: fix this bug
+		System.out.println(actual.getName());
+		ManchesterSyntaxExpression expression = manager.getManchesterSyntaxExpression(actual.getName());
+		System.out.println(expression.get());
 	}
 
 	private void testRestrictedDoublePhenotypeCreation() throws Exception {
@@ -514,7 +535,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
 		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_LONG);
-		assertThat(actual).isEqualTo(expected); // TODO: is not equal but string representation is equal
+		assertThat(actual).isEqualTo(expected);
 	}
 
 	private void testRestrictedBooleanPhenotypeCreation() throws Exception {
@@ -545,7 +566,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		RestrictedBooleanPhenotype expected = new RestrictedBooleanPhenotype(
 			id, "Abstract_Boolean_Phenotype",
-			manager.getManchesterSyntaxExpression("Restricted_Integer_Phenotype")); // TODO: is not resolved to manchester syntax
+			manager.getManchesterSyntaxExpression("Restricted_Integer_Phenotype"));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
 		expected.addLabel("Label EN", "en");
