@@ -3,6 +3,7 @@ package de.onto_med.ontology_service.manager;
 import com.sun.javaws.exceptions.MissingFieldException;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import org.apache.commons.lang3.StringUtils;
+import org.lha.phenoman.man.ManchesterSyntaxExpression;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
 import org.lha.phenoman.model.phenotype.*;
@@ -134,7 +135,9 @@ public class PhenotypeManager {
 		Category superPhenotype = manager.getPhenotype(formData.getSuperPhenotype());
 		RestrictedPhenotype phenotype;
 
-		if (superPhenotype.isAbstractBooleanPhenotype()) {
+		if (superPhenotype == null) {
+			throw new UnsupportedDataTypeException("Super phenotype does not exist");
+		} else if (superPhenotype.isAbstractBooleanPhenotype()) {
 			if (StringUtils.isBlank(formData.getExpression()))
 				throw new MissingFieldException(
 					"Boolean expression for restricted boolean phenotype is missing.", "expression");
@@ -164,7 +167,7 @@ public class PhenotypeManager {
 			);
 		} else {
 			throw new UnsupportedDataTypeException(
-				"Could not determine datatype of super phenotype. Maybe the super phenotype does not exist?");
+				"Could not determine datatype of super phenotype.");
 		}
 
 		setPhenotypeBasicData(phenotype, formData);
@@ -324,18 +327,18 @@ public class PhenotypeManager {
 	 * @param phenotype A phenotype which will be added to the manager.
 	 */
 	private void addPhenotype(Category phenotype) {
-		if (phenotype.isAbstractBooleanPhenotype()) {
-			manager.addAbstractBooleanPhenotype(phenotype.asAbstractBooleanPhenotype());
-		} else if (phenotype.isAbstractCalculationPhenotype()) {
-			manager.addAbstractCalculationPhenotype(phenotype.asAbstractCalculationPhenotype());
-		} else if (phenotype.isAbstractSinglePhenotype()) {
-			manager.addAbstractSinglePhenotype(phenotype.asAbstractSinglePhenotype());
-		} else if (phenotype.isRestrictedCalculationPhenotype()) {
+		if (phenotype.isRestrictedCalculationPhenotype()) {
 			manager.addRestrictedCalculationPhenotype(phenotype.asRestrictedCalculationPhenotype());
 		} else if (phenotype.isRestrictedBooleanPhenotype()) {
 			manager.addRestrictedBooleanPhenotype(phenotype.asRestrictedBooleanPhenotype());
 		} else if (phenotype.isRestrictedSinglePhenotype()) {
 			manager.addRestrictedSinglePhenotype(phenotype.asRestrictedSinglePhenotype());
+		} else if (phenotype.isAbstractBooleanPhenotype()) {
+			manager.addAbstractBooleanPhenotype(phenotype.asAbstractBooleanPhenotype());
+		} else if (phenotype.isAbstractCalculationPhenotype()) {
+			 manager.addAbstractCalculationPhenotype(phenotype.asAbstractCalculationPhenotype());
+		} else if (phenotype.isAbstractSinglePhenotype()) {
+			manager.addAbstractSinglePhenotype(phenotype.asAbstractSinglePhenotype());
 		}
 	}
 }

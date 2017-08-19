@@ -7,16 +7,10 @@ import de.onto_med.ontology_service.manager.PhenotypeManager;
 import de.onto_med.ontology_service.views.PhenotypeFormView;
 import de.onto_med.ontology_service.views.RestApiView;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
-import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
-import org.semanticweb.owlapi.io.XMLUtils;
-import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.ws.rs.*;
@@ -24,10 +18,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/phenotype")
 public class PhenotypeResource extends Resource {
@@ -47,8 +39,9 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/{iri}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPhenotype(@PathParam("iri") String iri) {
-		return Response.ok(manager.getPhenotype(iri)).build();
+	public Category getPhenotype(@PathParam("iri") String iri) {
+		System.out.println(manager.getPhenotype(iri));
+		return manager.getPhenotype(iri);
 	}
 
 	@GET

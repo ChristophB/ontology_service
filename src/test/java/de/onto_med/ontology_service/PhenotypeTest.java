@@ -5,7 +5,6 @@ import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.lha.phenoman.man.ManchesterSyntaxExpression;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
@@ -19,8 +18,10 @@ import javax.ws.rs.core.MediaType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
 
+import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -109,13 +110,14 @@ public class PhenotypeTest extends AbstractTest {
 		String restrictedName = "Restricted_Single_Phenotype";
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(path, true);
 
-		manager.addAbstractSinglePhenotype(new AbstractSinglePhenotype(abstractName, OWL2Datatype.XSD_INTEGER));
-		manager.addRestrictedSinglePhenotype(new RestrictedSinglePhenotype(restrictedName, abstractName, new PhenotypeRange(1, 2)));
-		manager.write();
+		manager.addAbstractSinglePhenotype(new AbstractSinglePhenotype(abstractName, OWL2Datatype.XSD_INTEGER, "Category_1"));
+		manager.getManchesterSyntaxExpression(abstractName);
 
-		manager = new PhenotypeOntologyManager(path, false);
-		org.lha.phenoman.man.ManchesterSyntaxExpression expression = manager.getManchesterSyntaxExpression(restrictedName);
-		System.out.println(expression.get());
+		try {
+			manager.getManchesterSyntaxExpression(restrictedName);
+			fail("Manchester syntax was generated for non existing entity.");
+		}
+		catch (Exception ignored) { }
 
 		if (Files.exists(Paths.get(path))) Files.delete(Paths.get(path));
 	}
@@ -400,11 +402,6 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
 		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_INTEGER);
 		assertThat(actual).isEqualTo(expected);
-
-		// TODO: fix this bug
-		System.out.println(actual.getName());
-		ManchesterSyntaxExpression expression = manager.getManchesterSyntaxExpression(actual.getName());
-		System.out.println(expression.get());
 	}
 
 	private void testRestrictedDoublePhenotypeCreation() throws Exception {
