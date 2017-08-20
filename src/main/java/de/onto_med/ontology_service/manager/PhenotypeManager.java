@@ -166,7 +166,7 @@ public class PhenotypeManager {
 			);
 		} else if (superPhenotype.isAbstractSinglePhenotype()) {
 			if (formData.getEnumValues().isEmpty()
-				|| StringUtils.isBlank(formData.getRangeMin()) || StringUtils.isBlank(formData.getRangeMax())
+				&& (StringUtils.isBlank(formData.getRangeMin()) || StringUtils.isBlank(formData.getRangeMax()))
 			) {
 				throw new MissingFieldException("No restriction for restricted phenotype provided.", "enum-value[], range-min, range-max");
 			}

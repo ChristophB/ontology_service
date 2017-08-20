@@ -51,7 +51,9 @@ public class PhenotypeTest extends AbstractTest {
 			= client.target(url + "/phenotype/create-category")
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getCategory(id);
@@ -149,6 +151,7 @@ public class PhenotypeTest extends AbstractTest {
 	    	.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 	    
 	    assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 	    Category actual = manager.getPhenotype(id);
@@ -189,6 +192,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -227,6 +231,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -264,6 +269,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -301,6 +307,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -339,6 +346,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -385,6 +393,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -426,6 +435,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -467,6 +477,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -508,6 +519,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -556,7 +568,8 @@ public class PhenotypeTest extends AbstractTest {
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
-		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK); // fails because object property "has_part" is not in ontology
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -598,6 +611,7 @@ public class PhenotypeTest extends AbstractTest {
 			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
