@@ -49,7 +49,7 @@ public class AnnotationResource extends Resource {
 	 * @param headers 		provided headers
 	 * @param text 			text to annotate
 	 * @param ontologies 	ontologies to search in (optional)
-	 * @return
+	 * @return Result of annotation.
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
@@ -65,10 +65,9 @@ public class AnnotationResource extends Resource {
 	
 	/**
 	 * POST method to access the annotation functionality of this resource.
-	 * @param headers 		provided headers
-	 * @param text 			text to annotate
-	 * @param ontologies 	ontologies to search in (optional)
-	 * @return
+	 * @param headers   provided headers
+	 * @param query     Object derived from JSON, which contains instance data.
+	 * @return Result of annotation.
 	 */
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
@@ -92,7 +91,7 @@ public class AnnotationResource extends Resource {
 		checkArgument(!StringUtils.isBlank(text), "Parameter 'text' is empty or blank");
 		
 		try {
-			List<Entity> classes = new ArrayList<Entity>();
+			List<Entity> classes = new ArrayList<>();
 			
 			for (String ontology : metaProjectManager.parseOntologies(ontologies)) {
 				ProjectManager projectManager = metaProjectManager.getProjectManager(ontology);
