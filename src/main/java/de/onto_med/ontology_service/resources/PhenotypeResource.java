@@ -47,14 +47,14 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/categories")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PhenotypeCategoryTreeNode getCategories() {
+	public PhenotypeManager.ExtendedPhenotypeCategoryTreeNode getCategories() {
 		return manager.getTaxonomy(false);
 	}
 
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PhenotypeCategoryTreeNode getPhenotypes() {
+	public PhenotypeManager.ExtendedPhenotypeCategoryTreeNode getPhenotypes() {
 		return manager.getTaxonomy(true);
 	}
 	
@@ -92,7 +92,7 @@ public class PhenotypeResource extends Resource {
 		PhenotypeFormView view = new PhenotypeFormView(rootPath, formData);
 
 		try {
-			Category category = manager.createCategory(formData);
+			PhenotypeManager.ExtendedCategory category = manager.createCategory(formData);
 			view.addMessage("success", "Category '" + category.getName() + "' created.");
 		} catch (MissingFieldException e) {
 			view.addMessage("danger", e.getMessage());
@@ -111,7 +111,9 @@ public class PhenotypeResource extends Resource {
 		try {
 			AbstractPhenotype phenotype = manager.createAbstractPhenotype(formData);
 			view.addMessage("success", "Abstract phenotype '" + phenotype.getName() + "' created.");
-		} catch (MissingFieldException | UnsupportedDataTypeException e) {
+		} catch (MissingFieldException e) {
+			view.addMessage("danger", e.getLaunchDescSource());
+		} catch (UnsupportedDataTypeException e) {
 			view.addMessage("danger", e.getMessage());
 		}
 
@@ -128,7 +130,9 @@ public class PhenotypeResource extends Resource {
 		try {
 			RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
 			view.addMessage("success", "Phenotype '" + phenotype.getName() + "' created.");
-		} catch (MissingFieldException | UnsupportedDataTypeException e) {
+		} catch (MissingFieldException e) {
+			view.addMessage("danger", e.getLaunchDescSource());
+		} catch (UnsupportedDataTypeException e) {
 			view.addMessage("danger", e.getMessage());
 		}
 

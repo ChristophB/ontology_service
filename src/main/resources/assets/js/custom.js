@@ -35,13 +35,16 @@ function transformToPhenotypeTree(node) {
 	        tree.icon = 'glyphicon glyphicon-leaf text-success';
 	}
 
-	if (node.category.abstractSinglePhenotype || node.category.restrictedSinglePhenotype) { // TODO: infer correct type
+    var category = node.category;
+	if (category.abstractNumericPhenotype || category.restrictedNumericPhenotype) {
 	    tree.a_attr.type = "numeric";
+	} else if (category.abstractStringPhenotype || category.restrictedStringPhenotype) {
 	    tree.a_attr.type = "string";
+	} else if (category.abstractDatePhenotype || category.restrictedDatePhenotype) {
 	    tree.a_attr.type = "date";
-	} else if (node.category.abstractBooleanPhenotype || node.category.restrictedBooleanPhenotype) {
+	} else if (category.abstractBooleanPhenotype || category.restrictedBooleanPhenotype) {
 	    tree.a_attr.type = "boolean";
-	} else if (node.category.abstractCalculationPhenotype || node.category.restrictedCalculationPhenotype) {
+	} else if (category.abstractCalculationPhenotype || category.restrictedCalculationPhenotype) {
 	    tree.a_attr.type = "calculation";
 	}
 

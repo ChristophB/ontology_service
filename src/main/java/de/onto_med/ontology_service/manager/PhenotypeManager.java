@@ -3,14 +3,10 @@ package de.onto_med.ontology_service.manager;
 import com.sun.javaws.exceptions.MissingFieldException;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.man.ManchesterSyntaxExpression;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
 import org.lha.phenoman.model.phenotype.*;
-import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
-import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.*;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
@@ -39,8 +35,8 @@ public class PhenotypeManager {
 		return manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
 	}
 
-	public PhenotypeCategoryTreeNode getTaxonomy(Boolean includePhenotypes) {
-		return manager.getPhenotypeCategoryTree(includePhenotypes);
+	public ExtendedPhenotypeCategoryTreeNode getTaxonomy(Boolean includePhenotypes) {
+		return new ExtendedPhenotypeCategoryTreeNode(manager.getPhenotypeCategoryTree(includePhenotypes));
 	}
 
 	/**
@@ -49,7 +45,7 @@ public class PhenotypeManager {
 	 * @return The created category.
 	 * @throws MissingFieldException If a required parameter is missing.
 	 */
-	public Category createCategory(Phenotype formData) throws MissingFieldException {
+	public ExtendedCategory createCategory(Phenotype formData) throws MissingFieldException {
 		if (StringUtils.isBlank(formData.getId()))
 			throw new MissingFieldException("ID of category is missing.", "id");
 
@@ -61,7 +57,7 @@ public class PhenotypeManager {
 		else manager.addPhenotypeCategory(category, formData.getSuperCategory());
 		manager.write();
 
-		return category;
+		return new ExtendedCategory(category);
 	}
 
 	/**
@@ -157,6 +153,12 @@ public class PhenotypeManager {
 				)).orElse(getRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, formData.getEnumValues()))
 			);
 		} else if (superPhenotype.isAbstractSinglePhenotype()) {
+			if (formData.getEnumValues().isEmpty()
+				|| StringUtils.isBlank(formData.getRangeMin()) || StringUtils.isBlank(formData.getRangeMax())
+			) {
+				throw new MissingFieldException("No restriction for restricted phenotype provided.", "enum-value[], range-min, range-max");
+			}
+
 			OWL2Datatype datatype = superPhenotype.asAbstractSinglePhenotype().getDatatype();
 			phenotype = new RestrictedSinglePhenotype(
 				formData.getId(), formData.getSuperPhenotype(),
@@ -340,6 +342,80 @@ public class PhenotypeManager {
 			 manager.addAbstractCalculationPhenotype(phenotype.asAbstractCalculationPhenotype());
 		} else if (phenotype.isAbstractSinglePhenotype()) {
 			manager.addAbstractSinglePhenotype(phenotype.asAbstractSinglePhenotype());
+		}
+	}
+
+	@SuppressWarnings("unused")
+	public class ExtendedCategory {
+		private Category category;
+
+		ExtendedCategory(Category category) {
+			this.category = category;
+		}
+
+		public Boolean isAbstractStringPhenotype() {
+			return category.isAbstractSinglePhenotype()
+				&& OWL2Datatype.XSD_STRING.equals(category.asAbstractSinglePhenotype().getDatatype());
+		}
+
+		public Boolean isAbstractDatePhenotype() {
+			return category.isAbstractSinglePhenotype()
+				&& OWL2Datatype.XSD_DATE_TIME.equals(category.asAbstractSinglePhenotype().getDatatype());
+		}
+
+		public Boolean isAbstractNumericPhenotype() {
+			return category.isAbstractSinglePhenotype()
+				&& (OWL2Datatype.XSD_INTEGER.equals(category.asAbstractSinglePhenotype().getDatatype())
+					|| OWL2Datatype.XSD_DOUBLE.equals(category.asAbstractSinglePhenotype().getDatatype()));
+		}
+
+		public Boolean isRestrictedStringPhenotype() {
+			return category.isRestrictedSinglePhenotype()
+				&& OWL2Datatype.XSD_STRING.equals(category.asRestrictedSinglePhenotype().getDatatype());
+		}
+
+		public Boolean isRestrictedDatePhenotype() {
+			return category.isRestrictedSinglePhenotype()
+				&& OWL2Datatype.XSD_DATE_TIME.equals(category.asRestrictedSinglePhenotype().getDatatype());
+		}
+
+		public Boolean isRestrictedNumericPhenotype() {
+			return category.isRestrictedSinglePhenotype()
+				&& (OWL2Datatype.XSD_INTEGER.equals(category.asRestrictedSinglePhenotype().getDatatype())
+				|| OWL2Datatype.XSD_DOUBLE.equals(category.asRestrictedSinglePhenotype().getDatatype()));
+		}
+
+		public Boolean isPhenotype() { return category.isPhenotype(); }
+		public Boolean isRestrictedPhenotype() { return category.isRestrictedPhenotype(); }
+		public Boolean isRestrictedSinglePhenotype() { return category.isRestrictedSinglePhenotype(); }
+		public Boolean isRestrictedBooleanPhenotype() { return category.isRestrictedBooleanPhenotype(); }
+		public Boolean isRestrictedCalculationPhenotype() { return category.isRestrictedCalculationPhenotype(); }
+		public Boolean isAbstractPhenotype() { return category.isAbstractPhenotype(); }
+		public Boolean isAbstractSinglePhenotype() { return category.isAbstractSinglePhenotype(); }
+		public Boolean isAbstractBooleanPhenotype() { return category.isAbstractBooleanPhenotype(); }
+		public Boolean isAbstractCalculationPhenotype() { return category.isAbstractCalculationPhenotype(); }
+		public Set<String> getRelatedConcepts() { return category.getRelatedConcepts(); }
+		public String getName() { return category.getName(); }
+		public Set<TextLang> getDefinitions() { return category.getDefinitions(); }
+		public Set<TextLang> getLabels() { return category.getLabels(); }
+	}
+
+	public class ExtendedPhenotypeCategoryTreeNode {
+		private PhenotypeCategoryTreeNode node;
+
+		ExtendedPhenotypeCategoryTreeNode(PhenotypeCategoryTreeNode node) {
+			this.node = node;
+		}
+
+		public String getName() { return node.getName(); }
+		public ExtendedCategory getCategory() {	return new ExtendedCategory(node.getCategory()); }
+
+		public Set<ExtendedPhenotypeCategoryTreeNode> getChildren() {
+			Set<ExtendedPhenotypeCategoryTreeNode> set = new HashSet<>();
+			for (PhenotypeCategoryTreeNode node : node.getChildren()) {
+				set.add(new ExtendedPhenotypeCategoryTreeNode(node));
+			}
+			return set;
 		}
 	}
 }
