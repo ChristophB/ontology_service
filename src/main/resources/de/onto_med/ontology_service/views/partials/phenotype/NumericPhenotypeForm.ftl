@@ -6,7 +6,6 @@
 	<#include "SuperPhenotype.ftl">
     <#include "Definitions.ftl">
     <#include "Relations.ftl">
-    <#include "Ucum.ftl">
 
 	<div class="form-group row">
 	    <label class="control-label col-sm-2">Restriction*</label>

@@ -1,12 +1,17 @@
 package de.onto_med.ontology_service.manager;
 
 import com.sun.javaws.exceptions.MissingFieldException;
+import de.onto_med.ontology_service.data_models.Individual;
 import de.onto_med.ontology_service.data_models.Phenotype;
+import de.onto_med.ontology_service.data_models.Property;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
+import org.lha.phenoman.model.instance.ComplexPhenotypeInstance;
+import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.*;
+import org.lha.phenoman.model.reasoner_result.ReasonerReport;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
@@ -16,6 +21,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PhenotypeManager {
 	private final String DATE_PATTERN = "dd.MM.yyyy";
@@ -35,6 +41,12 @@ public class PhenotypeManager {
 		return manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
 	}
 
+	/**
+	 * Returns the top node of the cop.owl taxonomy. The node may contain child nodes.
+	 * @param includePhenotypes If true the method returns the taxonomy with phenotypes,
+	 *                          else only categories are included.
+	 * @return Top node of the cop.owl taxonomy.
+	 */
 	public ExtendedPhenotypeCategoryTreeNode getTaxonomy(Boolean includePhenotypes) {
 		return new ExtendedPhenotypeCategoryTreeNode(manager.getPhenotypeCategoryTree(includePhenotypes));
 	}
@@ -179,6 +191,60 @@ public class PhenotypeManager {
 		manager.write();
 		return phenotype;
 	}
+
+	public List<String> classifyIndividual(Individual individual) throws IllegalArgumentException {
+		ComplexPhenotypeInstance complex = new ComplexPhenotypeInstance();
+
+		for (Property property : individual.getProperties()) {
+			if (StringUtils.isBlank(property.getIri()) || property.getValues().isEmpty()) continue;
+			Category phenotype = manager.getPhenotype(property.getIri());
+			if (phenotype == null) continue;
+
+			for (String value : property.getValues()) {
+				if (StringUtils.isBlank(value)) continue;
+
+				SinglePhenotypeInstance instance;
+				if (phenotype.isAbstractBooleanPhenotype() || phenotype.isRestrictedPhenotype()) {
+					instance = new SinglePhenotypeInstance(property.getIri(), Boolean.valueOf(value));
+				} else if (phenotype.isAbstractCalculationPhenotype()) {
+					try { instance = new SinglePhenotypeInstance(property.getIri(), Double.valueOf(value)); }
+					catch (NumberFormatException e) {
+						throw new IllegalArgumentException("Could not parse string '" + value + "' to Double." + e.getMessage());
+					}
+				} else if (phenotype.isAbstractSinglePhenotype()) {
+					if (OWL2Datatype.XSD_INTEGER.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
+						try { instance = new SinglePhenotypeInstance(property.getIri(), Integer.valueOf(value)); }
+						catch (NumberFormatException e) {
+							throw new IllegalArgumentException("Could not parse string '" + value + "' to Integer.");
+						}
+					} else if (OWL2Datatype.XSD_DOUBLE.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
+						try { instance = new SinglePhenotypeInstance(property.getIri(), Double.valueOf(value)); }
+						catch (NumberFormatException e) {
+							throw new IllegalArgumentException("Could not parse string '" + value + "' to Double." + e.getMessage());
+						}
+					} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
+						try { instance = new SinglePhenotypeInstance(property.getIri(), parseStringToDate(value)); }
+						catch (ParseException e) {
+							throw new IllegalArgumentException("Could not parse string '" + value + "' to date. " + e.getMessage());
+						}
+					} else {
+						instance = new SinglePhenotypeInstance(property.getIri(), value);
+					}
+				} else continue;
+
+				complex.addSinglePhenotypeInstance(instance);
+			}
+		}
+
+		ReasonerReport rr = manager.derivePhenotypes(complex, 0);
+		return rr.getPhenotypes().stream().map(c -> c.getName()).collect(Collectors.toList());
+	}
+
+	public String getPhenotypeDecisionTree(String phenotype, String language) {
+		// return manager.createPhenotypeDecisionTree(phenotype, language); // TODO: request implementation
+		return "";
+	}
+
 
 
 	/**

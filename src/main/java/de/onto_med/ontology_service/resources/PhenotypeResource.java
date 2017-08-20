@@ -64,10 +64,9 @@ public class PhenotypeResource extends Resource {
 	public Response getDecisionTree(@QueryParam("phenotype") String phenotype, @QueryParam("language") String language) {
 		if (StringUtils.isBlank(phenotype)) throw new WebApplicationException("Query parameter 'phenotype' missing.");
 		
-		// TODO: generate GraphML representation of the phenotypes decision tree
-		// String labelLanguage = StringUtils.defaultString(language, "en");
-		
-		return Response.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + phenotype + "_decisiontree.GraphML'").build();
+		return Response.ok(manager.getPhenotypeDecisionTree(phenotype, StringUtils.defaultString(language, "en")))
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + phenotype + "_decisiontree.GraphML'")
+			.build();
 	}
 	
 	@GET
@@ -144,9 +143,14 @@ public class PhenotypeResource extends Resource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response classifyIndividuals(List<Individual> individuals) {
+		if (individuals == null || individuals.isEmpty())
+			return Response.ok("No individuals were provided.").build();
+
 		for (Individual individual : individuals) {
-			// TODO: implement reasoning in COP.owl
-			individual.setClassification(new ArrayList<>());
+			try { individual.setClassification(manager.classifyIndividual(individual)); }
+			catch (IllegalArgumentException e) {
+				Response.ok(e.getMessage()).build();
+			}
 		}
 		return Response.ok(individuals).build();
 	}
