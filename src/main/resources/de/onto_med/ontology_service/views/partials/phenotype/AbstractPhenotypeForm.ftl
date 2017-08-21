@@ -19,6 +19,6 @@
     <#include "IsDecimal.ftl">
 
 	<div class="form-group">
-		<input type="button" class="btn btn-primary" value="Create Abstract Phenotype">
+		<input type="button" id="submit" class="btn btn-primary" value="Create Abstract Phenotype">
 	</div>
 </form>

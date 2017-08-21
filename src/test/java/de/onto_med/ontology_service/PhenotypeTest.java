@@ -46,9 +46,9 @@ public class PhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
 			setLabels(Arrays.asList("Label EN", "Label DE"));
-			setLabelLanguages(Arrays.asList("EN", "DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
 			setDefinitions(Arrays.asList("Definition EN", "Definition NONE"));
-			setDefinitionLanguages(Arrays.asList("EN"));
+			setDefinitionLanguages(Arrays.asList("en"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 		}};
 
@@ -113,10 +113,9 @@ public class PhenotypeTest extends AbstractTest {
 	public void testManchesterSyntaxGeneration() throws Exception {
 		String path = "src/test/resources/data/ontology-service/cop2.owl";
 		String abstractName   = "Abstract_Single_Phenotype";
-		String restrictedName = "Restricted_Single_Phenotype";
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(path, true);
 
-		manager.addAbstractSinglePhenotype(new AbstractSinglePhenotype(abstractName, OWL2Datatype.XSD_INTEGER, "Category_1"));
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(path, true);
+		manager.addAbstractSinglePhenotype(new AbstractSinglePhenotype(abstractName, OWL2Datatype.XSD_INTEGER));
 		manager.getManchesterSyntaxExpression(abstractName);
 
 		if (Files.exists(Paths.get(path))) Files.delete(Paths.get(path));
@@ -130,26 +129,25 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testAbstractIntegerPhenotypeCreation() throws Exception {
 		String id = "Abstract_Integer_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "numeric")
-	    	.param("label[]", "Label EN").param("label-language[]", "en")
-	    	.param("label[]", "Label DE").param("label-language[]", "de")
-	    	.param("definition[]", "Definition EN").param("definition-language[]", "en")
-	    	.param("definition[]", "Definition DE").param("definition-language[]", "de")
-	    	.param("relation[]", "IRI 1")
-	    	.param("relation[]", "IRI 2")
-			.param("categories", "Category_1")
-	    	.param("ucum", "m^2");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("numeric");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setCategories("Category_1");
+			setUcum("m^2");
+		}};
 		
 		javax.ws.rs.core.Response response
 	    	= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
 	    	.request(MediaType.APPLICATION_JSON_TYPE)
-	    	.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+	    	.post(Entity.json(phenotype));
 	    
 	    assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 	    Category actual = manager.getPhenotype(id);
@@ -170,27 +168,26 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testAbstractDoublePhenotypeCreation() throws Exception {
 		String id = "Abstract_Double_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "numeric")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("categories", "Category_1")
-			.param("ucum", "kg")
-			.param("is-decimal", "true");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("numeric");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setCategories("Category_1");
+			setUcum("kg");
+			setIsDecimal(true);
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -211,25 +208,24 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testAbstractStringPhenotypeCreation() throws Exception {
 		String id = "Abstract_String_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "string")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("categories", "Category_1");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("string");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setCategories("Category_1");
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -249,25 +245,24 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testAbstractDatePhenotypeCreation() throws Exception {
 		String id = "Abstract_Date_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "date")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("categories", "Category_1");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("date");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setCategories("Category_1");
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -287,25 +282,25 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testAbstractBooleanPhenotypeCreation() throws Exception {
 		String id = "Abstract_Boolean_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "boolean")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("categories", "Category_1");
+
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("boolean");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setCategories("Category_1");
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -324,27 +319,26 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testAbstractCalculationPhenotypeCreation() throws Exception {
 		String id = "Abstract_Calculation_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "calculation")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("categories", "Category_1")
-			.param("ucum", "cm")
-			.param("formula", "Abstract_Integer_Phenotype");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("calculation");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setCategories("Category_1");
+			setUcum("cm");
+			setFormula("Abstract_Integer_Phenotype");
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -371,27 +365,28 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testRestrictedIntegerPhenotypeCreation() throws Exception {
 		String id = "Restricted_Integer_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "numeric")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("super-phenotype", "Abstract_Integer_Phenotype")
-			.param("range-min", "5").param("range-min-operator", ">")
-			.param("range-max", "10").param("range-max-operator", "<=");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("numeric");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setSuperPhenotype("Abstract_Integer_Phenotype");
+			setRangeMin("5");
+			setRangeMinOperator(">");
+			setRangeMax("10");
+			setRangeMaxOperator("<=");
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -413,27 +408,28 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testRestrictedDoublePhenotypeCreation() throws Exception {
 		String id = "Restricted_Double_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "numeric")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("super-phenotype", "Abstract_Double_Phenotype")
-			.param("range-min", "5.3").param("range-min-operator", ">=")
-			.param("range-max", "10.7").param("range-max-operator", "<");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("numeric");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setSuperPhenotype("Abstract_Double_Phenotype");
+			setRangeMin("5.3");
+			setRangeMinOperator(">=");
+			setRangeMax("10.7");
+			setRangeMaxOperator("<");
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -455,27 +451,25 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testRestrictedStringPhenotypeCreation() throws Exception {
 		String id = "Restricted_String_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "string")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("super-phenotype", "Abstract_String_Phenotype")
-			.param("enum-value[]", "a")
-			.param("enum-value[]", "b");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("string");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setSuperPhenotype("Abstract_String_Phenotype");
+			setEnumValues(Arrays.asList("a", "b"));
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -497,27 +491,27 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testRestrictedDatePhenotypeCreation() throws Exception {
 		String id = "Restricted_Date_Phenotype";
-		Form form = new Form();
-
-		form.param("id", id)
-			.param("datatype", "date")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("super-phenotype", "Abstract_Date_Phenotype")
-			.param("range-min", "02.03.2015").param("range-min-operator", ">=")
-			.param("range-max", "15.10.2017").param("range-max-operator", "<");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("date");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setSuperPhenotype("Abstract_Date_Phenotype");
+			setRangeMin("02.03.2015");
+			setRangeMinOperator(">=");
+			setRangeMax("15.10.2017");
+			setRangeMaxOperator("<");
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -547,27 +541,26 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testRestrictedBooleanPhenotypeCreation() throws Exception {
 		String id = "Restricted_Boolean_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "boolean")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("super-phenotype", "Abstract_Boolean_Phenotype")
-			.param("expression", "Restricted_Integer_Phenotype")
-			.param("score", "15.4");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("boolean");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setSuperPhenotype("Abstract_Boolean_Phenotype");
+			setExpression("Abstract_Integer_Phenotype");
+			setScore(15.4);
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
-		assertThat(response.getStatus()).isEqualTo(Response.SC_OK); // fails because object property "has_part" is not in ontology
-		assertThat(response.readEntity(String.class)).contains("success");
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);
@@ -589,27 +582,28 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testRestrictedCalculationPhenotypeCreation() throws Exception {
 		String id = "Restricted_Calculation_Phenotype";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("datatype", "calculation")
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition DE").param("definition-language[]", "de")
-			.param("relation[]", "IRI 1")
-			.param("relation[]", "IRI 2")
-			.param("super-phenotype", "Abstract_Calculation_Phenotype")
-			.param("range-min", "5.3").param("range-min-operator", ">=")
-			.param("range-max", "10.7").param("range-max-operator", "<");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("calculation");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setSuperPhenotype("Abstract_Calculation_Phenotype");
+			setRangeMin("5.3");
+			setRangeMinOperator(">=");
+			setRangeMax("10.7");
+			setRangeMaxOperator("<");
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getPhenotype(id);

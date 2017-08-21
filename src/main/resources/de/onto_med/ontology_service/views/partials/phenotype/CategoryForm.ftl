@@ -1,4 +1,4 @@
-<form id="phenotype-category-form" action="${rootPath}/phenotype/create-category" method="post" accept-charset="UTF-8" class="hidden">
+<form id="phenotype-category-form" action="" url="${rootPath}/phenotype/create-category" method="post" accept-charset="UTF-8" class="hidden">
 	<#include "Id.ftl">
 	<#include "Labels.ftl">
 	<#include "SuperCategory.ftl">
@@ -6,6 +6,6 @@
     <#include "Relations.ftl">
 
 	<div class="form-group">
-		<input type="submit" class="btn btn-primary" value="Create Category">
+		<input type="button" id="submit" class="btn btn-primary" value="Create Category">
 	</div>
 </form>

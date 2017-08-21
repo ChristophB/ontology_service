@@ -56,7 +56,7 @@
 				});
 
 
-				$('form input[type="button"]').on('click', function() {
+				$('form #submit').on('click', function() {
                     $.ajax({
                         url: $($(this).closest('form')[0].attributes.url).val(),
                         dataType: 'text',

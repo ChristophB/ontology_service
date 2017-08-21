@@ -29,6 +29,7 @@ public class PhenotypeManager {
 
 	public PhenotypeManager(String phenotypePath) {
 		manager = new PhenotypeOntologyManager(phenotypePath, false);
+		manager.write();
 	}
 
 	/**
@@ -321,7 +322,7 @@ public class PhenotypeManager {
 			if (StringUtils.isBlank(definition)) continue;
 			if (languages.size() > i && StringUtils.isNoneBlank(languages.get(i)))
 				phenotype.addDefinition(definition, languages.get(i));
-			else phenotype.addLabel(definition);
+			else phenotype.addDefinition(definition);
 		}
 	}
 

@@ -46,10 +46,6 @@ public class Phenotype {
 	@JsonProperty
 	private String expression;
 	@JsonProperty
-	private String booleanTrueLabel;
-	@JsonProperty
-	private String booleanFalseLabel;
-	@JsonProperty
 	private List<String> relations = new ArrayList<>();
 	@JsonProperty
 	private Boolean isDecimal;
@@ -132,16 +128,16 @@ public class Phenotype {
 		return labels;
 	}
 
-	public void setLabels(List<String> label) {
-		this.labels = label;
+	public void setLabels(List<String> labels) {
+		this.labels = labels;
 	}
 
 	public List<String> getLabelLanguages() {
 		return labelLanguages;
 	}
 
-	public void setLabelLanguages(List<String> labelLanguage) {
-		this.labelLanguages = labelLanguage;
+	public void setLabelLanguages(List<String> labelLanguages) {
+		this.labelLanguages = labelLanguages;
 	}
 
 	public String getSuperPhenotype() {
@@ -164,8 +160,8 @@ public class Phenotype {
 		return definitions;
 	}
 
-	public void setDefinitions(List<String> definition) {
-		this.definitions = definition;
+	public void setDefinitions(List<String> definitions) {
+		this.definitions = definitions;
 	}
 
 	public List<String> getDefinitionLanguages() {
@@ -246,22 +242,6 @@ public class Phenotype {
 
 	public void setExpression(String expression) {
 		this.expression = expression;
-	}
-
-	public String getBooleanTrueLabel() {
-		return booleanTrueLabel;
-	}
-
-	public void setBooleanTrueLabel(String booleanTrueLabel) {
-		this.booleanTrueLabel = booleanTrueLabel;
-	}
-
-	public String getBooleanFalseLabel() {
-		return booleanFalseLabel;
-	}
-
-	public void setBooleanFalseLabel(String booleanFalseLabel) {
-		this.booleanFalseLabel = booleanFalseLabel;
 	}
 
 	public List<String> getRelations() {

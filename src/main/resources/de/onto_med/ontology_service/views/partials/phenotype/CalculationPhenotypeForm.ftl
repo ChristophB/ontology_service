@@ -1,4 +1,4 @@
-<form id="string-phenotype-form" action="" url="${rootPath}/phenotype/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
+<form id="calculation-phenotype-form" action="" url="${rootPath}/phenotype/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<input type="hidden" name="datatype" value="calculation">
 
 	<#include "Id.ftl">
@@ -18,6 +18,6 @@
 	</div>
 
 	<div class="form-group">
-		<input type="button" class="btn btn-primary" value="Create String Phenotype">
+		<input type="button" id="submit" class="btn btn-primary" value="Create String Phenotype">
 	</div>
 </form>

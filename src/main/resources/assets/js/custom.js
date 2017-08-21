@@ -1,9 +1,9 @@
 function toggleValueDefinition() {
 	$('#ucum-form-group, #is-decimal-form-group, #formula-form-group').addClass('hidden');
 
-	if ($('#datatype').val() == 'numeric' || $('#datatype').val() == 'calculated')
+	if ($('#datatype').val() == 'numeric' || $('#datatype').val() == 'calculation')
 		$('#ucum-form-group, #is-decimal-form-group').removeClass('hidden');
-	if ($('#datatype').val() == 'calculated')
+	if ($('#datatype').val() == 'calculation')
 	    $('#formula-form-group').removeClass('hidden');
 }
 
@@ -18,6 +18,7 @@ function addRow(id) {
 }
 
 function showMessage(text, state) {
+    $('#messages-div').empty();
     $('#messages-div').append(
         '<div class="alert alert-' + state + '">' + text + '</div>'
     );
@@ -45,23 +46,33 @@ function createPhenotypeTree(id, url) {
 	$(document).on('dnd_move.vakata', function (e, data) {
 		var t = $(data.event.target);
 		var attributes = data.element.attributes;
-		if (!t.closest('.jstree').length) {
-			if (t.closest('.drop').length && t.closest('.drop').hasClass(attributes.type.value)
-				&& !(t.closest('.drop')[0].id === 'formula' && ['string', 'expression'].indexOf(attributes.datatype.value) != -1)
-			) {
-				data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
-			} else {
-				data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
-			}
-		}
+
+		if (!t.closest('.jstree').length && t.closest('.drop').length) { // field with class "drop" outside of jstree
+            if (attributes.type.value === "null" && t.closest('.drop').hasClass('category')) {
+                data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
+                return;
+            } else if (attributes.type.value !== "null" && t.closest('.drop').hasClass('phenotype')){
+                if (t.closest('.drop')[0].id !== 'formula' || ['string', 'boolean'].indexOf(attributes.type.value) == -1) {
+                    data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
+                    return; // formula does not accepts string or boolean
+                }
+            }
+        }
+        data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
 	}).on('dnd_stop.vakata', function (e, data) {
 		var t = $(data.event.target);
 		var attributes = data.element.attributes;
-		if (!t.closest('.jstree').length && t.closest('.drop').length && t.closest('.drop').hasClass(attributes.type.value)) {
-			if (t.closest('.drop')[0].id === 'formula' && ['string', 'expression'].indexOf(attributes.datatype.value) != -1)
-				return;
-			t.closest('.drop').val(t.closest('.drop').val() + ' ' + data.element.text + ' ');
-			focusInputEnd(t.closest('.drop'));
+
+		if (!t.closest('.jstree').length && t.closest('.drop').length) { // field with class "drop" outside of jstree
+		    if (attributes.type.value === "null" && t.closest('.drop').hasClass('category')) {
+		        t.closest('.drop').val(t.closest('.drop').val() + ' ' + data.element.text + ' ');
+		        focusInputEnd(t.closest('.drop'));
+		    } else if (attributes.type.value !== "null" && t.closest('.drop').hasClass('phenotype')){
+		        if (t.closest('.drop')[0].id === 'formula' && ['string', 'boolean'].indexOf(attributes.type.value) != -1)
+                    return; // formula does not accepts string or boolean
+                t.closest('.drop').val(t.closest('.drop').val() + ' ' + data.element.text + ' ');
+                focusInputEnd(t.closest('.drop'));
+		    }
 		}
 	});
 }
@@ -69,7 +80,7 @@ function createPhenotypeTree(id, url) {
 function hidePhenotypeForms() {
     $('#abstract-phenotype-form, #phenotype-category-form').addClass('hidden');
     $('#numeric-phenotype-form, #string-phenotype-form, #date-phenotype-form').addClass('hidden');
-    $('#calculated-phenotype-form, #boolean-phenotype-form').addClass('hidden');
+    $('#calculation-phenotype-form, #boolean-phenotype-form').addClass('hidden');
 }
 
 function customMenu(node) {
@@ -99,7 +110,7 @@ function customMenu(node) {
 		            case 'string': $('#string-phenotype-form').removeClass('hidden'); break;
 		            case 'numeric': $('#numeric-phenotype-form').removeClass('hidden'); break;
 		            case 'boolean': $('#boolean-phenotype-form').removeClass('hidden'); break;
-		            case 'calculation': $('#formula-phenotype-form').removeClass('hidden'); break;
+		            case 'calculation': $('#calculation-phenotype-form').removeClass('hidden'); break;
 		            default: return;
 		        }
 

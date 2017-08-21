@@ -111,21 +111,17 @@ public class PhenotypeResource extends Resource {
 
 	@POST
 	@Path("/create-restricted-phenotype")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response createRestrictedPhenotype(@Context HttpHeaders headers, @BeanParam Phenotype formData) {
-		RestApiView view = new PhenotypeFormView(rootPath);
-
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createRestrictedPhenotype(Phenotype formData) {
 		try {
 			RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
-			view.addMessage("success", "Phenotype '" + phenotype.getName() + "' created.");
+			return Response.ok("Phenotype '" + phenotype.getName() + "' created.").build();
 		} catch (MissingFieldException e) {
-			view.addMessage("danger", e.getLaunchDescSource());
+			throw new WebApplicationException(e.getLaunchDescSource());
 		} catch (UnsupportedDataTypeException e) {
-			view.addMessage("danger", e.getMessage());
+			throw new WebApplicationException(e.getMessage());
 		}
-
-		return Response.ok(view).build();
 	}
 
 	@GET
@@ -141,12 +137,12 @@ public class PhenotypeResource extends Resource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response classifyIndividuals(List<Individual> individuals) {
 		if (individuals == null || individuals.isEmpty())
-			return Response.ok("No individuals were provided.").build();
+			throw new WebApplicationException("No individuals were provided.");
 
 		for (Individual individual : individuals) {
 			try { individual.setClassification(manager.classifyIndividual(individual)); }
 			catch (IllegalArgumentException e) {
-				Response.ok(e.getMessage()).build();
+				throw new WebApplicationException(e.getMessage());
 			}
 		}
 		return Response.ok(individuals).build();

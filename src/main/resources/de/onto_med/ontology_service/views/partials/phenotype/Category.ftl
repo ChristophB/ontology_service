@@ -3,7 +3,7 @@
 <div class="form-group row">
 	<label for="category" class="control-label col-sm-2">Category</label>
 	<div class="col-sm-4">
-		<input type="text" class="form-control" id="categories" name="categories"
+		<input type="text" class="form-control drop category" id="categories" name="categories"
 		    value="<#if phenotype?? & phenotype.categories??>${phenotype.categories}</#if>"
 		>
 	</div>

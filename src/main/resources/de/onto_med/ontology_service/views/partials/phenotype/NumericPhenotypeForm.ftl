@@ -17,6 +17,6 @@
 	</div>
 
 	<div class="form-group">
-		<input type="button" class="btn btn-primary" value="Create Numeric Phenotype">
+		<input type="button" id="submit" class="btn btn-primary" value="Create Numeric Phenotype">
 	</div>
 </form>
