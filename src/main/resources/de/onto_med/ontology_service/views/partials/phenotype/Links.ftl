@@ -10,6 +10,10 @@
 			<a class="list-group-item <@active "phenotype-form" />" href="${rootPath}/phenotype/phenotype-form">
 				Create Phenotype
 			</a>
+
+			<a class="list-group-item <@active "reason-form" />" href="${rootPath}/phenotype/reason-form">
+            	Reasoning
+            </a>
 		</div>
 	</div>
 </div>

@@ -25,7 +25,6 @@ function preProcessPhenotype(node) {
 }
 
 function transformToPhenotypeTree(node) {
-    console.log(node);
 	var tree = { text: node.name, children: [], a_attr: { id: node.name, phenotype: node.category.phenotype } };
 
 	if (node.category != null) {
@@ -101,25 +100,25 @@ function hidePhenotypeForms() {
 
 function customMenu(node) {
 	var items = {
-		showCategoryForm : {
-		    label : 'Create Sub Category',
-		    action : function() {
+		showCategoryForm: {
+		    label: 'Create Sub Category',
+		    action: function() {
 		        hidePhenotypeForms();
 		        $('#phenotype-category-form').removeClass('hidden');
 		        $('#super-category').val(node.text);
 		    }
 		},
-		showAbstractPhenotypeForm : {
-		    label : 'Create Abstract Phenotype',
-		    action : function() {
+		showAbstractPhenotypeForm: {
+		    label: 'Create Abstract Phenotype',
+		    action: function() {
 		        hidePhenotypeForms();
 		        $('#abstract-phenotype-form').removeClass('hidden');
 		        $('#categories').val(node.text);
 		    }
 		},
-		showRestrictedPhenotypeForm : {
-		    label : 'Create Restricted Phenotype',
-		    action : function() {
+		showRestrictedPhenotypeForm: {
+		    label: 'Create Restricted Phenotype',
+		    action: function() {
 		        hidePhenotypeForms();
 		        switch (node.a_attr.type) {
 		            case 'date': $('#date-phenotype-form').removeClass('hidden'); break;
@@ -131,6 +130,12 @@ function customMenu(node) {
 		        }
 
                 $('form:not(.hidden) #super-phenotype').val(node.text);
+		    }
+		},
+		inspect: {
+		    label: 'Inspect',
+		    action: function() {
+		        $.getJSON(node.text, function(data) { console.log(data) });
 		    }
 		}
 	};

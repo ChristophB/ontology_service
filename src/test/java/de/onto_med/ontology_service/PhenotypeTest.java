@@ -107,7 +107,7 @@ public class PhenotypeTest extends AbstractTest {
 
 	@Test
 	public void testManchesterSyntaxGeneration() throws Exception {
-		String path = "src/test/resources/ontology-service/cop2.owl";
+		String path = "src/test/resources/data/ontology-service/cop2.owl";
 		String abstractName   = "Abstract_Single_Phenotype";
 		String restrictedName = "Restricted_Single_Phenotype";
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(path, true);

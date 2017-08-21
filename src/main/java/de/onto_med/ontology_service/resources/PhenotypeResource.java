@@ -138,6 +138,13 @@ public class PhenotypeResource extends Resource {
 		return Response.ok(view).build();
 	}
 
+	@GET
+	@Path("/reason-form")
+	@Produces({ MediaType.TEXT_HTML })
+	public Response getReasonForm() {
+		return Response.ok(new RestApiView("PhenotypeReasonForm.ftl", rootPath)).build();
+	}
+
 	@POST
 	@Path("/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
