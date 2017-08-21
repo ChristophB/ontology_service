@@ -11,14 +11,14 @@
 	
 		<div class="input-group hidden">
 		<div class="input-group-addon">
-			<select name="label-language[]" data-toggle="tooltip" title="Language" data-placement="right">
+			<select name="labelLanguages[]" data-toggle="tooltip" title="Language" data-placement="right">
 				<option value="en">EN</option>
 				<option value="de">DE</option>
 				<option value="fr">FR</option>
 				<option value="es">ES</option>
 			</select>
 		</div>
-			<input type="text" class="form-control" name="label[]" placeholder="Some Label">
+			<input type="text" class="form-control" name="labels[]" placeholder="Some Label">
 		</div>
 	</div>
 </div>

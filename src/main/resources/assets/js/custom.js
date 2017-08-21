@@ -17,6 +17,12 @@ function addRow(id) {
 	$('form:not(.hidden) ' + id).append(row);
 }
 
+function showMessage(text, state) {
+    $('#messages-div').append(
+        '<div class="alert alert-' + state + '">' + text + '</div>'
+    );
+}
+
 function preProcessPhenotype(node) {
 	if (node.children) {
 		node.children.forEach(preProcessPhenotype);
@@ -24,50 +30,18 @@ function preProcessPhenotype(node) {
 	if (node.a_attr.type != 'category')	node.icon = 'glyphicon glyphicon-leaf';
 }
 
-function transformToPhenotypeTree(node) {
-	var tree = { text: node.name, children: [], a_attr: { id: node.name, phenotype: node.category.phenotype } };
-
-	if (node.category != null) {
-	    if (node.category.abstractPhenotype)
-	        tree.icon = 'glyphicon glyphicon-leaf text-primary';
-	    else if (node.category.restrictedPhenotype)
-	        tree.icon = 'glyphicon glyphicon-leaf text-success';
-	}
-
-    var category = node.category;
-	if (category.abstractNumericPhenotype || category.restrictedNumericPhenotype) {
-	    tree.a_attr.type = "numeric";
-	} else if (category.abstractStringPhenotype || category.restrictedStringPhenotype) {
-	    tree.a_attr.type = "string";
-	} else if (category.abstractDatePhenotype || category.restrictedDatePhenotype) {
-	    tree.a_attr.type = "date";
-	} else if (category.abstractBooleanPhenotype || category.restrictedBooleanPhenotype) {
-	    tree.a_attr.type = "boolean";
-	} else if (category.abstractCalculationPhenotype || category.restrictedCalculationPhenotype) {
-	    tree.a_attr.type = "calculation";
-	}
-
-	node.children.forEach(function(child) {
-		tree.children.push(transformToPhenotypeTree(child));
-	});
-	
-	return tree;
-}
-
 function createPhenotypeTree(id, url) {
-	$.getJSON(url, function(data) {
-	    var tree = transformToPhenotypeTree(data);
-	    tree.state = { opened : true };
+    $('#' + id).jstree({
+        core: {
+            multiple: false,
+            data: {
+                url: url
+            }
+        },
+        plugins: [ 'contextmenu', 'dnd' ],
+        contextmenu: { items: customMenu }
+    });
 
-		$('#' + id).jstree({
-			core : {
-				multiple : false,
-				data : tree
-			},
-			plugins : [ 'contextmenu', 'dnd' ],
-			contextmenu : { items : customMenu }
-		});
-	});
 	$(document).on('dnd_move.vakata', function (e, data) {
 		var t = $(data.event.target);
 		var attributes = data.element.attributes;
@@ -135,6 +109,7 @@ function customMenu(node) {
 		inspect: {
 		    label: 'Inspect',
 		    action: function() {
+		        console.log(node);
 		        $.getJSON(node.text, function(data) { console.log(data) });
 		    }
 		}

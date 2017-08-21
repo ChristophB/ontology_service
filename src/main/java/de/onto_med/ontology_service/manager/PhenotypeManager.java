@@ -47,8 +47,10 @@ public class PhenotypeManager {
 	 *                          else only categories are included.
 	 * @return Top node of the cop.owl taxonomy.
 	 */
-	public ExtendedPhenotypeCategoryTreeNode getTaxonomy(Boolean includePhenotypes) {
-		return new ExtendedPhenotypeCategoryTreeNode(manager.getPhenotypeCategoryTree(includePhenotypes));
+	public TreeNode getTaxonomy(Boolean includePhenotypes) {
+		PhenotypeCategoryTreeNode node = manager.getPhenotypeCategoryTree(includePhenotypes);
+
+		return getTreeNode(node, includePhenotypes);
 	}
 
 	/**
@@ -82,11 +84,14 @@ public class PhenotypeManager {
 	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws MissingFieldException, UnsupportedDataTypeException {
 		if (StringUtils.isBlank(formData.getId()))
 			throw new MissingFieldException("ID of the abstract phenotype is missing.", "id");
+		if (StringUtils.isBlank(formData.getDatatype()))
+			throw new MissingFieldException("Datatype of the abstract phenotype is missing.", "datatype");
 
 		AbstractPhenotype phenotype;
 		switch (formData.getDatatype()) {
 			case "numeric":
-				OWL2Datatype datatype = formData.getIsDecimal() ? OWL2Datatype.XSD_DOUBLE : OWL2Datatype.XSD_INTEGER;
+				OWL2Datatype datatype = formData.getIsDecimal() != null && formData.getIsDecimal()
+					? OWL2Datatype.XSD_DOUBLE : OWL2Datatype.XSD_INTEGER;
 				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractSinglePhenotype(formData.getId(), datatype)
 					: new AbstractSinglePhenotype(formData.getId(), datatype, formData.getCategories().split(";"));
@@ -139,7 +144,7 @@ public class PhenotypeManager {
 		if (StringUtils.isBlank(formData.getId()))
 			throw new MissingFieldException("ID or super phenotype is missing.", "id");
 		if (StringUtils.isBlank(formData.getSuperPhenotype()))
-			throw new MissingFieldException("Super phenotype is missing.", "super-phenotype");
+			throw new MissingFieldException("Super phenotype is missing.", "superPhenotype");
 
 		Category superPhenotype = manager.getPhenotype(formData.getSuperPhenotype());
 		RestrictedPhenotype phenotype;
@@ -168,7 +173,7 @@ public class PhenotypeManager {
 			if (formData.getEnumValues().isEmpty()
 				&& (StringUtils.isBlank(formData.getRangeMin()) || StringUtils.isBlank(formData.getRangeMax()))
 			) {
-				throw new MissingFieldException("No restriction for restricted phenotype provided.", "enum-value[], range-min, range-max");
+				throw new MissingFieldException("No restriction for restricted phenotype provided.", "enumValues, rangeMin, rangeMax");
 			}
 
 			OWL2Datatype datatype = superPhenotype.asAbstractSinglePhenotype().getDatatype();
@@ -247,6 +252,46 @@ public class PhenotypeManager {
 
 
 
+
+	private TreeNode getTreeNode(PhenotypeCategoryTreeNode node, Boolean includePhenotypes) {
+		TreeNode treeNode = new TreeNode(node.getName(), node.getName());
+		Category category = node.getCategory();
+
+		if (node.getCategory().isRestrictedPhenotype()) {
+			treeNode.setRestrictedPhenotype();
+		} else if (node.getCategory().isAbstractPhenotype()) {
+			treeNode.setAbstractPhenotype();
+		}
+
+		if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_STRING.equals(category.asAbstractSinglePhenotype().getDatatype())
+			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_STRING.equals(category.asRestrictedSinglePhenotype().getDatatype())
+		) {
+			treeNode.setType("string");
+		} else if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_DATE_TIME.equals(category.asAbstractSinglePhenotype().getDatatype())
+			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_DATE_TIME.equals(category.asRestrictedSinglePhenotype().getDatatype())
+		) {
+			treeNode.setType("date");
+		} else if (category.isAbstractSinglePhenotype()
+			&& (OWL2Datatype.XSD_INTEGER.equals(category.asAbstractSinglePhenotype().getDatatype())
+				|| OWL2Datatype.XSD_DOUBLE.equals(category.asAbstractSinglePhenotype().getDatatype()))
+			|| category.isRestrictedSinglePhenotype()
+			&& (OWL2Datatype.XSD_INTEGER.equals(category.asRestrictedSinglePhenotype().getDatatype())
+				|| OWL2Datatype.XSD_DOUBLE.equals(category.asRestrictedSinglePhenotype().getDatatype()))
+		) {
+			treeNode.setType("numeric");
+		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+			treeNode.setType("boolean");
+		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
+			treeNode.setType("calculation");
+		}
+
+		for (PhenotypeCategoryTreeNode child : node.getChildren()) {
+			if (!includePhenotypes && child.getCategory().isPhenotype()) continue;
+			treeNode.addChild(getTreeNode(child, includePhenotypes));
+		}
+		return treeNode;
+	}
+
 	/**
 	 * Adds basic information to the provided phenotype based on formData.
 	 * Basic information includes only fields, which are available for all types of phenotypes.
@@ -264,8 +309,8 @@ public class PhenotypeManager {
 		for (int i = 0; i < labels.size(); i++) {
 			String label = labels.get(i);
 			if (StringUtils.isBlank(label)) continue;
-			String language = languages.get(i);
-			if (StringUtils.isNoneBlank(language)) phenotype.addLabel(label, language);
+			if (languages.size() > i && StringUtils.isNoneBlank(languages.get(i)))
+				phenotype.addLabel(label, languages.get(i));
 			else phenotype.addLabel(label);
 		}
 	}
@@ -274,8 +319,8 @@ public class PhenotypeManager {
 		for (int i = 0; i < definitions.size(); i++) {
 			String definition = definitions.get(i);
 			if (StringUtils.isBlank(definition)) continue;
-			String language = languages.get(i);
-			if (StringUtils.isNoneBlank(definition)) phenotype.addDefinition(definition, language);
+			if (languages.size() > i && StringUtils.isNoneBlank(languages.get(i)))
+				phenotype.addDefinition(definition, languages.get(i));
 			else phenotype.addLabel(definition);
 		}
 	}
@@ -344,8 +389,6 @@ public class PhenotypeManager {
 	 * @param enumValues A list of enumeration values.
 	 */
 	private PhenotypeRange getRestrictedPhenotypeRange(OWL2Datatype datatype, List<String> enumValues) {
-		if (enumValues == null) return null;
-
 		if (OWL2Datatype.XSD_INTEGER.equals(datatype)) {
 			List<Integer> values = new ArrayList<>();
 			enumValues.stream().filter(StringUtils::isNoneBlank).forEach(
@@ -466,22 +509,33 @@ public class PhenotypeManager {
 		public Set<TextLang> getLabels() { return category.getLabels(); }
 	}
 
-	public class ExtendedPhenotypeCategoryTreeNode {
-		private PhenotypeCategoryTreeNode node;
+	public class TreeNode {
+		public String id;
+		public String text;
+		public String icon;
+		public List<TreeNode> children = new ArrayList<>();
+		public AttributeList a_attr = new AttributeList();
 
-		ExtendedPhenotypeCategoryTreeNode(PhenotypeCategoryTreeNode node) {
-			this.node = node;
+		public TreeNode(String id, String text) {
+			this.id = id;
+			this.text = text;
 		}
 
-		public String getName() { return node.getName(); }
-		public ExtendedCategory getCategory() {	return new ExtendedCategory(node.getCategory()); }
-
-		public Set<ExtendedPhenotypeCategoryTreeNode> getChildren() {
-			Set<ExtendedPhenotypeCategoryTreeNode> set = new HashSet<>();
-			for (PhenotypeCategoryTreeNode node : node.getChildren()) {
-				set.add(new ExtendedPhenotypeCategoryTreeNode(node));
-			}
-			return set;
+		public void setType(String type) { a_attr.type = type; }
+		public void setRestrictedPhenotype() {
+			a_attr.phenotype = true;
+			icon = "glyphicon glyphicon-leaf text-success";
 		}
+		public void setAbstractPhenotype() {
+			a_attr.phenotype = true;
+			icon = "glyphicon glyphicon-leaf text-primary";
+		}
+
+		public void addChild(TreeNode child) { children.add(child);	}
+	}
+
+	public class AttributeList {
+		public String type;
+		public Boolean phenotype;
 	}
 }

@@ -1,5 +1,7 @@
 package de.onto_med.ontology_service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.onto_med.ontology_service.data_models.Phenotype;
 import org.eclipse.jetty.server.Response;
 import org.junit.After;
 import org.junit.FixMethodOrder;
@@ -18,6 +20,8 @@ import javax.ws.rs.core.MediaType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,22 +42,22 @@ public class PhenotypeTest extends AbstractTest {
 	@Test
 	public void test1CategoryCreation() throws Exception {
 		String id = "Category_1";
-		Form form = new Form();
 
-		form.param("id", id)
-			.param("label[]", "Label EN").param("label-language[]", "en")
-			.param("label[]", "Label DE").param("label-language[]", "de")
-			.param("definition[]", "Definition EN").param("definition-language[]", "en")
-			.param("definition[]", "Definition NONE").param("definition-language[]", "")
-			.param("relation[]", "IRI 1").param("relation[]", "IRI 2");
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("EN", "DE"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition NONE"));
+			setDefinitionLanguages(Arrays.asList("EN"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+		}};
 
 		javax.ws.rs.core.Response response
 			= client.target(url + "/phenotype/create-category")
 			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-		assertThat(response.readEntity(String.class)).contains("success");
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
 		Category actual = manager.getCategory(id);
@@ -114,12 +118,6 @@ public class PhenotypeTest extends AbstractTest {
 
 		manager.addAbstractSinglePhenotype(new AbstractSinglePhenotype(abstractName, OWL2Datatype.XSD_INTEGER, "Category_1"));
 		manager.getManchesterSyntaxExpression(abstractName);
-
-		try {
-			manager.getManchesterSyntaxExpression(restrictedName);
-			fail("Manchester syntax was generated for non existing entity.");
-		}
-		catch (Exception ignored) { }
 
 		if (Files.exists(Paths.get(path))) Files.delete(Paths.get(path));
 	}

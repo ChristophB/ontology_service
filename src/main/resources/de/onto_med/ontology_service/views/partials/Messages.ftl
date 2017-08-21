@@ -1,4 +1,4 @@
-<div class="container">
+<div id="messages-div" class="container">
 	<#list messages?keys as key>
 		<#list messages[key] as message>
 			<div class="alert alert-${key}">

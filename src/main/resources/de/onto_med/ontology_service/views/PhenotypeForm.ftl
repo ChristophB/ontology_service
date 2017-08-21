@@ -55,6 +55,26 @@
 					$('#formula').scrollTop($('#formula')[0].scrollHeight);
 				});
 
+
+				$('form input[type="button"]').on('click', function() {
+                    $.ajax({
+                        url: $($(this).closest('form')[0].attributes.url).val(),
+                        dataType: 'text',
+                        contentType: 'application/json',
+                        processData: false,
+                        type: 'POST',
+                        data: JSON.stringify($($(this).closest('form')[0]).serializeJSON()),
+                        success: function(result) {
+                            $('#phenotype-tree').jstree('refresh');
+                            showMessage(result, 'success');
+                        },
+                        error: function(result) {
+                            var response = JSON.parse(result.responseText);
+                            showMessage(response.message, 'danger');
+                        }
+                    });
+                });
+
 				toggleValueDefinition();
 			});
 		</script>

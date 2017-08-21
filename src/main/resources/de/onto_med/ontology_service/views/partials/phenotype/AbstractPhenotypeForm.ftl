@@ -1,4 +1,4 @@
-<form id="abstract-phenotype-form" action="${rootPath}/phenotype/create-abstract-phenotype" method="post" accept-charset="UTF-8" class="hidden">
+<form id="abstract-phenotype-form" action="" url="${rootPath}/phenotype/create-abstract-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<#include "Id.ftl">
 	<#include "Labels.ftl">
 	<#include "Category.ftl">
@@ -19,6 +19,6 @@
     <#include "IsDecimal.ftl">
 
 	<div class="form-group">
-		<input type="submit" class="btn btn-primary" value="Create Abstract Phenotype">
+		<input type="button" class="btn btn-primary" value="Create Abstract Phenotype">
 	</div>
 </form>

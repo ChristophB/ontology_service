@@ -8,9 +8,9 @@
 	<div class="col-sm-8" id="relation-div">
 		<#if phenotype?? & phenotype.relations??>
 			<#list phenotype.relations as relation>
-				<input type="text" class="form-control" name="relation[]" placeholder="https://example.com/foo#bar" value="${relation}">
+				<input type="text" class="form-control" name="relations[]" placeholder="https://example.com/foo#bar" value="${relation}">
 			</#list>
 		</#if>
-		<input type="text" class="form-control hidden" name="relation[]" placeholder="https://example.com/foo#bar">
+		<input type="text" class="form-control hidden" name="relations[]" placeholder="https://example.com/foo#bar">
 	</div>
 </div>

@@ -8,7 +8,7 @@
 	</small>
 	<div class="row hidden">
 		<div class="col-sm-5">
-			<input type="text" class="form-control" name="enum-value[]" placeholder="Value">
+			<input type="text" class="form-control" name="enumValues[]" placeholder="Value">
 		</div>
 	</div>
 </div>

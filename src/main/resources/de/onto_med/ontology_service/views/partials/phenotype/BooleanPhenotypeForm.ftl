@@ -1,4 +1,4 @@
-<form id="boolean-phenotype-form" action="${rootPath}/phenotype/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
+<form id="boolean-phenotype-form" action="" url="${rootPath}/phenotype/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<input type="hidden" name="datatype" value="boolean">
 
 	<#include "Id.ftl">
@@ -16,6 +16,6 @@
 	</div>
 
 	<div class="form-group">
-		<input type="submit" class="btn btn-primary" value="Create Boolean Phenotype">
+		<input type="button" class="btn btn-primary" value="Create Boolean Phenotype">
 	</div>
 </form>

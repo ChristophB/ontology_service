@@ -4,15 +4,15 @@
 		Define appropriate labels for True and False.
 	</small>
 	<div class="row">
-		<label for="boolean-true-label" class="control-label col-sm-1">True:</label>
+		<label for="booleanTrueLabel" class="control-label col-sm-1">True:</label>
 		<div class="col-sm-5">
-			<input type="text" class="form-control" name="boolean-true-label" placeholder="Label"
+			<input type="text" class="form-control" name="booleanTrueLabel" placeholder="Label"
 				<#if phenotype?? & phenotype.booleanTrueLabel??> value="${phenotype.booleanTrueLabel}"</#if>
 			>
 		</div>
-		<label for="boolean-false-label" class="control-label col-sm-1">False:</label>
+		<label for="booleanFalseLabel" class="control-label col-sm-1">False:</label>
 		<div class="col-sm-5">
-			<input type="text" class="form-control" name="boolean-false-label" placeholder="Label"
+			<input type="text" class="form-control" name="booleanFalseLabel" placeholder="Label"
 				<#if phenotype?? & phenotype.booleanFalseLabel??> value="${phenotype.booleanFalseLabel}"</#if>
 			>
 		</div>

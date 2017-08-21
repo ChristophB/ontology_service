@@ -7,66 +7,64 @@ import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.TextLang;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
-import javax.ws.rs.FormParam;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class Phenotype {
-	@FormParam("id") @JsonProperty("id")
+	@JsonProperty
 	private String id;
-	@FormParam("label[]") @JsonProperty("label[]")
-	private List<String> labels;
-	@FormParam("label-language[]") @JsonProperty("label-language[]")
-	private List<String> labelLanguages;
-	@FormParam("super-phenotype") @JsonProperty("super-phenotype")
+	@JsonProperty
+	private List<String> labels = new ArrayList<>();
+	@JsonProperty
+	private List<String> labelLanguages = new ArrayList<>();
+	@JsonProperty
 	private String superPhenotype;
-	@FormParam("categories") @JsonProperty("categories")
+	@JsonProperty
 	private String categories;
-	@FormParam("super-category") @JsonProperty("super-category")
+	@JsonProperty
 	private String superCategory;
-	@FormParam("definition[]") @JsonProperty("definition[]")
-	private List<String> definitions;
-	@FormParam("definition-language[]") @JsonProperty("definition-language[]")
-	private List<String> definitionLanguages;
-	@FormParam("datatype") @JsonProperty("datatype")
+	@JsonProperty
+	private List<String> definitions = new ArrayList<>();
+	@JsonProperty
+	private List<String> definitionLanguages = new ArrayList<>();
+	@JsonProperty
 	private String datatype;
-	@FormParam("ucum") @JsonProperty("ucum")
+	@JsonProperty
 	private String ucum;
-	@FormParam("range-min") @JsonProperty("range-min")
+	@JsonProperty
 	private String rangeMin;
-	@FormParam("range-min-operator") @JsonProperty("range-min-operator")
+	@JsonProperty
 	private String rangeMinOperator;
-	@FormParam("range-max") @JsonProperty("range-max")
+	@JsonProperty
 	private String rangeMax;
-	@FormParam("range-max-operator") @JsonProperty("range-max-operator")
+	@JsonProperty
 	private String rangeMaxOperator;
-	@FormParam("enum-value[]") @JsonProperty("enum-value[]")
-	private List<String> enumValues;
-	@FormParam("formula") @JsonProperty("formula")
+	@JsonProperty
+	private List<String> enumValues = new ArrayList<>();
+	@JsonProperty
 	private String formula;
-	@FormParam("expression") @JsonProperty("expression")
+	@JsonProperty
 	private String expression;
-	@FormParam("boolean-true-label") @JsonProperty("boolean-true-label")
+	@JsonProperty
 	private String booleanTrueLabel;
-	@FormParam("boolean-false-label") @JsonProperty("boolean-false-label")
+	@JsonProperty
 	private String booleanFalseLabel;
-	@FormParam("relation[]") @JsonProperty("relation[]")
-	private List<String> relations;
-	@FormParam("is-decimal") @JsonProperty("is-decimal")
-	private boolean isDecimal;
-	@FormParam("score") @JsonProperty("score")
+	@JsonProperty
+	private List<String> relations = new ArrayList<>();
+	@JsonProperty
+	private Boolean isDecimal;
+	@JsonProperty
 	private Double score;
 
 
-	public Phenotype() { super(); }
+	public Phenotype() { }
 
 	public Phenotype(Category attributes) {
 		this();
 		if (attributes == null) return;
 
 		setId(attributes.getName());
-		setRelations(attributes.getRelatedConcepts());
+		setRelations(new ArrayList<>(attributes.getRelatedConcepts()));
 
 		if (attributes.isAbstractSinglePhenotype()) {
 			AbstractSinglePhenotype phenotype = attributes.asAbstractSinglePhenotype();
@@ -114,11 +112,11 @@ public class Phenotype {
 		this.superCategory = superCategory;
 	}
 
-	public boolean getIsDecimal() {
+	public Boolean getIsDecimal() {
 		return isDecimal;
 	}
 
-	public void setIsDecimal(boolean isDecimal) {
+	public void setIsDecimal(Boolean isDecimal) {
 		this.isDecimal = isDecimal;
 	}
 	
@@ -262,8 +260,8 @@ public class Phenotype {
 		return booleanFalseLabel;
 	}
 
-	public void setBooleanFalseLabel(String boolenFalseLabel) {
-		this.booleanFalseLabel = boolenFalseLabel;
+	public void setBooleanFalseLabel(String booleanFalseLabel) {
+		this.booleanFalseLabel = booleanFalseLabel;
 	}
 
 	public List<String> getRelations() {
@@ -274,27 +272,22 @@ public class Phenotype {
 		this.relations = relations;
 	}
 
-	public void setRelations(Set<String> relations) {
-		this.relations = new ArrayList<>();
-		this.relations.addAll(relations);
-	}
-
-	public void addDefinition(String definition) {
+	private void addDefinition(String definition) {
 		List<String> definitions = getDefinitions() != null ? getDefinitions() : new ArrayList<>();
 		definitions.add(definition);
 	}
 
-	public void addDefinitionLanguage(String definitionLanguage) {
+	private void addDefinitionLanguage(String definitionLanguage) {
 		List<String> definitionLanguages = getDefinitionLanguages() != null ? getDefinitionLanguages() : new ArrayList<>();
 		definitionLanguages.add(definitionLanguage);
 	}
 
-	public void addLabel(String label) {
+	private void addLabel(String label) {
 		List<String> labels = getLabels() != null ? getLabels() : new ArrayList<>();
 		labels.add(label);
 	}
 
-	public void addLabelLanguage(String labelLanguage) {
+	private void addLabelLanguage(String labelLanguage) {
 		List<String> labelLanguages = getLabelLanguages() != null ? getLabelLanguages() : new ArrayList<>();
 		labelLanguages.add(labelLanguage);
 	}

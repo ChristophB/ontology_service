@@ -7,7 +7,6 @@ import de.onto_med.ontology_service.manager.PhenotypeManager;
 import de.onto_med.ontology_service.views.PhenotypeFormView;
 import de.onto_med.ontology_service.views.RestApiView;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
@@ -18,7 +17,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/phenotype")
@@ -47,14 +45,14 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/categories")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PhenotypeManager.ExtendedPhenotypeCategoryTreeNode getCategories() {
+	public PhenotypeManager.TreeNode getCategories() {
 		return manager.getTaxonomy(false);
 	}
 
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PhenotypeManager.ExtendedPhenotypeCategoryTreeNode getPhenotypes() {
+	public PhenotypeManager.TreeNode getPhenotypes() {
 		return manager.getTaxonomy(true);
 	}
 	
@@ -80,43 +78,35 @@ public class PhenotypeResource extends Resource {
 	@Path("/phenotype-form")
 	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeForm(@QueryParam("type") String type, @QueryParam("id") String id) {
-		return Response.ok(new PhenotypeFormView(rootPath, new Phenotype(manager.getPhenotype(id)))).build();
+		return Response.ok(new PhenotypeFormView(rootPath, null)).build(); // new Phenotype(manager.getPhenotype(id))
 	}
 
 	@POST
 	@Path("/create-category")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response createCategory(@BeanParam Phenotype formData) {
-		PhenotypeFormView view = new PhenotypeFormView(rootPath, formData);
-
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createCategory(Phenotype formData) {
 		try {
 			PhenotypeManager.ExtendedCategory category = manager.createCategory(formData);
-			view.addMessage("success", "Category '" + category.getName() + "' created.");
+			return Response.ok("Category '" + category.getName() + "' created.").build();
 		} catch (MissingFieldException e) {
-			view.addMessage("danger", e.getMessage());
+			throw new WebApplicationException(e.getMessage());
 		}
-
-		return Response.ok(view).build();
 	}
 
 	@POST
 	@Path("/create-abstract-phenotype")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public Response createAbstractPhenotype(@BeanParam Phenotype formData) {
-		PhenotypeFormView view = new PhenotypeFormView(rootPath, formData);
-
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createAbstractPhenotype(Phenotype formData) {
 		try {
 			AbstractPhenotype phenotype = manager.createAbstractPhenotype(formData);
-			view.addMessage("success", "Abstract phenotype '" + phenotype.getName() + "' created.");
+			return Response.ok("Abstract phenotype '" + phenotype.getName() + "' created.").build();
 		} catch (MissingFieldException e) {
-			view.addMessage("danger", e.getLaunchDescSource());
+			throw new WebApplicationException(e.getLaunchDescSource());
 		} catch (UnsupportedDataTypeException e) {
-			view.addMessage("danger", e.getMessage());
+			throw new WebApplicationException(e.getMessage());
 		}
-
-		return Response.ok(view).build();
 	}
 
 	@POST
