@@ -1,7 +1,5 @@
 package de.onto_med.ontology_service.data_models;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**

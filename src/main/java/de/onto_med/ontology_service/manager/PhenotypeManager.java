@@ -1,7 +1,5 @@
 package de.onto_med.ontology_service.manager;
 
-import com.sun.javaws.exceptions.MissingFieldException;
-import de.onto_med.ontology_service.data_models.Individual;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.data_models.Property;
 import org.apache.commons.lang3.StringUtils;
@@ -60,11 +58,11 @@ public class PhenotypeManager {
 	 * Creates a phenotype category from provided category data.
 	 * @param formData Category data
 	 * @return The created category.
-	 * @throws MissingFieldException If a required parameter is missing.
+	 * @throws NullPointerException If a required parameter is missing.
 	 */
-	public Category createCategory(Phenotype formData) throws MissingFieldException {
+	public Category createCategory(Phenotype formData) throws NullPointerException {
 		if (StringUtils.isBlank(formData.getId()))
-			throw new MissingFieldException("ID of category is missing.", "id");
+			throw new NullPointerException("ID of category is missing.");
 
 		Category category = new Category(formData.getId());
 		setPhenotypeBasicData(category, formData);
@@ -81,14 +79,14 @@ public class PhenotypeManager {
 	 * Creates an abstract phenotype from provided phenotype data.
 	 * @param formData Phenotype data
 	 * @return The created abstract Phenotype.
-	 * @throws MissingFieldException If a required parameter is missing.
+	 * @throws NullPointerException If a required parameter is missing.
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
-	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws MissingFieldException, UnsupportedDataTypeException {
+	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
 		if (StringUtils.isBlank(formData.getId()))
-			throw new MissingFieldException("ID of the abstract phenotype is missing.", "id");
+			throw new NullPointerException("ID of the abstract phenotype is missing.");
 		if (StringUtils.isBlank(formData.getDatatype()))
-			throw new MissingFieldException("Datatype of the abstract phenotype is missing.", "datatype");
+			throw new NullPointerException("Datatype of the abstract phenotype is missing.");
 
 		AbstractPhenotype phenotype;
 		switch (formData.getDatatype()) {
@@ -118,7 +116,7 @@ public class PhenotypeManager {
 				break;
 			case "calculation":
 				if (StringUtils.isBlank(formData.getFormula()))
-					throw new MissingFieldException("Formula for abstract calculated phenotype is missing.", "formula");
+					throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
 				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractCalculationPhenotype(formData.getId(), manager.getFormula(formData.getFormula()))
 					: new AbstractCalculationPhenotype(formData.getId(), manager.getFormula(formData.getFormula()), formData.getCategories().split(";"));
@@ -140,14 +138,14 @@ public class PhenotypeManager {
 	 * Creates a restricted phenotype from provided phenotype data.
 	 * @param formData Phenotype data
 	 * @return The created restricted phenotype.
-	 * @throws MissingFieldException If a required parameter is missing.
+	 * @throws NullPointerException If a required parameter is missing.
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
-	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws MissingFieldException, UnsupportedDataTypeException {
+	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
 		if (StringUtils.isBlank(formData.getId()))
-			throw new MissingFieldException("ID or super phenotype is missing.", "id");
+			throw new NullPointerException("ID or super phenotype is missing.");
 		if (StringUtils.isBlank(formData.getSuperPhenotype()))
-			throw new MissingFieldException("Super phenotype is missing.", "superPhenotype");
+			throw new NullPointerException("Super phenotype is missing.");
 
 		Category superPhenotype = manager.getPhenotype(formData.getSuperPhenotype());
 		RestrictedPhenotype phenotype;
@@ -156,8 +154,8 @@ public class PhenotypeManager {
 			throw new UnsupportedDataTypeException("Super phenotype does not exist");
 		} else if (superPhenotype.isAbstractBooleanPhenotype()) {
 			if (StringUtils.isBlank(formData.getExpression()))
-				throw new MissingFieldException(
-					"Boolean expression for restricted boolean phenotype is missing.", "expression");
+				throw new NullPointerException(
+					"Boolean expression for restricted boolean phenotype is missing.");
 
 			phenotype = new RestrictedBooleanPhenotype(
 				formData.getId(), superPhenotype.getName(),
@@ -231,7 +229,7 @@ public class PhenotypeManager {
 		}
 
 		ReasonerReport rr = manager.derivePhenotypes(complex, 0);
-		return rr.getPhenotypes().stream().map(c -> c.getName()).collect(Collectors.toList());
+		return rr.getPhenotypes().stream().map(Category::getName).collect(Collectors.toList());
 	}
 
 	public String getPhenotypeDecisionTree(String phenotype, String language) {
@@ -327,7 +325,7 @@ public class PhenotypeManager {
 				phenotype.addRelatedConcept(relation);
 	}
 
-	private PhenotypeRange getRestrictedPhenotypeRange(OWL2Datatype datatype, Phenotype formData) throws MissingFieldException {
+	private PhenotypeRange getRestrictedPhenotypeRange(OWL2Datatype datatype, Phenotype formData) throws NullPointerException {
 		PhenotypeRange range = Optional.ofNullable(getRestrictedPhenotypeRange(
 			datatype,
 			formData.getRangeMin(), formData.getRangeMinOperator(),
@@ -335,7 +333,7 @@ public class PhenotypeManager {
 		)).orElse(getRestrictedPhenotypeRange(datatype, formData.getEnumValues()));
 
 		if (range == null)
-			throw new MissingFieldException("No Restriction for restricted phenotype provided.", "enumValues, rangeMin, rangeMax");
+			throw new NullPointerException("No Restriction for restricted phenotype provided.");
 
 		return range;
 	}

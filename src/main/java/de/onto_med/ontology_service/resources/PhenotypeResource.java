@@ -1,7 +1,5 @@
 package de.onto_med.ontology_service.resources;
 
-import com.sun.javaws.exceptions.MissingFieldException;
-import de.onto_med.ontology_service.data_models.Individual;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.data_models.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
@@ -14,7 +12,6 @@ import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -90,7 +87,7 @@ public class PhenotypeResource extends Resource {
 		try {
 			Category category = manager.createCategory(formData);
 			return Response.ok("Category '" + category.getName() + "' created.").build();
-		} catch (MissingFieldException e) {
+		} catch (NullPointerException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
@@ -103,9 +100,7 @@ public class PhenotypeResource extends Resource {
 		try {
 			AbstractPhenotype phenotype = manager.createAbstractPhenotype(formData);
 			return Response.ok("Abstract phenotype '" + phenotype.getName() + "' created.").build();
-		} catch (MissingFieldException e) {
-			throw new WebApplicationException(e.getLaunchDescSource());
-		} catch (UnsupportedDataTypeException e) {
+		} catch (NullPointerException | UnsupportedDataTypeException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
@@ -118,9 +113,7 @@ public class PhenotypeResource extends Resource {
 		try {
 			RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
 			return Response.ok("Phenotype '" + phenotype.getName() + "' created.").build();
-		} catch (MissingFieldException e) {
-			throw new WebApplicationException(e.getLaunchDescSource());
-		} catch (UnsupportedDataTypeException e) {
+		} catch (NullPointerException | UnsupportedDataTypeException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
@@ -142,7 +135,4 @@ public class PhenotypeResource extends Resource {
 
 		return Response.ok(manager.classifyIndividual(properties)).build();
 	}
-
-	// TODO: classifyIndividuals(List<Individual>)
-
 }
