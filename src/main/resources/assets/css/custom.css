@@ -37,3 +37,6 @@
     padding-left: 5px;
     padding-right: 0px;
 }
+#reason-form-drop-area {
+    min-height: 60px;
+}

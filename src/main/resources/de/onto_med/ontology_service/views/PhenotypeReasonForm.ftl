@@ -17,12 +17,28 @@
 
 		<main class="container">
 			<section name="content" class="row">
-			    <div class="col-md-3">
+			    <div class="col-sm-3">
                 	<div data-spy="affix" data-offset-top="300">
                 		<div id="phenotype-tree" class="well pre-scrollable "></div>
                 	</div>
                 </div>
 
+                <form id="reason-form" class="col-sm-8" action="" method="post">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="panel-title pull-left">
+                                Drag phenotypes from the right side and drop them into this form.
+                            </div>
+                            <div class="panel-title pull-right">
+                                <input type="button" id="submit" class="btn btn-primary" value="Get Phenotypes">
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="reason-form-drop-area" class="panel-body drop phenotype">
+
+                        </div>
+                    </div>
+                </form>
             </section>
         </main>
 
@@ -31,22 +47,26 @@
         <script type="text/javascript">
             $(document).ready(function() {
             	$('[data-toggle="tooltip"]').tooltip();
-            	createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/all');
+            	createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/all', false);
 
-                $('#expression-form-group input[type="button"]').on('click', function(button) {
-            		var expInput = $('#expression');
-            		expInput.val(expInput.val() + ' ' + this.value + ' ');
-            		focusInputEnd(expInput);
-            	});
-
-            	$('#expression').change(function() {
-            		$('#expression').scrollTop($('#expression')[0].scrollHeight);
-            	});
-            	$('#formula').change(function() {
-            		$('#formula').scrollTop($('#formula')[0].scrollHeight);
-            	});
-
-            	toggleValueDefinition();
+                $('form #submit').on('click', function() {
+                    $.ajax({
+                        url: '${rootPath}/phenotype/reason',
+                        dataType: 'text',
+                        contentType: 'application/json',
+                        processData: false,
+                        type: 'POST',
+                        data: JSON.stringify($('#reason-form').serializeArray()),
+                        success: function(result) {
+                            $('#phenotype-tree').jstree('refresh');
+                            showMessage(result, 'success');
+                        },
+                        error: function(result) {
+                            var response = JSON.parse(result.responseText);
+                            showMessage(response.message, 'danger');
+                        }
+                    });
+                });
             });
         </script>
     </body>

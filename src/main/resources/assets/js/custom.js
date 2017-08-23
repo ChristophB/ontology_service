@@ -7,10 +7,6 @@ function toggleValueDefinition() {
 	    $('#formula-form-group').removeClass('hidden');
 }
 
-function addTextField(parent, name, placeholder) {
-	$(parent).append('<input type="text" class="form-control" name="' + name + '" placeholder="' + placeholder + '">');
-}
-
 function addRow(id) {
 	var row = $('form:not(.hidden) ' + id + ' .hidden').clone();
 	row.removeClass('hidden');
@@ -24,14 +20,7 @@ function showMessage(text, state) {
     );
 }
 
-function preProcessPhenotype(node) {
-	if (node.children) {
-		node.children.forEach(preProcessPhenotype);
-	}
-	if (node.a_attr.type != 'category')	node.icon = 'glyphicon glyphicon-leaf';
-}
-
-function createPhenotypeTree(id, url) {
+function createPhenotypeTree(id, url, withContext) {
     $('#' + id).jstree({
         core: {
             multiple: false,
@@ -40,7 +29,7 @@ function createPhenotypeTree(id, url) {
             }
         },
         plugins: [ 'contextmenu', 'dnd' ],
-        contextmenu: { items: customMenu }
+        contextmenu: { items: withContext ? customMenu : null }
     });
 
 	$(document).on('dnd_move.vakata', function (e, data) {
@@ -52,7 +41,12 @@ function createPhenotypeTree(id, url) {
                 data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
                 return;
             } else if (attributes.type.value !== "null" && t.closest('.drop').hasClass('phenotype')){
-                if (t.closest('.drop')[0].id !== 'formula' || ['string', 'boolean'].indexOf(attributes.type.value) == -1) {
+                if (t.closest('.drop')[0].id === 'reason-form-drop-area') {
+                    if (attributes.abstractPhenotype.value === "true" && attributes.singlePhenotype.value == "true") {
+                        data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
+                        return;
+                    }
+                } else if (t.closest('.drop')[0].id !== 'formula' || ['string', 'boolean'].indexOf(attributes.type.value) == -1) {
                     data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
                     return; // formula does not accepts string or boolean
                 }
@@ -67,14 +61,34 @@ function createPhenotypeTree(id, url) {
 		    if (attributes.type.value === "null" && t.closest('.drop').hasClass('category')) {
 		        t.closest('.drop').val(t.closest('.drop').val() + ' ' + data.element.text + ' ');
 		        focusInputEnd(t.closest('.drop'));
-		    } else if (attributes.type.value !== "null" && t.closest('.drop').hasClass('phenotype')){
-		        if (t.closest('.drop')[0].id === 'formula' && ['string', 'boolean'].indexOf(attributes.type.value) != -1)
-                    return; // formula does not accepts string or boolean
-                t.closest('.drop').val(t.closest('.drop').val() + ' ' + data.element.text + ' ');
-                focusInputEnd(t.closest('.drop'));
+		    } else if (attributes.type.value !== "null" && t.closest('.drop').hasClass('phenotype')) {
+		        if (t.closest('.drop')[0].id === 'reason-form-drop-area') {
+		            if (attributes.abstractPhenotype.value === "true" && attributes.singlePhenotype.value == "true")
+		                appendFormField(data.element.id, t.closest('.drop')[0]);
+		        } else if (t.closest('.drop')[0].id !== 'formula' || ['string', 'boolean'].indexOf(attributes.type.value) === -1) {
+                    t.closest('.drop').val(t.closest('.drop').val() + ' ' + data.element.text + ' ');
+                    focusInputEnd(t.closest('.drop'));
+                } // else: formula does not accept string or boolean
 		    }
 		}
 	});
+}
+
+function appendFormField(phenotypeId, target) {
+    phenotypeId = phenotypeId.replace("_anchor", "");
+
+    var html
+        = '<div class="form-group row">'
+            + '<label for="' + phenotypeId + '" class="control-label col-sm-2">' + phenotypeId + '</label>'
+            + '<div class="col-sm-6">'
+                + '<input type="text" class="form-control" name="' + phenotypeId + '">'
+            + '</div>'
+            + '<a class="btn btn-danger" href="#" onclick="$(this).parent().remove()">'
+                + '<i class="fa fa-times fa-lg"></i>'
+            + '</a>'
+        + '</div>';
+
+    $(target).append(html);
 }
 
 function hidePhenotypeForms() {
@@ -121,7 +135,7 @@ function customMenu(node) {
 		    label: 'Inspect',
 		    action: function() {
 		        console.log(node);
-		        $.getJSON(node.text, function(data) { console.log(data) });
+		        // $.getJSON(node.text, function(data) { console.log(data) });
 		    }
 		}
 	};

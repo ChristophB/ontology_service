@@ -267,31 +267,30 @@ public class BinaryOwlParser extends OntologyParser {
 		});
 		
 		individual.getProperties().parallelStream().forEach(property -> {
-			IRI iri = IRI.create(property.getIri());
-			
-			for (String value : property.getValues()) {
-				if (getRootOntology().containsAnnotationPropertyInSignature(iri))
-					axioms.add(factory.getOWLAnnotationAssertionAxiom(
-						namedIndividual.getIRI(), factory.getOWLAnnotation(
-							factory.getOWLAnnotationProperty(iri),
-							OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
-						)
-					));
-				
-				if (getRootOntology().containsDataPropertyInSignature(iri))
-					axioms.add(factory.getOWLDataPropertyAssertionAxiom(
-						factory.getOWLDataProperty(iri),
-						namedIndividual,
+			IRI iri = IRI.create(property.getName());
+			String value = property.getValue();
+
+			if (getRootOntology().containsAnnotationPropertyInSignature(iri))
+				axioms.add(factory.getOWLAnnotationAssertionAxiom(
+					namedIndividual.getIRI(), factory.getOWLAnnotation(
+						factory.getOWLAnnotationProperty(iri),
 						OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
-					));
+					)
+				));
 				
-				if (getRootOntology().containsObjectPropertyInSignature(iri))
-					axioms.add(factory.getOWLObjectPropertyAssertionAxiom(
-							factory.getOWLObjectProperty(iri),
-							namedIndividual,
-							factory.getOWLNamedIndividual(IRI.create(value))
-					));
-			}
+			if (getRootOntology().containsDataPropertyInSignature(iri))
+				axioms.add(factory.getOWLDataPropertyAssertionAxiom(
+					factory.getOWLDataProperty(iri),
+					namedIndividual,
+					OwlApiUtils.getLiteralForValueAndClassName(value, property.getClassName(), manager)
+				));
+				
+			if (getRootOntology().containsObjectPropertyInSignature(iri))
+				axioms.add(factory.getOWLObjectPropertyAssertionAxiom(
+					factory.getOWLObjectProperty(iri),
+					namedIndividual,
+					factory.getOWLNamedIndividual(IRI.create(value))
+				));
 		});
 		
 		manager.addAxioms(getRootOntology(), axioms.stream());

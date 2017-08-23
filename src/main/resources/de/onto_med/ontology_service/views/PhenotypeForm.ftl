@@ -40,7 +40,7 @@
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$('[data-toggle="tooltip"]').tooltip();
-				createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/all');
+				createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/all', true);
 
 				$('#expression-form-group input[type="button"]').on('click', function(button) {
 					var expInput = $('#expression');

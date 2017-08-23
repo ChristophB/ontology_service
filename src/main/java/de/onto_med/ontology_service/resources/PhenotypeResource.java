@@ -3,6 +3,7 @@ package de.onto_med.ontology_service.resources;
 import com.sun.javaws.exceptions.MissingFieldException;
 import de.onto_med.ontology_service.data_models.Individual;
 import de.onto_med.ontology_service.data_models.Phenotype;
+import de.onto_med.ontology_service.data_models.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
 import de.onto_med.ontology_service.views.PhenotypeFormView;
 import de.onto_med.ontology_service.views.RestApiView;
@@ -87,7 +88,7 @@ public class PhenotypeResource extends Resource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createCategory(Phenotype formData) {
 		try {
-			PhenotypeManager.ExtendedCategory category = manager.createCategory(formData);
+			Category category = manager.createCategory(formData);
 			return Response.ok("Category '" + category.getName() + "' created.").build();
 		} catch (MissingFieldException e) {
 			throw new WebApplicationException(e.getMessage());
@@ -135,17 +136,13 @@ public class PhenotypeResource extends Resource {
 	@Path("/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response classifyIndividuals(List<Individual> individuals) {
-		if (individuals == null || individuals.isEmpty())
-			throw new WebApplicationException("No individuals were provided.");
+	public Response classifyIndividual(List<Property> properties) {
+		if (properties == null || properties.isEmpty())
+			throw new WebApplicationException("No properties were provided.");
 
-		for (Individual individual : individuals) {
-			try { individual.setClassification(manager.classifyIndividual(individual)); }
-			catch (IllegalArgumentException e) {
-				throw new WebApplicationException(e.getMessage());
-			}
-		}
-		return Response.ok(individuals).build();
+		return Response.ok(manager.classifyIndividual(properties)).build();
 	}
+
+	// TODO: classifyIndividuals(List<Individual>)
 
 }

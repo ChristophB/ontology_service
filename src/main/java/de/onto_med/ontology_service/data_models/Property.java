@@ -6,42 +6,40 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * This class represents Properties provided by JSON.
- * Assumption: all values for a propert are from the same Java class.
- * 
+ * Assumption: all values for a property are from the same Java class.
  * @author Christoph Beger
- *
  */
 public class Property {
 	@JsonProperty
-	private String iri;
+	private String name;
 	@JsonProperty
 	private String className;
 	@JsonProperty
-	private List<String> values;
+	private String value;
 	
-	public void setIri(String iri) {
-		this.iri = iri;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public void setClassName(String className) {
 		this.className = className;
 	}
 	
-	public void setValues(List<String> values) {
-		this.values = values;
+	public void setValue(String value) {
+		this.value = value;
 	}
 	
 	
-	public String getIri() {
-		return iri;
+	public String getName() {
+		return name;
 	}
 	
 	public String getClassName() {
 		return className;
 	}
 	
-	public List<String> getValues() {
-		return values;
+	public String getValue() {
+		return value;
 	}
 	
 }

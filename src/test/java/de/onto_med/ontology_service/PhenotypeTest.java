@@ -1,6 +1,5 @@
 package de.onto_med.ontology_service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import org.eclipse.jetty.server.Response;
 import org.junit.After;
@@ -15,17 +14,15 @@ import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
-import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -48,7 +45,7 @@ public class PhenotypeTest extends AbstractTest {
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
 			setDefinitions(Arrays.asList("Definition EN", "Definition NONE"));
-			setDefinitionLanguages(Arrays.asList("en"));
+			setDefinitionLanguages(Collections.singletonList("en"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 		}};
 
@@ -112,7 +109,7 @@ public class PhenotypeTest extends AbstractTest {
 	@Test
 	public void testManchesterSyntaxGeneration() throws Exception {
 		String path = "src/test/resources/data/ontology-service/cop2.owl";
-		String abstractName   = "Abstract_Single_Phenotype";
+		String abstractName = "Abstract_Single_Phenotype_1";
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(path, true);
 		manager.addAbstractSinglePhenotype(new AbstractSinglePhenotype(abstractName, OWL2Datatype.XSD_INTEGER));
@@ -128,7 +125,7 @@ public class PhenotypeTest extends AbstractTest {
 	 *******************************/
 
 	private void testAbstractIntegerPhenotypeCreation() throws Exception {
-		String id = "Abstract_Integer_Phenotype";
+		String id = "Abstract_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -167,7 +164,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractDoublePhenotypeCreation() throws Exception {
-		String id = "Abstract_Double_Phenotype";
+		String id = "Abstract_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -207,7 +204,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractStringPhenotypeCreation() throws Exception {
-		String id = "Abstract_String_Phenotype";
+		String id = "Abstract_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -244,7 +241,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractDatePhenotypeCreation() throws Exception {
-		String id = "Abstract_Date_Phenotype";
+		String id = "Abstract_Date_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -281,7 +278,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractBooleanPhenotypeCreation() throws Exception {
-		String id = "Abstract_Boolean_Phenotype";
+		String id = "Abstract_Boolean_Phenotype_1";
 
 
 		Phenotype phenotype = new Phenotype() {{
@@ -318,7 +315,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractCalculationPhenotypeCreation() throws Exception {
-		String id = "Abstract_Calculation_Phenotype";
+		String id = "Abstract_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -330,7 +327,7 @@ public class PhenotypeTest extends AbstractTest {
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setCategories("Category_1");
 			setUcum("cm");
-			setFormula("Abstract_Integer_Phenotype");
+			setFormula("Abstract_Integer_Phenotype_1");
 		}};
 
 		javax.ws.rs.core.Response response
@@ -344,7 +341,7 @@ public class PhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(id);
 
 		AbstractCalculationPhenotype expected = new AbstractCalculationPhenotype(
-			id, manager.getFormula("Abstract_Integer_Phenotype"), "Category_1"
+			id, manager.getFormula("Abstract_Integer_Phenotype_1"), "Category_1"
 		);
 		expected.setUnit("cm");
 		expected.addDefinition("Definition EN", "en");
@@ -364,7 +361,7 @@ public class PhenotypeTest extends AbstractTest {
 	 *********************************/
 
 	private void testRestrictedIntegerPhenotypeCreation() throws Exception {
-		String id = "Restricted_Integer_Phenotype";
+		String id = "Restricted_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -374,7 +371,7 @@ public class PhenotypeTest extends AbstractTest {
 			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
 			setDefinitionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setSuperPhenotype("Abstract_Integer_Phenotype");
+			setSuperPhenotype("Abstract_Integer_Phenotype_1");
 			setRangeMin("5");
 			setRangeMinOperator(">");
 			setRangeMax("10");
@@ -392,7 +389,7 @@ public class PhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_Integer_Phenotype",
+			id, "Abstract_Integer_Phenotype_1",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Integer[] { 5, 10 }));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
@@ -407,7 +404,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedDoublePhenotypeCreation() throws Exception {
-		String id = "Restricted_Double_Phenotype";
+		String id = "Restricted_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -417,7 +414,7 @@ public class PhenotypeTest extends AbstractTest {
 			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
 			setDefinitionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setSuperPhenotype("Abstract_Double_Phenotype");
+			setSuperPhenotype("Abstract_Double_Phenotype_1");
 			setRangeMin("5.3");
 			setRangeMinOperator(">=");
 			setRangeMax("10.7");
@@ -435,7 +432,7 @@ public class PhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_Double_Phenotype",
+			id, "Abstract_Double_Phenotype_1",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
@@ -450,7 +447,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedStringPhenotypeCreation() throws Exception {
-		String id = "Restricted_String_Phenotype";
+		String id = "Restricted_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -460,7 +457,7 @@ public class PhenotypeTest extends AbstractTest {
 			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
 			setDefinitionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setSuperPhenotype("Abstract_String_Phenotype");
+			setSuperPhenotype("Abstract_String_Phenotype_1");
 			setEnumValues(Arrays.asList("a", "b"));
 		}};
 
@@ -475,7 +472,7 @@ public class PhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_String_Phenotype",
+			id, "Abstract_String_Phenotype_1",
 			new PhenotypeRange("a", "b"));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
@@ -490,7 +487,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedDatePhenotypeCreation() throws Exception {
-		String id = "Restricted_Date_Phenotype";
+		String id = "Restricted_Date_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
 			setDatatype("date");
@@ -499,7 +496,7 @@ public class PhenotypeTest extends AbstractTest {
 			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
 			setDefinitionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setSuperPhenotype("Abstract_Date_Phenotype");
+			setSuperPhenotype("Abstract_Date_Phenotype_1");
 			setRangeMin("02.03.2015");
 			setRangeMinOperator(">=");
 			setRangeMax("15.10.2017");
@@ -525,7 +522,7 @@ public class PhenotypeTest extends AbstractTest {
 		Date max = calendar.getTime();
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_Date_Phenotype",
+			id, "Abstract_Date_Phenotype_1",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Date[] { min, max }));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
@@ -540,7 +537,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedBooleanPhenotypeCreation() throws Exception {
-		String id = "Restricted_Boolean_Phenotype";
+		String id = "Restricted_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -550,8 +547,8 @@ public class PhenotypeTest extends AbstractTest {
 			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
 			setDefinitionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setSuperPhenotype("Abstract_Boolean_Phenotype");
-			setExpression("Abstract_Integer_Phenotype");
+			setSuperPhenotype("Abstract_Boolean_Phenotype_1");
+			setExpression("Restricted_Integer_Phenotype_1");
 			setScore(15.4);
 		}};
 
@@ -566,8 +563,8 @@ public class PhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedBooleanPhenotype expected = new RestrictedBooleanPhenotype(
-			id, "Abstract_Boolean_Phenotype",
-			manager.getManchesterSyntaxExpression("Restricted_Integer_Phenotype"));
+			id, "Abstract_Boolean_Phenotype_1",
+			manager.getManchesterSyntaxExpression("Restricted_Integer_Phenotype_1"));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");
 		expected.addLabel("Label EN", "en");
@@ -581,7 +578,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedCalculationPhenotypeCreation() throws Exception {
-		String id = "Restricted_Calculation_Phenotype";
+		String id = "Restricted_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
@@ -591,7 +588,7 @@ public class PhenotypeTest extends AbstractTest {
 			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
 			setDefinitionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setSuperPhenotype("Abstract_Calculation_Phenotype");
+			setSuperPhenotype("Abstract_Calculation_Phenotype_1");
 			setRangeMin("5.3");
 			setRangeMinOperator(">=");
 			setRangeMax("10.7");
@@ -609,7 +606,7 @@ public class PhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedCalculationPhenotype expected = new RestrictedCalculationPhenotype(
-			id, "Abstract_Calculation_Phenotype",
+			id, "Abstract_Calculation_Phenotype_1",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");

@@ -137,9 +137,9 @@
 										<pre>
 [ { "types": [ "http://onto-med.de/auxology#patient" ],
     "properties": [
-      { "iri":       "http://onto-med.de/auxology#bmi_sds",
+      { "name":      "http://onto-med.de/auxology#bmi_sds",
         "className": "float",
-        "values":    [ "-1.5f" ] }
+        "value":     "-1.5f" }
     ] }, ... 
 ]</pre>
     								</small>
