@@ -12,6 +12,7 @@
 
     	<div class="col-sm-10" id="datatype-specification">
     	    <#include "BooleanExpression.ftl">
+    	    <#include "Score.ftl">
 		</div>
 	</div>
 

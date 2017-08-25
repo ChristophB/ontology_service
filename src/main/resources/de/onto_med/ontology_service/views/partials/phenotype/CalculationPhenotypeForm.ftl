@@ -12,7 +12,6 @@
 
     	<div class="col-sm-10" id="datatype-specification">
             <#include "Range.ftl">
-            <#include "Score.ftl">
             <#include "Enum.ftl">
 		</div>
 	</div>

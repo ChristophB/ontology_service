@@ -15,6 +15,11 @@ import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.activation.UnsupportedDataTypeException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,9 +28,12 @@ import java.util.stream.Collectors;
 
 public class PhenotypeManager {
 	public final List<String> DATE_PATTERNS = Arrays.asList("dd.MM.yyyy", "yyyy-MM-dd");
+
 	private PhenotypeOntologyManager manager;
+	private String phenotypePath;
 
 	public PhenotypeManager(String phenotypePath) {
+		this.phenotypePath = phenotypePath;
 		manager = new PhenotypeOntologyManager(phenotypePath, false);
 		manager.write();
 	}
@@ -232,9 +240,54 @@ public class PhenotypeManager {
 		return rr.getPhenotypes().stream().map(Category::getName).collect(Collectors.toList());
 	}
 
-	public String getPhenotypeDecisionTree(String phenotype, String language) {
-		// return manager.createPhenotypeDecisionTree(phenotype, language); // TODO: request implementation
-		return "";
+	/**
+	 * Creates a phenotype decision tree in the requested format.
+	 * @param phenotypeId The phenotype's identifier.
+	 * @param format String representation of the requested format.
+	 * @param path String representation of the path where the file will be written to.
+	 * @throws IllegalArgumentException If the provided format is not one of 'png' or 'graphml'.
+	 */
+	private void createPhenotypeDecisionTree(String phenotypeId, String format, String path) throws IllegalArgumentException {
+		if ("png".equalsIgnoreCase(format)) {
+			manager.createPhenotypeDecisionTreeAsPNG(phenotypeId, path);
+		} else if ("graphml".equalsIgnoreCase(format)) {
+			manager.createPhenotypeDecisionTreeAsGraphML(phenotypeId, path);
+		} else {
+			throw new IllegalArgumentException("Provided form '" + format + "' is not supported.");
+		}
+	}
+
+	/**
+	 * Returns a file containing the decision tree of a phenotype.
+	 * @param phenotypeId ID of the phenotype.
+	 * @param format Format of the returned file.
+	 * @return The decision tree file.
+	 * @throws IllegalArgumentException If the provided format was invalid.
+	 */
+	public File getPhenotypeDecisionTreeFile(String phenotypeId, String format) throws IllegalArgumentException {
+		String pathString = phenotypePath.replace("cop.owl", String.format("%s.%s", new Date().getTime(), format));
+
+		createPhenotypeDecisionTree(phenotypeId, format, pathString);
+
+		return new File(pathString);
+	}
+
+	/**
+	 * Returns a decision tree as string for requested phenotype and format.
+	 * The method calls {@link #getPhenotypeDecisionTreeFile}, which creates a decision tree file.
+	 * Later, the method reads the files content and finally deletes the file.
+	 * @param phenotypeId The phenotype's identifier.
+	 * @param format String representation of the requested format.
+	 * @return Decision tree as string.
+	 * @throws IllegalArgumentException If the provided format is not one of 'png' or 'graphml'.
+	 * @throws IOException If the file, which was created by {@link #createPhenotypeDecisionTree} could not be deleted.
+	 */
+	public String getPhenotypeDecisionTreeString(String phenotypeId, String format) throws IllegalArgumentException, IOException {
+		File file = getPhenotypeDecisionTreeFile(phenotypeId, format);
+		String content = new String(Files.readAllBytes(file.toPath()));
+
+		file.delete();
+		return content;
 	}
 
 
@@ -358,7 +411,9 @@ public class PhenotypeManager {
 	private PhenotypeRange getRestrictedPhenotypeRange(OWL2Datatype datatype, String min, String minOperator, String max, String maxOperator) {
 		List<OWLFacet> facets = new ArrayList<>();
 
-		if (datatype.equals(OWL2Datatype.XSD_INTEGER)) {
+		if ((StringUtils.isBlank(min) || StringUtils.isBlank(minOperator)) && (StringUtils.isBlank(max) || StringUtils.isBlank(maxOperator))) {
+			return null;
+		} else if (datatype.equals(OWL2Datatype.XSD_INTEGER)) {
 			List<Integer> values = new ArrayList<>();
 
 			if (StringUtils.isNoneBlank(min) && StringUtils.isNoneBlank(minOperator)) {

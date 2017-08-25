@@ -3,7 +3,6 @@ package de.onto_med.ontology_service.resources;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.data_models.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
-import de.onto_med.ontology_service.views.PhenotypeFormView;
 import de.onto_med.ontology_service.views.RestApiView;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
@@ -15,6 +14,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @Path("/phenotype")
@@ -57,26 +58,23 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/decision-tree")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getDecisionTree(@QueryParam("phenotype") String phenotype, @QueryParam("language") String language) {
+	public Response getDecisionTree(@QueryParam("phenotype") String phenotype, @QueryParam("format") String format) {
 		if (StringUtils.isBlank(phenotype)) throw new WebApplicationException("Query parameter 'phenotype' missing.");
-		
-		return Response.ok(manager.getPhenotypeDecisionTree(phenotype, StringUtils.defaultString(language, "en")))
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + phenotype + "_decisiontree.GraphML'")
-			.build();
-	}
-	
-	@GET
-	@Path("/decision-tree-form")
-	@Produces(MediaType.TEXT_HTML)
-	public Response getDecisionTreeForm() {
-		return Response.ok(new RestApiView("DecisionTreeForm.ftl", rootPath)).build();
+
+		try {
+			return Response.ok(manager.getPhenotypeDecisionTreeFile(phenotype, format), MediaType.APPLICATION_OCTET_STREAM)
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + phenotype + "_decisiontree." + format + "'")
+				.build();
+		} catch (IllegalArgumentException e) {
+			throw new WebApplicationException(e.getMessage());
+		}
 	}
 
 	@GET
 	@Path("/phenotype-form")
 	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeForm(@QueryParam("type") String type, @QueryParam("id") String id) {
-		return Response.ok(new PhenotypeFormView(rootPath, null)).build(); // new Phenotype(manager.getPhenotype(id))
+		return Response.ok(new RestApiView("PhenotypeForm.ftl", rootPath)).build();
 	}
 
 	@POST

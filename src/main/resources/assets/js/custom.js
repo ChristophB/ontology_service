@@ -46,7 +46,7 @@ function createPhenotypeTree(id, url, withContext) {
                         data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
                         return;
                     }
-                } else if (t.closest('.drop')[0].id !== 'formula' || ['string', 'boolean'].indexOf(attributes.type.value) == -1) {
+                } else if (t.closest('.drop')[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) == -1) {
                     data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
                     return; // formula does not accepts string or boolean
                 }
@@ -65,8 +65,8 @@ function createPhenotypeTree(id, url, withContext) {
 		        if (t.closest('.drop')[0].id === 'reason-form-drop-area') {
 		            if (attributes.abstractPhenotype.value === "true" && attributes.singlePhenotype.value == "true")
 		                appendFormField(data.element.id, attributes.type.value, t.closest('.drop')[0]);
-		        } else if (t.closest('.drop')[0].id !== 'formula' || ['string', 'boolean'].indexOf(attributes.type.value) === -1) {
-                    t.closest('.drop').val(t.closest('.drop').val() + ' ' + data.element.text + ' ');
+		        } else if (t.closest('.drop')[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) === -1) {
+                    t.closest('.drop').val(t.closest('.drop').val() + ' ' + getNodeId(data.element) + ' ');
                     focusInputEnd(t.closest('.drop'));
                 } // else: formula does not accept string or boolean
 		    }
@@ -98,6 +98,9 @@ function hidePhenotypeForms() {
     $('#abstract-phenotype-form, #phenotype-category-form').addClass('hidden');
     $('#numeric-phenotype-form, #string-phenotype-form, #date-phenotype-form').addClass('hidden');
     $('#calculation-phenotype-form, #boolean-phenotype-form').addClass('hidden');
+
+    /* clear data */
+    $('#id').val(null);
 }
 
 function customMenu(node) {
@@ -131,16 +134,29 @@ function customMenu(node) {
 		            default: return;
 		        }
 
-                $('form:not(.hidden) #super-phenotype').val(node.text);
+                $('form:not(.hidden) #super-phenotype').val(getNodeId(node));
 		    }
 		},
 		inspect: {
 		    label: 'Inspect',
 		    action: function() {
-		        console.log(node);
-		        // $.getJSON(node.text, function(data) { console.log(data) });
+		        $.getJSON(getNodeId(node), function(data) { showMessage(JSON.stringify(data), "info") });
 		    }
-		}
+		},
+		getDecisionTreePng: {
+		    label: 'Get Decision Tree As PNG',
+		    action: function() {
+		        var win = window.open('decision-tree?phenotype=' + getNodeId(node) + '&format=png', '_blank');
+		        win.focus();
+		    }
+		},
+		getDecisionTreeGraphml: {
+            label: 'Get Decision Tree As GraphML',
+        	action: function() {
+        	    var win = window.open('decision-tree?phenotype=' + getNodeId(node) + '&format=graphml', '_blank');
+        		win.focus();
+        	}
+        }
 	};
 	
 	if (!node.a_attr.phenotype) {
@@ -149,7 +165,16 @@ function customMenu(node) {
 		delete items.showCategoryForm;
 		delete items.showAbstractPhenotypeForm;
 	}
+
+	if (node.a_attr.type !== 'boolean') {
+        delete items.getDecisionTreePng;
+        delete items.getDecisionTreeGraphml;
+    }
 	return items;
+}
+
+function getNodeId(node) {
+    return node.id.replace("_anchor", "");
 }
 
 function focusInputEnd(input) {
