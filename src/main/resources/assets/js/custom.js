@@ -10,6 +10,7 @@ function toggleValueDefinition() {
 function addRow(id) {
 	var row = $('form:not(.hidden) ' + id + ' .hidden').clone();
 	row.removeClass('hidden');
+	row.addClass('generated');
 	$('form:not(.hidden) ' + id).append(row);
 }
 
@@ -99,8 +100,12 @@ function hidePhenotypeForms() {
     $('#numeric-phenotype-form, #string-phenotype-form, #date-phenotype-form').addClass('hidden');
     $('#calculation-phenotype-form, #boolean-phenotype-form').addClass('hidden');
 
-    /* clear data */
+    clearPhenotypeFormData();
+}
+
+function clearPhenotypeFormData() {
     $('#id').val(null);
+    $('.generated').remove();
 }
 
 function customMenu(node) {
