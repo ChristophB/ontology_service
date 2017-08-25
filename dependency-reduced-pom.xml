@@ -80,13 +80,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.lha</groupId>
-      <artifactId>phenoman</artifactId>
-      <version>0.0.1</version>
-      <scope>system</scope>
-      <systemPath>C:\Users\cbeger.IMISE\workspace\ontology-service/lib/phenoman-0.0.1.jar</systemPath>
-    </dependency>
   </dependencies>
   <properties>
     <mockito.version>2.7.6</mockito.version>
