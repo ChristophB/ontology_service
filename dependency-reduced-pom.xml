@@ -22,7 +22,7 @@
               <transformers>
                 <transformer />
                 <transformer>
-                  <mainClass>de.onto_med.ontology_service.RestApiApplication</mainClass>
+                  <mainClass>de.onto_med.ontology_service.OntologyServiceApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>
