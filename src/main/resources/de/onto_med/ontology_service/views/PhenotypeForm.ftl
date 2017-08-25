@@ -17,13 +17,11 @@
 
 		<main class="container">
 			<section name="content" class="row">
-			    <div class="col-md-3">
-                	<div data-spy="affix" data-offset-top="300">
-                		<div id="phenotype-tree" class="well pre-scrollable "></div>
-                	</div>
+			    <div class="col-md-4">
+                	<div id="phenotype-tree" class="well pre-scrollable "></div>
                 </div>
 
-				<div class="col-md-9">
+				<div class="col-md-8">
                     <#include "partials/phenotype/AbstractPhenotypeForm.ftl">
                     <#include "partials/phenotype/CategoryForm.ftl">
                     <#include "partials/phenotype/NumericPhenotypeForm.ftl">

@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PhenotypeManager {
-	private final String DATE_PATTERN = "dd.MM.yyyy";
+	public final List<String> DATE_PATTERNS = Arrays.asList("dd.MM.yyyy", "yyyy-MM-dd");
 	private PhenotypeOntologyManager manager;
 
 	public PhenotypeManager(String phenotypePath) {
@@ -241,42 +241,26 @@ public class PhenotypeManager {
 
 
 	private TreeNode getTreeNode(PhenotypeCategoryTreeNode node, Boolean includePhenotypes) {
-		String label = node.getCategory().hasLabels()
-			? getTextLang(node.getCategory().getLabels())
-			: node.getName();
-		TreeNode treeNode = new TreeNode(node.getName(), node.getName(), label);
 		Category category = node.getCategory();
 
-		if (node.getCategory().isRestrictedPhenotype()) {
+		String label    = category.hasLabels() ? getTextLang(category.getLabels())	: node.getName();
+		String datatype = getDatatype(category);
+
+		TreeNode treeNode = new TreeNode(
+			node.getName(),
+			datatype == null ? node.getName() : String.format("%s [%s]", node.getName(), datatype),
+			label
+		);
+		treeNode.setType(datatype);
+
+		if (category.isRestrictedPhenotype()) {
 			treeNode.setRestrictedPhenotype();
-		} else if (node.getCategory().isAbstractPhenotype()) {
+		} else if (category.isAbstractPhenotype()) {
 			treeNode.setAbstractPhenotype();
 		}
 
-		if (node.getCategory().isAbstractSinglePhenotype() || node.getCategory().isRestrictedSinglePhenotype()) {
+		if (category.isAbstractSinglePhenotype() || category.isRestrictedSinglePhenotype()) {
 			treeNode.setSinglePhenotype();
-		}
-
-		if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_STRING.equals(category.asAbstractSinglePhenotype().getDatatype())
-			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_STRING.equals(category.asRestrictedSinglePhenotype().getDatatype())
-		) {
-			treeNode.setType("string");
-		} else if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_DATE_TIME.equals(category.asAbstractSinglePhenotype().getDatatype())
-			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_DATE_TIME.equals(category.asRestrictedSinglePhenotype().getDatatype())
-		) {
-			treeNode.setType("date");
-		} else if (category.isAbstractSinglePhenotype()
-			&& (OWL2Datatype.XSD_INTEGER.equals(category.asAbstractSinglePhenotype().getDatatype())
-				|| OWL2Datatype.XSD_DOUBLE.equals(category.asAbstractSinglePhenotype().getDatatype()))
-			|| category.isRestrictedSinglePhenotype()
-			&& (OWL2Datatype.XSD_INTEGER.equals(category.asRestrictedSinglePhenotype().getDatatype())
-				|| OWL2Datatype.XSD_DOUBLE.equals(category.asRestrictedSinglePhenotype().getDatatype()))
-		) {
-			treeNode.setType("numeric");
-		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
-			treeNode.setType("boolean");
-		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
-			treeNode.setType("calculation");
 		}
 
 		for (PhenotypeCategoryTreeNode child : node.getChildren()) {
@@ -284,6 +268,31 @@ public class PhenotypeManager {
 			treeNode.addChild(getTreeNode(child, includePhenotypes));
 		}
 		return treeNode;
+	}
+
+	private String getDatatype(Category category) {
+		if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_STRING.equals(category.asAbstractSinglePhenotype().getDatatype())
+			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_STRING.equals(category.asRestrictedSinglePhenotype().getDatatype())
+			) {
+			return "string";
+		} else if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_DATE_TIME.equals(category.asAbstractSinglePhenotype().getDatatype())
+			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_DATE_TIME.equals(category.asRestrictedSinglePhenotype().getDatatype())
+			) {
+			return "date";
+		} else if (category.isAbstractSinglePhenotype()
+			&& (OWL2Datatype.XSD_INTEGER.equals(category.asAbstractSinglePhenotype().getDatatype())
+			|| OWL2Datatype.XSD_DOUBLE.equals(category.asAbstractSinglePhenotype().getDatatype()))
+			|| category.isRestrictedSinglePhenotype()
+			&& (OWL2Datatype.XSD_INTEGER.equals(category.asRestrictedSinglePhenotype().getDatatype())
+			|| OWL2Datatype.XSD_DOUBLE.equals(category.asRestrictedSinglePhenotype().getDatatype()))
+		) {
+			return "numeric";
+		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+			return "boolean";
+		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
+			return "calculation";
+		}
+		return null;
 	}
 
 	/**
@@ -422,19 +431,29 @@ public class PhenotypeManager {
 
 	/**
 	 * Transforms a string into a java Date object.
-	 * Allowed patterns: 'dd.MM.yyyy'
+	 * See {@link #DATE_PATTERNS} for allowed patterns.
 	 * @param string String representation of a date.
 	 * @return The parsed Date object.
 	 * @throws ParseException If the string could not be parsed to Date.
 	 */
 	private Date parseStringToDate(String string) throws ParseException {
-		DateFormat format = new SimpleDateFormat(DATE_PATTERN);
+		Date date = null;
+
+		for (String pattern : DATE_PATTERNS) {
+			DateFormat format = new SimpleDateFormat(pattern);
+			try {
+				date = format.parse(string);
+			} catch (ParseException ignored) { }
+		}
+		if (date == null) throw new ParseException("Could not parse string '" + string + "' to Date.", 0);
+
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(format.parse(string));
+		calendar.setTime(date);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
+
 		return calendar.getTime();
 	}
 

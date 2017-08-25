@@ -17,13 +17,11 @@
 
 		<main class="container">
 			<section name="content" class="row">
-			    <div class="col-sm-3">
-                	<div data-spy="affix" data-offset-top="300">
-                		<div id="phenotype-tree" class="well pre-scrollable "></div>
-                	</div>
+			    <div class="col-sm-4">
+                	<div id="phenotype-tree" class="well pre-scrollable "></div>
                 </div>
 
-                <form id="reason-form" class="col-sm-8" action="" method="post">
+                <form id="reason-form" class="col-sm-7" action="" method="post">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="panel-title pull-left">
