@@ -17,7 +17,7 @@ function addRow(id) {
 function showMessage(text, state) {
     $('#messages-div').empty();
     $('#messages-div').append(
-        '<div class="alert alert-' + state + '">'
+        '<div id="message" class="alert alert-' + state + '">'
             + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
             + text
         + '</div>'

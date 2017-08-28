@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -194,7 +195,7 @@ public class PhenotypeManager {
 		return phenotype;
 	}
 
-	public List<String> classifyIndividual(List<Property> properties) throws IllegalArgumentException {
+	public ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
 		ComplexPhenotypeInstance complex = new ComplexPhenotypeInstance();
 
 		for (Property property : properties) {
@@ -238,8 +239,17 @@ public class PhenotypeManager {
 			complex.addSinglePhenotypeInstance(instance);
 		}
 
-		ReasonerReport rr = manager.derivePhenotypes(complex, 0);
-		return rr.getPhenotypes().stream().map(Category::getName).collect(Collectors.toList());
+		return manager.derivePhenotypes(complex, 0);
+	}
+
+	public List<String> classifyIndividualAsList(List<Property> properties) {
+		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getName).collect(Collectors.toList());
+	}
+
+	public Object classifyIndividualAsImage(List<Property> properties) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ImageIO.write(manager.writeGraphToPNG(manager.createReasonerReportGraph(classifyIndividual(properties)), true), "png", out);
+		return out.toByteArray();
 	}
 
 	/**

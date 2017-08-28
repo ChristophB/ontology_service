@@ -130,6 +130,6 @@ public class PhenotypeResource extends Resource {
 		if (properties == null || properties.isEmpty())
 			throw new WebApplicationException("No properties were provided.");
 
-		return Response.ok(manager.classifyIndividual(properties)).build();
+		return Response.ok(manager.classifyIndividualAsList(properties)).build();
 	}
 }
