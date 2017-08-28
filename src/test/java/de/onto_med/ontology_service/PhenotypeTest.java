@@ -101,6 +101,12 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	@Test
+	public void testCompositeBooleanPhenotypeCreation() throws Exception {
+		testAbstractCompositeBooleanPhenotypeCreation();
+		testRestrictedCompositeBooleanPhenotypeCreation();
+	}
+
+	@Test
 	public void testCalculationPhenotypeCreation() throws Exception {
 		testAbstractCalculationPhenotypeCreation();
 		testRestrictedCalculationPhenotypeCreation();
@@ -280,10 +286,47 @@ public class PhenotypeTest extends AbstractTest {
 	private void testAbstractBooleanPhenotypeCreation() throws Exception {
 		String id = "Abstract_Boolean_Phenotype_1";
 
-
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
 			setDatatype("boolean");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setCategories("Category_1");
+		}};
+
+		javax.ws.rs.core.Response response
+			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(phenotype));
+
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		Category actual = manager.getPhenotype(id);
+
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_BOOLEAN, "Category_1");
+		expected.addDefinition("Definition EN", "en");
+		expected.addDefinition("Definition DE", "de");
+		expected.addLabel("Label EN", "en");
+		expected.addLabel("Label DE", "de");
+		expected.addRelatedConcept("IRI 1");
+		expected.addRelatedConcept("IRI 2");
+
+		assertThat(actual.isAbstractSinglePhenotype()).isTrue();
+		assertThat(actual.asAbstractSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_BOOLEAN);
+		assertThat(actual).isEqualTo(expected);
+	}
+
+	private void testAbstractCompositeBooleanPhenotypeCreation() throws Exception {
+		String id = "Abstract_Composite_Boolean_Phenotype_1";
+
+
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("composite-boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
 			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
@@ -538,7 +581,6 @@ public class PhenotypeTest extends AbstractTest {
 
 	private void testRestrictedBooleanPhenotypeCreation() throws Exception {
 		String id = "Restricted_Boolean_Phenotype_1";
-
 		Phenotype phenotype = new Phenotype() {{
 			setId(id);
 			setDatatype("boolean");
@@ -548,6 +590,46 @@ public class PhenotypeTest extends AbstractTest {
 			setDefinitionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_Boolean_Phenotype_1");
+			setEnumValues(Collections.singletonList("true"));
+		}};
+
+		javax.ws.rs.core.Response response
+			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(phenotype));
+
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		Category actual = manager.getPhenotype(id);
+
+		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
+			id, "Abstract_Boolean_Phenotype_1",
+			new PhenotypeRange(true));
+		expected.addDefinition("Definition EN", "en");
+		expected.addDefinition("Definition DE", "de");
+		expected.addLabel("Label EN", "en");
+		expected.addLabel("Label DE", "de");
+		expected.addRelatedConcept("IRI 1");
+		expected.addRelatedConcept("IRI 2");
+
+		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
+		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_BOOLEAN);
+		assertThat(actual).isEqualTo(expected);
+	}
+
+	private void testRestrictedCompositeBooleanPhenotypeCreation() throws Exception {
+		String id = "Restricted_Composite_Boolean_Phenotype_1";
+
+		Phenotype phenotype = new Phenotype() {{
+			setId(id);
+			setDatatype("composite-boolean");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
+			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setSuperPhenotype("Abstract_Composite_Boolean_Phenotype_1");
 			setExpression("Restricted_Integer_Phenotype_1");
 			setScore(15.4);
 		}};
@@ -563,7 +645,7 @@ public class PhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedBooleanPhenotype expected = new RestrictedBooleanPhenotype(
-			id, "Abstract_Boolean_Phenotype_1",
+			id, "Abstract_Composite_Boolean_Phenotype_1",
 			manager.getManchesterSyntaxExpression("Restricted_Integer_Phenotype_1"));
 		expected.addDefinition("Definition EN", "en");
 		expected.addDefinition("Definition DE", "de");

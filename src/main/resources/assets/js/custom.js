@@ -49,7 +49,7 @@ function createPhenotypeTree(id, url, withContext) {
                     }
                 } else if (t.closest('.drop')[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) == -1) {
                     data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
-                    return; // formula does not accepts string or boolean
+                    return; // formula does not accepts string
                 }
             }
         }
@@ -69,7 +69,7 @@ function createPhenotypeTree(id, url, withContext) {
 		        } else if (t.closest('.drop')[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) === -1) {
                     t.closest('.drop').val(t.closest('.drop').val() + ' ' + getNodeId(data.element) + ' ');
                     focusInputEnd(t.closest('.drop'));
-                } // else: formula does not accept string or boolean
+                } // else: formula does not accept string
 		    }
 		}
 	});
@@ -96,9 +96,9 @@ function appendFormField(phenotypeId, type, target) {
 }
 
 function hidePhenotypeForms() {
-    $('#abstract-phenotype-form, #phenotype-category-form').addClass('hidden');
+    $('#abstract-phenotype-form, #phenotype-category-form, #boolean-phenotype-form').addClass('hidden');
     $('#numeric-phenotype-form, #string-phenotype-form, #date-phenotype-form').addClass('hidden');
-    $('#calculation-phenotype-form, #boolean-phenotype-form').addClass('hidden');
+    $('#calculation-phenotype-form, #composite-boolean-phenotype-form').addClass('hidden');
 
     clearPhenotypeFormData();
 }
@@ -135,6 +135,7 @@ function customMenu(node) {
 		            case 'string': $('#string-phenotype-form').removeClass('hidden'); break;
 		            case 'numeric': $('#numeric-phenotype-form').removeClass('hidden'); break;
 		            case 'boolean': $('#boolean-phenotype-form').removeClass('hidden'); break;
+		            case 'composite-boolean': $('#composite-boolean-phenotype-form').removeClass('hidden'); break;
 		            case 'calculation': $('#calculation-phenotype-form').removeClass('hidden'); break;
 		            default: return;
 		        }
@@ -171,7 +172,7 @@ function customMenu(node) {
 		delete items.showAbstractPhenotypeForm;
 	}
 
-	if (node.a_attr.type !== 'boolean') {
+	if (!node.a_attr.abstract) { // TODO: check
         delete items.getDecisionTreePng;
         delete items.getDecisionTreeGraphml;
     }

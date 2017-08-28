@@ -9,8 +9,9 @@
        'numeric', 'Number',
        'date', 'Date',
        'string', 'String',
+       'boolean', 'Boolean',
        'calculation', 'Calculation',
-       'boolean', 'Boolean'
+       'composite-boolean', 'Boolean Expression'
     ]>
     <#include "Datatype.ftl">
 

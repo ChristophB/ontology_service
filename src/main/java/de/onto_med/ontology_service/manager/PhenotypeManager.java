@@ -119,6 +119,11 @@ public class PhenotypeManager {
 				break;
 			case "boolean":
 				phenotype = StringUtils.isBlank(formData.getCategories())
+					? new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_BOOLEAN)
+					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_BOOLEAN, formData.getCategories().split(";"));
+				break;
+			case "composite-boolean":
+				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractBooleanPhenotype(formData.getId())
 					: new AbstractBooleanPhenotype(formData.getId(), formData.getCategories().split(";"));
 				break;
@@ -249,9 +254,9 @@ public class PhenotypeManager {
 	 */
 	private void createPhenotypeDecisionTree(String phenotypeId, String format, String path) throws IllegalArgumentException {
 		if ("png".equalsIgnoreCase(format)) {
-			manager.createPhenotypeDecisionTreeAsPNG(phenotypeId, path);
+			manager.createAbstractPhenotypeAsPNG(phenotypeId, path);
 		} else if ("graphml".equalsIgnoreCase(format)) {
-			manager.createPhenotypeDecisionTreeAsGraphML(phenotypeId, path);
+			manager.createAbstractPhenotypeAsGraphML(phenotypeId, path);
 		} else {
 			throw new IllegalArgumentException("Provided form '" + format + "' is not supported.");
 		}
@@ -479,6 +484,9 @@ public class PhenotypeManager {
 			return new PhenotypeRange(values.toArray(new Date[values.size()]));
 		} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
 			return new PhenotypeRange(enumValues.stream().filter(StringUtils::isNoneBlank).toArray(String[]::new));
+		} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
+			if (enumValues.size() > 0 && StringUtils.isNoneBlank(enumValues.get(0)))
+				return new PhenotypeRange(Boolean.valueOf(enumValues.get(0)));
 		}
 
 		return null;

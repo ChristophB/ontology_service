@@ -11,8 +11,7 @@
 	    <label class="control-label col-sm-2">Restriction*</label>
 
     	<div class="col-sm-10" id="datatype-specification">
-    	    <#include "BooleanExpression.ftl">
-    	    <#include "Score.ftl">
+			<#include "Enum.ftl">
 		</div>
 	</div>
 
