@@ -41,7 +41,7 @@
 				$('[data-toggle="tooltip"]').tooltip();
 				createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/all', true);
 
-				$('#expression-form-group input[type="button"]').on('click', function(button) {
+				$('#expression-form-group input[type="button"].operator').on('click', function(button) {
 					var expInput = $('#expression');
 					expInput.val(expInput.val() + ' ' + this.value + ' ');
 					focusInputEnd(expInput);
@@ -56,6 +56,7 @@
 
 
 				$('form #submit').on('click', function() {
+				    console.log(JSON.stringify($($(this).closest('form')[0]).serializeJSON()));
                     $.ajax({
                         url: $($(this).closest('form')[0].attributes.url).val(),
                         dataType: 'text',

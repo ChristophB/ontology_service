@@ -1,5 +1,6 @@
 package de.onto_med.ontology_service.manager;
 
+import de.imise.graph_api.graph.Graph;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.data_models.Property;
 import org.apache.commons.lang3.StringUtils;
@@ -15,11 +16,9 @@ import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.activation.UnsupportedDataTypeException;
-import java.io.File;
+import javax.imageio.ImageIO;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,13 +26,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PhenotypeManager {
-	public final List<String> DATE_PATTERNS = Arrays.asList("dd.MM.yyyy", "yyyy-MM-dd");
+	private final List<String> DATE_PATTERNS = Arrays.asList("dd.MM.yyyy", "yyyy-MM-dd");
 
 	private PhenotypeOntologyManager manager;
-	private String phenotypePath;
 
 	public PhenotypeManager(String phenotypePath) {
-		this.phenotypePath = phenotypePath;
 		manager = new PhenotypeOntologyManager(phenotypePath, false);
 		manager.write();
 	}
@@ -249,51 +246,24 @@ public class PhenotypeManager {
 	 * Creates a phenotype decision tree in the requested format.
 	 * @param phenotypeId The phenotype's identifier.
 	 * @param format String representation of the requested format.
-	 * @param path String representation of the path where the file will be written to.
+	 * @return String representation of the result.
 	 * @throws IllegalArgumentException If the provided format is not one of 'png' or 'graphml'.
+	 * @throws IOException If BufferedImage could not be written to ByteArrayOutputStream.
 	 */
-	private void createPhenotypeDecisionTree(String phenotypeId, String format, String path) throws IllegalArgumentException {
+	public Object getPhenotypeDecisionTree(String phenotypeId, String format) throws IllegalArgumentException, IOException {
+		Graph graph = manager.createAbstractPhenotypeGraph(phenotypeId);
+
 		if ("png".equalsIgnoreCase(format)) {
-			manager.createAbstractPhenotypeAsPNG(phenotypeId, path);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ImageIO.write(manager.writeGraphToPNG(graph, true), "png", out);
+			return out.toByteArray();
 		} else if ("graphml".equalsIgnoreCase(format)) {
-			manager.createAbstractPhenotypeAsGraphML(phenotypeId, path);
+			return manager.writeGraphToGraphML(graph);
 		} else {
 			throw new IllegalArgumentException("Provided form '" + format + "' is not supported.");
 		}
 	}
 
-	/**
-	 * Returns a file containing the decision tree of a phenotype.
-	 * @param phenotypeId ID of the phenotype.
-	 * @param format Format of the returned file.
-	 * @return The decision tree file.
-	 * @throws IllegalArgumentException If the provided format was invalid.
-	 */
-	public File getPhenotypeDecisionTreeFile(String phenotypeId, String format) throws IllegalArgumentException {
-		String pathString = phenotypePath.replace("cop.owl", String.format("%s.%s", new Date().getTime(), format));
-
-		createPhenotypeDecisionTree(phenotypeId, format, pathString);
-
-		return new File(pathString);
-	}
-
-	/**
-	 * Returns a decision tree as string for requested phenotype and format.
-	 * The method calls {@link #getPhenotypeDecisionTreeFile}, which creates a decision tree file.
-	 * Later, the method reads the files content and finally deletes the file.
-	 * @param phenotypeId The phenotype's identifier.
-	 * @param format String representation of the requested format.
-	 * @return Decision tree as string.
-	 * @throws IllegalArgumentException If the provided format is not one of 'png' or 'graphml'.
-	 * @throws IOException If the file, which was created by {@link #createPhenotypeDecisionTree} could not be deleted.
-	 */
-	public String getPhenotypeDecisionTreeString(String phenotypeId, String format) throws IllegalArgumentException, IOException {
-		File file = getPhenotypeDecisionTreeFile(phenotypeId, format);
-		String content = new String(Files.readAllBytes(file.toPath()));
-
-		file.delete();
-		return content;
-	}
 
 
 
@@ -306,7 +276,9 @@ public class PhenotypeManager {
 
 		TreeNode treeNode = new TreeNode(
 			node.getName(),
-			datatype == null ? node.getName() : String.format("%s [%s]", node.getName(), datatype),
+			datatype != null && category.isAbstractPhenotype()
+				? String.format("%s [%s]", node.getName(), datatype)
+				: node.getName(),
 			label
 		);
 		treeNode.setType(datatype);
@@ -321,10 +293,10 @@ public class PhenotypeManager {
 			treeNode.setSinglePhenotype();
 		}
 
-		for (PhenotypeCategoryTreeNode child : node.getChildren()) {
-			if (!includePhenotypes && child.getCategory().isPhenotype()) continue;
-			treeNode.addChild(getTreeNode(child, includePhenotypes));
-		}
+		node.getChildren().stream().sorted(Comparator.comparing(PhenotypeCategoryTreeNode::getName)).forEach(child -> {
+			if (includePhenotypes || !child.getCategory().isPhenotype())
+				treeNode.addChild(getTreeNode(child, includePhenotypes));
+		});
 		return treeNode;
 	}
 
@@ -345,8 +317,11 @@ public class PhenotypeManager {
 			|| OWL2Datatype.XSD_DOUBLE.equals(category.asRestrictedSinglePhenotype().getDatatype()))
 		) {
 			return "numeric";
-		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+		} else if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_BOOLEAN.equals(category.asAbstractSinglePhenotype().getDatatype())
+			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_BOOLEAN.equals(category.asRestrictedSinglePhenotype().getDatatype())) {
 			return "boolean";
+		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+			return "composite-boolean";
 		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
 			return "calculation";
 		}

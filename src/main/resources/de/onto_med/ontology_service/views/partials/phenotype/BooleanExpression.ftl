@@ -1,9 +1,10 @@
 <div id="expression-form-group">
 	<label for="expression" class="control-label">Boolean-Expression*</label>
-	<input type="button" class="btn btn-default" value="AND">
-	<input type="button" class="btn btn-default" value="OR">
-	<input type="button" class="btn btn-default" value="(">
-	<input type="button" class="btn btn-default" value=")">
+	<input type="button" class="btn btn-default operator" value="AND">
+	<input type="button" class="btn btn-default operator" value="OR">
+	<input type="button" class="btn btn-default operator" value="(">
+	<input type="button" class="btn btn-default operator" value=")">
+	<input type="button" class="btn btn-default pull-right" value="Reset" onclick="$('#expression').val(null)">
 	
 	<textarea class="form-control drop phenotype" id="expression" name="expression"
 		placeholder="Phenotype_1 AND (Phenotype_2 OR Phenotype_3)" aria-describedby="expression-help"

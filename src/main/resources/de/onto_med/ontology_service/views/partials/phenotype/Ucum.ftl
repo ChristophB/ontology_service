@@ -5,7 +5,7 @@
 		    <#if phenotype?? & phenotype.ucum??>value="${phenotype.ucum}"</#if>
 	    >
 	    <small id="ucum-help" class="form-text text-muted">
-	        If the numeric values do have a unit, specify it as <a href="http://unitsofmeasure.org/trac">UCUM</a>.
+	        If the numeric values do have a unit, specify it as <a href="http://unitsofmeasure.org/trac" target="_blank">UCUM</a>.
 	    </small>
 	</div>
 </div>

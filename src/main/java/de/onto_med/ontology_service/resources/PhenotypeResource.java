@@ -15,7 +15,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 @Path("/phenotype")
@@ -62,10 +61,10 @@ public class PhenotypeResource extends Resource {
 		if (StringUtils.isBlank(phenotype)) throw new WebApplicationException("Query parameter 'phenotype' missing.");
 
 		try {
-			return Response.ok(manager.getPhenotypeDecisionTreeFile(phenotype, format), MediaType.APPLICATION_OCTET_STREAM)
+			return Response.ok(manager.getPhenotypeDecisionTree(phenotype, format), MediaType.APPLICATION_OCTET_STREAM)
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + phenotype + "_decisiontree." + format + "'")
 				.build();
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException | IOException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}

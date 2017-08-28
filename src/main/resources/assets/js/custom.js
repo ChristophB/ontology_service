@@ -17,7 +17,10 @@ function addRow(id) {
 function showMessage(text, state) {
     $('#messages-div').empty();
     $('#messages-div').append(
-        '<div class="alert alert-' + state + '">' + text + '</div>'
+        '<div class="alert alert-' + state + '">'
+            + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+            + text
+        + '</div>'
     );
 }
 
@@ -83,7 +86,7 @@ function appendFormField(phenotypeId, type, target) {
 
     var html
         = '<div class="form-group row">'
-            + '<label for="' + phenotypeId + '" class="control-label col-sm-2">' + phenotypeId + '</label>'
+            + '<label for="' + phenotypeId + '" class="control-label col-sm-4">' + phenotypeId + '</label>'
             + '<div class="col-sm-6">'
                 + '<input type="' + type + '" class="form-control" name="' + phenotypeId + '">'
             + '</div>'
@@ -95,16 +98,17 @@ function appendFormField(phenotypeId, type, target) {
     $(target).append(html);
 }
 
-function hidePhenotypeForms() {
-    $('#abstract-phenotype-form, #phenotype-category-form, #boolean-phenotype-form').addClass('hidden');
-    $('#numeric-phenotype-form, #string-phenotype-form, #date-phenotype-form').addClass('hidden');
+function showPhenotypeForm(id) {
+    $('#abstract-phenotype-form, #phenotype-category-form').addClass('hidden');
+    $('#numeric-phenotype-form, #string-phenotype-form, #date-phenotype-form, #boolean-phenotype-form').addClass('hidden');
     $('#calculation-phenotype-form, #composite-boolean-phenotype-form').addClass('hidden');
 
+    $(id).removeClass('hidden');
     clearPhenotypeFormData();
 }
 
 function clearPhenotypeFormData() {
-    $('#id').val(null);
+    $('form:not(.hidden) input[type!=checkbox].form-control, form:not(.hidden) textarea.form-control').val(null);
     $('.generated').remove();
 }
 
@@ -113,30 +117,27 @@ function customMenu(node) {
 		showCategoryForm: {
 		    label: 'Create Sub Category',
 		    action: function() {
-		        hidePhenotypeForms();
-		        $('#phenotype-category-form').removeClass('hidden');
+		        showPhenotypeForm('#phenotype-category-form');
 		        $('#super-category').val(node.text);
 		    }
 		},
 		showAbstractPhenotypeForm: {
 		    label: 'Create Abstract Phenotype',
 		    action: function() {
-		        hidePhenotypeForms();
-		        $('#abstract-phenotype-form').removeClass('hidden');
-		        $('#categories').val(node.text);
+		        showPhenotypeForm('#abstract-phenotype-form');
+		        $('form:not(.hidden) #categories').val(node.text);
 		    }
 		},
 		showRestrictedPhenotypeForm: {
 		    label: 'Create Restricted Phenotype',
 		    action: function() {
-		        hidePhenotypeForms();
 		        switch (node.a_attr.type) {
-		            case 'date': $('#date-phenotype-form').removeClass('hidden'); break;
-		            case 'string': $('#string-phenotype-form').removeClass('hidden'); break;
-		            case 'numeric': $('#numeric-phenotype-form').removeClass('hidden'); break;
-		            case 'boolean': $('#boolean-phenotype-form').removeClass('hidden'); break;
-		            case 'composite-boolean': $('#composite-boolean-phenotype-form').removeClass('hidden'); break;
-		            case 'calculation': $('#calculation-phenotype-form').removeClass('hidden'); break;
+		            case 'date': showPhenotypeForm('#date-phenotype-form'); break;
+		            case 'string': showPhenotypeForm('#string-phenotype-form'); break;
+		            case 'numeric': showPhenotypeForm('#numeric-phenotype-form'); break;
+		            case 'boolean': showPhenotypeForm('#boolean-phenotype-form'); break;
+		            case 'composite-boolean': showPhenotypeForm('#composite-boolean-phenotype-form'); break;
+		            case 'calculation': showPhenotypeForm('#calculation-phenotype-form'); break;
 		            default: return;
 		        }
 
@@ -164,7 +165,7 @@ function customMenu(node) {
         	}
         }
 	};
-	
+
 	if (!node.a_attr.phenotype) {
 		delete items.showRestrictedPhenotypeForm;
 	} else {
@@ -172,7 +173,7 @@ function customMenu(node) {
 		delete items.showAbstractPhenotypeForm;
 	}
 
-	if (!node.a_attr.abstract) { // TODO: check
+	if (!node.a_attr.abstractPhenotype) { // TODO: check
         delete items.getDecisionTreePng;
         delete items.getDecisionTreeGraphml;
     }
