@@ -4,6 +4,7 @@ import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.data_models.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
 import de.onto_med.ontology_service.views.RestApiView;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
@@ -11,6 +12,7 @@ import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -125,11 +127,21 @@ public class PhenotypeResource extends Resource {
 	@POST
 	@Path("/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response classifyIndividual(List<Property> properties) {
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
+	public Response classifyIndividual(@Context HttpHeaders headers, List<Property> properties) {
 		if (properties == null || properties.isEmpty())
 			throw new WebApplicationException("No properties were provided.");
 
-		return Response.ok(manager.classifyIndividualAsList(properties)).build();
+		try {
+			if (acceptsMediaType(headers, MediaType.TEXT_PLAIN_TYPE)) {
+				return Response.ok(Base64.encodeBase64(manager.classifyIndividualAsImage(properties)), MediaType.APPLICATION_OCTET_STREAM)
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='reasoner_report.png'")
+					.build();
+			} else {
+				return Response.ok(manager.classifyIndividualAsList(properties)).build();
+			}
+		} catch (IOException e) {
+			throw new WebApplicationException(e.getMessage());
+		}
 	}
 }
