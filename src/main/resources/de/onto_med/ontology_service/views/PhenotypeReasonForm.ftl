@@ -56,22 +56,22 @@
                         type: 'POST',
                         data: JSON.stringify($('#reason-form').serializeArray()),
                         success: function(result) {
-                            showMessage(result, 'success');
+                            showMessage(result.join(", "), 'success');
                             $.ajax({
-                                                    url: '${rootPath}/phenotype/reason',
-                                                    dataType: 'text',
-                                                    contentType: 'application/json',
-                                                    processData: false,
-                                                    type: 'POST',
-                                                    data: JSON.stringify($('#reason-form').serializeArray()),
-                                                    success: function(png) {
-                                                        download('data:image/png;base64,' + png, 'reasoner_report.png', 'image/png');
-                                                    },
-                                                    error: function(result) {
-                                                        var response = JSON.parse(result.responseText);
-                                                        showMessage(response.message, 'danger');
-                                                    }
-                                                });
+                                url: '${rootPath}/phenotype/reason',
+                                dataType: 'text',
+                                contentType: 'application/json',
+                                processData: false,
+                                type: 'POST',
+                                data: JSON.stringify($('#reason-form').serializeArray()),
+                                success: function(png) {
+                                    download('data:image/png;base64,' + png, 'reasoner_report.png', 'image/png');
+                                },
+                                error: function(result) {
+                                    var response = JSON.parse(result.responseText);
+                                    showMessage(response.message, 'danger');
+                                }
+                            });
                         },
                         error: function(result) {
                             var response = JSON.parse(result.responseText);

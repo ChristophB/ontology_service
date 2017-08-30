@@ -17,7 +17,7 @@ function addRow(id) {
 function showMessage(text, state) {
     $('#messages-div').empty();
     $('#messages-div').append(
-        '<div id="message" class="alert alert-' + state + '">'
+        '<div id="message" class="alert alert-' + state + ' col-sm-6 col-sm-offset-3">'
             + '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
             + text
         + '</div>'
@@ -96,6 +96,7 @@ function appendFormField(phenotypeId, type, target) {
         + '</div>';
 
     $(target).append(html);
+    $('.form-control:last').focus();
 }
 
 function showPhenotypeForm(id) {
