@@ -174,7 +174,7 @@ function customMenu(node) {
 		delete items.showAbstractPhenotypeForm;
 	}
 
-	if (!node.a_attr.abstractPhenotype) { // TODO: check
+	if (!node.a_attr.abstractPhenotype) {
         delete items.getDecisionTreePng;
         delete items.getDecisionTreeGraphml;
     }
@@ -182,7 +182,7 @@ function customMenu(node) {
 }
 
 function getNodeId(node) {
-    return node.id.replace("_anchor", "");
+    return node.a_attr.id;
 }
 
 function focusInputEnd(input) {

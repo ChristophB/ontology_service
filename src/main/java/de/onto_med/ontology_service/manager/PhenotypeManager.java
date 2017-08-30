@@ -539,7 +539,6 @@ public class PhenotypeManager {
 
 
 	public class TreeNode {
-		public String id;
 		public String text;
 		public String icon;
 		public State state = new State();
@@ -547,8 +546,8 @@ public class PhenotypeManager {
 		public AttributeList a_attr    = new AttributeList();
 
 		public TreeNode(String id, String text, String title) {
-			this.id = id;
 			this.text = text;
+			a_attr.id    = id;
 			a_attr.title = title;
 		}
 
@@ -585,6 +584,7 @@ public class PhenotypeManager {
 
 	public class AttributeList {
 		public String type;
+		public String id;
 		public String title;
 		public Boolean phenotype = false;
 		public Boolean restrictedPhenotype = false;
