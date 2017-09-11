@@ -200,38 +200,43 @@ public class PhenotypeManager {
 
 		for (Property property : properties) {
 			// TODO: handle restricted phenotypes
-			if (StringUtils.isBlank(property.getName()) || StringUtils.isBlank(property.getValue())) continue;
+			if (StringUtils.isBlank(property.getName())) continue;
 			Category phenotype = manager.getPhenotype(property.getName());
 			if (phenotype == null) continue;
 
 			String value = property.getValue();
 			String name  = property.getName();
-			if (StringUtils.isBlank(value)) continue;
+			// if (StringUtils.isBlank(value)) continue;
 
 			SinglePhenotypeInstance instance;
-			if (phenotype.isAbstractBooleanPhenotype() || phenotype.isRestrictedPhenotype()) {
+			if (phenotype.isRestrictedPhenotype()) {
+				throw new IllegalArgumentException("Reasoning with restricted phenotypes is not yet supported.");
+				// instance = new SinglePhenotypeInstance(name, null); // TODO: request implementation
+			} else if (phenotype.isAbstractBooleanPhenotype()) {
 				instance = new SinglePhenotypeInstance(name, Boolean.valueOf(value));
 			} else if (phenotype.isAbstractCalculationPhenotype()) {
 				try { instance = new SinglePhenotypeInstance(name, Double.valueOf(value)); }
 				catch (NumberFormatException e) {
-					throw new IllegalArgumentException("Could not parse string '" + value + "' to Double." + e.getMessage());
+					throw new IllegalArgumentException("Could not parse Double from String '" + value + "'." + e.getMessage());
 				}
 			} else if (phenotype.isAbstractSinglePhenotype()) {
 				if (OWL2Datatype.XSD_INTEGER.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 					try { instance = new SinglePhenotypeInstance(name, Integer.valueOf(value)); }
 					catch (NumberFormatException e) {
-						throw new IllegalArgumentException("Could not parse string '" + value + "' to Integer.");
+						throw new IllegalArgumentException("Could not parse Integer from String '" + value + "'.");
 					}
 				} else if (OWL2Datatype.XSD_DOUBLE.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 					try { instance = new SinglePhenotypeInstance(name, Double.valueOf(value)); }
 					catch (NumberFormatException e) {
-						throw new IllegalArgumentException("Could not parse string '" + value + "' to Double." + e.getMessage());
+						throw new IllegalArgumentException("Could not parse Double from String '" + value + "'." + e.getMessage());
 					}
 				} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 					try { instance = new SinglePhenotypeInstance(name, parseStringToDate(value)); }
 					catch (ParseException e) {
-						throw new IllegalArgumentException("Could not parse string '" + value + "' to date. " + e.getMessage());
+						throw new IllegalArgumentException("Could not parse Date from String '" + value + "'. " + e.getMessage());
 					}
+				} else if (OWL2Datatype.XSD_BOOLEAN.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
+					instance = new SinglePhenotypeInstance(name, Boolean.valueOf(value));
 				} else {
 					instance = new SinglePhenotypeInstance(name, value);
 				}
@@ -243,11 +248,11 @@ public class PhenotypeManager {
 		return manager.derivePhenotypes(complex, 0).getFinalReport();
 	}
 
-	public List<String> classifyIndividualAsList(List<Property> properties) {
+	public List<String> classifyIndividualAsList(List<Property> properties) throws IllegalArgumentException {
 		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getName).collect(Collectors.toList());
 	}
 
-	public byte[] classifyIndividualAsImage(List<Property> properties) throws IOException {
+	public byte[] classifyIndividualAsImage(List<Property> properties) throws IOException, IllegalArgumentException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ImageIO.write(
 			manager.writeGraphToPNG(manager.createReasonerReportGraph(classifyIndividual(properties)), true),
@@ -593,7 +598,7 @@ public class PhenotypeManager {
 		void setCompositeBooleanPhenotype() { icon += " fa fa-check-circle"; }
 		void setCalculationPhenotype() { icon += " fa fa-calculator"; }
 
-		void addChild(TreeNode child) { children.add(child);	}
+		void addChild(TreeNode child) { children.add(child); }
 	}
 
 	public class AttributeList {
@@ -601,9 +606,9 @@ public class PhenotypeManager {
 		public String id;
 		public String title;
 		public Boolean phenotype = false;
-		Boolean restrictedPhenotype = false;
-		Boolean abstractPhenotype   = false;
-		Boolean singlePhenotype     = false;
+		public Boolean restrictedPhenotype = false;
+		public Boolean abstractPhenotype   = false;
+		public Boolean singlePhenotype     = false;
 	}
 
 	public class State {

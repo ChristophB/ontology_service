@@ -39,5 +39,9 @@ public class Property {
 	public String getValue() {
 		return value;
 	}
-	
+
+
+	public String toString() {
+		return String.format("%s [%s]:%s", name, className, value);
+	}
 }

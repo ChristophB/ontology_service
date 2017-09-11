@@ -140,7 +140,7 @@ public class PhenotypeResource extends Resource {
 			} else {
 				return Response.ok(manager.classifyIndividualAsList(properties)).build();
 			}
-		} catch (IOException e) {
+		} catch (IOException | IllegalArgumentException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
