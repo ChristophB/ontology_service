@@ -11,7 +11,6 @@ import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.*;
 import org.lha.phenoman.model.reasoner_result.ReasonerReport;
-import org.lha.phenoman.model.reasoner_result.ReasonerReports;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
@@ -43,7 +42,8 @@ public class PhenotypeManager {
 	 */
 	public Category getPhenotype(String id) {
 		if (StringUtils.isBlank(id)) return null;
-		return manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
+		Category category = manager.getCategory(XMLUtils.getNCNameSuffix(id));
+		return category != null ? category : manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
 	}
 
 	/**
@@ -195,10 +195,11 @@ public class PhenotypeManager {
 		return phenotype;
 	}
 
-	public ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
+	private ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
 		ComplexPhenotypeInstance complex = new ComplexPhenotypeInstance();
 
 		for (Property property : properties) {
+			// TODO: handle restricted phenotypes
 			if (StringUtils.isBlank(property.getName()) || StringUtils.isBlank(property.getValue())) continue;
 			Category phenotype = manager.getPhenotype(property.getName());
 			if (phenotype == null) continue;
@@ -284,17 +285,13 @@ public class PhenotypeManager {
 	private TreeNode getTreeNode(PhenotypeCategoryTreeNode node, Boolean includePhenotypes) {
 		Category category = node.getCategory();
 
-		String label    = category.hasLabels() ? getTextLang(category.getLabels())	: node.getName();
-		String datatype = getDatatype(category);
+		String tooltip  = category.hasLabels() ? getTextLang(category.getLabels()) : "";
+		String text     = node.getName().replaceAll("_", " ");
+		OWL2Datatype datatype = getDatatype(category);
 
-		TreeNode treeNode = new TreeNode(
-			node.getName(),
-			datatype != null && category.isAbstractPhenotype()
-				? String.format("%s [%s]", node.getName(), datatype)
-				: node.getName(),
-			label
-		);
-		treeNode.setType(datatype);
+
+		TreeNode treeNode = new TreeNode(node.getName(), text, tooltip);
+		treeNode.setType(owl2DatatypeToString(datatype, category));
 
 		if (category.isRestrictedPhenotype()) {
 			treeNode.setRestrictedPhenotype();
@@ -304,6 +301,19 @@ public class PhenotypeManager {
 
 		if (category.isAbstractSinglePhenotype() || category.isRestrictedSinglePhenotype()) {
 			treeNode.setSinglePhenotype();
+			if (OWL2Datatype.XSD_DOUBLE.equals(datatype) || OWL2Datatype.XSD_INTEGER.equals(datatype)) {
+				treeNode.setNumericPhenotype();
+			} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
+				treeNode.setStringPhenotype();
+			} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype)) {
+				treeNode.setDatePhenotype();
+			} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
+				treeNode.setBooleanPhenotype();
+			}
+		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+			treeNode.setCompositeBooleanPhenotype();
+		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
+			treeNode.setCalculationPhenotype();
 		}
 
 		node.getChildren().stream().sorted(Comparator.comparing(PhenotypeCategoryTreeNode::getName)).forEach(child -> {
@@ -313,30 +323,32 @@ public class PhenotypeManager {
 		return treeNode;
 	}
 
-	private String getDatatype(Category category) {
-		if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_STRING.equals(category.asAbstractSinglePhenotype().getDatatype())
-			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_STRING.equals(category.asRestrictedSinglePhenotype().getDatatype())
-			) {
-			return "string";
-		} else if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_DATE_TIME.equals(category.asAbstractSinglePhenotype().getDatatype())
-			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_DATE_TIME.equals(category.asRestrictedSinglePhenotype().getDatatype())
-			) {
-			return "date";
-		} else if (category.isAbstractSinglePhenotype()
-			&& (OWL2Datatype.XSD_INTEGER.equals(category.asAbstractSinglePhenotype().getDatatype())
-			|| OWL2Datatype.XSD_DOUBLE.equals(category.asAbstractSinglePhenotype().getDatatype()))
-			|| category.isRestrictedSinglePhenotype()
-			&& (OWL2Datatype.XSD_INTEGER.equals(category.asRestrictedSinglePhenotype().getDatatype())
-			|| OWL2Datatype.XSD_DOUBLE.equals(category.asRestrictedSinglePhenotype().getDatatype()))
-		) {
-			return "numeric";
-		} else if (category.isAbstractSinglePhenotype() && OWL2Datatype.XSD_BOOLEAN.equals(category.asAbstractSinglePhenotype().getDatatype())
-			|| category.isRestrictedSinglePhenotype() && OWL2Datatype.XSD_BOOLEAN.equals(category.asRestrictedSinglePhenotype().getDatatype())) {
-			return "boolean";
-		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+	private String owl2DatatypeToString(OWL2Datatype datatype, Category category) {
+		if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
 			return "composite-boolean";
 		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
 			return "calculation";
+		} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
+			return "string";
+		} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype)) {
+			return "date";
+		} else if (OWL2Datatype.XSD_INTEGER.equals(datatype) || OWL2Datatype.XSD_DOUBLE.equals(datatype)) {
+			return "numeric";
+		} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
+			return "boolean";
+		}
+		return null;
+	}
+
+	private OWL2Datatype getDatatype(Category category) {
+		if (category.isAbstractSinglePhenotype()) {
+			return category.asAbstractSinglePhenotype().getDatatype();
+		} else if (category.isRestrictedSinglePhenotype()) {
+			return category.asRestrictedSinglePhenotype().getDatatype();
+		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
+			return OWL2Datatype.XSD_DOUBLE;
+		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+			return OWL2Datatype.XSD_BOOLEAN;
 		}
 		return null;
 	}
@@ -545,7 +557,7 @@ public class PhenotypeManager {
 		public List<TreeNode> children = new ArrayList<>();
 		public AttributeList a_attr    = new AttributeList();
 
-		public TreeNode(String id, String text, String title) {
+		TreeNode(String id, String text, String title) {
 			this.text = text;
 			a_attr.id    = id;
 			a_attr.title = title;
@@ -555,31 +567,33 @@ public class PhenotypeManager {
 			state.opened = opened;
 		}
 
-		public void setdisabled(Boolean disabled) {
-			state.disabled = disabled;
-		}
-
 		public void setSelected(Boolean selected) {
 			state.selected = selected;
 		}
 
 		public void setType(String type) { a_attr.type = type; }
-		public void setRestrictedPhenotype() {
+		void setRestrictedPhenotype() {
 			a_attr.phenotype = true;
 			a_attr.restrictedPhenotype = true;
-			icon = "glyphicon glyphicon-leaf text-warning";
+			icon += " text-warning";
 		}
-		public void setAbstractPhenotype() {
+		void setAbstractPhenotype() {
 			a_attr.phenotype = true;
 			a_attr.abstractPhenotype = true;
-			icon = "glyphicon glyphicon-leaf text-primary";
+			icon += " text-primary";
 		}
-		public void setSinglePhenotype() {
+		void setSinglePhenotype() {
 			a_attr.phenotype = true;
 			a_attr.singlePhenotype = true;
 		}
+		void setNumericPhenotype() { icon += " fa fa-calculator"; }
+		void setStringPhenotype() { icon += " fa fa-font"; }
+		void setDatePhenotype() { icon += " fa fa-calendar"; }
+		void setBooleanPhenotype() { icon += " fa fa-check-circle-o"; }
+		void setCompositeBooleanPhenotype() { icon += " fa fa-check-circle"; }
+		void setCalculationPhenotype() { icon += " fa fa-calculator"; }
 
-		public void addChild(TreeNode child) { children.add(child);	}
+		void addChild(TreeNode child) { children.add(child);	}
 	}
 
 	public class AttributeList {
@@ -587,14 +601,13 @@ public class PhenotypeManager {
 		public String id;
 		public String title;
 		public Boolean phenotype = false;
-		public Boolean restrictedPhenotype = false;
-		public Boolean abstractPhenotype   = false;
-		public Boolean singlePhenotype     = false;
+		Boolean restrictedPhenotype = false;
+		Boolean abstractPhenotype   = false;
+		Boolean singlePhenotype     = false;
 	}
 
 	public class State {
 		public Boolean opened   = false;
-		public Boolean disabled = false;
 		public Boolean selected = false;
 	}
 }

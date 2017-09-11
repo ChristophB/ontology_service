@@ -135,8 +135,7 @@ public class ProjectResource extends Resource {
 		try {
 			manager = getProjectManager(id);
 		} catch (Exception e) { throw new WebApplicationException(e.getMessage()); }
-		
-		// TODO: add form fields according to the GraphML plugin, maybe with class tree
+
 		return Response.ok(new ProjectView("ProjectGraphMlForm.ftl", manager, rootPath, uriInfo.getBaseUri().getHost())).build();
 	}
 

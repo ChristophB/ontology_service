@@ -45,7 +45,7 @@ function createPhenotypeTree(id, url, withContext) {
                 data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
                 return;
             } else if (attributes.type.value !== "null" && t.closest('.drop').hasClass('phenotype')){
-                if (t.closest('.drop')[0].id === 'reason-form-drop-area') {
+                if (t.closest('.drop')[0].id === 'reason-form-drop-area') { // TODO: allow restricted single phenotypes
                     if (attributes.abstractPhenotype.value === "true" && attributes.singlePhenotype.value == "true") {
                         data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
                         return;
@@ -66,7 +66,7 @@ function createPhenotypeTree(id, url, withContext) {
 		        t.closest('.drop').val(t.closest('.drop').val() + ' ' + data.element.text + ' ');
 		        focusInputEnd(t.closest('.drop'));
 		    } else if (attributes.type.value !== "null" && t.closest('.drop').hasClass('phenotype')) {
-		        if (t.closest('.drop')[0].id === 'reason-form-drop-area') {
+		        if (t.closest('.drop')[0].id === 'reason-form-drop-area') { // TODO: allow restricted single phenotypes
 		            if (attributes.abstractPhenotype.value === "true" && attributes.singlePhenotype.value == "true")
 		                appendFormField(data.element.id, attributes.type.value, t.closest('.drop')[0]);
 		        } else if (t.closest('.drop')[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) === -1) {
@@ -78,7 +78,7 @@ function createPhenotypeTree(id, url, withContext) {
 	});
 }
 
-function appendFormField(phenotypeId, type, target) {
+function appendFormField(phenotypeId, type, target) { // TODO: updated this to include fields for restricted single phenotypes
     phenotypeId = phenotypeId.replace("_anchor", "");
 
     if (type === "numeric") type = "number";
@@ -148,7 +148,7 @@ function customMenu(node) {
 		inspect: {
 		    label: 'Inspect',
 		    action: function() {
-		        $.getJSON(getNodeId(node), function(data) { showMessage(JSON.stringify(data), "info") });
+		        $.getJSON(getNodeId(node), function(data) { showMessage(JSON.stringify(data, null, 2), "info") });
 		    }
 		},
 		getDecisionTreePng: {
