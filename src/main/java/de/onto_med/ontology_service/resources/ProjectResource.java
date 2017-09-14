@@ -235,8 +235,7 @@ public class ProjectResource extends Resource {
 	public List<Entity> reason(String projectId, String ce) {
 		try {
 			ProjectManager manager = getProjectManager(projectId);
-			
-			/* TODO: remove this workaround */
+
 			Map<String, String> shortFormMap = manager.getOntologyIris();
 			for (String shortForm : shortFormMap.keySet()) {
 				ce = ce.replaceAll(shortForm + ":([\\w_\\-]+)", "<" + shortFormMap.get(shortForm) + "#$1>");

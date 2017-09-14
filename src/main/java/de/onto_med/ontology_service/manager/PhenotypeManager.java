@@ -199,14 +199,12 @@ public class PhenotypeManager {
 		ComplexPhenotypeInstance complex = new ComplexPhenotypeInstance();
 
 		for (Property property : properties) {
-			// TODO: handle restricted phenotypes
 			if (StringUtils.isBlank(property.getName())) continue;
 			Category phenotype = manager.getPhenotype(property.getName());
 			if (phenotype == null) continue;
 
 			String value = property.getValue();
 			String name  = property.getName();
-			// if (StringUtils.isBlank(value)) continue;
 
 			SinglePhenotypeInstance instance;
 			if (phenotype.isRestrictedPhenotype()) {

@@ -55,43 +55,6 @@ public class Phenotype {
 
 	public Phenotype() { }
 
-	public Phenotype(Category attributes) {
-		this();
-		if (attributes == null) return;
-
-		setId(attributes.getName());
-		setRelations(new ArrayList<>(attributes.getRelatedConcepts()));
-
-		if (attributes.isAbstractSinglePhenotype()) {
-			AbstractSinglePhenotype phenotype = attributes.asAbstractSinglePhenotype();
-			setDatatype(owl2DatatypeToString(phenotype.getDatatype()));
-			setUcum(attributes.asAbstractSinglePhenotype().getUnit());
-		} else if (attributes.isAbstractBooleanPhenotype() || attributes.isRestrictedBooleanPhenotype()) {
-			setDatatype("boolean");
-			if (attributes.isRestrictedBooleanPhenotype()) {
-				RestrictedBooleanPhenotype phenotype = attributes.asRestrictedBooleanPhenotype();
-				setExpression(phenotype.getManchesterSyntaxExpression());
-				setScore(phenotype.getScore());
-			}
-		} else if (attributes.isAbstractCalculationPhenotype() || attributes.isRestrictedCalculationPhenotype()) {
-			setDatatype("formula");
-			if (attributes.isAbstractCalculationPhenotype()) {
-				setFormula(attributes.asAbstractCalculationPhenotype().getFormula());
-				setUcum(attributes.asAbstractCalculationPhenotype().getUnit());
-				// TODO: set ranges and operators
-			}
-		}
-
-		for (TextLang textLang : attributes.getDefinitions()) {
-			addDefinition(textLang.getText());
-			addDefinitionLanguage(textLang.getLang());
-		}
-		for (TextLang textLang : attributes.getLabels()) {
-			addLabel(textLang.getText());
-			addLabelLanguage(textLang.getText());
-		}
-	}
-
 	public Double getScore() {
 		return score;
 	}
