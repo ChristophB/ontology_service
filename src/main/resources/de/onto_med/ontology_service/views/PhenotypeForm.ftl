@@ -67,6 +67,7 @@
                         success: function(result) {
                             $('#phenotype-tree').jstree('refresh');
                             showMessage(result, 'success');
+                            clearPhenotypeFormData();
                         },
                         error: function(result) {
                             var response = JSON.parse(result.responseText);

@@ -42,8 +42,9 @@ public class PhenotypeManager {
 	 */
 	public Category getPhenotype(String id) {
 		if (StringUtils.isBlank(id)) return null;
-		Category category = manager.getCategory(XMLUtils.getNCNameSuffix(id));
-		return category != null ? category : manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
+		Category category = manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
+
+		return category != null ? category : manager.getCategory(XMLUtils.getNCNameSuffix(id));
 	}
 
 	/**
