@@ -10,4 +10,4 @@ server:
 dataPath: src/test/resources/data/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
-phenotypePath: src/test/resources/data/ontology-service/cop.owl
+phenotypePath: src/test/resources/data/ontology-service/cop_%id%.owl

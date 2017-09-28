@@ -1,4 +1,4 @@
-<form id="abstract-phenotype-form" action="" url="${rootPath}/phenotype/create-abstract-phenotype" method="post" accept-charset="UTF-8" class="hidden">
+<form id="abstract-phenotype-form" action="" url="${rootPath}/phenotype/${id}/create-abstract-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<#include "Id.ftl">
 	<#include "Labels.ftl">
 	<#include "Category.ftl">

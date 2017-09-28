@@ -1,4 +1,4 @@
-<form id="phenotype-category-form" action="" url="${rootPath}/phenotype/create-category" method="post" accept-charset="UTF-8" class="hidden">
+<form id="phenotype-category-form" action="" url="${rootPath}/phenotype/${id}/create-category" method="post" accept-charset="UTF-8" class="hidden">
 	<#include "Id.ftl">
 	<#include "Labels.ftl">
 	<#include "SuperCategory.ftl">

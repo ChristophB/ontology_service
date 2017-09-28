@@ -27,12 +27,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PhenotypeTest extends AbstractTest {
-	private final String CREATE_ABSTRACT_PHENOTYPE_PATH = "/phenotype/create-abstract-phenotype";
-	private final String CREATE_RESTRICTED_PHENOTYPE_PATH = "/phenotype/create-restricted-phenotype";
-
+	private final String ID = "1";
+	private final String CREATE_ABSTRACT_PHENOTYPE_PATH = "/phenotype/" + ID + "/create-abstract-phenotype";
+	private final String CREATE_RESTRICTED_PHENOTYPE_PATH = "/phenotype/" + ID + "/create-restricted-phenotype";
+	private final String CREATE_CATEGORY_PATH = "/phenotype/" + ID + "/create-category";
+	private final String ONTOLOGY_PATH = RULE.getConfiguration().getPhenotypePath().replace("%id%", ID);
+	
 	@After
 	public void cleanUp() throws Exception {
-		Path path = Paths.get(RULE.getConfiguration().getPhenotypePath());
+		Path path = Paths.get(ONTOLOGY_PATH);
 		if (Files.exists(path)) Files.delete(path);
 	}
 
@@ -50,13 +53,13 @@ public class PhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + "/phenotype/create-category")
+			= client.target(url + CREATE_CATEGORY_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getCategory(id);
 
 		Category expected = new Category(id);
@@ -152,7 +155,7 @@ public class PhenotypeTest extends AbstractTest {
 	    
 	    assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 	    Category actual = manager.getPhenotype(id);
 
 	    AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_INTEGER, "Category_1");
@@ -192,7 +195,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_DOUBLE, "Category_1");
@@ -230,7 +233,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_STRING, "Category_1");
@@ -267,7 +270,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_DATE_TIME, "Category_1");
@@ -304,7 +307,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_BOOLEAN, "Category_1");
@@ -342,7 +345,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		AbstractBooleanPhenotype expected = new AbstractBooleanPhenotype(id, "Category_1");
@@ -380,7 +383,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		AbstractCalculationPhenotype expected = new AbstractCalculationPhenotype(
@@ -428,7 +431,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
@@ -471,7 +474,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
@@ -511,7 +514,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
@@ -553,7 +556,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		Calendar calendar = Calendar.getInstance();
@@ -600,7 +603,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
@@ -641,7 +644,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedBooleanPhenotype expected = new RestrictedBooleanPhenotype(
@@ -684,7 +687,7 @@ public class PhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(RULE.getConfiguration().getPhenotypePath(), false);
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(id);
 
 		RestrictedCalculationPhenotype expected = new RestrictedCalculationPhenotype(

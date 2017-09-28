@@ -45,11 +45,11 @@
         <script type="text/javascript">
             $(document).ready(function() {
             	$('[data-toggle="tooltip"]').tooltip();
-            	createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/all', false);
+            	createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/${id}/all', false);
 
                 $('form #submit').on('click', function() {
                     $.ajax({
-                        url: '${rootPath}/phenotype/reason',
+                        url: '${rootPath}/phenotype/${id}/reason',
                         dataType: 'json',
                         contentType: 'application/json; charset=utf-8',
                         processData: false,

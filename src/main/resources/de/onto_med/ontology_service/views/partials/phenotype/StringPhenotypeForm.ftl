@@ -1,4 +1,4 @@
-<form id="string-phenotype-form" action="" url="${rootPath}/phenotype/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
+<form id="string-phenotype-form" action="" url="${rootPath}/phenotype/${id}/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<input type="hidden" name="datatype" value="string">
 
 	<#include "Id.ftl">

@@ -1,16 +1,23 @@
 package de.onto_med.ontology_service.resources;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import de.onto_med.ontology_service.api.Timer;
 import de.onto_med.ontology_service.data_models.Phenotype;
 import de.onto_med.ontology_service.data_models.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
-import de.onto_med.ontology_service.views.RestApiView;
+import de.onto_med.ontology_service.views.PhenotypeView;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.UnsupportedDataTypeException;
+import javax.annotation.Nonnull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -18,49 +25,76 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-@Path("/phenotype")
+@Path("/phenotype/{id}")
 public class PhenotypeResource extends Resource {
-	private PhenotypeManager manager;
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PhenotypeManager.class);
+
+	private String phenotypePath;
+
+	/**
+	 * This is the Cache, which contains all previously loaded phenotypeManagers.
+	 * Expiration time is set to 10 minutes after the last access.
+	 * If a a non existent key is used, the cache tries to instantiate a respective PhenotypeManager.
+	 */
+	private LoadingCache<String, PhenotypeManager> managers = CacheBuilder.newBuilder()
+		.expireAfterAccess(10, TimeUnit.MINUTES)
+		.build(
+			new CacheLoader<String, PhenotypeManager>() {
+				@Override
+				public PhenotypeManager load(@Nonnull String key) throws Exception {
+					Timer timer = new Timer();
+					PhenotypeManager manager = new PhenotypeManager(phenotypePath.replace("%id%", key));
+
+					LOGGER.info("Populated cache with phenotype ontology '" + key + "'. " + timer.getDiff());
+					return manager;
+				}
+			}
+		);
+
 	public PhenotypeResource(String rootPath, String phenotypePath) {
 		super(rootPath);
-		manager = new PhenotypeManager(phenotypePath);
+		this.phenotypePath = phenotypePath;
 	}
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	public Response getPhenotypeView() {
-		return Response.ok(new RestApiView("PhenotypeView.ftl", rootPath)).build();
+	public Response getPhenotypeView(@PathParam("id") String id) {
+		return Response.ok(new PhenotypeView("PhenotypeView.ftl", rootPath, id)).build();
 	}
 	
 	@GET
 	@Path("/{iri}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Category getPhenotype(@PathParam("iri") String iri) {
-		System.out.println(manager.getPhenotype(iri));
+	public Category getPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+		PhenotypeManager manager = managers.getUnchecked(id);
 		return manager.getPhenotype(iri);
 	}
 
 	@GET
 	@Path("/categories")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PhenotypeManager.TreeNode getCategories() {
-		return manager.getTaxonomy(false);
+	public PhenotypeManager.TreeNode getCategories(@PathParam("id") String id) {
+		return managers.getUnchecked(id).getTaxonomy(false);
 	}
 
 	@GET
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PhenotypeManager.TreeNode getPhenotypes() {
-		return manager.getTaxonomy(true);
+	public PhenotypeManager.TreeNode getPhenotypes(@PathParam("id") String id) {
+		return managers.getUnchecked(id).getTaxonomy(true);
 	}
 	
 	@GET
 	@Path("/decision-tree")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getDecisionTree(@QueryParam("phenotype") String phenotype, @QueryParam("format") String format) {
+	public Response getDecisionTree(
+		@PathParam("id") String id, @QueryParam("phenotype") String phenotype, @QueryParam("format") String format
+	) {
 		if (StringUtils.isBlank(phenotype)) throw new WebApplicationException("Query parameter 'phenotype' missing.");
+
+		PhenotypeManager manager = managers.getUnchecked(id);
 
 		try {
 			return Response.ok(manager.getPhenotypeDecisionTree(phenotype, format), MediaType.APPLICATION_OCTET_STREAM)
@@ -74,15 +108,17 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/phenotype-form")
 	@Produces(MediaType.TEXT_HTML)
-	public Response getPhenotypeForm(@QueryParam("type") String type, @QueryParam("id") String id) {
-		return Response.ok(new RestApiView("PhenotypeForm.ftl", rootPath)).build();
+	public Response getPhenotypeForm(@PathParam("id") String id) {
+		return Response.ok(new PhenotypeView("PhenotypeForm.ftl", rootPath, id)).build();
 	}
 
 	@POST
 	@Path("/create-category")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createCategory(Phenotype formData) {
+	public Response createCategory(@PathParam("id") String id, Phenotype formData) {
+		PhenotypeManager manager = managers.getUnchecked(id);
+
 		try {
 			Category category = manager.createCategory(formData);
 			return Response.ok("Category '" + category.getName() + "' created.").build();
@@ -95,7 +131,9 @@ public class PhenotypeResource extends Resource {
 	@Path("/create-abstract-phenotype")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createAbstractPhenotype(Phenotype formData) {
+	public synchronized Response createAbstractPhenotype(@PathParam("id") String id, Phenotype formData) {
+		PhenotypeManager manager = managers.getUnchecked(id);
+
 		try {
 			AbstractPhenotype phenotype = manager.createAbstractPhenotype(formData);
 			return Response.ok("Abstract phenotype '" + phenotype.getName() + "' created.").build();
@@ -108,7 +146,9 @@ public class PhenotypeResource extends Resource {
 	@Path("/create-restricted-phenotype")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createRestrictedPhenotype(Phenotype formData) {
+	public synchronized Response createRestrictedPhenotype(@PathParam("id") String id, Phenotype formData) {
+		PhenotypeManager manager = managers.getUnchecked(id);
+
 		try {
 			RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
 			return Response.ok("Phenotype '" + phenotype.getName() + "' created.").build();
@@ -120,17 +160,21 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/reason-form")
 	@Produces({ MediaType.TEXT_HTML })
-	public Response getReasonForm() {
-		return Response.ok(new RestApiView("PhenotypeReasonForm.ftl", rootPath)).build();
+	public Response getReasonForm(@PathParam("id") String id) {
+		return Response.ok(new PhenotypeView("PhenotypeReasonForm.ftl", rootPath, id)).build();
 	}
 
 	@POST
 	@Path("/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
-	public Response classifyIndividual(@Context HttpHeaders headers, List<Property> properties) {
+	public synchronized Response classifyIndividual(
+		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties
+	) {
 		if (properties == null || properties.isEmpty())
 			throw new WebApplicationException("No properties were provided.");
+
+		PhenotypeManager manager = managers.getUnchecked(id);
 
 		try {
 			if (acceptsMediaType(headers, MediaType.TEXT_PLAIN_TYPE)) {

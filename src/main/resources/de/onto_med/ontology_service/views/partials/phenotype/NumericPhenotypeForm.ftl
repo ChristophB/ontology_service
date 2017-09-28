@@ -1,4 +1,4 @@
-<form id="numeric-phenotype-form" action="" url="${rootPath}/phenotype/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
+<form id="numeric-phenotype-form" action="" url="${rootPath}/phenotype/${id}/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<input type="hidden" name="datatype" value="numeric">
 
 	<#include "Id.ftl">
