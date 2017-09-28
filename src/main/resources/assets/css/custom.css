@@ -43,3 +43,7 @@
 .pre-scrollable {
     max-height: 600px;
 }
+.center {
+	margin: auto;
+	width: 50%;
+}

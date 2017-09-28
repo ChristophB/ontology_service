@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Path("/phenotype/{id}")
+@Path("/phenotype")
 public class PhenotypeResource extends Resource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PhenotypeManager.class);
 
@@ -60,12 +60,19 @@ public class PhenotypeResource extends Resource {
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
+	public Response getPhenotypeSelectionView(@QueryParam("id") String id) {
+		return Response.ok(new PhenotypeView("PhenotypeView.ftl", rootPath, id)).build();
+	}
+
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeView(@PathParam("id") String id) {
 		return Response.ok(new PhenotypeView("PhenotypeView.ftl", rootPath, id)).build();
 	}
 	
 	@GET
-	@Path("/{iri}")
+	@Path("/{id}/{iri}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Category getPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
 		PhenotypeManager manager = managers.getUnchecked(id);
@@ -73,21 +80,21 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@GET
-	@Path("/categories")
+	@Path("/{id}/categories")
 	@Produces(MediaType.APPLICATION_JSON)
 	public PhenotypeManager.TreeNode getCategories(@PathParam("id") String id) {
 		return managers.getUnchecked(id).getTaxonomy(false);
 	}
 
 	@GET
-	@Path("/all")
+	@Path("/{id}/all")
 	@Produces(MediaType.APPLICATION_JSON)
 	public PhenotypeManager.TreeNode getPhenotypes(@PathParam("id") String id) {
 		return managers.getUnchecked(id).getTaxonomy(true);
 	}
 	
 	@GET
-	@Path("/decision-tree")
+	@Path("/{id}/decision-tree")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getDecisionTree(
 		@PathParam("id") String id, @QueryParam("phenotype") String phenotype, @QueryParam("format") String format
@@ -106,14 +113,14 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@GET
-	@Path("/phenotype-form")
+	@Path("/{id}/phenotype-form")
 	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeForm(@PathParam("id") String id) {
 		return Response.ok(new PhenotypeView("PhenotypeForm.ftl", rootPath, id)).build();
 	}
 
 	@POST
-	@Path("/create-category")
+	@Path("/{id}/create-category")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createCategory(@PathParam("id") String id, Phenotype formData) {
@@ -128,7 +135,7 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@POST
-	@Path("/create-abstract-phenotype")
+	@Path("/{id}/create-abstract-phenotype")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public synchronized Response createAbstractPhenotype(@PathParam("id") String id, Phenotype formData) {
@@ -143,7 +150,7 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@POST
-	@Path("/create-restricted-phenotype")
+	@Path("/{id}/create-restricted-phenotype")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public synchronized Response createRestrictedPhenotype(@PathParam("id") String id, Phenotype formData) {
@@ -158,14 +165,14 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@GET
-	@Path("/reason-form")
+	@Path("/{id}/reason-form")
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getReasonForm(@PathParam("id") String id) {
 		return Response.ok(new PhenotypeView("PhenotypeReasonForm.ftl", rootPath, id)).build();
 	}
 
 	@POST
-	@Path("/reason")
+	@Path("/{id}/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
 	public synchronized Response classifyIndividual(
