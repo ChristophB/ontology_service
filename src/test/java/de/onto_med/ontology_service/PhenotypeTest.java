@@ -127,6 +127,16 @@ public class PhenotypeTest extends AbstractTest {
 		if (Files.exists(Paths.get(path))) Files.delete(Paths.get(path));
 	}
 
+	@Test
+	public void testUpdateAbstractPhenotype() throws Exception {
+		// TODO: implement test for update of abstract phenotype
+	}
+
+	@Test
+	public void testUpdateRestrictedPhenotype() throws Exception {
+		// TODO: implement test for update of restricted phenotype
+	}
+
 
 
 	/*******************************

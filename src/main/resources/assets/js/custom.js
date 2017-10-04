@@ -72,7 +72,7 @@ function createPhenotypeTree(id, url, withContext) {
 					if (attributes.singlePhenotype.value == "true")
 						appendFormField(data.element, drop[0]);
 				} else if (drop[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) === -1) {
-					drop.val(drop.val() + ' ' + getNodeId(data.element) + ' ');
+					drop.val(drop.val() + ' ' + attributes.id.value + ' ');
 					focusInputEnd(drop);
 				} // else: formula does not accept string
 			}
@@ -127,7 +127,9 @@ function showPhenotypeForm(id, clear = false) {
 
 function clearPhenotypeFormData() {
 	$('form:not(.hidden) input[type!=checkbox].form-control, form:not(.hidden) textarea.form-control, form:not(.hidden) select').val(null);
+	$('form:not(.hidden) input[type=checkbox]').removeAttr('checked');
 	$('.generated').remove();
+	toggleValueDefinition();
 }
 
 function customMenu(node) {
@@ -162,7 +164,7 @@ function customMenu(node) {
 				$('form:not(.hidden) #super-phenotype').val(getNodeId(node));
 			}
 		},
-		inspect: {
+		inspect: { // TODO: does not work for e.g. boolean expression
 			label: 'Inspect',
 			action: function() {
 				$.getJSON(getNodeId(node), function(data) {
