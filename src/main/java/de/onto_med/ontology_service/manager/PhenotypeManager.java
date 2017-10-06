@@ -309,7 +309,7 @@ public class PhenotypeManager {
 				treeNode.setNumericPhenotype();
 			} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
 				treeNode.setStringPhenotype();
-			} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype)) {
+			} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype) || OWL2Datatype.XSD_LONG.equals(datatype)) {
 				treeNode.setDatePhenotype();
 			} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
 				treeNode.setBooleanPhenotype();

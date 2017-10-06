@@ -88,7 +88,6 @@ function appendFormField(element, target) {
 	if (type === "string") type = "text";
 
 	var inputField = '';
-	console.log(element.attributes);
 	if (element.attributes.restrictedPhenotype.value === "true") {
 		inputField = '<input type="hidden" name="' + id + '">';
 	} else if (['boolean', 'composite-boolean'].indexOf(type) !== -1) {
@@ -164,7 +163,7 @@ function customMenu(node) {
 				$('form:not(.hidden) #super-phenotype').val(getNodeId(node));
 			}
 		},
-		inspect: { // TODO: does not work for e.g. boolean expression
+		inspect: {
 			label: 'Inspect',
 			action: function() {
 				$.getJSON(getNodeId(node), function(data) {
@@ -217,26 +216,29 @@ function inspectPhenotype(data) {
 	console.log(data);
 
 	var form;
-	if (data.datatype === undefined) {
-		form = '#phenotype-category-form';
-	} else {
-		if (data.abstractPhenotype === true) {
-			form = '#abstract-phenotype-form';
-			$(form + ' #ucum').val(data.unit);
-			$(form + ' #datatype').val(getDatatype(data));
-			toggleValueDefinition();
-		} else {
-			switch (getDatatype(data)) { // TODO: implement filling of restriction fields, use data.phenotypeRange for this
-				case 'date': form = '#date-phenotype-form'; break;
-				case 'string': form = '#string-phenotype-form'; break;
-				case 'numeric': form = '#numeric-phenotype-form'; break;
-				case 'boolean': form = '#boolean-phenotype-form'; break;
-				case 'composite-boolean': form = '#composite-boolean-phenotype-form'; break;
-				case 'calculation': form = '#calculation-phenotype-form'; break;
-			}
-			$(form + ' #super-phenotype').val(data.abstractPhenotypeName);
+	if (data.abstractPhenotype === true) {
+		form = '#abstract-phenotype-form';
+		$(form + ' #ucum').val(data.unit);
+		$(form + ' #datatype').val(getDatatype(data));
+		toggleValueDefinition();
+	} else if (data.restrictedPhenotype === true) {
+		switch (getDatatype(data)) {
+			case 'date':              form = '#date-phenotype-form'; break;
+			case 'string':            form = '#string-phenotype-form'; break;
+			case 'numeric':           form = '#numeric-phenotype-form'; break;
+			case 'boolean':           form = '#boolean-phenotype-form'; break;
+			case 'composite-boolean':
+				form = '#composite-boolean-phenotype-form';
+				$(form + ' #expression').val(data.manchesterSyntaxExpression); // TODO: print original string
+				$(form + ' #score').val(data.score);
+				break;
+			case 'calculation':       form = '#calculation-phenotype-form'; break;
 		}
-	}
+		$(form + ' #super-phenotype').val(data.abstractPhenotypeName);
+	} else {
+    	form = '#phenotype-category-form';
+    	// TODO: add super category value to form
+    }
 
 	showPhenotypeForm(form);
 
@@ -245,18 +247,64 @@ function inspectPhenotype(data) {
 
 	data.labels.forEach(function(label) {
 		addRow('#label-div');
-        $(form + ' #label-div .generated select:last').val(label.lang);
-        $(form + ' #label-div .generated input[type=text]:last').val(label.text);
+        $(form + ' #label-div .generated:last select').val(label.lang);
+        $(form + ' #label-div .generated:last input[type=text]').val(label.text);
 	});
 	data.definitions.forEach(function(definition) {
     	addRow('#definition-div');
-        $(form + ' #definition-div .generated select:last').val(definition.lang);
-        $(form + ' #definition-div .generated textarea:last').val(definition.text);
+        $(form + ' #definition-div .generated:last select').val(definition.lang);
+        $(form + ' #definition-div .generated:last textarea').val(definition.text);
     });
 	data.relatedConcepts.forEach(function(relation) {
     	addRow('#relation-div');
-        $(form + ' #relation-div .generated input[type=text]:last').val(relation);
+        $(form + ' #relation-div .generated:last input[type=text]').val(relation);
     });
+    addRange(form, data.phenotypeRange);
+}
+
+function addRange(form, range) {
+	if (!range) return;
+
+	if (range.dateValue || range.dateValues || range.dateRange) asDate = true;
+    value = range.stringValue || range.dateValue || range.integerValue || range.doubleValue;
+    values = range.stringValues || range.dateValues || range.integerValues || range.doubleValues;
+    rangeValues = range.dateRange || range.integerRange || range.doubleRange;
+
+	if (value !== null) {
+		addEnumFieldWithValue(form, convertValue(value, asDate));
+	} else if (values !== null) {
+		values.forEach(function(value) {
+			addEnumFieldWithValue(form, convertValue(value, asDate));
+		});
+	} else if (rangeValues !== null) {
+		if (rangeValues.MIN_INCLUSIVE) {
+			$(form + ' #range-min-operator').val('>=');
+			$(form + ' #range-min').val(convertValue(rangeValues.MIN_INCLUSIVE, asDate));
+		} else if (rangeValues.MIN_EXCLUSIVE) {
+			$(form + ' #range-min-operator').val('>');
+            $(form + ' #range-min').val(convertValue(rangeValues.MIN_EXCLUSIVE, asDate));
+		}
+		if (rangeValues.MAX_INCLUSIVE) {
+           	$(form + ' #range-max-operator').val('<=');
+           	$(form + ' #range-max').val(convertValue(rangeValues.MAX_INCLUSIVE, asDate));
+        } else if (rangeValues.MAX_EXCLUSIVE) {
+            $(form + ' #range-max-operator').val('<');
+           	$(form + ' #range-max').val(convertValue(rangeValues.MAX_EXCLUSIVE, asDate));
+        }
+	}
+}
+
+function convertValue(value, asDate) {
+	if (asDate) {
+		return new Date(value).toISOString().substring(0, 10);
+	} else {
+		return value;
+	}
+}
+
+function addEnumFieldWithValue(form, value) {
+	addRow('#enum-form-group');
+    $(form + ' #enum-form-group .generated:last input[type=text]').val(value);
 }
 
 function getDatatype(data) {
@@ -266,7 +314,7 @@ function getDatatype(data) {
     	return "calculation";
     } else if (data.datatype == 'XSD_STRING') {
     	return "string";
-    } else if (data.datatype == 'XSD_DATE_TIME') {
+    } else if (data.datatype == 'XSD_DATE_TIME' || data.datatype == 'XSD_LONG') {
     	return "date";
     } else if (data.datatype == 'XSD_INTEGER' || data.datatype == 'XSD_DOUBLE') {
     	return "numeric";

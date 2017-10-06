@@ -5,25 +5,25 @@
 	<label class="control-label">By Range</label>
 	<div class="row">
 		<div class="col-sm-1" style="padding-right:0">
-			<select class="form-control operator-select" name="rangeMinOperator">
+			<select class="form-control operator-select" id="range-min-operator" name="rangeMinOperator">
 				<option value="&gt;=" <@minSelected "&gt;="/> >&ge;</option>
 				<option value="&gt;" <@minSelected "&gt;"/> >&gt;</option>
 			</select>
 		</div>
-		<div class="col-sm-2" style="padding-left:0">
-			<input type="text" class="form-control" name="rangeMin" placeholder="Min"
+		<div class="col-sm-3" style="padding-left:0">
+			<input type="text" class="form-control" id="range-min" name="rangeMin" placeholder="Min"
 			    value="<#if phenotype?? & phenotype.rangeMin??>${phenotype.rangeMin}</#if>"
 			>
 		</div>
 			
 		<div class="col-sm-1" style="padding-right:0">
-			<select class="form-control operator-select" name="rangeMaxOperator">
+			<select class="form-control operator-select" id="range-max-operator" name="rangeMaxOperator">
 				<option value="&lt;=" <@maxSelected "&lt;="/> >&le;</option>
 				<option value="&lt;" <@maxSelected "&lt;"/> >&lt;</option>
 			</select>
 		</div>
-		<div class="col-sm-2" style="padding-left:0">
-			<input type="text" class="form-control" name="rangeMax" placeholder="Max"
+		<div class="col-sm-3" style="padding-left:0">
+			<input type="text" class="form-control" id="range-max" name="rangeMax" placeholder="Max"
 			    value="<#if phenotype?? & phenotype.rangeMax??>${phenotype.rangeMax}</#if>"
 			>
 		</div>
