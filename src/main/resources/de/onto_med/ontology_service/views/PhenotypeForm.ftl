@@ -3,8 +3,8 @@
 <#assign title = "Phenotype Create Form">
 <#assign current = "Phenotypes">
 <#assign current_submenu = "phenotype-form">
-<#assign heading = "Phenotype-Definition Form">
-<#assign subHeading = "On this page you can define a new phenotype with all required metadata and properties.">
+<#assign heading = "Phenotype Editing">
+<#assign subHeading = "On this page you can create or update phenotypes and their metadata and properties.">
 
 <html>
 	<#include "partials/Head.ftl">
@@ -66,8 +66,8 @@
                         data: JSON.stringify($($(this).closest('form')[0]).serializeJSON()),
                         success: function(result) {
                             $('#phenotype-tree').jstree('refresh');
-                            showMessage(result, 'success');
                             clearPhenotypeFormData();
+                            showMessage(result, 'success');
                         },
                         error: function(result) {
                             var response = JSON.parse(result.responseText);

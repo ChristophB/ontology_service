@@ -10,7 +10,7 @@
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
 		<#include "partials/Messages.ftl">
-    	
+
     	<div class="container">
     		<div class="row">
 	    		<table class="table">
@@ -50,7 +50,7 @@
 						</tr>
 						
 						<tr>
-							<td rowspan="7">/phenotype</td>
+							<td rowspan="7">/phenotype/{id}</td>
 						</tr>
 						
 						<tr>
@@ -60,41 +60,31 @@
 						
 						<tr>
 							<td>/all</td>
-							<td>
-								A List of all phenotypes and/or phenotype categories
-								<ul>
-									<li><b>type:</b> can be 'all', 'phenotype', 'category', 'integer', 'double', 'string', 'formula', 'expression' (default: all)</li>
-								</ul>
-							</td>
+							<td>A List of all phenotypes and/or phenotype categories</td>
 						</tr>
 						
 						<tr>
 							<td>/create</td>
 							<td>
-								Creates a phenotype with provided data. <i>/simple-phenotype-form</i> and <i>/composit-phenotype-form</i> send their data to this endpoint.<br>
+								Creates a phenotype with provided data. <i>/phenotype-form</i> sends its data to this endpoint.<br>
 								All parameters in the following list, which end with '[]' are handled as lists and thus can be provided multiple times. Their order may be important to map for example language to label.
 								<ul>
 									<li><b>id:</b> Unique identifier</li>
 									<li><b>label[]:</b> Label</li>
-									<li><b>label-language[]:</b> Label language</li>
-									<li><b>has-super-phenotype:</b> Signals if the phenotype has a super phenotype. Use 'true' as value.</li>
-									<li><b>super-phenotype:</b> The ID of an existing phenotype, which will be used as super phenotype.</li>
-									<li><b>category:</b> Category ID in which the phenotype will be placed</li>
-									<li><b>new-category:</b> A new Category's ID</li>
+									<li><b>labelLanguage[]:</b> Label language</li>
+									<li><b>superPhenotype:</b> The ID of an existing phenotype, which will be used as super phenotype.</li>
+									<li><b>categories:</b> Category ID in which the phenotype will be placed</li>
 									<li><b>definition[]:</b> Textual definition</li>
-									<li><b>definition-language[]:</b> Definition language</li>
+									<li><b>definitionLanguage[]:</b> Definition language</li>
 									<li><b>datatype:</b> one of 'integer', 'double', 'string', 'formula', 'expression' (required)</li>
 									<li><b>ucum:</b> Unit of a integer/double/formula phenotype as UCUM</li>
-									<li><b>range-min[]:</b> Minimal value for sub phenotype range</li>
-									<li><b>range-min-operator[]:</b> Operator for range-min[] ('=', '&ge;', '>')</li>
-									<li><b>range-max[]:</b> Maximum value for sub phenotype range</li>
-									<li><b>range-max-operator[]:</b> Operator for range-max[] ('<', '&le;', '=')</li>
-									<li><b>enum-value[]:</b> Enumeration value for string phenotypes</li>
-									<li><b>enum-label[]:</b> Label for enum[value] or a numeric range, specified by range-x[] and range-x-operator[]</li>
+									<li><b>rangeMin[]:</b> Minimal value for sub phenotype range</li>
+									<li><b>rangeMinOperator[]:</b> Operator for range-min[] ('=', '&ge;', '>')</li>
+									<li><b>rangeMax[]:</b> Maximum value for sub phenotype range</li>
+									<li><b>rangeMaxOperator[]:</b> Operator for range-max[] ('<', '&le;', '=')</li>
+									<li><b>enumValue[]:</b> Enumeration value for string phenotypes</li>
 									<li><b>formula:</b> A mathematical formula which may contain other numerical phenotypes.</li>
-									<li><b>expression:</b> A logical expression which may contain other phenotypes and mathematic symbols.</li>
-									<li><b>boolean-true-label:</b> Label for phenotypes, where the expression evaluates to true.</li>
-									<li><b>boolean-false-label:</b> Label for phenotypes, where the expression evaluates to false.</li>
+									<li><b>expression:</b> A logical expression which may contain other phenotypes and mathematical symbols.</li>
 									<li><b>relation[]:</b> IRI referencing other ontological entities.</li>
 								</ul>	
 							</td>

@@ -12,7 +12,7 @@
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
 		<#include "partials/Messages.ftl">
-		
+
 		<div class="container">
 			<div class="row">
 				<#list resultset as result>

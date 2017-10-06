@@ -15,13 +15,13 @@ function addRow(id) {
 }
 
 function showMessage(text, state) {
-	$('#messages-div').empty();
-	$('#messages-div').append(
-		'<div id="message" class="alert alert-' + state + ' col-sm-6 col-sm-offset-3">'
-			+ '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
-			+ text
-		+ '</div>'
-	);
+	$('#message').remove();
+	$('body').append(
+		'<div id="message" class="alert alert-' + state + ' fade in">'
+    	+ '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+        	+ text
+        + '</div>'
+    );
 }
 
 function createPhenotypeTree(id, url, withContext) {
@@ -125,6 +125,7 @@ function showPhenotypeForm(id, clear = false) {
 }
 
 function clearPhenotypeFormData() {
+	$('#message').remove();
 	$('form:not(.hidden) input[type!=checkbox].form-control, form:not(.hidden) textarea.form-control, form:not(.hidden) select').val(null);
 	$('form:not(.hidden) input[type=checkbox]').removeAttr('checked');
 	$('.generated').remove();
@@ -184,6 +185,13 @@ function customMenu(node) {
 				var win = window.open('decision-tree?phenotype=' + getNodeId(node) + '&format=graphml', '_blank');
 				win.focus();
 			}
+		},
+		delete: {
+			label: 'Delete',
+			action: function() {
+				// TODO: implement deletion of phenotypes and categories
+				alert('Not implemented.');
+			}
 		}
 	};
 
@@ -197,6 +205,11 @@ function customMenu(node) {
 	if (!node.a_attr.abstractPhenotype) {
 		delete items.getDecisionTreePng;
 		delete items.getDecisionTreeGraphml;
+	}
+
+	if (node.a_attr.id === 'Phenotype_Category') {
+		delete items.delete;
+		delete items.inspect;
 	}
 	return items;
 }
@@ -223,16 +236,16 @@ function inspectPhenotype(data) {
 		toggleValueDefinition();
 	} else if (data.restrictedPhenotype === true) {
 		switch (getDatatype(data)) {
-			case 'date':              form = '#date-phenotype-form'; break;
-			case 'string':            form = '#string-phenotype-form'; break;
-			case 'numeric':           form = '#numeric-phenotype-form'; break;
-			case 'boolean':           form = '#boolean-phenotype-form'; break;
+			case 'date':    form = '#date-phenotype-form';    break;
+			case 'string':  form = '#string-phenotype-form';  break;
+			case 'numeric': form = '#numeric-phenotype-form'; break;
+			case 'boolean': form = '#boolean-phenotype-form'; break;
 			case 'composite-boolean':
 				form = '#composite-boolean-phenotype-form';
 				$(form + ' #expression').val(data.manchesterSyntaxExpression); // TODO: print original string
 				$(form + ' #score').val(data.score);
 				break;
-			case 'calculation':       form = '#calculation-phenotype-form'; break;
+			case 'calculation': form = '#calculation-phenotype-form'; break;
 		}
 		$(form + ' #super-phenotype').val(data.abstractPhenotypeName);
 	} else {
@@ -266,17 +279,18 @@ function addRange(form, range) {
 	if (!range) return;
 
 	if (range.dateValue || range.dateValues || range.dateRange) asDate = true;
-    value = range.stringValue || range.dateValue || range.integerValue || range.doubleValue;
-    values = range.stringValues || range.dateValues || range.integerValues || range.doubleValues;
+
+    value       = range.stringValue || range.dateValue || range.integerValue || range.doubleValue;
+    values      = range.stringValues || range.dateValues || range.integerValues || range.doubleValues;
     rangeValues = range.dateRange || range.integerRange || range.doubleRange;
 
-	if (value !== null) {
+	if (value) {
 		addEnumFieldWithValue(form, convertValue(value, asDate));
-	} else if (values !== null) {
+	} else if (values) {
 		values.forEach(function(value) {
 			addEnumFieldWithValue(form, convertValue(value, asDate));
 		});
-	} else if (rangeValues !== null) {
+	} else if (rangeValues) {
 		if (rangeValues.MIN_INCLUSIVE) {
 			$(form + ' #range-min-operator').val('>=');
 			$(form + ' #range-min').val(convertValue(rangeValues.MIN_INCLUSIVE, asDate));

@@ -9,7 +9,7 @@
 
 			<#if id??>
 				<a class="list-group-item <@active "phenotype-form" />" href="${rootPath}/phenotype/${id}/phenotype-form">
-					Create Phenotype
+					Edit Phenotypes
 				</a>
 			</#if>
 

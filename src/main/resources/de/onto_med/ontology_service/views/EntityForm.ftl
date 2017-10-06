@@ -10,7 +10,7 @@
 		<#include "partials/Navbar.ftl">
 		<#include "partials/Heading.ftl">
 		<#include "partials/Messages.ftl">
-		
+
 		<div class="container">
 			<div class="row well">
 				<form action="${rootPath}/entity" method="get" class="form" role="form">
