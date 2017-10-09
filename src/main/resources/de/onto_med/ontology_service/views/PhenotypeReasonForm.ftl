@@ -21,7 +21,7 @@
                 	<div id="phenotype-tree" class="well pre-scrollable "></div>
                 </div>
 
-                <form id="reason-form" class="col-sm-7" action="" method="post">
+                <form id="reason-form" class="col-sm-7" action="" method="post" onSubmit="return false">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="panel-title pull-left">
