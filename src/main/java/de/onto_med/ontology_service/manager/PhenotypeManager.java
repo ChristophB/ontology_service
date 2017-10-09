@@ -206,9 +206,12 @@ public class PhenotypeManager {
 
 			String value = property.getValue();
 			String name  = property.getName();
+			if (StringUtils.isBlank(value)) value = null;
 
 			SinglePhenotypeInstance instance;
-			if (phenotype.isRestrictedPhenotype()) {
+			if (value == null) {
+				instance = new SinglePhenotypeInstance(name, value); // TODO: check that instance is created with null value
+			} else if (phenotype.isRestrictedPhenotype()) {
 				throw new IllegalArgumentException("Reasoning with restricted phenotypes is not yet supported.");
 				// instance = new SinglePhenotypeInstance(name, null); // TODO: request implementation
 			} else if (phenotype.isAbstractBooleanPhenotype()) {

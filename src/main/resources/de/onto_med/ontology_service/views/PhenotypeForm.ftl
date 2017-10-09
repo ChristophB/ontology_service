@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <#assign title = "Phenotype Create Form">
-<#assign current = "Phenotypes">
+<#assign current = "Phenotyping">
 <#assign current_submenu = "phenotype-form">
 <#assign heading = "Phenotype Editing">
 <#assign subHeading = "On this page you can create or update phenotypes and their metadata and properties.">

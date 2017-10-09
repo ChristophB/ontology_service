@@ -61,6 +61,7 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeSelectionView(@QueryParam("id") String id) {
+		if (StringUtils.isBlank(id)) id = null;
 		return Response.ok(new PhenotypeView("PhenotypeView.ftl", rootPath, id)).build();
 	}
 

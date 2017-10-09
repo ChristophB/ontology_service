@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <#assign title = "Phenotype Reasoning Form">
-<#assign current = "Phenotypes">
+<#assign current = "Phenotyping">
 <#assign current_submenu = "reason-form">
 <#assign heading = "Phenotype Reasoning Form">
 <#assign subHeading = "Define properties based on phenotypes and get inferred phenotypes.">
@@ -28,7 +28,9 @@
                                 Drag phenotypes from the right side and drop them into this form.
                             </div>
                             <div class="panel-title pull-right">
-                                <input type="button" id="submit" class="btn btn-primary" value="Get Phenotypes">
+                                <a id="submit-button" class="btn btn-primary" href="#">
+                                	Get Phenotypes
+                                </a>
                             </div>
                             <div class="clearfix"></div>
                         </div>
@@ -47,7 +49,12 @@
             	$('[data-toggle="tooltip"]').tooltip();
             	createPhenotypeTree('phenotype-tree', '${rootPath}/phenotype/${id}/all', false);
 
-                $('form #submit').on('click', function() {
+                $('form #submit-button').on('click', function() {
+                	$('form #submit-button').html(
+                		'<i class="fa fa-refresh fa-spin fa-fw" aria-hidden="true"></i>'
+                		+ '<span class="sr-only">Loading...</span>'
+                	).addClass('disabled');
+
                     $.ajax({
                         url: '${rootPath}/phenotype/${id}/reason',
                         dataType: 'text',
@@ -66,16 +73,19 @@
                                 data: JSON.stringify($('#reason-form').serializeArray()),
                                 success: function(png) {
                                     download('data:image/png;base64,' + png, 'reasoner_report.png', 'image/png');
+                                    $('form #submit-button').html('Get Phenotypes').removeClass('disabled');
                                 },
                                 error: function(result) {
                                     var response = JSON.parse(result.responseText);
                                     showMessage(response.message, 'danger');
+                                    $('form #submit-button').html('Get Phenotypes').removeClass('disabled');
                                 }
                             });
                         },
                         error: function(result) {
                             var response = JSON.parse(result.responseText);
                             showMessage(response.message, 'danger');
+                            $('form #submit-button').html('Get Phenotypes').removeClass('disabled');
                         }
                     });
                 });

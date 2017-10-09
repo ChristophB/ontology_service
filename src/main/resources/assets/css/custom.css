@@ -71,3 +71,6 @@
 .navbar {
 	margin-bottom: 0px;
 }
+.panel-title .btn {
+	color: #fff;
+}

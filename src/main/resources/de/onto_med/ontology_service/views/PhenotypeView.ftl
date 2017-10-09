@@ -1,7 +1,7 @@
-<#assign title = "Phenotypes">
-<#assign current = "Phenotypes">
+<#assign title = "Phenotyping">
+<#assign current = "Phenotyping">
 <#assign current_submenu = "overview">
-<#assign heading = "Phenotypes">
+<#assign heading = "Phenotyping">
 <#assign subHeading ="Create New Phenotypes or View Existing Ones">
 
 <html>
