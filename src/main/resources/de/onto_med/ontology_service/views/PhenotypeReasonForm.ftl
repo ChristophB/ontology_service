@@ -50,17 +50,17 @@
                 $('form #submit').on('click', function() {
                     $.ajax({
                         url: '${rootPath}/phenotype/${id}/reason',
-                        dataType: 'json',
+                        dataType: 'text',
                         contentType: 'application/json; charset=utf-8',
                         processData: false,
                         type: 'POST',
                         data: JSON.stringify($('#reason-form').serializeArray()),
                         success: function(result) {
-                            showMessage(result.join(", "), 'success');
+                            showMessage(result, 'success');
                             $.ajax({
-                                url: '${rootPath}/phenotype/reason',
+                                url: '${rootPath}/phenotype/${id}/reason-image',
                                 dataType: 'text',
-                                contentType: 'application/json',
+                                contentType: 'application/json; charset=utf-8',
                                 processData: false,
                                 type: 'POST',
                                 data: JSON.stringify($('#reason-form').serializeArray()),

@@ -247,6 +247,10 @@ public class PhenotypeManager {
 		return manager.derivePhenotypes(complex, 0).getFinalReport();
 	}
 
+	public String classifyIndividualAsString(List<Property> properties) throws IllegalArgumentException {
+		return classifyIndividual(properties).toString().replaceAll("\n", "<br>");
+	}
+
 	public List<String> classifyIndividualAsList(List<Property> properties) throws IllegalArgumentException {
 		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getName).collect(Collectors.toList());
 	}

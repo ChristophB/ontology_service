@@ -174,8 +174,8 @@ public class PhenotypeResource extends Resource {
 	@POST
 	@Path("/{id}/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
-	public synchronized Response classifyIndividual(
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+	public synchronized Response classifyIndividualAsText(
 		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties
 	) {
 		if (properties == null || properties.isEmpty())
@@ -184,14 +184,33 @@ public class PhenotypeResource extends Resource {
 		PhenotypeManager manager = managers.getUnchecked(id);
 
 		try {
-			if (acceptsMediaType(headers, MediaType.TEXT_PLAIN_TYPE)) {
-				return Response.ok(Base64.encodeBase64(manager.classifyIndividualAsImage(properties)), MediaType.APPLICATION_OCTET_STREAM)
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='reasoner_report.png'")
-					.build();
-			} else {
+			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
 				return Response.ok(manager.classifyIndividualAsList(properties)).build();
+			} else {
+				return Response.ok(manager.classifyIndividualAsString(properties)).build();
 			}
-		} catch (IOException | IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
+			throw new WebApplicationException(e.getMessage());
+		}
+	}
+
+	@POST
+	@Path("{id}/reason-image")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_OCTET_STREAM })
+	public synchronized Response classifyIndividualAsImage(
+		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties
+	) {
+		if (properties == null || properties.isEmpty())
+			throw new WebApplicationException("No properties were provided.");
+
+		PhenotypeManager manager = managers.getUnchecked(id);
+
+		try {
+			return Response.ok(Base64.encodeBase64(manager.classifyIndividualAsImage(properties)), MediaType.APPLICATION_OCTET_STREAM)
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='reasoner_report.png'")
+				.build();
+		} catch (IOException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
