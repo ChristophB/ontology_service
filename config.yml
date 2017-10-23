@@ -7,7 +7,9 @@ server:
   - type: http
     port: 8081
   adminContextPath: /ontology-service
-dataPath: /data/webprotege/
+  requestLog:
+    appenders: []
+dataPath: H:/Projekte/Leipzig Health Atlas/Development/Web-Service/data/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
-phenotypePath: /data/ontology-service/cop_%id%.owl
+phenotypePath: H:/Projekte/Leipzig Health Atlas/Development/Web-Service/data/ontology-service/cop_%id%.owl

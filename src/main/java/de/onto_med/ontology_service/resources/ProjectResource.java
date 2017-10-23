@@ -47,7 +47,7 @@ public class ProjectResource extends Resource {
 	/**
 	 * Returns a list of imported ontologies for a specified project.
 	 * @param headers Headers of the HTTP request
-	 * @param projectId ID of the WebProtegé project
+	 * @param projectId ID of the WebProtégé project
 	 * @return List of imported ontologies or error message
 	 */
 	@GET
@@ -68,7 +68,7 @@ public class ProjectResource extends Resource {
 	}
 	
 	/**
-	 * Transforms the projects ontologies into GraphmML and returns the result as string.
+	 * Transforms the projects ontologies into GraphML and returns the result as string.
 	 * @param id ID of the WebProtégé project
 	 * @return GraphML
 	 */
@@ -114,7 +114,7 @@ public class ProjectResource extends Resource {
 		if (hasIndividualAssertions)
 			graphMlOntology.addIndividualAssertions();
 		if (hasPropertyDefinitions)
-			graphMlOntology.addProperyDefinitions();
+			graphMlOntology.addPropertyDefinitions();
 
 		return Response
 			.ok(graphMlOntology.toXml().toString())
@@ -188,7 +188,7 @@ public class ProjectResource extends Resource {
 	
 	/**
 	 * Returns full OWL document as RDF/XML.
-	 * @param projectId ID of the WebProtegé project
+	 * @param projectId ID of the WebProtégé project
 	 * @return JSON response
 	 */
 	@GET
@@ -227,7 +227,7 @@ public class ProjectResource extends Resource {
 	}
 	
 	/**
-	 * Reasons over the specified ontologies with supplied classexpression
+	 * Reasons over the specified ontologies with supplied class expression.
 	 * @param projectId projectId of the project
 	 * @param ce class expression
 	 * @return search result
