@@ -93,7 +93,7 @@ public class PhenotypeManager {
 
 		if (StringUtils.isBlank(formData.getSuperCategory()))
 			manager.addPhenotypeCategory(category);
-		else manager.addPhenotypeCategory(category, cleanName(formData.getSuperCategory()));
+		else manager.addPhenotypeCategory(category, formData.getSuperCategory());
 		manager.write();
 
 		return category;
@@ -119,36 +119,36 @@ public class PhenotypeManager {
 					? OWL2Datatype.XSD_DOUBLE : OWL2Datatype.XSD_INTEGER;
 				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractSinglePhenotype(formData.getId(), datatype)
-					: new AbstractSinglePhenotype(formData.getId(), datatype, cleanNames(formData.getCategories()).split(";"));
+					: new AbstractSinglePhenotype(formData.getId(), datatype, formData.getCategories().split(";"));
 				if (StringUtils.isNoneBlank(formData.getUcum()))
 					phenotype.asAbstractSinglePhenotype().setUnit(formData.getUcum());
 				break;
 			case "string":
 				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING)
-					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING, cleanNames(formData.getCategories()).split(";"));
+					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING, formData.getCategories().split(";"));
 				break;
 			case "date":
 				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DATE_TIME)
-					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DATE_TIME, cleanNames(formData.getCategories()).split(";"));
+					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DATE_TIME, formData.getCategories().split(";"));
 				break;
 			case "boolean":
 				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_BOOLEAN)
-					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_BOOLEAN, cleanNames(formData.getCategories()).split(";"));
+					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_BOOLEAN, formData.getCategories().split(";"));
 				break;
 			case "composite-boolean":
 				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractBooleanPhenotype(formData.getId())
-					: new AbstractBooleanPhenotype(formData.getId(), cleanName(formData.getCategories()).split(";"));
+					: new AbstractBooleanPhenotype(formData.getId(), formData.getCategories().split(";"));
 				break;
 			case "calculation":
 				if (StringUtils.isBlank(formData.getFormula()))
 					throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
 				phenotype = StringUtils.isBlank(formData.getCategories())
 					? new AbstractCalculationPhenotype(formData.getId(), manager.getFormula(formData.getFormula()))
-					: new AbstractCalculationPhenotype(formData.getId(), manager.getFormula(formData.getFormula()), cleanNames(formData.getCategories()).split(";"));
+					: new AbstractCalculationPhenotype(formData.getId(), manager.getFormula(formData.getFormula()), formData.getCategories().split(";"));
 				if (StringUtils.isNoneBlank(formData.getUcum()))
 					phenotype.asAbstractCalculationPhenotype().setUnit(formData.getUcum());
 				break;
@@ -176,7 +176,7 @@ public class PhenotypeManager {
 		if (StringUtils.isBlank(formData.getSuperPhenotype()))
 			throw new NullPointerException("Super phenotype is missing.");
 
-		Category superPhenotype = manager.getPhenotype(cleanName(formData.getSuperPhenotype()));
+		Category superPhenotype = manager.getPhenotype(formData.getSuperPhenotype());
 		RestrictedPhenotype phenotype;
 
 		if (superPhenotype == null) {
@@ -187,18 +187,18 @@ public class PhenotypeManager {
 					"Boolean expression for restricted boolean phenotype is missing.");
 
 			phenotype = new RestrictedBooleanPhenotype(
-				formData.getId(), cleanName(superPhenotype.getName()),
+				formData.getId(), superPhenotype.getName(),
 				manager.getManchesterSyntaxExpression(formData.getExpression())
 			);
 			phenotype.asRestrictedBooleanPhenotype().setScore(formData.getScore());
 		} else if (superPhenotype.isAbstractCalculationPhenotype()) {
 			phenotype = new RestrictedCalculationPhenotype(
-				formData.getId(), cleanName(formData.getSuperPhenotype()),
+				formData.getId(), formData.getSuperPhenotype(),
 				getRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, formData)
 			);
 		} else if (superPhenotype.isAbstractSinglePhenotype()) {
 			phenotype = new RestrictedSinglePhenotype(
-				formData.getId(), cleanName(formData.getSuperPhenotype()),
+				formData.getId(), formData.getSuperPhenotype(),
 				getRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), formData)
 			);
 		} else {
@@ -610,32 +610,6 @@ public class PhenotypeManager {
 		} else if (phenotype.isAbstractSinglePhenotype()) {
 			manager.addAbstractSinglePhenotype(phenotype.asAbstractSinglePhenotype());
 		}
-	}
-
-	/**
-	 * TODO: This function is taken from the Category class of PhenoMan. Remove this workaround!
-	 */
-	private String cleanName(String str) {
-		str = str.replaceAll("[^A-Za-z0-9_]+", "_");
-		str = str.replaceAll("_+", "_");
-		if (str.endsWith("_")) {
-			str = str.substring(0, str.length() - 1);
-		}
-
-		return str;
-	}
-
-	/**
-	 * TODO: This function is taken from the Category class of PhenoMan. Remove this workaround!
-	 */
-	private String cleanNames(String str) {
-		str = str.replaceAll("[^A-Za-z0-9_;]+", "_");
-		str = str.replaceAll("_+", "_");
-		if (str.endsWith("_")) {
-			str = str.substring(0, str.length() - 1);
-		}
-
-		return str;
 	}
 
 	public class TreeNode {
