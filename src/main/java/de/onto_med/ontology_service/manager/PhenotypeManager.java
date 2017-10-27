@@ -25,11 +25,28 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class serves as communicator between the web application and the PhenoMan.
+ * @author Christoph Beger
+ */
 public class PhenotypeManager {
+	/**
+	 * A list of supported date patterns.
+	 */
 	private final List<String> DATE_PATTERNS = Arrays.asList("dd.MM.yyyy", "yyyy-MM-dd");
 
+	/**
+	 * The PhenoMan manager instance of a phenotype ontology.
+	 */
 	private PhenotypeOntologyManager manager;
 
+	/**
+	 * This constructor opens an existing phenotype ontology or creates a new one.
+	 * Existing files are not overwritten but appended to.
+	 * The parameter @code{phenotypePath} specifies the location of the existing
+	 * ontology or of the ontology to be created.
+	 * @param phenotypePath Path to the phenotype ontology OWL file.
+	 */
 	public PhenotypeManager(String phenotypePath) {
 		manager = new PhenotypeOntologyManager(phenotypePath, false);
 		manager.write();
@@ -196,6 +213,13 @@ public class PhenotypeManager {
 		return phenotype;
 	}
 
+	/**
+	 * This method created a temporary individual with the provided list of properties.
+	 * Thereafter, types of the individual are retrieved with a reasoner and returned as @code{ReasonerReport}.
+	 * @param properties A list of properties, which will be used to create the individual.
+	 * @return A ReasonerReport which contains all found types of the individual.
+	 * @throws IllegalArgumentException If a property value could not be parsed.
+	 */
 	private ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
 		ComplexPhenotypeInstance complex = new ComplexPhenotypeInstance();
 
@@ -250,14 +274,33 @@ public class PhenotypeManager {
 		return manager.derivePhenotypes(complex, 0).getFinalReport();
 	}
 
+	/**
+	 * Returns the result of @code{classifyIndividual} as HTML formated string.
+	 * @param properties A list of properties, which will be used to create the individual.
+	 * @return String representation of the reasoning result.
+	 * @throws IllegalArgumentException If a property value could not be parsed.
+	 */
 	public String classifyIndividualAsString(List<Property> properties) throws IllegalArgumentException {
 		return classifyIndividual(properties).toString().replaceAll("\n", "<br>");
 	}
 
+	/**
+	 * Returns the result of @code{classifyIndividual} as list.
+	 * @param properties A list of properties, which will be used to create the individual.
+	 * @return A list of class names.
+	 * @throws IllegalArgumentException If a property value could not be parsed.
+	 */
 	public List<String> classifyIndividualAsList(List<Property> properties) throws IllegalArgumentException {
 		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getName).collect(Collectors.toList());
 	}
 
+	/**
+	 * Returns the result of @code{classifyIndividual} as image.
+	 * @param properties A list of properties, which will be used to create the individual.
+	 * @return Byte representation of the resulting image.
+	 * @throws IOException If the file image file could not be created or written to.
+	 * @throws IllegalArgumentException If a property value could not be parsed.
+	 */
 	public byte[] classifyIndividualAsImage(List<Property> properties) throws IOException, IllegalArgumentException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ImageIO.write(
@@ -334,6 +377,12 @@ public class PhenotypeManager {
 		return treeNode;
 	}
 
+	/**
+	 * Converts an OWL2Datatype to a string, depending on the provided category/phenotype.
+	 * @param datatype The OWL2Datatype.
+	 * @param category The category or phenotype object.
+	 * @return A string for representation of the OWL2Datatype.
+	 */
 	private String owl2DatatypeToString(OWL2Datatype datatype, Category category) {
 		if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
 			return "composite-boolean";
@@ -351,6 +400,11 @@ public class PhenotypeManager {
 		return null;
 	}
 
+	/**
+	 * Returns the OWL2Datatype of a category or phenotype.
+	 * @param category The category or phenotype object.
+	 * @return The OWL2Datatype of the category.
+	 */
 	private OWL2Datatype getDatatype(Category category) {
 		if (category.isAbstractSinglePhenotype()) {
 			return category.asAbstractSinglePhenotype().getDatatype();
