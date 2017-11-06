@@ -332,9 +332,21 @@ public class PhenotypeManager {
 		}
 	}
 
+	public List<String> getList() {
+		return taxonomyAsList(manager.getPhenotypeCategoryTree(true));
+	}
 
 
 
+
+
+
+	private List<String> taxonomyAsList(PhenotypeCategoryTreeNode node) {
+		List<String> result = new ArrayList<>();
+		result.add(node.getName());
+		node.getChildren().forEach(c -> result.addAll(taxonomyAsList(c)));
+		return result;
+	}
 
 	private TreeNode getTreeNode(PhenotypeCategoryTreeNode node, Boolean includePhenotypes) {
 		Category category = node.getCategory();

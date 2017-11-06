@@ -81,17 +81,14 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@GET
-	@Path("/{id}/categories")
-	@Produces(MediaType.APPLICATION_JSON)
-	public PhenotypeManager.TreeNode getCategories(@PathParam("id") String id) {
-		return managers.getUnchecked(id).getTaxonomy(false);
-	}
-
-	@GET
 	@Path("/{id}/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PhenotypeManager.TreeNode getPhenotypes(@PathParam("id") String id) {
-		return managers.getUnchecked(id).getTaxonomy(true);
+	public Response getPhenotypes(@PathParam("id") String id, @QueryParam("type") String type) {
+		if ("list".equals(type)) {
+			return Response.ok(managers.getUnchecked(id).getList()).build();
+		} else {
+			return Response.ok(managers.getUnchecked(id).getTaxonomy(true)).build();
+		}
 	}
 	
 	@GET

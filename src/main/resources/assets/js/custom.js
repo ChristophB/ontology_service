@@ -130,6 +130,16 @@ function clearPhenotypeFormData() {
 	$('form:not(.hidden) input[type=checkbox]').removeAttr('checked');
 	$('.generated').remove();
 	toggleValueDefinition();
+
+	$.getJSON('all?type=list', function(data) {
+		var input = document.querySelector('form:not(.hidden) input#id');
+    	var awesomplete = new Awesomplete(input, { list: data });
+    	//Awesomplete.$.bind(input, { "awesomplete-selectcomplete": blurIdField });
+    });
+}
+
+function blurIdField() {
+	$('form:not(.hidden) input#id').blur();
 }
 
 function customMenu(node) {
@@ -224,9 +234,14 @@ function focusInputEnd(input) {
 	input[0].setSelectionRange(length, length);
 }
 
+function inspectIfExists(id) {
+	$.getJSON(id, function(data) {
+    	inspectPhenotype(data);
+    });
+}
+
 function inspectPhenotype(data) {
 	clearPhenotypeFormData();
-	console.log(data);
 
 	var form;
 	if (data.abstractPhenotype === true) {
@@ -278,11 +293,11 @@ function inspectPhenotype(data) {
 function addRange(form, range) {
 	if (!range) return;
 
-	if (range.dateValue || range.dateValues || range.dateRange) asDate = true;
+	var asDate = range.dateValue || range.dateValues || range.dateRange;
 
-    value       = range.stringValue || range.dateValue || range.integerValue || range.doubleValue;
-    values      = range.stringValues || range.dateValues || range.integerValues || range.doubleValues;
-    rangeValues = range.dateRange || range.integerRange || range.doubleRange;
+    var value       = range.stringValue || range.dateValue || range.integerValue || range.doubleValue;
+    var values      = range.stringValues || range.dateValues || range.integerValues || range.doubleValues;
+    var rangeValues = range.dateRange || range.integerRange || range.doubleRange;
 
 	if (value) {
 		addEnumFieldWithValue(form, convertValue(value, asDate));
