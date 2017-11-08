@@ -19,6 +19,8 @@ import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,6 +41,7 @@ public class PhenotypeManager {
 	 * The PhenoMan manager instance of a phenotype ontology.
 	 */
 	private PhenotypeOntologyManager manager;
+	private String phenotypePath;
 
 	/**
 	 * This constructor opens an existing phenotype ontology or creates a new one.
@@ -48,6 +51,7 @@ public class PhenotypeManager {
 	 * @param phenotypePath Path to the phenotype ontology OWL file.
 	 */
 	public PhenotypeManager(String phenotypePath) {
+		this.phenotypePath = phenotypePath;
 		manager = new PhenotypeOntologyManager(phenotypePath, false);
 		manager.write();
 	}
@@ -336,6 +340,13 @@ public class PhenotypeManager {
 		return taxonomyAsList(manager.getPhenotypeCategoryTree(true));
 	}
 
+	/**
+	 * Returns the full RDF document for this ontology as string.
+	 * @return string containing the full RDF document.
+	 */
+	public String getFullRdfDocument() throws IOException {
+		return new String(Files.readAllBytes(Paths.get(phenotypePath)));
+	}
 
 
 

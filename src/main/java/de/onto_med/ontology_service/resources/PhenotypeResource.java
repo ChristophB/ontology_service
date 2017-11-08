@@ -69,7 +69,14 @@ public class PhenotypeResource extends Resource {
 	@Path("/{id}")
 	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeView(@PathParam("id") String id) {
-		return Response.ok(new PhenotypeView("PhenotypeView.ftl", rootPath, id)).build();
+		try {
+			return Response.ok(managers.getUnchecked(id).getFullRdfDocument())
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+					String.format("attachment; filename='cop_%s.owl'", id))
+				.build();
+		} catch (IOException e) {
+			throw new WebApplicationException(e.getMessage());
+		}
 	}
 	
 	@GET

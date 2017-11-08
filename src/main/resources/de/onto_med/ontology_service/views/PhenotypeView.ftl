@@ -26,6 +26,13 @@
 
 				<input type="submit" class="btn btn-primary col-sm-2">
 			</form>
+			<br>
+			
+			<#if id??>
+				<div class="row text-center">
+					<a href="${rootPath}/phenotype/${id}" class="btn btn-default">Download Ontology</a>
+				</div>
+			</#if>
 		</div>
 	    
 	    <#include "partials/Footer.ftl">

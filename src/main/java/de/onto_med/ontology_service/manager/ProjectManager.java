@@ -124,8 +124,8 @@ public class ProjectManager {
 	 * Returns the full RDF document for this ontology as string.
 	 * @return string containing the full RDF document.
 	 */
-	public Object getFullRDFDocument() {
-		return binaryOwlParser.getFullRDFDocument();
+	public String getFullRdfDocument() {
+		return binaryOwlParser.getFullRdfDocument();
 	}
 	
 	

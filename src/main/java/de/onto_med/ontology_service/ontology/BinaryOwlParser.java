@@ -210,7 +210,7 @@ public class BinaryOwlParser extends OntologyParser {
 	 * Returns the full RDF document for this ontology as string.
 	 * @return string containing the full RDF document.
 	 */
-	public Object getFullRDFDocument() {
+	public String getFullRdfDocument() {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		
 		try {

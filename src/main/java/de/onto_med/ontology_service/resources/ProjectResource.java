@@ -197,7 +197,7 @@ public class ProjectResource extends Resource {
 	public Response getFullRDFDocument(@PathParam("id") String projectId) {
 		try {
 			ProjectManager pm = getProjectManager(projectId);
-			return Response.ok(pm.getFullRDFDocument())
+			return Response.ok(pm.getFullRdfDocument())
 				.header(HttpHeaders.CONTENT_DISPOSITION,
 						String.format("attachment; filename='%s.owl'", pm.getProjectShortForm()))
 				.build();
