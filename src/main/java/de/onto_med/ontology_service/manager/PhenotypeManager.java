@@ -1,19 +1,24 @@
 package de.onto_med.ontology_service.manager;
 
 import de.imise.graph_api.graph.Graph;
-import de.onto_med.ontology_service.data_models.Phenotype;
-import de.onto_med.ontology_service.data_models.Property;
+import de.onto_med.ontology_service.data_model.Phenotype;
+import de.onto_med.ontology_service.data_model.Property;
+import de.onto_med.ontology_service.factory.AbstractPhenotypeFactory;
+import de.onto_med.ontology_service.factory.PhenotypeCategoryFactory;
+import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
+import de.onto_med.ontology_service.util.Parser;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
 import org.lha.phenoman.model.instance.ComplexPhenotypeInstance;
 import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
-import org.lha.phenoman.model.phenotype.*;
-import org.lha.phenoman.model.phenotype.top_level.*;
+import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.Category;
+import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.TextLang;
 import org.lha.phenoman.model.reasoner_result.ReasonerReport;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
@@ -21,10 +26,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,10 +38,6 @@ import java.util.stream.Collectors;
  * @author Christoph Beger
  */
 public class PhenotypeManager {
-	/**
-	 * A list of supported date patterns.
-	 */
-	private final List<String> DATE_PATTERNS = Arrays.asList("dd.MM.yyyy", "yyyy-MM-dd");
 
 	/**
 	 * The PhenoMan manager instance of a phenotype ontology.
@@ -89,11 +91,10 @@ public class PhenotypeManager {
 	 * @throws NullPointerException If a required parameter is missing.
 	 */
 	public Category createCategory(Phenotype formData) throws NullPointerException {
-		if (StringUtils.isBlank(formData.getId()))
-			throw new NullPointerException("ID of category is missing.");
+		if (StringUtils.isBlank(formData.getTitleEn()) && StringUtils.isBlank(formData.getTitleDe()))
+			throw new NullPointerException("Title of category is missing.");
 
-		Category category = new Category(formData.getId());
-		setPhenotypeBasicData(category, formData);
+		Category category = PhenotypeCategoryFactory.createPhenotypeCategory(formData);
 
 		if (StringUtils.isBlank(formData.getSuperCategory()))
 			manager.addPhenotypeCategory(category);
@@ -111,56 +112,12 @@ public class PhenotypeManager {
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
 	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
-		if (StringUtils.isBlank(formData.getId()))
-			throw new NullPointerException("ID of the abstract phenotype is missing.");
+		if (StringUtils.isBlank(formData.getTitleEn()) && StringUtils.isBlank(formData.getTitleDe()))
+			throw new NullPointerException("Title of the abstract phenotype is missing.");
 		if (StringUtils.isBlank(formData.getDatatype()))
 			throw new NullPointerException("Datatype of the abstract phenotype is missing.");
 
-		AbstractPhenotype phenotype;
-		switch (formData.getDatatype()) {
-			case "numeric":
-				OWL2Datatype datatype = formData.getIsDecimal() != null && formData.getIsDecimal()
-					? OWL2Datatype.XSD_DOUBLE : OWL2Datatype.XSD_INTEGER;
-				phenotype = StringUtils.isBlank(formData.getCategories())
-					? new AbstractSinglePhenotype(formData.getId(), datatype)
-					: new AbstractSinglePhenotype(formData.getId(), datatype, formData.getCategories().split(";"));
-				if (StringUtils.isNoneBlank(formData.getUcum()))
-					phenotype.asAbstractSinglePhenotype().setUnit(formData.getUcum());
-				break;
-			case "string":
-				phenotype = StringUtils.isBlank(formData.getCategories())
-					? new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING)
-					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_STRING, formData.getCategories().split(";"));
-				break;
-			case "date":
-				phenotype = StringUtils.isBlank(formData.getCategories())
-					? new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DATE_TIME)
-					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_DATE_TIME, formData.getCategories().split(";"));
-				break;
-			case "boolean":
-				phenotype = StringUtils.isBlank(formData.getCategories())
-					? new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_BOOLEAN)
-					: new AbstractSinglePhenotype(formData.getId(), OWL2Datatype.XSD_BOOLEAN, formData.getCategories().split(";"));
-				break;
-			case "composite-boolean":
-				phenotype = StringUtils.isBlank(formData.getCategories())
-					? new AbstractBooleanPhenotype(formData.getId())
-					: new AbstractBooleanPhenotype(formData.getId(), formData.getCategories().split(";"));
-				break;
-			case "calculation":
-				if (StringUtils.isBlank(formData.getFormula()))
-					throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
-				phenotype = StringUtils.isBlank(formData.getCategories())
-					? new AbstractCalculationPhenotype(formData.getId(), manager.getFormula(formData.getFormula()))
-					: new AbstractCalculationPhenotype(formData.getId(), manager.getFormula(formData.getFormula()), formData.getCategories().split(";"));
-				if (StringUtils.isNoneBlank(formData.getUcum()))
-					phenotype.asAbstractCalculationPhenotype().setUnit(formData.getUcum());
-				break;
-			default:
-				throw new UnsupportedDataTypeException("Could not determine Datatype.");
-		}
-
-		setPhenotypeBasicData(phenotype, formData);
+		AbstractPhenotype phenotype = AbstractPhenotypeFactory.createAbstractPhenotype(manager, formData);
 		addPhenotype(phenotype);
 
 		manager.write();
@@ -175,42 +132,12 @@ public class PhenotypeManager {
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
 	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
-		if (StringUtils.isBlank(formData.getId()))
-			throw new NullPointerException("ID or super phenotype is missing.");
+		if (StringUtils.isBlank(formData.getTitleEn()) && StringUtils.isBlank(formData.getTitleDe()))
+			throw new NullPointerException("Title or super phenotype is missing.");
 		if (StringUtils.isBlank(formData.getSuperPhenotype()))
 			throw new NullPointerException("Super phenotype is missing.");
 
-		Category superPhenotype = manager.getPhenotype(formData.getSuperPhenotype());
-		RestrictedPhenotype phenotype;
-
-		if (superPhenotype == null) {
-			throw new UnsupportedDataTypeException("Super phenotype does not exist");
-		} else if (superPhenotype.isAbstractBooleanPhenotype()) {
-			if (StringUtils.isBlank(formData.getExpression()))
-				throw new NullPointerException(
-					"Boolean expression for restricted boolean phenotype is missing.");
-
-			phenotype = new RestrictedBooleanPhenotype(
-				formData.getId(), superPhenotype.getName(),
-				manager.getManchesterSyntaxExpression(formData.getExpression())
-			);
-			phenotype.asRestrictedBooleanPhenotype().setScore(formData.getScore());
-		} else if (superPhenotype.isAbstractCalculationPhenotype()) {
-			phenotype = new RestrictedCalculationPhenotype(
-				formData.getId(), formData.getSuperPhenotype(),
-				getRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, formData)
-			);
-		} else if (superPhenotype.isAbstractSinglePhenotype()) {
-			phenotype = new RestrictedSinglePhenotype(
-				formData.getId(), formData.getSuperPhenotype(),
-				getRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), formData)
-			);
-		} else {
-			throw new UnsupportedDataTypeException(
-				"Could not determine datatype of super phenotype.");
-		}
-
-		setPhenotypeBasicData(phenotype, formData);
+		RestrictedPhenotype phenotype = RestrictedPhenotypeFactory.createRestrictedPhenotype(manager, formData);
 		addPhenotype(phenotype);
 
 		manager.write();
@@ -261,7 +188,7 @@ public class PhenotypeManager {
 						throw new IllegalArgumentException("Could not parse Double from String '" + value + "'." + e.getMessage());
 					}
 				} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					try { instance = new SinglePhenotypeInstance(name, parseStringToDate(value)); }
+					try { instance = new SinglePhenotypeInstance(name, Parser.parseStringToDate(value)); }
 					catch (ParseException e) {
 						throw new IllegalArgumentException("Could not parse Date from String '" + value + "'. " + e.getMessage());
 					}
@@ -441,172 +368,7 @@ public class PhenotypeManager {
 		return null;
 	}
 
-	/**
-	 * Adds basic information to the provided phenotype based on formData.
-	 * Basic information includes only fields, which are available for all types of phenotypes.
-	 * If the phenotype is abstract, categories are added too.
-	 * @param phenotype An abstract or restricted phenotype.
-	 * @param formData Data which was provided via form or JSON post request.
-	 */
-	private void setPhenotypeBasicData(Category phenotype, Phenotype formData) {
-		setPhenotypeLabels(phenotype, formData.getLabels(), formData.getLabelLanguages());
-		setPhenotypeDefinitions(phenotype, formData.getDefinitions(), formData.getDefinitionLanguages());
-		setPhenotypeRelations(phenotype, formData.getRelations());
-	}
 
-	private void setPhenotypeLabels(Category phenotype, List<String> labels, List<String> languages) {
-		for (int i = 0; i < labels.size(); i++) {
-			String label = labels.get(i);
-			if (StringUtils.isBlank(label)) continue;
-			if (languages.size() > i && StringUtils.isNoneBlank(languages.get(i)))
-				phenotype.addLabel(label, languages.get(i));
-			else phenotype.addLabel(label);
-		}
-	}
-
-	private void setPhenotypeDefinitions(Category phenotype, List<String> definitions, List<String> languages) {
-		for (int i = 0; i < definitions.size(); i++) {
-			String definition = definitions.get(i);
-			if (StringUtils.isBlank(definition)) continue;
-			if (languages.size() > i && StringUtils.isNoneBlank(languages.get(i)))
-				phenotype.addDefinition(definition, languages.get(i));
-			else phenotype.addDefinition(definition);
-		}
-	}
-
-	private void setPhenotypeRelations(Category phenotype, List<String> relations) {
-		for (String relation : relations)
-			if (StringUtils.isNoneBlank(relation))
-				phenotype.addRelatedConcept(relation);
-	}
-
-	private PhenotypeRange getRestrictedPhenotypeRange(OWL2Datatype datatype, Phenotype formData) throws NullPointerException {
-		PhenotypeRange range = Optional.ofNullable(getRestrictedPhenotypeRange(
-			datatype,
-			formData.getRangeMin(), formData.getRangeMinOperator(),
-			formData.getRangeMax(), formData.getRangeMaxOperator()
-		)).orElse(getRestrictedPhenotypeRange(datatype, formData.getEnumValues()));
-
-		if (range == null)
-			throw new NullPointerException("No Restriction for restricted phenotype provided.");
-
-		return range;
-	}
-
-	/**
-	 * Creates a single restricted phenotype by range for the given phenotype, if min and minOperator or max and maxOperator are valid.
-	 * @param datatype The OWL2Datatype, which will be used to generate a PhenotypeRange.
-	 * @param min Minimum of the range restriction.
-	 * @param max Maximum of the range restriction.
-	 * @param minOperator Operator for bottom border.
-	 * @param maxOperator Operator for top border.
-	 */
-	private PhenotypeRange getRestrictedPhenotypeRange(OWL2Datatype datatype, String min, String minOperator, String max, String maxOperator) {
-		List<OWLFacet> facets = new ArrayList<>();
-
-		if ((StringUtils.isBlank(min) || StringUtils.isBlank(minOperator)) && (StringUtils.isBlank(max) || StringUtils.isBlank(maxOperator))) {
-			return null;
-		} else if (datatype.equals(OWL2Datatype.XSD_INTEGER)) {
-			List<Integer> values = new ArrayList<>();
-
-			if (StringUtils.isNoneBlank(min) && StringUtils.isNoneBlank(minOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(minOperator));
-				values.add(Integer.valueOf(min));
-			}
-			if (StringUtils.isNoneBlank(max) && StringUtils.isNoneBlank(maxOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(maxOperator));
-				values.add(Integer.valueOf(max));
-			}
-			return new PhenotypeRange(facets.toArray(new OWLFacet[facets.size()]), values.toArray(new Integer[values.size()]));
-		} else if (datatype.equals(OWL2Datatype.XSD_DOUBLE)) {
-			List<Double> values = new ArrayList<>();
-
-			if (StringUtils.isNoneBlank(min) && StringUtils.isNoneBlank(minOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(minOperator));
-				values.add(Double.valueOf(min));
-			}
-			if (StringUtils.isNoneBlank(max) && StringUtils.isNoneBlank(maxOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(maxOperator));
-				values.add(Double.valueOf(max));
-			}
-			return new PhenotypeRange(facets.toArray(new OWLFacet[facets.size()]), values.toArray(new Double[values.size()]));
-		} else if (datatype.equals(OWL2Datatype.XSD_DATE_TIME)) {
-			List<Date> values = new ArrayList<>();
-
-			if (StringUtils.isNoneBlank(min) && StringUtils.isNoneBlank(minOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(minOperator));
-				try { values.add(parseStringToDate(min)); } catch (Exception e) { values.add(null); }
-			}
-			if (StringUtils.isNoneBlank(max) && StringUtils.isNoneBlank(maxOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(maxOperator));
-				try { values.add(parseStringToDate(max)); } catch (Exception e) { values.add(null); }
-			}
-			return new PhenotypeRange(facets.toArray(new OWLFacet[facets.size()]), values.toArray(new Date[values.size()]));
-		}
-		return null;
-	}
-
-	/**
-	 * Creates potentially multiple restricted phenotypes depending on the values and labels lists
-	 * and adds them to the provided phenotype.
-	 * @param datatype The OWL2Datatype, which will be used to generate a PhenotypeRange.
-	 * @param enumValues A list of enumeration values.
-	 */
-	private PhenotypeRange getRestrictedPhenotypeRange(OWL2Datatype datatype, List<String> enumValues) {
-		if (OWL2Datatype.XSD_INTEGER.equals(datatype)) {
-			List<Integer> values = new ArrayList<>();
-			enumValues.stream().filter(StringUtils::isNoneBlank).forEach(
-				v -> { try { values.add(Integer.valueOf(v)); } catch (Exception ignored) { } });
-			return new PhenotypeRange(values.toArray(new Integer[values.size()]));
-		} else if (OWL2Datatype.XSD_DOUBLE.equals(datatype)) {
-			List<Double> values = new ArrayList<>();
-			enumValues.stream().filter(StringUtils::isNoneBlank).forEach(
-				v -> { try { values.add(Double.valueOf(v)); } catch (Exception ignored) { } });
-			return new PhenotypeRange(values.toArray(new Double[values.size()]));
-		} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype)) {
-			List<Date> values = new ArrayList<>();
-			enumValues.stream().filter(StringUtils::isNoneBlank).forEach(
-				v -> { try {
-					values.add(parseStringToDate(v));
-				} catch (ParseException ignored) { } });
-			return new PhenotypeRange(values.toArray(new Date[values.size()]));
-		} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
-			return new PhenotypeRange(enumValues.stream().filter(StringUtils::isNoneBlank).toArray(String[]::new));
-		} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
-			if (enumValues.size() > 0 && StringUtils.isNoneBlank(enumValues.get(0)))
-				return new PhenotypeRange(Boolean.valueOf(enumValues.get(0)));
-		}
-
-		return null;
-	}
-
-	/**
-	 * Transforms a string into a java Date object.
-	 * See {@link #DATE_PATTERNS} for allowed patterns.
-	 * @param string String representation of a date.
-	 * @return The parsed Date object.
-	 * @throws ParseException If the string could not be parsed to Date.
-	 */
-	private Date parseStringToDate(String string) throws ParseException {
-		Date date = null;
-
-		for (String pattern : DATE_PATTERNS) {
-			DateFormat format = new SimpleDateFormat(pattern);
-			try {
-				date = format.parse(string);
-			} catch (ParseException ignored) { }
-		}
-		if (date == null) throw new ParseException("Could not parse string '" + string + "' to Date.", 0);
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-
-		return calendar.getTime();
-	}
 
 	private String getTextLang(Set<TextLang> set) {
 		return String.join("\n", set.stream().map(textLang -> textLang.getLang() + ": " + textLang.getText()).collect(Collectors.toList()));

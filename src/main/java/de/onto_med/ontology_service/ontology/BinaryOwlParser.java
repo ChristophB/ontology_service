@@ -2,8 +2,8 @@ package de.onto_med.ontology_service.ontology;
 
 import de.onto_med.ontology_service.api.TaxonomyNode;
 import de.onto_med.ontology_service.api.Timer;
-import de.onto_med.ontology_service.data_models.Entity;
-import de.onto_med.ontology_service.data_models.Individual;
+import de.onto_med.ontology_service.data_model.Entity;
+import de.onto_med.ontology_service.data_model.Individual;
 import de.onto_med.owlapi_utils.binaryowl.BinaryOwlUtils;
 import de.onto_med.owlapi_utils.owlapi.OwlApiUtils;
 import org.apache.commons.lang3.StringUtils;

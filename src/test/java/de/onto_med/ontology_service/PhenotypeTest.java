@@ -1,6 +1,6 @@
 package de.onto_med.ontology_service;
 
-import de.onto_med.ontology_service.data_models.Phenotype;
+import de.onto_med.ontology_service.data_model.Phenotype;
 import org.eclipse.jetty.server.Response;
 import org.junit.After;
 import org.junit.FixMethodOrder;

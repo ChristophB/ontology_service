@@ -1,8 +1,8 @@
 <form id="phenotype-category-form" action="" url="${rootPath}/phenotype/${id}/create-category" method="post" accept-charset="UTF-8" class="hidden">
-	<#include "Id.ftl">
+	<#include "Title.ftl">
 	<#include "Labels.ftl">
 	<#include "SuperCategory.ftl">
-	<#include "Definitions.ftl">
+	<#include "Descriptions.ftl">
     <#include "Relations.ftl">
 
 	<div class="form-group">

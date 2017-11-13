@@ -10,14 +10,14 @@
 		<small class="form-text text-muted">Specify some human-readable labels in different languages.</small>
 	
 		<div class="input-group hidden">
-		<div class="input-group-addon">
-			<select name="labelLanguages[]" data-toggle="tooltip" title="Language" data-placement="right">
-				<option value="en">EN</option>
-				<option value="de">DE</option>
-				<option value="fr">FR</option>
-				<option value="es">ES</option>
-			</select>
-		</div>
+			<div class="input-group-addon">
+				<select name="labelLanguages[]" data-toggle="tooltip" title="Language" data-placement="right">
+					<option value="en">EN</option>
+					<option value="de">DE</option>
+					<option value="fr">FR</option>
+					<option value="es">ES</option>
+				</select>
+			</div>
 			<input type="text" class="form-control" name="labels[]" placeholder="Some Label">
 		</div>
 	</div>

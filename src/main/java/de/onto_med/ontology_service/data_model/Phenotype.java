@@ -1,10 +1,6 @@
-package de.onto_med.ontology_service.data_models;
+package de.onto_med.ontology_service.data_model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
-import org.lha.phenoman.model.phenotype.RestrictedBooleanPhenotype;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.TextLang;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import java.util.ArrayList;
@@ -12,7 +8,13 @@ import java.util.List;
 
 public class Phenotype {
 	@JsonProperty
-	private String id;
+	private String titleEn;
+	@JsonProperty
+	private String titleDe;
+	@JsonProperty
+	private String aliasEn;
+	@JsonProperty
+	private String aliasDe;
 	@JsonProperty
 	private List<String> labels = new ArrayList<>();
 	@JsonProperty
@@ -79,12 +81,36 @@ public class Phenotype {
 		this.isDecimal = isDecimal;
 	}
 	
-	public String getId() {
-		return id;
+	public String getTitleEn() {
+		return titleEn;
 	}
 	
-	public void setId(String id) {
-		this.id = id;
+	public void setTitleEn(String titleEn) {
+		this.titleEn = titleEn;
+	}
+
+	public String getTitleDe() {
+		return titleDe;
+	}
+
+	public void setTitleDe(String titleDe) {
+		this.titleDe = titleDe;
+	}
+
+	public String getAliasEn() {
+		return aliasEn;
+	}
+
+	public void setAliasEn(String aliasEn) {
+		this.aliasEn = aliasEn;
+	}
+
+	public String getAliasDe() {
+		return aliasDe;
+	}
+
+	public void setAliasDe(String aliasDe) {
+		this.aliasDe = aliasDe;
 	}
 
 	public List<String> getLabels() {

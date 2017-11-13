@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Singleton;
 
 import de.imise.owl2graphml_view.onto.MainOntology;
-import de.onto_med.ontology_service.data_models.Entity;
-import de.onto_med.ontology_service.data_models.Individual;
-import de.onto_med.ontology_service.data_models.Project;
+import de.onto_med.ontology_service.data_model.Entity;
+import de.onto_med.ontology_service.data_model.Individual;
+import de.onto_med.ontology_service.data_model.Project;
 import de.onto_med.ontology_service.manager.ProjectManager;
 import de.onto_med.ontology_service.views.ProjectTaxonomyView;
 import de.onto_med.ontology_service.views.ProjectView;

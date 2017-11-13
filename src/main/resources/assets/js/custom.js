@@ -72,7 +72,7 @@ function createPhenotypeTree(id, url, withContext) {
 					if (attributes.singlePhenotype.value == "true")
 						appendFormField(data.element, drop[0]);
 				} else if (drop[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) === -1) {
-					drop.val(drop.val() + ' ' + attributes.id.value + ' ');
+					drop.val(drop.val() + ' ' + attributes.aliasEn.value + ' ');
 					focusInputEnd(drop);
 				} // else: formula does not accept string
 			}
@@ -139,7 +139,7 @@ function clearPhenotypeFormData() {
 }
 
 function blurIdField() {
-	$('form:not(.hidden) input#id').blur();
+	$('form:not(.hidden) input#titleEn').blur();
 }
 
 function customMenu(node) {
@@ -217,7 +217,7 @@ function customMenu(node) {
 		delete items.getDecisionTreeGraphml;
 	}
 
-	if (node.a_attr.id === 'Phenotype_Category') {
+	if (node.a_attr.titleEn === 'Phenotype_Category') {
 		delete items.delete;
 		delete items.inspect;
 	}
@@ -225,7 +225,7 @@ function customMenu(node) {
 }
 
 function getNodeId(node) {
-	return node.a_attr.id;
+	return node.a_attr.titleEn ?: node.a_attr.titleDe;
 }
 
 function focusInputEnd(input) {
@@ -270,7 +270,7 @@ function inspectPhenotype(data) {
 
 	showPhenotypeForm(form);
 
-	$(form + ' #id').val(data.name);
+	$(form + ' #title-en').val(data.name); // TODO: add titleDe
 	$(form + ' #categories').val(data.phenotypeCategories !== undefined ? data.phenotypeCategories.join('; ') : null);
 
 	data.labels.forEach(function(label) {
@@ -278,10 +278,10 @@ function inspectPhenotype(data) {
         $(form + ' #label-div .generated:last select').val(label.lang);
         $(form + ' #label-div .generated:last input[type=text]').val(label.text);
 	});
-	data.definitions.forEach(function(definition) {
-    	addRow('#definition-div');
-        $(form + ' #definition-div .generated:last select').val(definition.lang);
-        $(form + ' #definition-div .generated:last textarea').val(definition.text);
+	data.descriptions.forEach(function(description) {
+    	addRow('#description-div');
+        $(form + ' #description-div .generated:last select').val(description.lang);
+        $(form + ' #description-div .generated:last textarea').val(description.text);
     });
 	data.relatedConcepts.forEach(function(relation) {
     	addRow('#relation-div');

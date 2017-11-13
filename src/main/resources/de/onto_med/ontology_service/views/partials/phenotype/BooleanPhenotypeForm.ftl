@@ -1,10 +1,10 @@
 <form id="boolean-phenotype-form" action="" url="${rootPath}/phenotype/${id}/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
 	<input type="hidden" name="datatype" value="boolean">
 
-	<#include "Id.ftl">
+	<#include "Title.ftl">
 	<#include "Labels.ftl">
 	<#include "SuperPhenotype.ftl">
-    <#include "Definitions.ftl">
+    <#include "Descriptions.ftl">
     <#include "Relations.ftl">
 
 	<div class="form-group row">
