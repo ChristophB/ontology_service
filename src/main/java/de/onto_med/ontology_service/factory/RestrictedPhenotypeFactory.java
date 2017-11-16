@@ -10,6 +10,7 @@ import org.lha.phenoman.model.phenotype.RestrictedSinglePhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
@@ -24,27 +25,32 @@ import java.util.Optional;
  * Convenient factory to construct RestrictedPhenotypes.
  * @author Christoph Beger
  */
-public abstract class RestrictedPhenotypeFactory extends PhenotypeFactory {
+public class RestrictedPhenotypeFactory extends PhenotypeFactory {
+	public PhenotypeOntologyManager manager;
+
+	public RestrictedPhenotypeFactory(PhenotypeOntologyManager manager) {
+		this.manager = manager;
+		this.factory = manager.getPhenotypeFactory();
+	}
 
 	/**
 	 * Creates a RestrictedPhenotype according to the provided phenotype data.
-	 * @param manager The associated PhenotypeOntologyManager.
 	 * @param data Phenotype data.
 	 * @return A Restricted Phenotype.
 	 * @throws UnsupportedDataTypeException If thr provided phenotype data contains invalid data.
 	 */
-	public static RestrictedPhenotype createRestrictedPhenotype(PhenotypeOntologyManager manager, Phenotype data) throws UnsupportedDataTypeException {
+	public RestrictedPhenotype createRestrictedPhenotype(Phenotype data) throws UnsupportedDataTypeException, NullPointerException {
 		Category superPhenotype = manager.getPhenotype(data.getSuperPhenotype());
 
 		RestrictedPhenotype phenotype;
 		if (superPhenotype == null) {
 			throw new UnsupportedDataTypeException("Super phenotype does not exist");
 		} else if (superPhenotype.isAbstractBooleanPhenotype()) {
-			phenotype = RestrictedPhenotypeFactory.createRestrictedBooleanPhenotype(manager, data, superPhenotype);
+			phenotype = createRestrictedBooleanPhenotype(data, superPhenotype);
 		} else if (superPhenotype.isAbstractCalculationPhenotype()) {
-			phenotype = RestrictedPhenotypeFactory.createRestrictedCalculationPhenotype(data, superPhenotype);
+			phenotype = createRestrictedCalculationPhenotype(data, superPhenotype);
 		} else if (superPhenotype.isAbstractSinglePhenotype()) {
-			phenotype = RestrictedPhenotypeFactory.createRestrictedSinglePhenotype(data, superPhenotype);
+			phenotype = createRestrictedSinglePhenotype(data, superPhenotype);
 		} else {
 			throw new UnsupportedDataTypeException("Could not determine datatype of super phenotype.");
 		}
@@ -60,18 +66,22 @@ public abstract class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param superPhenotype The super phenotype.
 	 * @return A RestrictedSinglePhenotype.
 	 */
-	private static RestrictedSinglePhenotype createRestrictedSinglePhenotype(Phenotype data, Category superPhenotype) {
+	private RestrictedSinglePhenotype createRestrictedSinglePhenotype(Phenotype data, Category superPhenotype) {
 		RestrictedSinglePhenotype phenotype;
 		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = new RestrictedSinglePhenotype(
-				data.getTitleEn(), "en", data.getSuperPhenotype(),
+			phenotype = factory.createRestrictedSinglePhenotype(
+				new Title(data.getTitleEn(), data.getAliasEn(), "en"), data.getSuperPhenotype(),
 				createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
 			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(data.getTitleDe(), "de");
-		} else {
-			phenotype = new RestrictedSinglePhenotype(
-				data.getTitleDe(), "de", data.getSuperPhenotype(),
+			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(),"de"));
+		} else if (StringUtils.isNoneBlank(data.getTitleDe())) {
+			phenotype = factory.createRestrictedSinglePhenotype(
+				new Title(data.getTitleDe(), data.getAliasDe(), "de"), data.getSuperPhenotype(),
 				createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
+			);
+		} else {
+			phenotype = factory.createRestrictedSinglePhenotype(
+				data.getSuperPhenotype(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
 			);
 		}
 		return phenotype;
@@ -83,18 +93,22 @@ public abstract class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param superPhenotype The super phenotype.
 	 * @return A RestrictedCalculationPhenotype.
 	 */
-	private static RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(Phenotype data, Category superPhenotype) {
+	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(Phenotype data, Category superPhenotype) {
 		RestrictedCalculationPhenotype phenotype;
 		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = new RestrictedCalculationPhenotype(
-				data.getTitleEn(), "en", superPhenotype.getName(),
+			phenotype = factory.createRestrictedCalculationPhenotype(
+				new Title(data.getTitleEn(), data.getAliasEn(), "en"), superPhenotype.getName(),
 				createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
 			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(data.getTitleDe(), "de");
-		} else {
-			phenotype = new RestrictedCalculationPhenotype(
-				data.getTitleDe(), "de", superPhenotype.getName(),
+			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(), "de"));
+		} else if (StringUtils.isNoneBlank(data.getTitleDe())) {
+			phenotype = factory.createRestrictedCalculationPhenotype(
+				new Title(data.getTitleDe(), data.getAliasDe(), "de"), superPhenotype.getName(),
 				createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
+			);
+		} else {
+			phenotype = factory.createRestrictedCalculationPhenotype(
+				superPhenotype.getName(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
 			);
 		}
 		return phenotype;
@@ -102,27 +116,26 @@ public abstract class RestrictedPhenotypeFactory extends PhenotypeFactory {
 
 	/**
 	 * Creates a restricted boolean phenotype.
-	 * @param manager The associated PhenotypeOntologyManager.
 	 * @param data Phenotype data.
 	 * @param superPhenotype The super phenotype.
 	 * @return A RestrictedBooleanPhenotype.
 	 */
-	private static RestrictedBooleanPhenotype createRestrictedBooleanPhenotype(PhenotypeOntologyManager manager, Phenotype data, Category superPhenotype) {
+	private RestrictedBooleanPhenotype createRestrictedBooleanPhenotype(Phenotype data, Category superPhenotype) throws NullPointerException {
 		RestrictedBooleanPhenotype phenotype;
 		if (StringUtils.isBlank(data.getExpression()))
 			throw new NullPointerException("Boolean expression for restricted boolean phenotype is missing.");
 
 		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = new RestrictedBooleanPhenotype(
-				data.getTitleEn(), "en", superPhenotype.getName(),
-				manager.getManchesterSyntaxExpression(data.getExpression())
+			phenotype = factory.createRestrictedBooleanPhenotype(
+				new Title(data.getTitleEn(), data.getAliasEn(), "en"), superPhenotype.getName(), data.getExpression()
 			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(data.getTitleDe(), "de");
+			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(), "de"));
+		} else if (StringUtils.isNoneBlank(data.getTitleDe())){
+			phenotype = factory.createRestrictedBooleanPhenotype(
+				new Title(data.getTitleDe(), data.getAliasDe(), "de"), superPhenotype.getName(), data.getExpression()
+			);
 		} else {
-			phenotype = new RestrictedBooleanPhenotype(
-				data.getTitleDe(), "de", superPhenotype.getName(),
-				manager.getManchesterSyntaxExpression(data.getExpression())
-			);
+			throw new NullPointerException("Title of restricted boolean phenotype is missing.");
 		}
 		phenotype.asRestrictedBooleanPhenotype().setScore(data.getScore());
 		return phenotype;
@@ -135,7 +148,7 @@ public abstract class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A value range for a restricted phenotype.
 	 * @throws NullPointerException If no range could be generated.
 	 */
-	private static PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, Phenotype data) throws NullPointerException {
+	private PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, Phenotype data) throws NullPointerException {
 		PhenotypeRange range = Optional.ofNullable(createRestrictedPhenotypeRange(
 			datatype,
 			data.getRangeMin(), data.getRangeMinOperator(),
@@ -155,7 +168,7 @@ public abstract class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param minOperator Operator for bottom border.
 	 * @param maxOperator Operator for top border.
 	 */
-	private static PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, String min, String minOperator, String max, String maxOperator) {
+	private PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, String min, String minOperator, String max, String maxOperator) {
 		List<OWLFacet> facets = new ArrayList<>();
 
 		if ((StringUtils.isBlank(min) || StringUtils.isBlank(minOperator)) && (StringUtils.isBlank(max) || StringUtils.isBlank(maxOperator))) {
@@ -206,7 +219,7 @@ public abstract class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param datatype The OWL2Datatype, which will be used to generate a PhenotypeRange.
 	 * @param enumValues A list of enumeration values.
 	 */
-	private static PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, List<String> enumValues) {
+	private PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, List<String> enumValues) {
 		if (OWL2Datatype.XSD_INTEGER.equals(datatype)) {
 			List<Integer> values = new ArrayList<>();
 			enumValues.stream().filter(StringUtils::isNoneBlank).forEach(

@@ -10,6 +10,7 @@ import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
+import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
@@ -41,14 +42,14 @@ public class PhenotypeTest extends AbstractTest {
 
 	@Test
 	public void test1CategoryCreation() throws Exception {
-		String id = "Category_1";
+		String title = "Category_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition NONE"));
-			setDefinitionLanguages(Collections.singletonList("en"));
+			setDescriptions(Arrays.asList("Description EN", "Description NONE"));
+			setDescriptionLanguages(Collections.singletonList("en"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 		}};
 
@@ -60,13 +61,13 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getCategory(id);
+		Category actual = manager.getCategory(title);
 
-		Category expected = new Category(id);
+		Category expected = new Category(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition NONE");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description NONE", "en"); // language defaults to "en"
 		expected.addRelatedConcept("IRI 2");
 		expected.addRelatedConcept("IRI 1");
 
@@ -116,18 +117,6 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testManchesterSyntaxGeneration() throws Exception {
-		String path = "src/test/resources/data/ontology-service/cop2.owl";
-		String abstractName = "Abstract_Single_Phenotype_1";
-
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(path, true);
-		manager.addAbstractSinglePhenotype(new AbstractSinglePhenotype(abstractName, OWL2Datatype.XSD_INTEGER));
-		manager.getManchesterSyntaxExpression(abstractName);
-
-		if (Files.exists(Paths.get(path))) Files.delete(Paths.get(path));
-	}
-
-	@Test
 	public void testUpdateAbstractPhenotype() throws Exception {
 		// TODO: implement test for update of abstract phenotype
 	}
@@ -144,15 +133,15 @@ public class PhenotypeTest extends AbstractTest {
 	 *******************************/
 
 	private void testAbstractIntegerPhenotypeCreation() throws Exception {
-		String id = "Abstract_Integer_Phenotype_1";
+		String title = "Abstract_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setCategories("Category_1");
 			setUcum("m^2");
@@ -166,12 +155,12 @@ public class PhenotypeTest extends AbstractTest {
 	    assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-	    Category actual = manager.getPhenotype(id);
+	    Category actual = manager.getPhenotype(title);
 
-	    AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_INTEGER, "Category_1");
+	    AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_INTEGER, "Category_1");
 		expected.setUnit("m^2");
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -183,15 +172,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractDoublePhenotypeCreation() throws Exception {
-		String id = "Abstract_Double_Phenotype_1";
+		String title = "Abstract_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setCategories("Category_1");
 			setUcum("kg");
@@ -206,12 +195,12 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_DOUBLE, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_DOUBLE, "Category_1");
 		expected.setUnit("kg");
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -223,15 +212,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractStringPhenotypeCreation() throws Exception {
-		String id = "Abstract_String_Phenotype_1";
+		String title = "Abstract_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("string");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setCategories("Category_1");
 		}};
@@ -244,11 +233,11 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_STRING, "Category_1");
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_STRING, "Category_1");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -260,15 +249,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractDatePhenotypeCreation() throws Exception {
-		String id = "Abstract_Date_Phenotype_1";
+		String title = "Abstract_Date_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("date");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setCategories("Category_1");
 		}};
@@ -281,11 +270,11 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_DATE_TIME, "Category_1");
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_DATE_TIME, "Category_1");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -297,15 +286,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractBooleanPhenotypeCreation() throws Exception {
-		String id = "Abstract_Boolean_Phenotype_1";
+		String title = "Abstract_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setCategories("Category_1");
 		}};
@@ -318,11 +307,11 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(id, OWL2Datatype.XSD_BOOLEAN, "Category_1");
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_BOOLEAN, "Category_1");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -334,16 +323,16 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractCompositeBooleanPhenotypeCreation() throws Exception {
-		String id = "Abstract_Composite_Boolean_Phenotype_1";
+		String title = "Abstract_Composite_Boolean_Phenotype_1";
 
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("composite-boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setCategories("Category_1");
 		}};
@@ -356,11 +345,11 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		AbstractBooleanPhenotype expected = new AbstractBooleanPhenotype(id, "Category_1");
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		AbstractBooleanPhenotype expected = new AbstractBooleanPhenotype(new Title(title), "Category_1");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -371,15 +360,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testAbstractCalculationPhenotypeCreation() throws Exception {
-		String id = "Abstract_Calculation_Phenotype_1";
+		String title = "Abstract_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("calculation");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setCategories("Category_1");
 			setUcum("cm");
@@ -394,14 +383,14 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		AbstractCalculationPhenotype expected = new AbstractCalculationPhenotype(
-			id, manager.getFormula("Abstract_Integer_Phenotype_1"), "Category_1"
+		AbstractCalculationPhenotype expected = manager.getPhenotypeFactory().createAbstractCalculationPhenotype(
+			new Title(title), "Abstract_Integer_Phenotype_1", "Category_1"
 		);
 		expected.setUnit("cm");
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -417,15 +406,15 @@ public class PhenotypeTest extends AbstractTest {
 	 *********************************/
 
 	private void testRestrictedIntegerPhenotypeCreation() throws Exception {
-		String id = "Restricted_Integer_Phenotype_1";
+		String title = "Restricted_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_Integer_Phenotype_1");
 			setRangeMin("5");
@@ -442,13 +431,13 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_Integer_Phenotype_1",
+		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
+			title, "Abstract_Integer_Phenotype_1",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Integer[] { 5, 10 }));
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -460,15 +449,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedDoublePhenotypeCreation() throws Exception {
-		String id = "Restricted_Double_Phenotype_1";
+		String title = "Restricted_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_Double_Phenotype_1");
 			setRangeMin("5.3");
@@ -485,13 +474,13 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_Double_Phenotype_1",
+		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
+			title, "Abstract_Double_Phenotype_1",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -503,15 +492,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedStringPhenotypeCreation() throws Exception {
-		String id = "Restricted_String_Phenotype_1";
+		String title = "Restricted_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("string");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_String_Phenotype_1");
 			setEnumValues(Arrays.asList("a", "b"));
@@ -525,13 +514,13 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_String_Phenotype_1",
+		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
+			title, "Abstract_String_Phenotype_1",
 			new PhenotypeRange("a", "b"));
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -543,14 +532,14 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedDatePhenotypeCreation() throws Exception {
-		String id = "Restricted_Date_Phenotype_1";
+		String title = "Restricted_Date_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("date");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_Date_Phenotype_1");
 			setRangeMin("02.03.2015");
@@ -567,7 +556,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2015, Calendar.MARCH, 2, 0, 0, 0);
@@ -577,11 +566,11 @@ public class PhenotypeTest extends AbstractTest {
 		calendar.set(Calendar.MILLISECOND, 0);
 		Date max = calendar.getTime();
 
-		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_Date_Phenotype_1",
+		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
+			title, "Abstract_Date_Phenotype_1",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Date[] { min, max }));
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -593,14 +582,14 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedBooleanPhenotypeCreation() throws Exception {
-		String id = "Restricted_Boolean_Phenotype_1";
+		String title = "Restricted_Boolean_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_Boolean_Phenotype_1");
 			setEnumValues(Collections.singletonList("true"));
@@ -614,13 +603,12 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		RestrictedSinglePhenotype expected = new RestrictedSinglePhenotype(
-			id, "Abstract_Boolean_Phenotype_1",
-			new PhenotypeRange(true));
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
+			title, "Abstract_Boolean_Phenotype_1", new PhenotypeRange(true));
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -632,15 +620,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedCompositeBooleanPhenotypeCreation() throws Exception {
-		String id = "Restricted_Composite_Boolean_Phenotype_1";
+		String title = "Restricted_Composite_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("composite-boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_Composite_Boolean_Phenotype_1");
 			setExpression("Restricted_Integer_Phenotype_1");
@@ -655,13 +643,12 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		RestrictedBooleanPhenotype expected = new RestrictedBooleanPhenotype(
-			id, "Abstract_Composite_Boolean_Phenotype_1",
-			manager.getManchesterSyntaxExpression("Restricted_Integer_Phenotype_1"));
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		RestrictedBooleanPhenotype expected = manager.getPhenotypeFactory().createRestrictedBooleanPhenotype(
+			title, "Abstract_Composite_Boolean_Phenotype_1", "Restricted_Integer_Phenotype_1");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -673,15 +660,15 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	private void testRestrictedCalculationPhenotypeCreation() throws Exception {
-		String id = "Restricted_Calculation_Phenotype_1";
+		String title = "Restricted_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setId(id);
+			setTitleEn(title);
 			setDatatype("calculation");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
-			setDefinitions(Arrays.asList("Definition EN", "Definition DE"));
-			setDefinitionLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_Calculation_Phenotype_1");
 			setRangeMin("5.3");
@@ -698,13 +685,13 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(id);
+		Category actual = manager.getPhenotype(title);
 
-		RestrictedCalculationPhenotype expected = new RestrictedCalculationPhenotype(
-			id, "Abstract_Calculation_Phenotype_1",
+		RestrictedCalculationPhenotype expected = manager.getPhenotypeFactory().createRestrictedCalculationPhenotype(
+			title, "Abstract_Calculation_Phenotype_1",
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
-		expected.addDefinition("Definition EN", "en");
-		expected.addDefinition("Definition DE", "de");
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");

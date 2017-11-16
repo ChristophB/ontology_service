@@ -15,10 +15,11 @@ import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
-import org.lha.phenoman.model.phenotype.top_level.TextLang;
 import org.lha.phenoman.model.reasoner_result.ReasonerReport;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
@@ -30,7 +31,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +39,8 @@ import java.util.stream.Collectors;
  * @author Christoph Beger
  */
 public class PhenotypeManager {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(PhenotypeManager.class);
 
 	/**
 	 * The PhenoMan manager instance of a phenotype ontology.
@@ -65,9 +68,12 @@ public class PhenotypeManager {
 	 */
 	public Category getPhenotype(String id) {
 		if (StringUtils.isBlank(id)) return null;
-		Category category = manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
+		try {
+			Category category = manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
 
-		return category != null ? category : manager.getCategory(XMLUtils.getNCNameSuffix(id));
+			return category != null ? category : manager.getCategory(XMLUtils.getNCNameSuffix(id));
+		} catch (NoSuchElementException e) { LOGGER.info(e.getMessage()); }
+		return null;
 	}
 
 	/**
@@ -94,7 +100,7 @@ public class PhenotypeManager {
 		if (StringUtils.isBlank(formData.getTitleEn()) && StringUtils.isBlank(formData.getTitleDe()))
 			throw new NullPointerException("Title of category is missing.");
 
-		Category category = PhenotypeCategoryFactory.createPhenotypeCategory(formData);
+		Category category = new PhenotypeCategoryFactory(manager).createPhenotypeCategory(formData);
 
 		if (StringUtils.isBlank(formData.getSuperCategory()))
 			manager.addPhenotypeCategory(category);
@@ -117,7 +123,7 @@ public class PhenotypeManager {
 		if (StringUtils.isBlank(formData.getDatatype()))
 			throw new NullPointerException("Datatype of the abstract phenotype is missing.");
 
-		AbstractPhenotype phenotype = AbstractPhenotypeFactory.createAbstractPhenotype(manager, formData);
+		AbstractPhenotype phenotype = new AbstractPhenotypeFactory(manager).createAbstractPhenotype(formData);
 		addPhenotype(phenotype);
 
 		manager.write();
@@ -132,12 +138,10 @@ public class PhenotypeManager {
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
 	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
-		if (StringUtils.isBlank(formData.getTitleEn()) && StringUtils.isBlank(formData.getTitleDe()))
-			throw new NullPointerException("Title or super phenotype is missing.");
 		if (StringUtils.isBlank(formData.getSuperPhenotype()))
 			throw new NullPointerException("Super phenotype is missing.");
 
-		RestrictedPhenotype phenotype = RestrictedPhenotypeFactory.createRestrictedPhenotype(manager, formData);
+		RestrictedPhenotype phenotype = new RestrictedPhenotypeFactory(manager).createRestrictedPhenotype(formData);
 		addPhenotype(phenotype);
 
 		manager.write();
@@ -289,12 +293,15 @@ public class PhenotypeManager {
 	private TreeNode getTreeNode(PhenotypeCategoryTreeNode node, Boolean includePhenotypes) {
 		Category category = node.getCategory();
 
-		String tooltip  = category.hasLabels() ? getTextLang(category.getLabels()) : "";
+		StringBuilder tooltip = new StringBuilder();
+		for (String lang : category.getTitles().keySet()) {
+			tooltip.append(lang).append(": ").append(category.getTitle(lang)).append("\n");
+		}
 		String text     = node.getName().replaceAll("_", " ");
 		OWL2Datatype datatype = getDatatype(category);
 
 
-		TreeNode treeNode = new TreeNode(node.getName(), text, tooltip);
+		TreeNode treeNode = new TreeNode(node.getName(), text, tooltip.toString());
 		treeNode.setType(owl2DatatypeToString(datatype, category));
 
 		if (category.isRestrictedPhenotype()) {
@@ -370,10 +377,6 @@ public class PhenotypeManager {
 
 
 
-	private String getTextLang(Set<TextLang> set) {
-		return String.join("\n", set.stream().map(textLang -> textLang.getLang() + ": " + textLang.getText()).collect(Collectors.toList()));
-	}
-
 	/**
 	 * This function checks if the provided Phenotype is one of
 	 * RestrictedSinglePhenotype, RestrictedBooleanPhenotype, RestrictedCalculationPhenotype,
@@ -443,7 +446,7 @@ public class PhenotypeManager {
 		void addChild(TreeNode child) { children.add(child); }
 	}
 
-	public class AttributeList {
+	public class AttributeList { // TODO: add superPhenotype and superCategories
 		public String type;
 		public String id;
 		public String title;

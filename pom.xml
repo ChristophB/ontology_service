@@ -93,11 +93,11 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- RUN: mvn install:install-file -Dfile=lib/phenoman-0.0.1.jar -DgroupId=org.lha -DartifactId=phenoman -Dversion=0.0.1 -Dpackaging=jar -->
+        <!-- RUN: mvn install:install-file -Dfile=lib/phenoman-0.0.2.jar -DgroupId=org.lha -DartifactId=phenoman -Dversion=0.0.2 -Dpackaging=jar -->
         <dependency>
             <groupId>org.lha</groupId>
             <artifactId>phenoman</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.2</version>
         </dependency>
     </dependencies>
 

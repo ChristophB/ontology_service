@@ -149,7 +149,7 @@ public class Phenotype {
 		return definitions;
 	}
 
-	public void setDefinitions(List<String> definitions) {
+	public void setDescriptions(List<String> definitions) {
 		this.definitions = definitions;
 	}
 
@@ -157,7 +157,7 @@ public class Phenotype {
 		return definitionLanguages;
 	}
 
-	public void setDefinitionLanguages(List<String> definitionLanguage) {
+	public void setDescriptionLanguages(List<String> definitionLanguage) {
 		this.definitionLanguages = definitionLanguage;
 	}
 

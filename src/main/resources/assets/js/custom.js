@@ -132,14 +132,15 @@ function clearPhenotypeFormData() {
 	toggleValueDefinition();
 
 	$.getJSON('all?type=list', function(data) {
-		var input = document.querySelector('form:not(.hidden) input#id');
+		var input = document.querySelector('form:not(.hidden) input#title-en');
     	var awesomplete = new Awesomplete(input, { list: data });
-    	//Awesomplete.$.bind(input, { "awesomplete-selectcomplete": blurIdField });
+//    	var input2 = document.querySelector('form:not(.hidden) input#title-de');
+//        var awesomplete2 = new Awesomplete(input2, { list: data });
     });
 }
 
 function blurIdField() {
-	$('form:not(.hidden) input#titleEn').blur();
+	$('form:not(.hidden) input#title-en').blur();
 }
 
 function customMenu(node) {
@@ -148,14 +149,14 @@ function customMenu(node) {
 			label: 'Create Sub Category',
 			action: function() {
 				showPhenotypeForm('#phenotype-category-form', true);
-				$('#super-category').val(node.text);
+				$('#super-category').val(node.a_attr.id);
 			}
 		},
 		showAbstractPhenotypeForm: {
 			label: 'Create Abstract Phenotype',
 			action: function() {
 				showPhenotypeForm('#abstract-phenotype-form', true);
-				$('form:not(.hidden) #categories').val(node.text);
+				$('form:not(.hidden) #categories').val(node.a_attr.id);
 			}
 		},
 		showRestrictedPhenotypeForm: {
@@ -171,13 +172,13 @@ function customMenu(node) {
 					default: return;
 				}
 
-				$('form:not(.hidden) #super-phenotype').val(getNodeId(node));
+				$('form:not(.hidden) #super-phenotype').val(node.a_attr.id);
 			}
 		},
 		inspect: {
 			label: 'Inspect',
 			action: function() {
-				$.getJSON(getNodeId(node), function(data) {
+				$.getJSON(node.a_attr.id, function(data) {
 					inspectPhenotype(data);
 				});
 			}
@@ -185,14 +186,14 @@ function customMenu(node) {
 		getDecisionTreePng: {
 			label: 'Get Decision Tree As PNG',
 			action: function() {
-				var win = window.open('decision-tree?phenotype=' + getNodeId(node) + '&format=png', '_blank');
+				var win = window.open('decision-tree?phenotype=' + node.a_attr.id + '&format=png', '_blank');
 				win.focus();
 			}
 		},
 		getDecisionTreeGraphml: {
 			label: 'Get Decision Tree As GraphML',
 			action: function() {
-				var win = window.open('decision-tree?phenotype=' + getNodeId(node) + '&format=graphml', '_blank');
+				var win = window.open('decision-tree?phenotype=' + node.a_attr.id + '&format=graphml', '_blank');
 				win.focus();
 			}
 		},
@@ -217,15 +218,11 @@ function customMenu(node) {
 		delete items.getDecisionTreeGraphml;
 	}
 
-	if (node.a_attr.titleEn === 'Phenotype_Category') {
+	if (node.a_attr.id === 'Phenotype_Category') {
 		delete items.delete;
 		delete items.inspect;
 	}
 	return items;
-}
-
-function getNodeId(node) {
-	return node.a_attr.titleEn ?: node.a_attr.titleDe;
 }
 
 function focusInputEnd(input) {
@@ -236,7 +233,7 @@ function focusInputEnd(input) {
 
 function inspectIfExists(id) {
 	$.getJSON(id, function(data) {
-    	inspectPhenotype(data);
+    	if (data != undefined) inspectPhenotype(data);
     });
 }
 
@@ -270,19 +267,31 @@ function inspectPhenotype(data) {
 
 	showPhenotypeForm(form);
 
-	$(form + ' #title-en').val(data.name); // TODO: add titleDe
+	if (data.titles.en != undefined) {
+		$(form + ' #title-en').val(data.titles.en.titleText);
+		$(form + ' #alias-en').val(data.titles.en.alias);
+	}
+	if (data.titles.de != undefined) {
+		$(form + ' #title-de').val(data.titles.de.titleText);
+		$(form + ' #alias-de').val(data.titles.de.alias);
+	}
+
 	$(form + ' #categories').val(data.phenotypeCategories !== undefined ? data.phenotypeCategories.join('; ') : null);
 
-	data.labels.forEach(function(label) {
-		addRow('#label-div');
-        $(form + ' #label-div .generated:last select').val(label.lang);
-        $(form + ' #label-div .generated:last input[type=text]').val(label.text);
-	});
-	data.descriptions.forEach(function(description) {
-    	addRow('#description-div');
-        $(form + ' #description-div .generated:last select').val(description.lang);
-        $(form + ' #description-div .generated:last textarea').val(description.text);
-    });
+	for (var lang in data.labels) {
+		data.labels[lang].forEach(function(label) {
+			addRow('#label-div');
+			$(form + ' #label-div .generated:last select').val(lang);
+			$(form + ' #label-div .generated:last input[type=text]').val(label);
+		});
+	}
+	for (var lang in data.descriptions) {
+		data.descriptions[lang].forEach(function(description) {
+			addRow('#description-div');
+            $(form + ' #description-div .generated:last select').val(lang);
+            $(form + ' #description-div .generated:last textarea').val(description);
+		});
+    }
 	data.relatedConcepts.forEach(function(relation) {
     	addRow('#relation-div');
         $(form + ' #relation-div .generated:last input[type=text]').val(relation);

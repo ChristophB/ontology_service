@@ -78,3 +78,21 @@
 div.awesomplete {
     display: block;
 }
+
+/**
+ * bootstrap's input groups modify the float & z-index of form-controls, this allows awesomplete
+ * to assume the position of the form-control and reset the input
+ */
+.input-group div.awesomplete {
+    position: relative;
+    z-index: 2;
+    float: left;
+    width: 100%;
+    margin-bottom: 0;
+}
+.input-group div.awesomplete > input {
+    float: none;
+}
+.input-group div.awesomplete > ul {
+    z-index: 3; /* bootstrap sets .input-group .form-control to 2 */
+}
