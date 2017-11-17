@@ -7,7 +7,7 @@
 	</div>
 	
 	<div class="col-sm-6" id="label-div">
-		<small class="form-text text-muted">Specify some human-readable labels in different languages.</small>
+		<small class="form-text text-muted">Specify some alternative labels in different languages.</small>
 	
 		<div class="input-group hidden">
 			<div class="input-group-addon">

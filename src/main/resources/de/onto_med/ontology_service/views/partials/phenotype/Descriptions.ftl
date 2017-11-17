@@ -1,6 +1,6 @@
 <div class="form-group row">
 	<div class="col-sm-2">
-		<label class="control-label">Descriptions</label>
+		<label class="control-label">Descript.</label>
 		<a class="btn btn-primary btn-xs pull-right" onclick="addRow('#description-div')" data-toggle="tooltip" title="Add a Description" data-placement="right">
 			<i class="fa fa-plus" aria-hidden="true"></i>
 		</a>
