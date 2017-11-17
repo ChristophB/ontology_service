@@ -28,8 +28,6 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @throws UnsupportedDataTypeException If the provided phenotype data contains invalid values.
 	 */
 	public AbstractPhenotype createAbstractPhenotype(Phenotype data) throws UnsupportedDataTypeException, NullPointerException {
-		if (StringUtils.isBlank(data.getTitleDe()) && StringUtils.isBlank(data.getTitleEn()))
-			throw new NullPointerException("Title of abstract phenotype is missing.");
 		String datatype = data.getDatatype();
 
 		AbstractPhenotype phenotype;
@@ -63,19 +61,21 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @param datatype An OWL2Datatype.
 	 * @return An AbstractSinglePhenotype.
 	 */
-	private AbstractSinglePhenotype createAbstractSinglePhenotype(Phenotype data, OWL2Datatype datatype) {
-		AbstractSinglePhenotype phenotype;
-		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = factory.createAbstractSinglePhenotype(
-				new Title(data.getTitleEn(), data.getAliasEn(), "en"), datatype, data.getCategories().split(";")
-			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(), "de"));
-		} else {
-			phenotype = factory.createAbstractSinglePhenotype(
-				new Title(data.getTitleDe(), data.getAliasDe(), "de"), datatype, data.getCategories().split(";")
-			);
+	private AbstractSinglePhenotype createAbstractSinglePhenotype(Phenotype data, OWL2Datatype datatype) throws NullPointerException {
+		AbstractSinglePhenotype phenotype = null;
+
+		for (Title title : data.getTitleObjects()) {
+			if (phenotype == null) {
+				phenotype = factory.createAbstractSinglePhenotype(
+					title, datatype, data.getCategories().split(";")
+				);
+				if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
+			} else {
+				phenotype.addTitle(title);
+			}
 		}
-		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
+
+		if (phenotype == null) throw new NullPointerException("Could not create abstract phenotype, because title is missing.");
 
 		return phenotype;
 	}
@@ -86,17 +86,20 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @return An AbstractBooleanPhenotype
 	 */
 	private AbstractBooleanPhenotype createAbstractBooleanPhenotype(Phenotype data) {
-		AbstractBooleanPhenotype phenotype;
-		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = factory.createAbstractBooleanPhenotype(
-				new Title(data.getTitleEn(), data.getAliasEn(), "en"), data.getCategories().split(";")
-			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(), "de"));
-		} else {
-			phenotype = factory.createAbstractBooleanPhenotype(
-				new Title(data.getTitleDe(), data.getAliasDe(), "de"), data.getCategories().split(";")
-			);
+		AbstractBooleanPhenotype phenotype = null;
+
+		for (Title title : data.getTitleObjects()) {
+			if (phenotype == null) {
+				phenotype = factory.createAbstractBooleanPhenotype(
+					title, data.getCategories().split(";")
+				);
+			} else {
+				phenotype.addTitle(title);
+			}
 		}
+
+		if (phenotype == null) throw new NullPointerException("Could not create abstract phenotype, because title is missing.");
+
 		return phenotype;
 	}
 
@@ -106,20 +109,23 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @return An AbstractCalculationPhenotype.
 	 */
 	private AbstractCalculationPhenotype createAbstractCalculationPhenotype(Phenotype data) {
-		AbstractCalculationPhenotype phenotype;
+		AbstractCalculationPhenotype phenotype = null;
+
 		if (StringUtils.isBlank(data.getFormula()))
 			throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
-		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = factory.createAbstractCalculationPhenotype(
-				new Title(data.getTitleEn(), data.getAliasEn(), "en"), data.getFormula(), data.getCategories().split(";")
-			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(), "de"));
-		} else {
-			phenotype = factory.createAbstractCalculationPhenotype(
-				new Title(data.getTitleDe(), data.getAliasDe(), "de"), data.getFormula(), data.getCategories().split(";")
-			);
+
+		for (Title title : data.getTitleObjects()) {
+			if (phenotype == null) {
+				phenotype = factory.createAbstractCalculationPhenotype(
+					title, data.getFormula(), data.getCategories().split(";")
+				);
+				if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
+			} else {
+				phenotype.addTitle(title);
+			}
 		}
-		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
+
+		if (phenotype == null) throw new NullPointerException("Could not create abstract phenotype, because title is missing.");
 
 		return phenotype;
 	}

@@ -67,23 +67,23 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A RestrictedSinglePhenotype.
 	 */
 	private RestrictedSinglePhenotype createRestrictedSinglePhenotype(Phenotype data, Category superPhenotype) {
-		RestrictedSinglePhenotype phenotype;
-		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = factory.createRestrictedSinglePhenotype(
-				new Title(data.getTitleEn(), data.getAliasEn(), "en"), data.getSuperPhenotype(),
-				createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
-			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(),"de"));
-		} else if (StringUtils.isNoneBlank(data.getTitleDe())) {
-			phenotype = factory.createRestrictedSinglePhenotype(
-				new Title(data.getTitleDe(), data.getAliasDe(), "de"), data.getSuperPhenotype(),
-				createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
-			);
-		} else {
+		RestrictedSinglePhenotype phenotype = null;
+
+		for (Title title : data.getTitleObjects()) {
+			if (phenotype == null) {
+				phenotype = factory.createRestrictedSinglePhenotype(
+					title, data.getSuperPhenotype(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
+				);
+			} else {
+				phenotype.addTitle(title);
+			}
+		}
+		if (phenotype == null) {
 			phenotype = factory.createRestrictedSinglePhenotype(
 				data.getSuperPhenotype(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
 			);
 		}
+
 		return phenotype;
 	}
 
@@ -94,23 +94,24 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A RestrictedCalculationPhenotype.
 	 */
 	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(Phenotype data, Category superPhenotype) {
-		RestrictedCalculationPhenotype phenotype;
-		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = factory.createRestrictedCalculationPhenotype(
-				new Title(data.getTitleEn(), data.getAliasEn(), "en"), superPhenotype.getName(),
-				createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
-			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(), "de"));
-		} else if (StringUtils.isNoneBlank(data.getTitleDe())) {
-			phenotype = factory.createRestrictedCalculationPhenotype(
-				new Title(data.getTitleDe(), data.getAliasDe(), "de"), superPhenotype.getName(),
-				createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
-			);
-		} else {
+		RestrictedCalculationPhenotype phenotype = null;
+
+		for (Title title : data.getTitleObjects()) {
+			if (phenotype == null) {
+				phenotype = factory.createRestrictedCalculationPhenotype(
+					title, superPhenotype.getName(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
+				);
+			} else {
+				phenotype.addTitle(title);
+			}
+		}
+
+		if (phenotype == null) {
 			phenotype = factory.createRestrictedCalculationPhenotype(
 				superPhenotype.getName(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
 			);
 		}
+
 		return phenotype;
 	}
 
@@ -121,22 +122,23 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A RestrictedBooleanPhenotype.
 	 */
 	private RestrictedBooleanPhenotype createRestrictedBooleanPhenotype(Phenotype data, Category superPhenotype) throws NullPointerException {
-		RestrictedBooleanPhenotype phenotype;
+		RestrictedBooleanPhenotype phenotype = null;
+
 		if (StringUtils.isBlank(data.getExpression()))
 			throw new NullPointerException("Boolean expression for restricted boolean phenotype is missing.");
 
-		if (StringUtils.isNoneBlank(data.getTitleEn())) {
-			phenotype = factory.createRestrictedBooleanPhenotype(
-				new Title(data.getTitleEn(), data.getAliasEn(), "en"), superPhenotype.getName(), data.getExpression()
-			);
-			if (StringUtils.isNoneBlank(data.getTitleDe())) phenotype.addTitle(new Title(data.getTitleDe(), data.getAliasDe(), "de"));
-		} else if (StringUtils.isNoneBlank(data.getTitleDe())){
-			phenotype = factory.createRestrictedBooleanPhenotype(
-				new Title(data.getTitleDe(), data.getAliasDe(), "de"), superPhenotype.getName(), data.getExpression()
-			);
-		} else {
-			throw new NullPointerException("Title of restricted boolean phenotype is missing.");
+		for (Title title : data.getTitleObjects()) {
+			if (phenotype == null) {
+				phenotype = factory.createRestrictedBooleanPhenotype(
+					title, superPhenotype.getName(), data.getExpression()
+				);
+			} else {
+				phenotype.addTitle(title);
+			}
 		}
+
+		if (phenotype == null) throw new NullPointerException("Title of restricted boolean phenotype is missing.");
+
 		phenotype.asRestrictedBooleanPhenotype().setScore(data.getScore());
 		return phenotype;
 	}

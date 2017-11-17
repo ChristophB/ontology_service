@@ -45,7 +45,8 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Category_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
+			getTitleLanguages().add("de");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description NONE"));
@@ -63,7 +64,7 @@ public class PhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getCategory(title);
 
-		Category expected = new Category(new Title(title));
+		Category expected = new Category(new Title(title, "de"));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addDescription("Description EN", "en");
@@ -136,7 +137,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Abstract_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -175,7 +176,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Abstract_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -215,7 +216,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Abstract_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("string");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -252,7 +253,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Abstract_Date_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("date");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -289,7 +290,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Abstract_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -327,7 +328,7 @@ public class PhenotypeTest extends AbstractTest {
 
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("composite-boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -363,7 +364,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Abstract_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("calculation");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -409,7 +410,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Restricted_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -452,7 +453,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Restricted_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -495,7 +496,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Restricted_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("string");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -534,7 +535,7 @@ public class PhenotypeTest extends AbstractTest {
 	private void testRestrictedDatePhenotypeCreation() throws Exception {
 		String title = "Restricted_Date_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("date");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -584,7 +585,7 @@ public class PhenotypeTest extends AbstractTest {
 	private void testRestrictedBooleanPhenotypeCreation() throws Exception {
 		String title = "Restricted_Boolean_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -623,7 +624,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Restricted_Composite_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("composite-boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));
@@ -663,7 +664,7 @@ public class PhenotypeTest extends AbstractTest {
 		String title = "Restricted_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
-			setTitleEn(title);
+			getTitles().add(title);
 			setDatatype("calculation");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
 			setLabelLanguages(Arrays.asList("en", "de"));

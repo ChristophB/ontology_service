@@ -9,7 +9,7 @@
 	<div class="col-sm-10" id="description-div">
 		<div class="input-group hidden">
 			<div class="input-group-addon">
-				<select name="descriptionLanguages[]" data-toggle="tooltip" title="Language" data-placement="right">
+				<select name="descriptionLanguages[]" class="hidden-languages" data-toggle="tooltip" title="Language" data-placement="right">
 					<option value="en">EN</option>
 					<option value="de">DE</option>
 					<option value="fr">FR</option>

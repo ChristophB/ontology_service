@@ -1,6 +1,8 @@
 package de.onto_med.ontology_service.data_model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
+import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import java.util.ArrayList;
@@ -8,13 +10,11 @@ import java.util.List;
 
 public class Phenotype {
 	@JsonProperty
-	private String titleEn;
+	private List<String> titles = new ArrayList<>();
 	@JsonProperty
-	private String titleDe;
+	private List<String> aliases = new ArrayList<>();
 	@JsonProperty
-	private String aliasEn;
-	@JsonProperty
-	private String aliasDe;
+	private List<String> titleLanguages = new ArrayList<>();
 	@JsonProperty
 	private List<String> labels = new ArrayList<>();
 	@JsonProperty
@@ -81,36 +81,28 @@ public class Phenotype {
 		this.isDecimal = isDecimal;
 	}
 	
-	public String getTitleEn() {
-		return titleEn;
+	public List<String> getTitles() {
+		return titles;
 	}
 	
-	public void setTitleEn(String titleEn) {
-		this.titleEn = titleEn;
+	public void setTitles(List<String> titles) {
+		this.titles = titles;
 	}
 
-	public String getTitleDe() {
-		return titleDe;
+	public List<String> getAliases() {
+		return aliases;
 	}
 
-	public void setTitleDe(String titleDe) {
-		this.titleDe = titleDe;
+	public void setAliases(List<String> aliases) {
+		this.aliases = aliases;
 	}
 
-	public String getAliasEn() {
-		return aliasEn;
+	public List<String> getTitleLanguages() {
+		return titleLanguages;
 	}
 
-	public void setAliasEn(String aliasEn) {
-		this.aliasEn = aliasEn;
-	}
-
-	public String getAliasDe() {
-		return aliasDe;
-	}
-
-	public void setAliasDe(String aliasDe) {
-		this.aliasDe = aliasDe;
+	public void setTitleLanguages(List<String> titleLanguages) {
+		this.titleLanguages = titleLanguages;
 	}
 
 	public List<String> getLabels() {
@@ -239,6 +231,20 @@ public class Phenotype {
 
 	public void setRelations(List<String> relations) {
 		this.relations = relations;
+	}
+
+	public List<Title> getTitleObjects() {
+		List<Title> result = new ArrayList<>();
+
+		for (int i = 0; i < getTitles().size(); i++) {
+			if (StringUtils.isBlank(getTitles().get(i))) continue;
+			Title title;
+			if (getAliases().size() > i) title = new Title(getTitles().get(i), getAliases().get(i), getTitleLanguages().get(i));
+			else title = new Title(getTitles().get(i), getTitleLanguages().get(i));
+			result.add(title);
+		}
+
+		return result;
 	}
 
 	private void addDefinition(String definition) {

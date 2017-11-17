@@ -129,18 +129,14 @@ function clearPhenotypeFormData() {
 	$('form:not(.hidden) input[type!=checkbox].form-control, form:not(.hidden) textarea.form-control, form:not(.hidden) select').val(null);
 	$('form:not(.hidden) input[type=checkbox]').removeAttr('checked');
 	$('.generated').remove();
+	$('.hidden-language').val('en');
+	$('form:not(.hidden) #title-languages').val('en');
 	toggleValueDefinition();
 
 	$.getJSON('all?type=list', function(data) {
-		var input = document.querySelector('form:not(.hidden) input#title-en');
+		var input = document.querySelector('form:not(.hidden) input.awesomplete#titles');
     	var awesomplete = new Awesomplete(input, { list: data });
-//    	var input2 = document.querySelector('form:not(.hidden) input#title-de');
-//        var awesomplete2 = new Awesomplete(input2, { list: data });
     });
-}
-
-function blurIdField() {
-	$('form:not(.hidden) input#title-en').blur();
 }
 
 function customMenu(node) {
@@ -267,14 +263,22 @@ function inspectPhenotype(data) {
 
 	showPhenotypeForm(form);
 
-	if (data.titles.en != undefined) {
-		$(form + ' #title-en').val(data.titles.en.titleText);
-		$(form + ' #alias-en').val(data.titles.en.alias);
-	}
-	if (data.titles.de != undefined) {
-		$(form + ' #title-de').val(data.titles.de.titleText);
-		$(form + ' #alias-de').val(data.titles.de.alias);
-	}
+	var counter = 1;
+	for (var lang in data.titles) {
+		var title = data.titles[lang];
+
+		if (counter == 1) {
+			$(form + ' #title-div #title-languages').val(lang);
+            $(form + ' #title-div .input-group:not(.hidden):first input[type=text]#titles').val(title.titleText);
+            if (title.alias != null) $(form + ' #title-div .input-group:not(.hidden):first input[type=text]#aliases').val(title.alias);
+		} else {
+			addRow('#title-div');
+			$(form + ' #title-div .generated:last select').val(lang);
+			$(form + ' #title-div .generated:last input[type=text]#titles').val(title.titleText);
+			if (title.alias != null) $(form + ' #title-div .generated:last input[type=text]#aliases').val(title.alias);
+		}
+		counter++;
+    }
 
 	$(form + ' #categories').val(data.phenotypeCategories !== undefined ? data.phenotypeCategories.join('; ') : null);
 

@@ -97,9 +97,6 @@ public class PhenotypeManager {
 	 * @throws NullPointerException If a required parameter is missing.
 	 */
 	public Category createCategory(Phenotype formData) throws NullPointerException {
-		if (StringUtils.isBlank(formData.getTitleEn()) && StringUtils.isBlank(formData.getTitleDe()))
-			throw new NullPointerException("Title of category is missing.");
-
 		Category category = new PhenotypeCategoryFactory(manager).createPhenotypeCategory(formData);
 
 		if (StringUtils.isBlank(formData.getSuperCategory()))
@@ -118,8 +115,6 @@ public class PhenotypeManager {
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
 	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
-		if (StringUtils.isBlank(formData.getTitleEn()) && StringUtils.isBlank(formData.getTitleDe()))
-			throw new NullPointerException("Title of the abstract phenotype is missing.");
 		if (StringUtils.isBlank(formData.getDatatype()))
 			throw new NullPointerException("Datatype of the abstract phenotype is missing.");
 
