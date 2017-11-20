@@ -1,5 +1,6 @@
 package de.onto_med.ontology_service.data_model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.model.phenotype.top_level.Title;
@@ -10,13 +11,13 @@ import java.util.List;
 
 public class Phenotype {
 	@JsonProperty
-	private List<String> titles = new ArrayList<>();
+	private List<String> titles         = new ArrayList<>();
 	@JsonProperty
-	private List<String> aliases = new ArrayList<>();
+	private List<String> aliases        = new ArrayList<>();
 	@JsonProperty
 	private List<String> titleLanguages = new ArrayList<>();
 	@JsonProperty
-	private List<String> labels = new ArrayList<>();
+	private List<String> labels         = new ArrayList<>();
 	@JsonProperty
 	private List<String> labelLanguages = new ArrayList<>();
 	@JsonProperty
@@ -26,7 +27,7 @@ public class Phenotype {
 	@JsonProperty
 	private String superCategory;
 	@JsonProperty
-	private List<String> definitions = new ArrayList<>();
+	private List<String> definitions         = new ArrayList<>();
 	@JsonProperty
 	private List<String> definitionLanguages = new ArrayList<>();
 	@JsonProperty
@@ -52,10 +53,11 @@ public class Phenotype {
 	@JsonProperty
 	private Boolean isDecimal;
 	@JsonProperty
-	private Double score;
+	private Double  score;
 
 
-	public Phenotype() { }
+	public Phenotype() {
+	}
 
 	public Double getScore() {
 		return score;
@@ -80,11 +82,11 @@ public class Phenotype {
 	public void setIsDecimal(Boolean isDecimal) {
 		this.isDecimal = isDecimal;
 	}
-	
+
 	public List<String> getTitles() {
 		return titles;
 	}
-	
+
 	public void setTitles(List<String> titles) {
 		this.titles = titles;
 	}
@@ -233,15 +235,19 @@ public class Phenotype {
 		this.relations = relations;
 	}
 
+	@JsonIgnore
 	public List<Title> getTitleObjects() {
 		List<Title> result = new ArrayList<>();
 
 		for (int i = 0; i < getTitles().size(); i++) {
 			if (StringUtils.isBlank(getTitles().get(i))) continue;
-			Title title;
-			if (getAliases().size() > i) title = new Title(getTitles().get(i), getAliases().get(i), getTitleLanguages().get(i));
-			else title = new Title(getTitles().get(i), getTitleLanguages().get(i));
-			result.add(title);
+			String title = getTitles().get(i);
+			String alias = getAliases().size() > i ? getAliases().get(i) : null;
+			String lang  = getTitleLanguages().size() > i ? getTitleLanguages().get(i) : null;
+
+			if (alias != null && lang != null) result.add(new Title(title, lang, alias));
+			else if (lang != null) result.add(new Title(title, lang));
+			else result.add(new Title(title));
 		}
 
 		return result;
@@ -268,7 +274,7 @@ public class Phenotype {
 	}
 
 	private String owl2DatatypeToString(OWL2Datatype datatype) {
-		if (OWL2Datatype.XSD_INTEGER.equals(datatype)|| OWL2Datatype.XSD_DOUBLE.equals(datatype))
+		if (OWL2Datatype.XSD_INTEGER.equals(datatype) || OWL2Datatype.XSD_DOUBLE.equals(datatype))
 			return "numeric";
 		else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype))
 			return "date";

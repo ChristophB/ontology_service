@@ -56,7 +56,6 @@
 
 
 				$('form #submit').on('click', function() {
-				    console.log(JSON.stringify($($(this).closest('form')[0]).serializeJSON()));
                     $.ajax({
                         url: $($(this).closest('form')[0].attributes.url).val(),
                         dataType: 'text',

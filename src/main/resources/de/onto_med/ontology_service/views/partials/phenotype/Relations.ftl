@@ -6,7 +6,7 @@
 		</a>
 	</div>
 	<div class="col-sm-8" id="relation-div">
-		<span class="form-text text-muted">Relations may be IRIs of concepts of ontologies or some identifying code or a database table/column name.</span>
+		<small class="form-text text-muted">Relations may be IRIs of concepts of ontologies or some identifying code or a database table/column name.</small>
 		<#if phenotype?? & phenotype.relations??>
 			<#list phenotype.relations as relation>
 				<input type="text" class="form-control" name="relations[]" placeholder="https://example.com/foo#bar" value="${relation}">
