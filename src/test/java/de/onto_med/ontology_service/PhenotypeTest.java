@@ -127,6 +127,14 @@ public class PhenotypeTest extends AbstractTest {
 		// TODO: implement test for update of restricted phenotype
 	}
 
+	@Test
+	public void testGetTaxonomyNode() throws Exception {
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(
+			RULE.getConfiguration().getPhenotypePath().replace("%id%", "2"), false
+		);
+		assertThat(manager.getPhenotypeCategoryTree(true).getCategory()).isNotNull();
+	}
+
 
 
 	/*******************************

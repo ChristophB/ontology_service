@@ -1,3 +1,5 @@
+var awesomplete;
+
 function toggleValueDefinition() {
 	$('#ucum-form-group, #is-decimal-form-group, #formula-form-group').addClass('hidden');
 
@@ -72,7 +74,7 @@ function createPhenotypeTree(id, url, withContext) {
 					if (attributes.singlePhenotype.value == "true")
 						appendFormField(data.element, drop[0]);
 				} else if (drop[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) === -1) {
-					drop.val(drop.val() + ' ' + attributes.aliasEn.value + ' ');
+					drop.val(drop.val() + ' ' + attributes.id.value + ' ');
 					focusInputEnd(drop);
 				} // else: formula does not accept string
 			}
@@ -133,9 +135,12 @@ function clearPhenotypeFormData() {
 	$('form:not(.hidden) #title-languages').val('en');
 	toggleValueDefinition();
 
-	$.getJSON('all?type=list', function(data) {
+	$.getJSON('all?type=list', function(data) { // TODO: remove old awesomplete if exists
 		var input = document.querySelector('form:not(.hidden) input.awesomplete#titles');
-    	var awesomplete = new Awesomplete(input, { list: data });
+    	if (awesomplete != undefined) {
+    		awesomplete.destroy();
+    	}
+    	awesomplete = new Awesomplete(input, { list: data });
     });
 }
 
@@ -298,9 +303,10 @@ function inspectPhenotype(data) {
     }
 	data.relatedConcepts.forEach(function(relation) {
     	addRow('#relation-div');
-        $(form + ' #relation-div .generated:last input[type=text]').val(relation);
+        $(form + ' #relation-div input[type=text].generated:last').val(relation);
     });
     addRange(form, data.phenotypeRange);
+    if (data.score != undefined) $(form + ' #score').val(data.score);
 }
 
 function addRange(form, range) {

@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 /**
  * This class serves as communicator between the web application and the PhenoMan.
+ *
  * @author Christoph Beger
  */
 public class PhenotypeManager {
@@ -46,13 +47,14 @@ public class PhenotypeManager {
 	 * The PhenoMan manager instance of a phenotype ontology.
 	 */
 	private PhenotypeOntologyManager manager;
-	private String phenotypePath;
+	private String                   phenotypePath;
 
 	/**
 	 * This constructor opens an existing phenotype ontology or creates a new one.
 	 * Existing files are not overwritten but appended to.
 	 * The parameter @code{phenotypePath} specifies the location of the existing
 	 * ontology or of the ontology to be created.
+	 *
 	 * @param phenotypePath Path to the phenotype ontology OWL file.
 	 */
 	public PhenotypeManager(String phenotypePath) {
@@ -63,6 +65,7 @@ public class PhenotypeManager {
 
 	/**
 	 * Retrieves a phenotype for a given id from the cop ontology.
+	 *
 	 * @param id Identifier to search for. Can be suffix or full IRI.
 	 * @return The found phenotype as Category object.
 	 */
@@ -72,12 +75,15 @@ public class PhenotypeManager {
 			Category category = manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
 
 			return category != null ? category : manager.getCategory(XMLUtils.getNCNameSuffix(id));
-		} catch (NoSuchElementException e) { LOGGER.info(e.getMessage()); }
+		} catch (NoSuchElementException e) {
+			LOGGER.info(e.getMessage());
+		}
 		return null;
 	}
 
 	/**
 	 * Returns the top node of the cop.owl taxonomy. The node may contain child nodes.
+	 *
 	 * @param includePhenotypes If true the method returns the taxonomy with phenotypes,
 	 *                          else only categories are included.
 	 * @return Top node of the cop.owl taxonomy.
@@ -92,6 +98,7 @@ public class PhenotypeManager {
 
 	/**
 	 * Creates a phenotype category from provided category data.
+	 *
 	 * @param formData Category data
 	 * @return The created category.
 	 * @throws NullPointerException If a required parameter is missing.
@@ -109,9 +116,10 @@ public class PhenotypeManager {
 
 	/**
 	 * Creates an abstract phenotype from provided phenotype data.
+	 *
 	 * @param formData Phenotype data
 	 * @return The created abstract Phenotype.
-	 * @throws NullPointerException If a required parameter is missing.
+	 * @throws NullPointerException         If a required parameter is missing.
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
 	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
@@ -127,9 +135,10 @@ public class PhenotypeManager {
 
 	/**
 	 * Creates a restricted phenotype from provided phenotype data.
+	 *
 	 * @param formData Phenotype data
 	 * @return The created restricted phenotype.
-	 * @throws NullPointerException If a required parameter is missing.
+	 * @throws NullPointerException         If a required parameter is missing.
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
 	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
@@ -146,6 +155,7 @@ public class PhenotypeManager {
 	/**
 	 * This method created a temporary individual with the provided list of properties.
 	 * Thereafter, types of the individual are retrieved with a reasoner and returned as @code{ReasonerReport}.
+	 *
 	 * @param properties A list of properties, which will be used to create the individual.
 	 * @return A ReasonerReport which contains all found types of the individual.
 	 * @throws IllegalArgumentException If a property value could not be parsed.
@@ -171,24 +181,28 @@ public class PhenotypeManager {
 			} else if (phenotype.isAbstractBooleanPhenotype()) {
 				instance = new SinglePhenotypeInstance(name, Boolean.valueOf(value));
 			} else if (phenotype.isAbstractCalculationPhenotype()) {
-				try { instance = new SinglePhenotypeInstance(name, Double.valueOf(value)); }
-				catch (NumberFormatException e) {
+				try {
+					instance = new SinglePhenotypeInstance(name, Double.valueOf(value));
+				} catch (NumberFormatException e) {
 					throw new IllegalArgumentException("Could not parse Double from String '" + value + "'." + e.getMessage());
 				}
 			} else if (phenotype.isAbstractSinglePhenotype()) {
 				if (OWL2Datatype.XSD_INTEGER.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					try { instance = new SinglePhenotypeInstance(name, Integer.valueOf(value)); }
-					catch (NumberFormatException e) {
+					try {
+						instance = new SinglePhenotypeInstance(name, Integer.valueOf(value));
+					} catch (NumberFormatException e) {
 						throw new IllegalArgumentException("Could not parse Integer from String '" + value + "'.");
 					}
 				} else if (OWL2Datatype.XSD_DOUBLE.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					try { instance = new SinglePhenotypeInstance(name, Double.valueOf(value)); }
-					catch (NumberFormatException e) {
+					try {
+						instance = new SinglePhenotypeInstance(name, Double.valueOf(value));
+					} catch (NumberFormatException e) {
 						throw new IllegalArgumentException("Could not parse Double from String '" + value + "'." + e.getMessage());
 					}
 				} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					try { instance = new SinglePhenotypeInstance(name, Parser.parseStringToDate(value)); }
-					catch (ParseException e) {
+					try {
+						instance = new SinglePhenotypeInstance(name, Parser.parseStringToDate(value));
+					} catch (ParseException e) {
 						throw new IllegalArgumentException("Could not parse Date from String '" + value + "'. " + e.getMessage());
 					}
 				} else if (OWL2Datatype.XSD_BOOLEAN.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
@@ -206,6 +220,7 @@ public class PhenotypeManager {
 
 	/**
 	 * Returns the result of @code{classifyIndividual} as HTML formated string.
+	 *
 	 * @param properties A list of properties, which will be used to create the individual.
 	 * @return String representation of the reasoning result.
 	 * @throws IllegalArgumentException If a property value could not be parsed.
@@ -216,6 +231,7 @@ public class PhenotypeManager {
 
 	/**
 	 * Returns the result of @code{classifyIndividual} as list.
+	 *
 	 * @param properties A list of properties, which will be used to create the individual.
 	 * @return A list of class names.
 	 * @throws IllegalArgumentException If a property value could not be parsed.
@@ -226,9 +242,10 @@ public class PhenotypeManager {
 
 	/**
 	 * Returns the result of @code{classifyIndividual} as image.
+	 *
 	 * @param properties A list of properties, which will be used to create the individual.
 	 * @return Byte representation of the resulting image.
-	 * @throws IOException If the file image file could not be created or written to.
+	 * @throws IOException              If the file image file could not be created or written to.
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public byte[] classifyIndividualAsImage(List<Property> properties) throws IOException, IllegalArgumentException {
@@ -242,11 +259,12 @@ public class PhenotypeManager {
 
 	/**
 	 * Creates a phenotype decision tree in the requested format.
+	 *
 	 * @param phenotypeId The phenotype's identifier.
-	 * @param format String representation of the requested format.
+	 * @param format      String representation of the requested format.
 	 * @return String representation of the result.
 	 * @throws IllegalArgumentException If the provided format is not one of 'png' or 'graphml'.
-	 * @throws IOException If BufferedImage could not be written to ByteArrayOutputStream.
+	 * @throws IOException              If BufferedImage could not be written to ByteArrayOutputStream.
 	 */
 	public Object getPhenotypeDecisionTree(String phenotypeId, String format) throws IllegalArgumentException, IOException {
 		Graph graph = manager.createAbstractPhenotypeGraph(phenotypeId);
@@ -268,14 +286,12 @@ public class PhenotypeManager {
 
 	/**
 	 * Returns the full RDF document for this ontology as string.
+	 *
 	 * @return string containing the full RDF document.
 	 */
 	public String getFullRdfDocument() throws IOException {
 		return new String(Files.readAllBytes(Paths.get(phenotypePath)));
 	}
-
-
-
 
 
 	private List<String> taxonomyAsList(PhenotypeCategoryTreeNode node) {
@@ -286,40 +302,48 @@ public class PhenotypeManager {
 	}
 
 	private TreeNode getTreeNode(PhenotypeCategoryTreeNode node, Boolean includePhenotypes) {
-		Category category = node.getCategory();
-
-		StringBuilder tooltip = new StringBuilder();
-		for (String lang : category.getTitles().keySet()) {
-			tooltip.append(lang).append(": ").append(category.getTitle(lang)).append("\n");
-		}
-		String text     = node.getName().replaceAll("_", " ");
+		Category     category = node.getCategory();
+		String       text     = node.getName().replaceAll("_", " ");
 		OWL2Datatype datatype = getDatatype(category);
 
-
-		TreeNode treeNode = new TreeNode(node.getName(), text, tooltip.toString());
+		TreeNode treeNode = new TreeNode(node.getName(), text);
 		treeNode.setType(owl2DatatypeToString(datatype, category));
 
-		if (category.isRestrictedPhenotype()) {
-			treeNode.setRestrictedPhenotype();
-		} else if (category.isAbstractPhenotype()) {
-			treeNode.setAbstractPhenotype();
+		if (category != null) {
+			StringBuilder tooltip = new StringBuilder();
+			for (String lang : category.getTitles().keySet()) {
+				tooltip.append(String.format(
+					"%s: %s (%s)\n",
+					lang, category.getTitle(lang).getTitleText(),
+					StringUtils.defaultString(category.getTitle(lang).getAlias(), "none")
+				));
+			}
+			treeNode.setTitle(tooltip.toString());
 		}
 
-		if (category.isAbstractSinglePhenotype() || category.isRestrictedSinglePhenotype()) {
-			treeNode.setSinglePhenotype();
-			if (OWL2Datatype.XSD_DOUBLE.equals(datatype) || OWL2Datatype.XSD_INTEGER.equals(datatype)) {
-				treeNode.setNumericPhenotype();
-			} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
-				treeNode.setStringPhenotype();
-			} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype) || OWL2Datatype.XSD_LONG.equals(datatype)) {
-				treeNode.setDatePhenotype();
-			} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
-				treeNode.setBooleanPhenotype();
+		if (category != null) {
+			if (category.isRestrictedPhenotype()) {
+				treeNode.setRestrictedPhenotype();
+			} else if (category.isAbstractPhenotype()) {
+				treeNode.setAbstractPhenotype();
 			}
-		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
-			treeNode.setCompositeBooleanPhenotype();
-		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
-			treeNode.setCalculationPhenotype();
+
+			if (category.isAbstractSinglePhenotype() || category.isRestrictedSinglePhenotype()) {
+				treeNode.setSinglePhenotype();
+				if (OWL2Datatype.XSD_DOUBLE.equals(datatype) || OWL2Datatype.XSD_INTEGER.equals(datatype)) {
+					treeNode.setNumericPhenotype();
+				} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
+					treeNode.setStringPhenotype();
+				} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype) || OWL2Datatype.XSD_LONG.equals(datatype)) {
+					treeNode.setDatePhenotype();
+				} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
+					treeNode.setBooleanPhenotype();
+				}
+			} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+				treeNode.setCompositeBooleanPhenotype();
+			} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
+				treeNode.setCalculationPhenotype();
+			}
 		}
 
 		node.getChildren().stream().sorted(Comparator.comparing(PhenotypeCategoryTreeNode::getName)).forEach(child -> {
@@ -331,12 +355,15 @@ public class PhenotypeManager {
 
 	/**
 	 * Converts an OWL2Datatype to a string, depending on the provided category/phenotype.
+	 *
 	 * @param datatype The OWL2Datatype.
 	 * @param category The category or phenotype object.
 	 * @return A string for representation of the OWL2Datatype.
 	 */
 	private String owl2DatatypeToString(OWL2Datatype datatype, Category category) {
-		if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+		if (datatype == null || category == null) {
+			return null;
+		} if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
 			return "composite-boolean";
 		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
 			return "calculation";
@@ -354,11 +381,14 @@ public class PhenotypeManager {
 
 	/**
 	 * Returns the OWL2Datatype of a category or phenotype.
+	 *
 	 * @param category The category or phenotype object.
 	 * @return The OWL2Datatype of the category.
 	 */
 	private OWL2Datatype getDatatype(Category category) {
-		if (category.isAbstractSinglePhenotype()) {
+		if (category == null) {
+			return null;
+		} if (category.isAbstractSinglePhenotype()) {
 			return category.asAbstractSinglePhenotype().getDatatype();
 		} else if (category.isRestrictedSinglePhenotype()) {
 			return category.asRestrictedSinglePhenotype().getDatatype();
@@ -371,12 +401,12 @@ public class PhenotypeManager {
 	}
 
 
-
 	/**
 	 * This function checks if the provided Phenotype is one of
 	 * RestrictedSinglePhenotype, RestrictedBooleanPhenotype, RestrictedCalculationPhenotype,
 	 * AbstractSinglePhenotype, AbstractBooleanPhenotype, AbstractCalculationPhenotype
 	 * and uses the appropriate function to add the phenotype to the manager.
+	 *
 	 * @param phenotype A phenotype which will be added to the manager.
 	 */
 	private void addPhenotype(Category phenotype) {
@@ -389,7 +419,7 @@ public class PhenotypeManager {
 		} else if (phenotype.isAbstractBooleanPhenotype()) {
 			manager.addAbstractBooleanPhenotype(phenotype.asAbstractBooleanPhenotype());
 		} else if (phenotype.isAbstractCalculationPhenotype()) {
-			 manager.addAbstractCalculationPhenotype(phenotype.asAbstractCalculationPhenotype());
+			manager.addAbstractCalculationPhenotype(phenotype.asAbstractCalculationPhenotype());
 		} else if (phenotype.isAbstractSinglePhenotype()) {
 			manager.addAbstractSinglePhenotype(phenotype.asAbstractSinglePhenotype());
 		}
@@ -398,14 +428,18 @@ public class PhenotypeManager {
 	public class TreeNode {
 		public String text;
 		public String icon;
-		public State state = new State();
+		public State          state    = new State();
 		public List<TreeNode> children = new ArrayList<>();
-		public AttributeList a_attr    = new AttributeList();
+		public AttributeList  a_attr   = new AttributeList();
 
 		TreeNode(String id, String text, String title) {
-			this.text = text;
-			a_attr.id    = id;
+			this(id, text);
 			a_attr.title = title;
+		}
+
+		TreeNode(String id, String text) {
+			a_attr.id = id;
+			this.text = text;
 		}
 
 		public void setOpened(Boolean opened) {
@@ -416,36 +450,65 @@ public class PhenotypeManager {
 			state.selected = selected;
 		}
 
-		public void setType(String type) { a_attr.type = type; }
+		public void setType(String type) {
+			a_attr.type = type;
+		}
+
+		public void setTitle(String title) {
+			a_attr.title = title;
+		}
+
 		void setRestrictedPhenotype() {
 			a_attr.phenotype = true;
 			a_attr.restrictedPhenotype = true;
 			icon += " text-warning";
 		}
+
 		void setAbstractPhenotype() {
 			a_attr.phenotype = true;
 			a_attr.abstractPhenotype = true;
 			icon += " text-primary";
 		}
+
 		void setSinglePhenotype() {
 			a_attr.phenotype = true;
 			a_attr.singlePhenotype = true;
 		}
-		void setNumericPhenotype() { icon += " fa fa-calculator"; }
-		void setStringPhenotype() { icon += " fa fa-font"; }
-		void setDatePhenotype() { icon += " fa fa-calendar"; }
-		void setBooleanPhenotype() { icon += " fa fa-check-circle-o"; }
-		void setCompositeBooleanPhenotype() { icon += " fa fa-check-circle"; }
-		void setCalculationPhenotype() { icon += " fa fa-calculator"; }
 
-		void addChild(TreeNode child) { children.add(child); }
+		void setNumericPhenotype() {
+			icon += " fa fa-calculator";
+		}
+
+		void setStringPhenotype() {
+			icon += " fa fa-font";
+		}
+
+		void setDatePhenotype() {
+			icon += " fa fa-calendar";
+		}
+
+		void setBooleanPhenotype() {
+			icon += " fa fa-check-circle-o";
+		}
+
+		void setCompositeBooleanPhenotype() {
+			icon += " fa fa-check-circle";
+		}
+
+		void setCalculationPhenotype() {
+			icon += " fa fa-calculator";
+		}
+
+		void addChild(TreeNode child) {
+			children.add(child);
+		}
 	}
 
 	public class AttributeList { // TODO: add superPhenotype and superCategories
 		public String type;
 		public String id;
 		public String title;
-		public Boolean phenotype = false;
+		public Boolean phenotype           = false;
 		public Boolean restrictedPhenotype = false;
 		public Boolean abstractPhenotype   = false;
 		public Boolean singlePhenotype     = false;

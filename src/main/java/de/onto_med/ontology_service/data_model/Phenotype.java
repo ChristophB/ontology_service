@@ -245,7 +245,7 @@ public class Phenotype {
 			String alias = getAliases().size() > i ? getAliases().get(i) : null;
 			String lang  = getTitleLanguages().size() > i ? getTitleLanguages().get(i) : null;
 
-			if (alias != null && lang != null) result.add(new Title(title, lang, alias));
+			if (alias != null && lang != null) result.add(new Title(title, alias, lang));
 			else if (lang != null) result.add(new Title(title, lang));
 			else result.add(new Title(title));
 		}
