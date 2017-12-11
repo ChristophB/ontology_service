@@ -10,6 +10,7 @@ import de.onto_med.ontology_service.manager.PhenotypeManager;
 import de.onto_med.ontology_service.views.PhenotypeView;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
@@ -149,7 +150,7 @@ public class PhenotypeResource extends Resource {
 		try {
 			AbstractPhenotype phenotype = manager.createAbstractPhenotype(formData);
 			return Response.ok("Abstract phenotype '" + phenotype.getName() + "' created.").build();
-		} catch (NullPointerException | UnsupportedDataTypeException e) {
+		} catch (NullPointerException | UnsupportedDataTypeException | WrongPhenotypeTypeException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
@@ -164,7 +165,7 @@ public class PhenotypeResource extends Resource {
 		try {
 			RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
 			return Response.ok("Phenotype '" + phenotype.getName() + "' created.").build();
-		} catch (NullPointerException | UnsupportedDataTypeException e) {
+		} catch (NullPointerException | UnsupportedDataTypeException | WrongPhenotypeTypeException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}

@@ -8,6 +8,7 @@ import de.onto_med.ontology_service.factory.PhenotypeCategoryFactory;
 import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
 import de.onto_med.ontology_service.util.Parser;
 import org.apache.commons.lang3.StringUtils;
+import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
 import org.lha.phenoman.model.instance.ComplexPhenotypeInstance;
@@ -122,7 +123,7 @@ public class PhenotypeManager {
 	 * @throws NullPointerException         If a required parameter is missing.
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
-	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
+	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException, WrongPhenotypeTypeException {
 		if (StringUtils.isBlank(formData.getDatatype()))
 			throw new NullPointerException("Datatype of the abstract phenotype is missing.");
 
@@ -141,7 +142,7 @@ public class PhenotypeManager {
 	 * @throws NullPointerException         If a required parameter is missing.
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
-	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException {
+	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException, WrongPhenotypeTypeException {
 		if (StringUtils.isBlank(formData.getSuperPhenotype()))
 			throw new NullPointerException("Super phenotype is missing.");
 
@@ -313,7 +314,7 @@ public class PhenotypeManager {
 			StringBuilder tooltip = new StringBuilder();
 			for (String lang : category.getTitles().keySet()) {
 				tooltip.append(String.format(
-					"%s: %s (%s)\n",
+					"%s: %s (%s)" + System.lineSeparator(),
 					lang, category.getTitle(lang).getTitleText(),
 					StringUtils.defaultString(category.getTitle(lang).getAlias(), "none")
 				));
@@ -409,7 +410,7 @@ public class PhenotypeManager {
 	 *
 	 * @param phenotype A phenotype which will be added to the manager.
 	 */
-	private void addPhenotype(Category phenotype) {
+	private void addPhenotype(Category phenotype) throws WrongPhenotypeTypeException {
 		if (phenotype.isRestrictedCalculationPhenotype()) {
 			manager.addRestrictedCalculationPhenotype(phenotype.asRestrictedCalculationPhenotype());
 		} else if (phenotype.isRestrictedBooleanPhenotype()) {

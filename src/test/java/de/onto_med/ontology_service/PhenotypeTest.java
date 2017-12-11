@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +38,7 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void test1CategoryCreation() throws Exception {
+	public void test1CategoryCreation() {
 		String title = "Category_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -76,63 +73,118 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void test2IntegerPhenotypeCreation() throws Exception {
+	public void test2IntegerPhenotypeCreation() {
 		testAbstractIntegerPhenotypeCreation();
 		testRestrictedIntegerPhenotypeCreation();
 	}
 
 	@Test
-	public void testDoublePhenotypeCreation() throws Exception {
+	public void testDoublePhenotypeCreation() {
 		testAbstractDoublePhenotypeCreation();
 		testRestrictedDoublePhenotypeCreation();
 	}
 
 	@Test
-	public void testStringPhenotypeCreation() throws Exception {
+	public void testStringPhenotypeCreation() {
 		testAbstractStringPhenotypeCreation();
 		testRestrictedStringPhenotypeCreation();
 	}
 
 	@Test
-	public void testDatePhenotypeCreation() throws Exception {
+	public void testDatePhenotypeCreation() {
 		testAbstractDatePhenotypeCreation();
 		testRestrictedDatePhenotypeCreation();
 	}
 
 	@Test
-	public void testBooleanPhenotypeCreation() throws Exception {
+	public void testBooleanPhenotypeCreation() {
 		testAbstractBooleanPhenotypeCreation();
 		testRestrictedBooleanPhenotypeCreation();
 	}
 
 	@Test
-	public void testCompositeBooleanPhenotypeCreation() throws Exception {
+	public void testCompositeBooleanPhenotypeCreation() {
 		testAbstractCompositeBooleanPhenotypeCreation();
 		testRestrictedCompositeBooleanPhenotypeCreation();
 	}
 
 	@Test
-	public void testCalculationPhenotypeCreation() throws Exception {
+	public void testCalculationPhenotypeCreation() {
 		testAbstractCalculationPhenotypeCreation();
 		testRestrictedCalculationPhenotypeCreation();
 	}
 
 	@Test
-	public void testUpdateAbstractPhenotype() throws Exception {
-		// TODO: implement test for update of abstract phenotype
+	public void testGetDependentPhenotypes() {
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
+		List<Category> list              = manager.getDependentPhenotypes("Abstract_Integer_Phenotype_1");
+		assertThat(list).isNotEmpty();
 	}
 
 	@Test
-	public void testUpdateRestrictedPhenotype() throws Exception {
-		// TODO: implement test for update of restricted phenotype
+	public void testUpdatePhenotypeWithSameType() {
+		String title = "Restricted_Integer_Phenotype_1";
+
+		Phenotype phenotype = new Phenotype() {{
+			getTitles().add(title);
+			setDatatype("numeric");
+			setLabels(Arrays.asList("Label EN", "Label DE"));
+			setLabelLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setSuperPhenotype("Abstract_Integer_Phenotype_1");
+			setRangeMin("8");
+			setRangeMinOperator(">");
+			setRangeMax("12");
+			setRangeMaxOperator("<=");
+		}};
+
+		javax.ws.rs.core.Response response
+			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(phenotype));
+
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
+		Category actual = manager.getPhenotype(title);
+
+		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
+			title, "Abstract_Integer_Phenotype_1",
+			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Integer[] { 8, 12 }));
+		expected.addDescription("Description EN", "en");
+		expected.addDescription("Description DE", "de");
+		expected.addLabel("Label EN", "en");
+		expected.addLabel("Label DE", "de");
+		expected.addRelatedConcept("IRI 1");
+		expected.addRelatedConcept("IRI 2");
+
+		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
+		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_INTEGER);
+		assertThat(actual).isEqualTo(expected);
 	}
 
 	@Test
-	public void testGetTaxonomyNode() throws Exception {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(
-			RULE.getConfiguration().getPhenotypePath().replace("%id%", "2"), false
-		);
-		assertThat(manager.getPhenotypeCategoryTree(true).getCategory()).isNotNull();
+	public void testUpdatePhenotypeWithDifferentType() {
+		String title = "Restricted_Integer_Phenotype_1";
+
+		Phenotype phenotype = new Phenotype() {{
+			getTitles().add(title);
+			setDatatype("boolean");
+			setSuperPhenotype("Abstract_Integer_Phenotype_1");
+			setRangeMin("8");
+			setRangeMinOperator(">");
+			setRangeMax("12");
+			setRangeMaxOperator("<=");
+		}};
+
+		javax.ws.rs.core.Response response
+			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(phenotype));
+
+		assertThat(response.getStatus()).isEqualTo(Response.SC_INTERNAL_SERVER_ERROR);
 	}
 
 
@@ -141,7 +193,7 @@ public class PhenotypeTest extends AbstractTest {
 	 * Tests for abstract phenotypes
 	 *******************************/
 
-	private void testAbstractIntegerPhenotypeCreation() throws Exception {
+	private void testAbstractIntegerPhenotypeCreation() {
 		String title = "Abstract_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -180,7 +232,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractDoublePhenotypeCreation() throws Exception {
+	private void testAbstractDoublePhenotypeCreation() {
 		String title = "Abstract_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -220,7 +272,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractStringPhenotypeCreation() throws Exception {
+	private void testAbstractStringPhenotypeCreation() {
 		String title = "Abstract_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -257,7 +309,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractDatePhenotypeCreation() throws Exception {
+	private void testAbstractDatePhenotypeCreation() {
 		String title = "Abstract_Date_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -294,7 +346,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractBooleanPhenotypeCreation() throws Exception {
+	private void testAbstractBooleanPhenotypeCreation() {
 		String title = "Abstract_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -331,7 +383,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractCompositeBooleanPhenotypeCreation() throws Exception {
+	private void testAbstractCompositeBooleanPhenotypeCreation() {
 		String title = "Abstract_Composite_Boolean_Phenotype_1";
 
 
@@ -368,7 +420,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractCalculationPhenotypeCreation() throws Exception {
+	private void testAbstractCalculationPhenotypeCreation() {
 		String title = "Abstract_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -414,7 +466,7 @@ public class PhenotypeTest extends AbstractTest {
 	 * Tests for restricted phenotypes
 	 *********************************/
 
-	private void testRestrictedIntegerPhenotypeCreation() throws Exception {
+	private void testRestrictedIntegerPhenotypeCreation() {
 		String title = "Restricted_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -457,7 +509,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedDoublePhenotypeCreation() throws Exception {
+	private void testRestrictedDoublePhenotypeCreation() {
 		String title = "Restricted_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -500,7 +552,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedStringPhenotypeCreation() throws Exception {
+	private void testRestrictedStringPhenotypeCreation() {
 		String title = "Restricted_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -540,7 +592,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedDatePhenotypeCreation() throws Exception {
+	private void testRestrictedDatePhenotypeCreation() {
 		String title = "Restricted_Date_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
 			getTitles().add(title);
@@ -590,7 +642,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedBooleanPhenotypeCreation() throws Exception {
+	private void testRestrictedBooleanPhenotypeCreation() {
 		String title = "Restricted_Boolean_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
 			getTitles().add(title);
@@ -628,7 +680,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedCompositeBooleanPhenotypeCreation() throws Exception {
+	private void testRestrictedCompositeBooleanPhenotypeCreation() {
 		String title = "Restricted_Composite_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -668,7 +720,7 @@ public class PhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedCalculationPhenotypeCreation() throws Exception {
+	private void testRestrictedCalculationPhenotypeCreation() {
 		String title = "Restricted_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
