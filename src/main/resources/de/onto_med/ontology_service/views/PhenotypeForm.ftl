@@ -30,6 +30,7 @@
                     <#include "partials/phenotype/BooleanPhenotypeForm.ftl">
                     <#include "partials/phenotype/CalculationPhenotypeForm.ftl">
                     <#include "partials/phenotype/CompositeBooleanPhenotypeForm.ftl">
+					<#include "partials/phenotype/DeletePhenotypeModal.ftl">
 				</div>
 			</section>
 		</main>

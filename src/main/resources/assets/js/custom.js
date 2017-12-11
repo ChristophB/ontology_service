@@ -201,8 +201,13 @@ function customMenu(node) {
 		delete: {
 			label: 'Delete',
 			action: function() {
-				// TODO: implement deletion of phenotypes and categories
-				alert('Not implemented.');
+			// TODO: get dependent phenotypes for current selected (node.a_attr.id)
+			    var data = [
+			        { id: 'Example Phenotype 1', datatype: 'numeric' },
+			        { id: 'Example Phenotype 2', datatype: 'boolean' }
+			    ];
+                $('#deletePhenotypeTable').bootstrapTable('load', data);
+				$('#deletePhenotypeModal').modal('show');
 			}
 		}
 	};
