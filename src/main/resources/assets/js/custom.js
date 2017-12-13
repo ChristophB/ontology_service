@@ -201,13 +201,11 @@ function customMenu(node) {
 		delete: {
 			label: 'Delete',
 			action: function() {
-			// TODO: get dependent phenotypes for current selected (node.a_attr.id)
-			    var data = [
-			        { id: 'Example Phenotype 1', datatype: 'numeric' },
-			        { id: 'Example Phenotype 2', datatype: 'boolean' }
-			    ];
-                $('#deletePhenotypeTable').bootstrapTable('load', data);
-				$('#deletePhenotypeModal').modal('show');
+			    $.getJSON(node.a_attr.id + "/dependents", function(data) {
+                    $('#deletePhenotypeTable').bootstrapTable('load', data);
+                    $('#deletePhenotypeTable').bootstrapTable('checkAll', true);
+                    $('#deletePhenotypeModal').modal('show');
+                });
 			}
 		}
 	};
@@ -229,6 +227,32 @@ function customMenu(node) {
 		delete items.inspect;
 	}
 	return items;
+}
+
+function deletePhenotypes() {
+    var deletions = [];
+    $('#deletePhenotypeTable').bootstrapTable('getSelections').forEach(function(phenotype) {
+        deletions.push(phenotype.name);
+    });
+
+    $.ajax({
+        url: 'delete',
+        dataType: 'text',
+        contentType: 'application/json',
+        processData: false,
+        type: 'POST',
+        data: JSON.stringify(deletions),
+        success: function(result) {
+            $('#phenotype-tree').jstree('refresh');
+            $('#deletePhenotypeModal').modal('hide');
+            showMessage(result, 'success');
+        },
+        error: function(result) {
+            console.log(result);
+            $('#deletePhenotypeModal').modal('hide');
+            showMessage(result.responseText, 'danger');
+        }
+    });
 }
 
 function focusInputEnd(input) {

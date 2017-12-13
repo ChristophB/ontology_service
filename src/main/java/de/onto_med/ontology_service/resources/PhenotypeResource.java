@@ -25,7 +25,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Path("/phenotype")
@@ -44,7 +46,7 @@ public class PhenotypeResource extends Resource {
 		.build(
 			new CacheLoader<String, PhenotypeManager>() {
 				@Override
-				public PhenotypeManager load(@Nonnull String key) throws Exception {
+				public PhenotypeManager load(@Nonnull String key) {
 					Timer timer = new Timer();
 					PhenotypeManager manager = new PhenotypeManager(phenotypePath.replace("%id%", key));
 
@@ -86,6 +88,29 @@ public class PhenotypeResource extends Resource {
 	public Category getPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
 		PhenotypeManager manager = managers.getUnchecked(id);
 		return manager.getPhenotype(iri);
+	}
+
+	@GET
+	@Path("{id}/{iri}/dependents")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Category> getDependentPhenotypes(@PathParam("id") String id, @PathParam("iri") String iri) {
+		PhenotypeManager manager = managers.getUnchecked(id);
+		List<Category> phenotypes = manager.getDependentPhenotypes(iri);
+		phenotypes.add(manager.getPhenotype(iri));
+		return phenotypes;
+	}
+
+	@POST
+	@Path("{id}/delete")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_HTML)
+	public Response deletePhenotypes(@PathParam("id") String id, Set<String> phenotypes) {
+		try {
+			managers.getUnchecked(id).deletePhenotypes(phenotypes);
+		} catch (Exception e) {
+			return Response.serverError().build();
+		}
+		return Response.ok("Phenotypes deleted.").build();
 	}
 
 	@GET

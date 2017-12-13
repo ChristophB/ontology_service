@@ -29,10 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -140,7 +137,7 @@ public class PhenotypeManager {
 	 * @param formData Phenotype data
 	 * @return The created restricted phenotype.
 	 * @throws NullPointerException         If a required parameter is missing.
-	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
+	 * @throws UnsupportedDataTypeException If the provided data type of the phenotype is not supported.
 	 */
 	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException, WrongPhenotypeTypeException {
 		if (StringUtils.isBlank(formData.getSuperPhenotype()))
@@ -151,6 +148,25 @@ public class PhenotypeManager {
 
 		manager.write();
 		return phenotype;
+	}
+
+	/**
+	 * Returns a list of all phenotypes, which are referencing this phenotype, thus require it for reasoning.
+	 *
+	 * @param iri The local name or IRI of the phenotype to search for.
+	 * @return List of dependent phenotypes as Category.
+	 */
+	public List<Category> getDependentPhenotypes(String iri) {
+		return manager.getDependentPhenotypes(XMLUtils.getNCNameSuffix(iri));
+	}
+
+	/**
+	 * Deletes all phenotypes, which are represented in the set with their ID.
+	 * @param ids A Set of phenotype IDs
+	 */
+	public void deletePhenotypes(Set<String> ids) {
+		manager.removePhenotypes(ids);
+		manager.write();
 	}
 
 	/**

@@ -9,20 +9,21 @@
             <div class="modal-body">
                 <p>
                     There are some phenotypes which are connected to the phenotype you want to delete.<br>
-                    Please deselect all phenotypes from the list below to exclude them from deletion.
+                    Please de-select all phenotypes from the list below to exclude them from deletion.
                 </p>
                 <form onsubmit="return false;">
                     <table id="deletePhenotypeTable" data-toggle="table" data-search="true" data-click-to-select="true">
                         <thead>
                             <tr>
                                 <th data-field="delete" data-checkbox="true"></th>
-                                <th data-sortable="true" data-field="id">Phenotype</th>
-                                <th data-sortable="true" data-field="datatype">Data Type</th>
+                                <th data-visible="false" data-field="name">Phenotype</th>
+                                <th data-sortable="true" data-field="titleText">Phenotype</th>
+                                <th data-sortable="true" data-field="datatypeText">Data Type</th>
                             </tr>
                         </thead>
                     </table>
                     <br>
-                    <button class="btn btn-warning">Delete</button>
+                    <button class="btn btn-warning" onclick="deletePhenotypes()">Delete</button>
                 </form>
             </div>
             <div class="modal-footer">
