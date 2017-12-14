@@ -1,27 +1,24 @@
 package de.onto_med.ontology_service;
 
 
-import javax.ws.rs.core.MediaType;
-
 import org.eclipse.jetty.server.Response;
 import org.junit.Test;
 
-import de.onto_med.ontology_service.manager.ProjectManager;
+import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.ArrayList;
 
 public class IntegrationTest extends AbstractTest {
 
     @Test
-    public void testProjectsList() throws Exception {
+    public void testProjectsList() {
         Object response
         	= client.target(url + "/projects")
         	.request(MediaType.APPLICATION_JSON_TYPE)
         	.get(Object.class);
         
-        assertThat(response).isExactlyInstanceOf(new ArrayList<ProjectManager>().getClass());
+        assertThat(response).isExactlyInstanceOf(ArrayList.class);
         
         response
         	= client.target(url + "/projects")
@@ -33,7 +30,7 @@ public class IntegrationTest extends AbstractTest {
     }
     
     @Test
-    public void testDocumentation() throws Exception {
+    public void testDocumentation() {
     	String response
     		= client.target(url)
     		.request(MediaType.TEXT_HTML_TYPE)
@@ -44,7 +41,7 @@ public class IntegrationTest extends AbstractTest {
     }
     
     @Test
-    public void testEntityForm() throws Exception {
+    public void testEntityForm() {
     	String response
     		= client.target(url + "/entity-form")
     		.request(MediaType.TEXT_HTML_TYPE)
@@ -55,7 +52,7 @@ public class IntegrationTest extends AbstractTest {
     }
     
     @Test
-    public void testReasonForm() throws Exception {
+    public void testReasonForm() {
     	String response
     		= client.target(url + "/reason-form")
     		.request(MediaType.TEXT_HTML_TYPE)
@@ -66,7 +63,7 @@ public class IntegrationTest extends AbstractTest {
     }
     
     @Test
-    public void testEntitySearch() throws Exception {
+    public void testEntitySearch() {
     	Object response
     		= client.target(url + "/entity")
             .request(MediaType.APPLICATION_JSON_TYPE)
@@ -83,7 +80,7 @@ public class IntegrationTest extends AbstractTest {
     }
     
     @Test
-    public void testReasoning() throws Exception {
+    public void testReasoning() {
     	Object response
     		= client.target(url + "/reason")
            	.request(MediaType.APPLICATION_JSON_TYPE)
@@ -100,7 +97,7 @@ public class IntegrationTest extends AbstractTest {
     }
     
     @Test
-    public void testTaxonomy() throws Exception {
+    public void testTaxonomy() {
     	String response
     		= client.target(url + "/project/e2906cf8-ae16-4162-989c-66b83291b5cf/taxonomy")
     		.request(MediaType.TEXT_HTML_TYPE)
@@ -109,7 +106,7 @@ public class IntegrationTest extends AbstractTest {
     }
     
 //    @Test
-//    public void testImports() throws Exception {
+//    public void testImports() {
 //    	String response
 //			= client.target(url + "/project/702fdf23-882e-41cf-9d8d-0f589e7632a0/overview")
 //			.request(MediaType.TEXT_HTML_TYPE)

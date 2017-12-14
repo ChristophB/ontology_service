@@ -3,12 +3,8 @@ package de.onto_med.ontology_service;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.*;
 
-import de.onto_med.ontology_service.OntologyServiceApplication;
-import de.onto_med.ontology_service.OntologyServiceConfiguration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 
 public abstract class AbstractTest {
@@ -21,15 +17,14 @@ public abstract class AbstractTest {
     protected Client client;
     
     protected final String url = "http://localhost:8080" + RULE.getConfiguration().getRootPath();
-    protected final String adminUrl = "http://localhost:8081" + RULE.getConfiguration().getRootPath();
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         client = ClientBuilder.newClient();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         client.close();
     }
 }

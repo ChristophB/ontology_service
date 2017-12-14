@@ -8,11 +8,12 @@ import org.eclipse.jetty.server.Response;
 import org.junit.Test;
 
 public class TasksTest extends AbstractTest {
-    
+	private static final String ADMIN_URL = "http://localhost:8081" + RULE.getConfiguration().getRootPath();
+
 	@Test
-    public void testClearCacheTask() throws Exception {
+    public void testClearCacheTask() {
     	javax.ws.rs.core.Response response
-			= client.target(adminUrl + "/tasks/clear_cache")
+			= client.target(ADMIN_URL + "/tasks/clear_cache")
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(null);
     	

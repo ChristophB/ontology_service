@@ -3,10 +3,10 @@ package de.onto_med.ontology_service;
 import de.onto_med.ontology_service.data_model.Phenotype;
 import org.eclipse.jetty.server.Response;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
@@ -25,13 +25,12 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PhenotypeTest extends AbstractTest {
-	private static final String ID = "1";
+public class CreatePhenotypeTest extends AbstractTest {
+	private static final String ID = String.valueOf(new Date().getTime());
+	private static final String ONTOLOGY_PATH = RULE.getConfiguration().getPhenotypePath().replace("%id%", ID);
 	private static final String CREATE_ABSTRACT_PHENOTYPE_PATH = "/phenotype/" + ID + "/create-abstract-phenotype";
 	private static final String CREATE_RESTRICTED_PHENOTYPE_PATH = "/phenotype/" + ID + "/create-restricted-phenotype";
 	private static final String CREATE_CATEGORY_PATH = "/phenotype/" + ID + "/create-category";
-	private static final String DELETE_PHENOTYPE_PATH = "/phenotype/" + ID + "/delete";
-	private static final String ONTOLOGY_PATH = RULE.getConfiguration().getPhenotypePath().replace("%id%", ID);
 
 	@AfterClass
 	public static void cleanUp() throws Exception {
@@ -39,8 +38,8 @@ public class PhenotypeTest extends AbstractTest {
 		if (Files.exists(path)) Files.delete(path);
 	}
 
-	@Test
-	public void test1CategoryCreation() {
+	@Before
+	public void createCategory() {
 		String title = "Category_1";
 
 		Phenotype phenotype = new Phenotype() {{
@@ -75,13 +74,13 @@ public class PhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void test2IntegerPhenotypeCreation() {
+	public void test1IntegerPhenotypeCreation() {
 		testAbstractIntegerPhenotypeCreation();
 		testRestrictedIntegerPhenotypeCreation();
 	}
 
 	@Test
-	public void test3DoublePhenotypeCreation() {
+	public void testDoublePhenotypeCreation() {
 		testAbstractDoublePhenotypeCreation();
 		testRestrictedDoublePhenotypeCreation();
 	}
@@ -116,113 +115,6 @@ public class PhenotypeTest extends AbstractTest {
 		testRestrictedCalculationPhenotypeCreation();
 	}
 
-	@Test
-	public void testGetDependentPhenotypes() {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		List<Category> list              = manager.getDependentPhenotypes("Abstract_Integer_Phenotype_1");
-		assertThat(list).isNotEmpty();
-	}
-
-	@Test
-	public void testUpdatePhenotypeWithSameType() {
-		String title = "Restricted_Integer_Phenotype_1";
-
-		Phenotype phenotype = new Phenotype() {{
-			getTitles().add(title);
-			setDatatype("integer");
-			setLabels(Arrays.asList("Label EN", "Label DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
-			setDescriptions(Arrays.asList("Description EN", "Description DE"));
-			setDescriptionLanguages(Arrays.asList("en", "de"));
-			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setSuperPhenotype("Abstract_Integer_Phenotype_1");
-			setRangeMin("8");
-			setRangeMinOperator(">");
-			setRangeMax("12");
-			setRangeMaxOperator("<=");
-		}};
-
-		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
-			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.json(phenotype));
-
-		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
-
-		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
-			title, "Abstract_Integer_Phenotype_1",
-			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Integer[] { 8, 12 }));
-		expected.addDescription("Description EN", "en");
-		expected.addDescription("Description DE", "de");
-		expected.addLabel("Label EN", "en");
-		expected.addLabel("Label DE", "de");
-		expected.addRelatedConcept("IRI 1");
-		expected.addRelatedConcept("IRI 2");
-
-		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
-		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_INTEGER);
-//		assertThat(actual).isEqualTo(expected);
-		// TODO: this test fails sometimes because range is not overwritten but appended
-	}
-
-	@Test
-	public void testUpdatePhenotypeWithDifferentType() {
-		String title = "Abstract_Double_Phenotype_1";
-
-		Phenotype phenotype = new Phenotype() {{
-			getTitles().add(title);
-			setDatatype("boolean");
-			setLabels(Arrays.asList("Label EN", "Label2 DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
-			setDescriptions(Arrays.asList("Description EN", "Description DE"));
-			setDescriptionLanguages(Arrays.asList("en", "de"));
-			setRelations(Arrays.asList("IRI 3", "IRI 2"));
-			setCategories("Category_1");
-		}};
-
-		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
-			.request(MediaType.APPLICATION_JSON_TYPE)
-			.post(Entity.json(phenotype));
-
-//		assertThat(response.getStatus()).isEqualTo(Response.SC_INTERNAL_SERVER_ERROR);
-		// TODO: should throw an exception
-	}
-
-	@Test
-	public void test4DeletePhenotype() {
-		String id = "Restricted_Double_Phenotype_1";
-
-		javax.ws.rs.core.Response response
-			= client.target(url + DELETE_PHENOTYPE_PATH)
-			.request(MediaType.TEXT_HTML)
-			.post(Entity.json(Collections.singletonList(id)));
-
-		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
-
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		assertThat(manager.getPhenotype(id)).isNull();
-	}
-
-	@Test
-	public void testDeletePhenotype() throws WrongPhenotypeTypeException {
-		String id = "Phenotype_to_be_deleted";
-
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		AbstractSinglePhenotype phenotype = manager.getPhenotypeFactory().createAbstractSinglePhenotype(id, OWL2Datatype.XSD_INTEGER);
-		manager.addAbstractSinglePhenotype(phenotype);
-		manager.write();
-		manager.removePhenotypes(new HashSet<>(Collections.singletonList(id)));
-		manager.write();
-
-		PhenotypeOntologyManager manager2 = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		assertThat(manager2.getPhenotype(id)).isNull();
-	}
-
-
 
 	/*******************************
 	 * Tests for abstract phenotypes
@@ -242,12 +134,12 @@ public class PhenotypeTest extends AbstractTest {
 			setCategories("Category_1");
 			setUcum("m^2");
 		}};
-		
+
 		javax.ws.rs.core.Response response
 	    	= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
 	    	.request(MediaType.APPLICATION_JSON_TYPE)
 	    	.post(Entity.json(phenotype));
-	    
+
 	    assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
