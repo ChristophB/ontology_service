@@ -66,9 +66,9 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 
 		for (Title title : data.getTitleObjects()) {
 			if (phenotype == null) {
-				phenotype = factory.createAbstractSinglePhenotype(
-					title, datatype, data.getCategories().split(";")
-				);
+				phenotype = data.getCategories() != null
+					? factory.createAbstractSinglePhenotype(title, datatype, data.getCategories().split(";"))
+					: factory.createAbstractSinglePhenotype(title, datatype);
 				if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
 			} else {
 				phenotype.addTitle(title);
@@ -90,9 +90,9 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 
 		for (Title title : data.getTitleObjects()) {
 			if (phenotype == null) {
-				phenotype = factory.createAbstractBooleanPhenotype(
-					title, data.getCategories().split(";")
-				);
+				phenotype = data.getCategories() != null
+					? factory.createAbstractBooleanPhenotype(title, data.getCategories().split(";"))
+					: factory.createAbstractBooleanPhenotype(title);
 			} else {
 				phenotype.addTitle(title);
 			}
@@ -116,9 +116,9 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 
 		for (Title title : data.getTitleObjects()) {
 			if (phenotype == null) {
-				phenotype = factory.createAbstractCalculationPhenotype(
-					title, data.getFormula(), data.getCategories().split(";")
-				);
+				phenotype = data.getCategories() != null
+					? factory.createAbstractCalculationPhenotype(title, data.getFormula(), data.getCategories().split(";"))
+					: factory.createAbstractCalculationPhenotype(title, data.getFormula());
 				if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
 			} else {
 				phenotype.addTitle(title);

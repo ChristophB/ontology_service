@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,7 +34,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private static final String CREATE_CATEGORY_PATH = "/phenotype/" + ID + "/create-category";
 
 	@AfterClass
-	public static void cleanUp() throws Exception {
+	public static void cleanUp() throws IOException {
 		Path path = Paths.get(ONTOLOGY_PATH);
 		if (Files.exists(path)) Files.delete(path);
 	}

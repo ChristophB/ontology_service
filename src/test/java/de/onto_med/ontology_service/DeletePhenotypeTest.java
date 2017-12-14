@@ -131,7 +131,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testDeleteDependentInCalculation() throws Exception {
+	public void testDeleteDependentInCalculation() throws WrongPhenotypeTypeException {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory         factory = manager.getPhenotypeFactory();
 
