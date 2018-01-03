@@ -10,6 +10,7 @@ import io.dropwizard.views.View;
 public class RestApiView extends View {
 	protected String rootPath;
 	protected Map<String, List<String>> messages;
+	protected boolean navigationVisible = true;
 	
 	public RestApiView(String template, String rootPath) {
 		super(template);
@@ -28,5 +29,13 @@ public class RestApiView extends View {
 	
 	public Map<String, List<String>> getMessages() {
 		return messages;
+	}
+
+	public boolean isNavigationVisible() {
+		return navigationVisible;
+	}
+
+	public void setNavigationVisible(boolean navigationVisible) {
+		this.navigationVisible = navigationVisible;
 	}
 }

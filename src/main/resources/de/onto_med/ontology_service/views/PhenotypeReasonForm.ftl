@@ -10,7 +10,7 @@
 	<#include "partials/Head.ftl">
 
 	<body>
-		<#include "partials/Navbar.ftl">
+        <#if navigationVisible><#include "partials/Navbar.ftl"></#if>
 		<#include "partials/Heading.ftl">
 		<#include "partials/phenotype/Links.ftl">
 		<#include "partials/Messages.ftl">

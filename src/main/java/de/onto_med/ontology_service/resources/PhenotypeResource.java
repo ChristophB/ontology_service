@@ -35,6 +35,7 @@ public class PhenotypeResource extends Resource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PhenotypeManager.class);
 
 	private String phenotypePath;
+	private boolean navigationVisible = true;
 
 	/**
 	 * This is the Cache, which contains all previously loaded phenotypeManagers.
@@ -60,12 +61,18 @@ public class PhenotypeResource extends Resource {
 		super(rootPath);
 		this.phenotypePath = phenotypePath;
 	}
+
+	public void setNavigationVisible(boolean navigationVisible) {
+		this.navigationVisible = navigationVisible;
+	}
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeSelectionView(@QueryParam("id") String id) {
 		if (StringUtils.isBlank(id)) id = null;
-		return Response.ok(new PhenotypeView("PhenotypeView.ftl", rootPath, id)).build();
+		PhenotypeView view = new PhenotypeView("PhenotypeView.ftl", rootPath, id);
+		view.setNavigationVisible(navigationVisible);
+		return Response.ok(view).build();
 	}
 
 	@GET
@@ -147,7 +154,9 @@ public class PhenotypeResource extends Resource {
 	@Path("/{id}/phenotype-form")
 	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeForm(@PathParam("id") String id) {
-		return Response.ok(new PhenotypeView("PhenotypeForm.ftl", rootPath, id)).build();
+		PhenotypeView view = new PhenotypeView("PhenotypeForm.ftl", rootPath, id);
+		view.setNavigationVisible(navigationVisible);
+		return Response.ok(view).build();
 	}
 
 	@POST
@@ -199,7 +208,9 @@ public class PhenotypeResource extends Resource {
 	@Path("/{id}/reason-form")
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getReasonForm(@PathParam("id") String id) {
-		return Response.ok(new PhenotypeView("PhenotypeReasonForm.ftl", rootPath, id)).build();
+		PhenotypeView view = new PhenotypeView("PhenotypeReasonForm.ftl", rootPath, id);
+		view.setNavigationVisible(navigationVisible);
+		return Response.ok(view).build();
 	}
 
 	@POST

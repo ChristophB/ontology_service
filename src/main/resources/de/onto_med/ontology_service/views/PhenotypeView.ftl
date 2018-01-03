@@ -8,7 +8,7 @@
 	<#include "partials/Head.ftl">
 	
 	<body>
-		<#include "partials/Navbar.ftl">
+		<#if navigationVisible><#include "partials/Navbar.ftl"></#if>
     	<#include "partials/Heading.ftl">
 		<#include "partials/phenotype/Links.ftl">
 		<#include "partials/Messages.ftl">
@@ -19,7 +19,7 @@
 			</p>
 
 			<form action="${rootPath}/phenotype" method="get" class="form-horizontal row center">
-				<label for="id" class="control-label col-sm-3">Ontology ID:</label>
+				<label class="control-label col-sm-3">Ontology ID:</label>
 				<div class="col-sm-4">
 					<input type="text" class="form-control" name="id" placeholder="Ontology ID" value="<#if id??>${id}</#if>">
 				</div>
@@ -35,6 +35,6 @@
 			</#if>
 		</div>
 	    
-	    <#include "partials/Footer.ftl">
+		<#include "partials/Footer.ftl">
 	</body>
 </html>

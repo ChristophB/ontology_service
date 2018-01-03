@@ -25,13 +25,13 @@ import io.dropwizard.views.ViewBundle;
  * This is the main application of the WebProtegé Rest-API.
  * @author Christoph Beger
  */
-public class OntologyServiceApplication extends Application<OntologyServiceConfiguration>{
+public class OntologyServiceApplication extends Application<OntologyServiceConfiguration> {
 	private String rootPath = "";
 	private MetaProjectResource metaProjectResource;
 	private ProjectResource projectResource;
 	
 	/**
-	 * Main method, wich starts the service.
+	 * Main method, which starts the service.
 	 * @param args Dropwizard arguments
 	 * @throws Exception
 	 */
