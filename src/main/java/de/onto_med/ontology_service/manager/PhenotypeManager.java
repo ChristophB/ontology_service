@@ -476,26 +476,26 @@ public class PhenotypeManager {
 		}
 
 		void setCategory() {
-			a_attr.phenotype = false;
-			a_attr.restrictedPhenotype = false;
+			a_attr.isPhenotype = false;
+			a_attr.isRestricted = false;
 			icon += " fa fa-folder-open-o text-secondary";
 		}
 
 		void setRestrictedPhenotype() {
-			a_attr.phenotype = true;
-			a_attr.restrictedPhenotype = true;
+			a_attr.isPhenotype = true;
+			a_attr.isRestricted = true;
 			icon += " text-warning";
 		}
 
 		void setAbstractPhenotype() {
-			a_attr.phenotype = true;
-			a_attr.abstractPhenotype = true;
+			a_attr.isPhenotype = true;
+			a_attr.isRestricted = false;
 			icon += " text-primary";
 		}
 
 		void setSinglePhenotype() {
-			a_attr.phenotype = true;
-			a_attr.singlePhenotype = true;
+			a_attr.isPhenotype = true;
+			a_attr.isSinglePhenotype = true;
 		}
 
 		void setNumericPhenotype() {
@@ -531,10 +531,9 @@ public class PhenotypeManager {
 		public String type;
 		public String id;
 		public String title;
-		public Boolean phenotype           = false;
-		public Boolean restrictedPhenotype = false;
-		public Boolean abstractPhenotype   = false;
-		public Boolean singlePhenotype     = false;
+		public Boolean isPhenotype       = false;
+		public Boolean isRestricted      = false;
+		public Boolean isSinglePhenotype = false;
 	}
 
 	public class State {

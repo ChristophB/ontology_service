@@ -38,6 +38,8 @@ function createPhenotypeTree(id, url, withContext) {
 		contextmenu: { items: withContext ? customMenu : null }
 	});
 
+
+
 	$(document).on('dnd_move.vakata', function (e, data) {
 		var t = $(data.event.target);
 		var attributes = data.element.attributes;
@@ -49,7 +51,7 @@ function createPhenotypeTree(id, url, withContext) {
 				return;
 			} else if (attributes.type.value !== "null" && drop.hasClass('phenotype')){
 				if (drop[0].id === 'reason-form-drop-area') {
-					if (attributes.singlePhenotype.value == "true") {
+					if (attributes.isSinglePhenotype.value == "true") {
 						data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
 						return;
 					}
@@ -71,7 +73,7 @@ function createPhenotypeTree(id, url, withContext) {
 				focusInputEnd(drop);
 			} else if (attributes.type.value !== "null" && drop.hasClass('phenotype')) {
 				if (drop[0].id === 'reason-form-drop-area') {
-					if (attributes.singlePhenotype.value == "true")
+					if (attributes.isSinglePhenotype.value == "true")
 						appendFormField(data.element, drop[0]);
 				} else if (drop[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) === -1) {
 					drop.val(drop.val() + ' ' + attributes.id.value + ' ');
@@ -225,14 +227,14 @@ function customMenu(node) {
 		}
 	};
 
-	if (!node.a_attr.phenotype) {
+	if (!node.a_attr.isPhenotype) {
 		delete items.showRestrictedPhenotypeForm;
 	} else {
 		delete items.showCategoryForm;
 		delete items.showAbstractPhenotypeForm;
 	}
 
-	if (!node.a_attr.abstractPhenotype) {
+	if (node.a_attr.isRestricted) {
 		delete items.getDecisionTreePng;
 		delete items.getDecisionTreeGraphml;
 	}
