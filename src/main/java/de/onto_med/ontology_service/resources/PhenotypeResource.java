@@ -11,6 +11,7 @@ import de.onto_med.ontology_service.views.PhenotypeView;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
+import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
@@ -25,6 +26,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -210,6 +212,26 @@ public class PhenotypeResource extends Resource {
 	public Response getReasonForm(@PathParam("id") String id) {
 		PhenotypeView view = new PhenotypeView("PhenotypeReasonForm.ftl", rootPath, id);
 		view.setNavigationVisible(navigationVisible);
+		return Response.ok(view).build();
+	}
+
+	@GET
+	@Path("/{id}/reason-form/{iri}")
+	@Produces({ MediaType.TEXT_HTML })
+	public Response getReasonFormForPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+		PhenotypeManager manager = managers.getUnchecked(id);
+		List<Category> relatedPhenotypes = manager.getDependentPhenotypes(iri);
+		relatedPhenotypes.add(manager.getPhenotype(iri));
+		List<AbstractSinglePhenotype> phenotypes = new ArrayList<>();
+
+		for (Category relatedPhenotype : relatedPhenotypes)
+			if (relatedPhenotype.isAbstractSinglePhenotype())
+				phenotypes.add(relatedPhenotype.asAbstractSinglePhenotype());
+
+		PhenotypeView view = new PhenotypeView("PhenotypeReasonFormForPhenotype.ftl", rootPath, id);
+		view.setPhenotypes(phenotypes);
+		view.setNavigationVisible(navigationVisible);
+
 		return Response.ok(view).build();
 	}
 

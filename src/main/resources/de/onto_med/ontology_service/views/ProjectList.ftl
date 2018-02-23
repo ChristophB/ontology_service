@@ -22,10 +22,10 @@
 							<th>Description</th>
 						</tr>
 					</thead>
-					
+
 					<tbody>
 						<#list projects as project>
-							<tr class="clickable-row" data-href="${rootPath}/project/${project.projectId}/overview" style="cursor:pointer">
+							<tr class="clickable-row" data-href="${rootPath}/project/${project.projectId}/overview">
 								<td>${project.projectId}</td>
 								<td>${project.name}</td>
 								<td>${project.description}</td>

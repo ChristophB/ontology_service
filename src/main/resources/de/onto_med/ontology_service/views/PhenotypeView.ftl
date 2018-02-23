@@ -15,7 +15,7 @@
 		
     	<div class="container">
     		<p class="text-center">
-				Phenotype definition... And description of both kinds of phenotypes...
+				Enter the ID of the phenotype ontology you want to access.
 			</p>
 
 			<form action="${rootPath}/phenotype" method="get" class="form-horizontal row center">

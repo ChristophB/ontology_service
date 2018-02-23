@@ -336,13 +336,13 @@ public class PhenotypeManager {
 				));
 			}
 			treeNode.setTitle(tooltip.toString());
-		}
 
-		if (category != null) {
 			if (category.isRestrictedPhenotype()) {
 				treeNode.setRestrictedPhenotype();
 			} else if (category.isAbstractPhenotype()) {
 				treeNode.setAbstractPhenotype();
+			} else {
+				treeNode.setCategory();
 			}
 
 			if (category.isAbstractSinglePhenotype() || category.isRestrictedSinglePhenotype()) {
@@ -361,7 +361,7 @@ public class PhenotypeManager {
 			} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
 				treeNode.setCalculationPhenotype();
 			}
-		}
+		} else treeNode.setCategory();
 
 		node.getChildren().stream().sorted(Comparator.comparing(PhenotypeCategoryTreeNode::getName)).forEach(child -> {
 			if (includePhenotypes || !child.getCategory().isPhenotype())
@@ -473,6 +473,12 @@ public class PhenotypeManager {
 
 		public void setTitle(String title) {
 			a_attr.title = title;
+		}
+
+		void setCategory() {
+			a_attr.phenotype = false;
+			a_attr.restrictedPhenotype = false;
+			icon += " fa fa-folder-open-o text-secondary";
 		}
 
 		void setRestrictedPhenotype() {

@@ -1,6 +1,6 @@
 <div class="form-group row">
 	<div class="col-sm-2">
-		<label for="title-en" class="control-label">Title*</label>
+		<label class="control-label">Title*</label>
 		<a class="btn btn-primary btn-xs pull-right" onclick="addRow('#title-div')" data-toggle="tooltip" title="Add a Title" data-placement="right">
 			<i class="fa fa-plus" aria-hidden="true"></i>
 		</a>

@@ -146,22 +146,34 @@ function clearPhenotypeFormData() {
 
 function customMenu(node) {
 	var items = {
+	    inspect: {
+        	label: 'Inspect',
+        	icon: 'fa fa-search',
+        	action: function() {
+        		$.getJSON(node.a_attr.id, function(data) {
+        			inspectPhenotype(data);
+        		});
+        	}
+        },
 		showCategoryForm: {
-			label: 'Create Sub Category',
+			label: 'Create Category',
+			icon: 'fa fa-plus text-secondary',
 			action: function() {
 				showPhenotypeForm('#phenotype-category-form', true);
 				$('#super-category').val(node.a_attr.id);
 			}
 		},
 		showAbstractPhenotypeForm: {
-			label: 'Create Abstract Phenotype',
+			label: 'Create Phenotype',
+			icon: 'fa fa-plus text-primary',
 			action: function() {
 				showPhenotypeForm('#abstract-phenotype-form', true);
 				$('form:not(.hidden) #categories').val(node.a_attr.id);
 			}
 		},
 		showRestrictedPhenotypeForm: {
-			label: 'Create Restricted Phenotype',
+			label: 'Add Restriction',
+			icon: 'fa fa-plus text-warning',
 			action: function() {
 				switch (node.a_attr.type) {
 					case 'date': showPhenotypeForm('#date-phenotype-form', true); break;
@@ -176,16 +188,9 @@ function customMenu(node) {
 				$('form:not(.hidden) #super-phenotype').val(node.a_attr.id);
 			}
 		},
-		inspect: {
-			label: 'Inspect',
-			action: function() {
-				$.getJSON(node.a_attr.id, function(data) {
-					inspectPhenotype(data);
-				});
-			}
-		},
 		getDecisionTreePng: {
 			label: 'Get Decision Tree As PNG',
+			icon: 'fa fa-file-image-o',
 			action: function() {
 				var win = window.open('decision-tree?phenotype=' + node.a_attr.id + '&format=png', '_blank');
 				win.focus();
@@ -193,13 +198,23 @@ function customMenu(node) {
 		},
 		getDecisionTreeGraphml: {
 			label: 'Get Decision Tree As GraphML',
+			icon: 'fa fa-file-text-o',
 			action: function() {
 				var win = window.open('decision-tree?phenotype=' + node.a_attr.id + '&format=graphml', '_blank');
 				win.focus();
 			}
 		},
+		showReasonForm: {
+		    label: 'Show Reason Form',
+		    icon: 'fa fa-comment-o',
+		    action: function() {
+		        var win = window.open('reason-form/' + node.a_attr.id, '_self');
+                win.focus();
+		    }
+		},
 		delete: {
 			label: 'Delete',
+			icon: 'fa fa-trash-o text-danger',
 			action: function() {
 			    $.getJSON(node.a_attr.id + "/dependents", function(data) {
                     $('#deletePhenotypeTable').bootstrapTable('load', data);
