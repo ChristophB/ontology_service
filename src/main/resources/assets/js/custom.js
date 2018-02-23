@@ -218,10 +218,17 @@ function customMenu(node) {
 			label: 'Delete',
 			icon: 'fa fa-trash-o text-danger',
 			action: function() {
-			    $.getJSON(node.a_attr.id + "/dependents", function(data) {
-                    $('#deletePhenotypeTable').bootstrapTable('load', data);
-                    $('#deletePhenotypeTable').bootstrapTable('checkAll', true);
-                    $('#deletePhenotypeModal').modal('show');
+			    $.ajax({
+			        url: node.a_attr.id + "/dependents",
+			        dataType: 'json',
+			        success: function(data) {
+                        $('#deletePhenotypeTable').bootstrapTable('load', data);
+                        $('#deletePhenotypeTable').bootstrapTable('checkAll', true);
+                        $('#deletePhenotypeModal').modal('show');
+                    },
+                    error: function(data) {
+                        showMessage(data.responseJSON.message, 'danger');
+                    }
                 });
 			}
 		}
