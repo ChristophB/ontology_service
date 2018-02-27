@@ -11,6 +11,5 @@
 			</#list>
 		</select>
 	</div>
-	
-	<small class="form-text text-muted col-sm-5">Some description about the datatypes</small>
+
 </div>

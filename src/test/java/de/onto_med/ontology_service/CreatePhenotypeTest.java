@@ -29,9 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CreatePhenotypeTest extends AbstractTest {
 	private static final String ID = String.valueOf(new Date().getTime());
 	private static final String ONTOLOGY_PATH = RULE.getConfiguration().getPhenotypePath().replace("%id%", ID);
-	private static final String CREATE_ABSTRACT_PHENOTYPE_PATH = "/phenotype/" + ID + "/create-abstract-phenotype";
-	private static final String CREATE_RESTRICTED_PHENOTYPE_PATH = "/phenotype/" + ID + "/create-restricted-phenotype";
-	private static final String CREATE_CATEGORY_PATH = "/phenotype/" + ID + "/create-category";
+	private static final String CREATE_PATH = "/phenotype/" + ID + "/create";
 
 	@AfterClass
 	public static void cleanUp() throws IOException {
@@ -44,6 +42,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Category_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(false);
+			setIsRestricted(false);
 			getTitles().add(title);
 			getTitleLanguages().add("de");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -54,7 +54,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_CATEGORY_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -125,6 +125,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Abstract_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -137,7 +139,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-	    	= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
+	    	= client.target(url + CREATE_PATH)
 	    	.request(MediaType.APPLICATION_JSON_TYPE)
 	    	.post(Entity.json(phenotype));
 
@@ -164,6 +166,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Abstract_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -177,7 +181,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -204,6 +208,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Abstract_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("string");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -215,7 +221,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -241,6 +247,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Abstract_Date_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("date");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -252,7 +260,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -278,6 +286,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Abstract_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -289,7 +299,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -316,6 +326,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("composite-boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -327,7 +339,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -352,6 +364,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Abstract_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("calculation");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -365,7 +379,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_ABSTRACT_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -398,6 +412,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Restricted_Integer_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -413,7 +429,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -441,6 +457,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Restricted_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add(title);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -456,7 +474,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -484,6 +502,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Restricted_String_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add(title);
 			setDatatype("string");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -496,7 +516,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -523,6 +543,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private void testRestrictedDatePhenotypeCreation() {
 		String title = "Restricted_Date_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add(title);
 			setDatatype("date");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -538,7 +560,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -573,6 +595,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private void testRestrictedBooleanPhenotypeCreation() {
 		String title = "Restricted_Boolean_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add(title);
 			setDatatype("boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -585,7 +609,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -612,6 +636,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Restricted_Composite_Boolean_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add(title);
 			setDatatype("composite-boolean");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -625,7 +651,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -652,6 +678,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Restricted_Calculation_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add(title);
 			setDatatype("calculation");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -667,7 +695,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + CREATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + CREATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 

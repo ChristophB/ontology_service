@@ -92,7 +92,8 @@ function appendFormField(element, target) {
 	if (type === "string") type = "text";
 
 	var inputField = '';
-	if (element.attributes.restrictedPhenotype.value === "true") {
+	console.log(element.attributes);
+	if (element.attributes.isRestricted.value === "true") {
 		inputField = '<input type="hidden" name="' + id + '">';
 	} else if (['boolean', 'composite-boolean'].indexOf(type) !== -1) {
 		inputField
@@ -152,8 +153,12 @@ function customMenu(node) {
         	label: 'Inspect',
         	icon: 'fa fa-search',
         	action: function() {
-        		$.getJSON(node.a_attr.id, function(data) {
-        			inspectPhenotype(data);
+        		$.ajax({
+        		    url: node.a_attr.id,
+        		    datatype: 'text',
+        		    type: 'GET',
+        		    success: function(data) { inspectPhenotype(data); },
+        		    error: function(response) { showMessage(response.responseJSON.message, 'danger'); }
         		});
         	}
         },
@@ -226,9 +231,7 @@ function customMenu(node) {
                         $('#deletePhenotypeTable').bootstrapTable('checkAll', true);
                         $('#deletePhenotypeModal').modal('show');
                     },
-                    error: function(data) {
-                        showMessage(data.responseJSON.message, 'danger');
-                    }
+                    error: function(data) { showMessage(data.responseJSON.message, 'danger'); }
                 });
 			}
 		}

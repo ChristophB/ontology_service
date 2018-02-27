@@ -1,4 +1,6 @@
-<form id="calculation-phenotype-form" action="" url="${rootPath}/phenotype/${id}/create-restricted-phenotype" method="post" accept-charset="UTF-8" class="hidden">
+<form id="calculation-phenotype-form" action="" url="${rootPath}/phenotype/${id}/create" method="post" accept-charset="UTF-8" class="hidden">
+	<input type="hidden" name="isPhenotype" value="true">
+	<input type="hidden" name="isRestricted" value="true">
 	<input type="hidden" name="datatype" value="calculation">
 
 	<#include "Title.ftl">

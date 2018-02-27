@@ -21,6 +21,10 @@ public class Phenotype {
 	@JsonProperty
 	private List<String> labelLanguages = new ArrayList<>();
 	@JsonProperty
+	private Boolean isPhenotype;
+	@JsonProperty
+	private Boolean isRestricted;
+	@JsonProperty
 	private String superPhenotype;
 	@JsonProperty
 	private String categories;
@@ -233,6 +237,22 @@ public class Phenotype {
 
 	public void setRelations(List<String> relations) {
 		this.relations = relations;
+	}
+
+	public Boolean getIsPhenotype() {
+		return isPhenotype;
+	}
+
+	public void setIsPhenotype(Boolean phenotype) {
+		isPhenotype = phenotype;
+	}
+
+	public Boolean getIsRestricted() {
+		return isRestricted;
+	}
+
+	public void setIsRestricted(Boolean restricted) {
+		isRestricted = restricted;
 	}
 
 	@JsonIgnore

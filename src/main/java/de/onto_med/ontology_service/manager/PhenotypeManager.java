@@ -367,6 +367,7 @@ public class PhenotypeManager {
 			if (includePhenotypes || !child.getCategory().isPhenotype())
 				treeNode.addChild(getTreeNode(child, includePhenotypes));
 		});
+
 		return treeNode;
 	}
 
@@ -525,12 +526,17 @@ public class PhenotypeManager {
 		void addChild(TreeNode child) {
 			children.add(child);
 		}
+
+		public void addCategory(String category) {
+			a_attr.categories.add(category);
+		}
 	}
 
 	public class AttributeList { // TODO: add superPhenotype and superCategories
 		public String type;
 		public String id;
 		public String title;
+		public List<String> categories;
 		public Boolean isPhenotype       = false;
 		public Boolean isRestricted      = false;
 		public Boolean isSinglePhenotype = false;

@@ -29,7 +29,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 	private static final String CREATE_RESTRICTED_PHENOTYPE_PATH = "/phenotype/" + ID + "/create-restricted-phenotype";
 
 
-	@Test
+	@Test @Ignore
 	public void testGetDependentPhenotypes() {
 		String id = "Double_Phenotype";
 
@@ -80,7 +80,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 		assertThat(list).isNotEmpty();
 	}
 
-	@Test
+	@Test @Ignore
 	public void testDeletePhenotype() {
 		String id = "Abstract_Integer_Phenotype";
 
@@ -130,7 +130,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 		assertThat(manager.getPhenotype(id)).isNull();
 	}
 
-	@Test
+	@Test @Ignore
 	public void testDeleteDependentInCalculation() throws WrongPhenotypeTypeException {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory         factory = manager.getPhenotypeFactory();

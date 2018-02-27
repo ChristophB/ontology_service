@@ -1,4 +1,7 @@
-<form id="abstract-phenotype-form" action="" url="${rootPath}/phenotype/${id}/create-abstract-phenotype" method="post" accept-charset="UTF-8" class="hidden">
+<form id="abstract-phenotype-form" action="" url="${rootPath}/phenotype/${id}/create" method="post" accept-charset="UTF-8" class="hidden">
+    <input type="hidden" name="isPhenotype" value="true">
+    <input type="hidden" name="isRestricted" value="false">
+
 	<#include "Title.ftl">
 	<#include "Labels.ftl">
 	<#include "Category.ftl">

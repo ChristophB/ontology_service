@@ -1,4 +1,6 @@
-<form id="phenotype-category-form" action="" url="${rootPath}/phenotype/${id}/create-category" method="post" accept-charset="UTF-8" class="hidden">
+<form id="phenotype-category-form" action="" url="${rootPath}/phenotype/${id}/create" method="post" accept-charset="UTF-8" class="hidden">
+	<input type="hidden" name="isPhenotype" value="false">
+
 	<#include "Title.ftl">
 	<#include "Labels.ftl">
 	<#include "SuperCategory.ftl">

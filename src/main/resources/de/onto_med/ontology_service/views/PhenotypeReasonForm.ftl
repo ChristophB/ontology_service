@@ -65,7 +65,7 @@
                         success: function(result) {
                             showMessage(result, 'success');
                             $.ajax({
-                                url: '${rootPath}/phenotype/${id}/reason-image',
+                                url: '${rootPath}/phenotype/${id}/reason?format=png',
                                 dataType: 'text',
                                 contentType: 'application/json; charset=utf-8',
                                 processData: false,

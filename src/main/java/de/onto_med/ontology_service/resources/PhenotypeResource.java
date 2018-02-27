@@ -41,8 +41,8 @@ public class PhenotypeResource extends Resource {
 
 	/**
 	 * This is the Cache, which contains all previously loaded phenotypeManagers.
-	 * Expiration time is set to 10 minutes after the last access.
-	 * If a a non existent key is used, the cache tries to instantiate a respective PhenotypeManager.
+	 * Expiration time is set to 10 minutes after last access.
+	 * If a non existent key is used, the cache tries to instantiate a respective PhenotypeManager.
 	 */
 	private LoadingCache<String, PhenotypeManager> managers = CacheBuilder.newBuilder()
 		.expireAfterAccess(10, TimeUnit.MINUTES)
@@ -162,45 +162,23 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@POST
-	@Path("/{id}/create-category")
+	@Path("/{id}/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createCategory(@PathParam("id") String id, Phenotype formData) {
 		PhenotypeManager manager = managers.getUnchecked(id);
 
 		try {
-			Category category = manager.createCategory(formData);
-			return Response.ok("Category '" + category.getName() + "' created.").build();
-		} catch (NullPointerException e) {
-			throw new WebApplicationException(e.getMessage());
-		}
-	}
-
-	@POST
-	@Path("/{id}/create-abstract-phenotype")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public synchronized Response createAbstractPhenotype(@PathParam("id") String id, Phenotype formData) {
-		PhenotypeManager manager = managers.getUnchecked(id);
-
-		try {
-			AbstractPhenotype phenotype = manager.createAbstractPhenotype(formData);
-			return Response.ok("Abstract phenotype '" + phenotype.getName() + "' created.").build();
-		} catch (NullPointerException | UnsupportedDataTypeException | WrongPhenotypeTypeException e) {
-			throw new WebApplicationException(e.getMessage());
-		}
-	}
-
-	@POST
-	@Path("/{id}/create-restricted-phenotype")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public synchronized Response createRestrictedPhenotype(@PathParam("id") String id, Phenotype formData) {
-		PhenotypeManager manager = managers.getUnchecked(id);
-
-		try {
-			RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
-			return Response.ok("Phenotype '" + phenotype.getName() + "' created.").build();
+			if (!formData.getIsPhenotype()) {
+				Category category = manager.createCategory(formData);
+				return Response.ok("Category '" + category.getName() + "' created.").build();
+			} else if (!formData.getIsRestricted()) {
+				AbstractPhenotype phenotype = manager.createAbstractPhenotype(formData);
+				return Response.ok("Abstract phenotype '" + phenotype.getName() + "' created.").build();
+			} else {
+				RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
+				return Response.ok("Phenotype '" + phenotype.getName() + "' created.").build();
+			}
 		} catch (NullPointerException | UnsupportedDataTypeException | WrongPhenotypeTypeException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
@@ -236,34 +214,11 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@POST
-	@Path("/{id}/reason")
+	@Path("{id}/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
-	public synchronized Response classifyIndividualAsText(
-		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties
-	) {
-		if (properties == null || properties.isEmpty())
-			throw new WebApplicationException("No properties were provided.");
-
-		PhenotypeManager manager = managers.getUnchecked(id);
-
-		try {
-			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
-				return Response.ok(manager.classifyIndividualAsList(properties)).build();
-			} else {
-				return Response.ok(manager.classifyIndividualAsString(properties)).build();
-			}
-		} catch (IllegalArgumentException e) {
-			throw new WebApplicationException(e.getMessage());
-		}
-	}
-
-	@POST
-	@Path("{id}/reason-image")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({ MediaType.APPLICATION_OCTET_STREAM })
+	@Produces({ MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public synchronized Response classifyIndividualAsImage(
-		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties
+		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties, @QueryParam("format") String format
 	) {
 		if (properties == null || properties.isEmpty())
 			throw new WebApplicationException("No properties were provided.");
@@ -271,9 +226,17 @@ public class PhenotypeResource extends Resource {
 		PhenotypeManager manager = managers.getUnchecked(id);
 
 		try {
-			return Response.ok(Base64.encodeBase64(manager.classifyIndividualAsImage(properties)), MediaType.APPLICATION_OCTET_STREAM)
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='reasoner_report.png'")
-				.build();
+			if ("png".equals(format)) {
+				return Response.ok(Base64.encodeBase64(manager.classifyIndividualAsImage(properties)), MediaType.APPLICATION_OCTET_STREAM)
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='reasoner_report.png'")
+					.build();
+			} else {
+				if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
+					return Response.ok(manager.classifyIndividualAsList(properties)).build();
+				} else {
+					return Response.ok(manager.classifyIndividualAsString(properties)).build();
+				}
+			}
 		} catch (IOException e) {
 			throw new WebApplicationException(e.getMessage());
 		}

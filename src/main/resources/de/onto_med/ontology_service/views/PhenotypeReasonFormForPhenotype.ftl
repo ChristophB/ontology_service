@@ -17,7 +17,7 @@
 
 		<main class="container">
 			<div name="content" class="row">
-                <form id="reason-form" class="col-sm-7" action="" method="post" onSubmit="return false">
+                <form id="reason-form" class="col-sm-6 col-sm-offset-3" action="" method="post" onSubmit="return false">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="panel-title pull-left">
@@ -84,7 +84,7 @@
                         success: function(result) {
                             showMessage(result, 'success');
                             $.ajax({
-                                url: '${rootPath}/phenotype/${id}/reason-image',
+                                url: '${rootPath}/phenotype/${id}/reason?format=png',
                                 dataType: 'text',
                                 contentType: 'application/json; charset=utf-8',
                                 processData: false,
