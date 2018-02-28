@@ -21,15 +21,12 @@ import org.slf4j.LoggerFactory;
 import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Nonnull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Path("/phenotype")
@@ -70,11 +67,22 @@ public class PhenotypeResource extends Resource {
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	public Response getPhenotypeSelectionView(@QueryParam("id") String id) {
-		if (StringUtils.isBlank(id)) id = null;
-		PhenotypeView view = new PhenotypeView("PhenotypeView.ftl", rootPath, id);
+	public Response getPhenotypeSelectionView() {
+		Map<String, Long> ontologies = new HashMap<>();
+
+		for (File file : Objects.requireNonNull(new File(phenotypePath.replaceFirst("\\/[^\\/]*$", "")).listFiles()))
+			if (file.isFile()) ontologies.put(getIdFromFilename(file.getName()), file.length() / 1000);
+
+		PhenotypeView view = new PhenotypeView("PhenotypeView.ftl", rootPath, ontologies);
 		view.setNavigationVisible(navigationVisible);
 		return Response.ok(view).build();
+	}
+
+	@POST
+	@Path("/create")
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+	public Response create(@Context HttpHeaders headers, @FormParam("id") String id) {
+		return Response.seeOther(UriBuilder.fromUri(rootPath + "/phenotype/" + id + "/phenotype-form").build()).build();
 	}
 
 	@GET
@@ -111,6 +119,22 @@ public class PhenotypeResource extends Resource {
 
 	@POST
 	@Path("{id}/delete")
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+	public Response delete(@Context HttpHeaders headers, @PathParam("id") String id) {
+		managers.invalidate(id);
+		try {
+			Files.delete(Paths.get(phenotypePath.replace("%id%", id)));
+		} catch (IOException e) {
+			LOGGER.warn(e.getMessage());
+			return Response.seeOther(UriBuilder.fromUri(rootPath + "/phenotype").build()).build();
+		}
+		if (acceptsMediaType(headers, MediaType.TEXT_HTML_TYPE))
+			return Response.seeOther(UriBuilder.fromUri(rootPath + "/phenotype").build()).build();
+		return Response.ok("Ontology deleted.").build();
+	}
+
+	@POST
+	@Path("{id}/delete-phenotypes")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_HTML)
 	public Response deletePhenotypes(@PathParam("id") String id, Set<String> phenotypes) {
@@ -240,5 +264,12 @@ public class PhenotypeResource extends Resource {
 		} catch (IOException e) {
 			throw new WebApplicationException(e.getMessage());
 		}
+	}
+
+	private String getIdFromFilename(String filename) {
+		String namePattern = phenotypePath.replaceFirst(".*\\/", "");
+		String prefix      = namePattern.replaceFirst("%id%.*", "");
+
+		return filename.replaceFirst("\\..+$", "").replace(prefix, "");
 	}
 }

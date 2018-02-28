@@ -48,14 +48,28 @@
 							<td colspan="2">/entity-form</td>
 							<td><p>Form-based user interface to search for entities in one or multiple projects.</p></td>
 						</tr>
-						
+
 						<tr>
-							<td rowspan="7">/phenotype/{id}</td>
+							<td rowspan="2">/phenotype</td>
+							<td>/</td>
+							<td>List of available phenotype ontologies with download and delete option</td>
+						</tr>
+
+						<tr>
+							<td>/create</td>
+							<td>
+								Creates an empty phenotype ontology.
+								<ul><li><b>id:</b> ID of the phenotype ontology</li></ul>
+							</td>
+						</tr>
+
+						<tr>
+							<td rowspan="8">/phenotype/{id}</td>
 						</tr>
 						
 						<tr>
 							<td>/</td>
-							<td>Overview page for phenotypes</td>
+							<td>Download of the phenotype ontology as OWL file.</td>
 						</tr>
 						
 						<tr>
@@ -91,21 +105,26 @@
 						</tr>
 						
 						<tr>
-							<td>/composit-phenotype-form</td>
-							<td>A form to create a <b>composit</b> phenotype</td>
-						</tr>
-						
-						<tr>
 							<td>/decision-tree</td>
 							<td>
 								Generates a decision tree for the specified phenotype.
 								<ul><li><b>phenotype:</b> The phenotype identifier for which a decision tree will be generated.</li></ul>
 							</td>
 						</tr>
+
+						<tr>
+							<td>/delete</td>
+							<td>Deletes the specified ontology.</td>
+						</tr>
+
+						<tr>
+							<td>/delete-phenotype/{iri}</td>
+							<td>Deletes the phenotype with path param iri as IRI from the specified ontology.</td>
+						</tr>
 						
 						<tr>
-							<td>/simple-phenotype-form</td>
-							<td>A form to create a <b>simple</b> phenotype</td>
+							<td>/phenotype-form</td>
+							<td>Interactive page to edit an ontology's phenotypes</td>
 						</tr>
 						
 						<tr>

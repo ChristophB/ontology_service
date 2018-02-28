@@ -11,8 +11,7 @@ function toggleValueDefinition() {
 
 function addRow(id) {
 	var row = $('form:not(.hidden) ' + id + ' .hidden').clone();
-	row.removeClass('hidden');
-	row.addClass('generated');
+	row.removeClass('hidden').addClass('generated');
 	$('form:not(.hidden) ' + id).append(row);
 }
 
@@ -41,58 +40,56 @@ function createPhenotypeTree(id, url, withContext) {
 
 
 	$(document).on('dnd_move.vakata', function (e, data) {
-		var t = $(data.event.target);
+		var target     = $(data.event.target);
 		var attributes = data.element.attributes;
-		var drop = t.closest('.drop');
+		var drop       = target.closest('.drop');
+		var jstreeIcon = data.helper.find('.jstree-icon');
 
-		if (!t.closest('.jstree').length && drop.length) { // field with class "drop" outside of jstree
-			if (attributes.type.value === "null" && drop.hasClass('category')) {
-				data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
-				return;
-			} else if (attributes.type.value !== "null" && drop.hasClass('phenotype')){
-				if (drop[0].id === 'reason-form-drop-area') {
-					if (attributes.isSinglePhenotype.value == "true") {
-						data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
-						return;
-					}
-				} else if (drop[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) == -1) {
-					data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
-					return; // formula does not accepts string
-				}
-			}
-		}
-		data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
+        jstreeIcon.removeClass('jstree-ok').addClass('jstree-er');
+
+		if (target.closest('.jstree').length || !drop.length) return; // field with class "drop" outside of jstree
+
+		if ((attributes.type.value === "null" && drop.hasClass('category'))
+		    || (attributes.type.value !== "null" && drop.hasClass('phenotype')
+		        && ((drop[0].id === 'reason-form-drop-area' && attributes.isSinglePhenotype.value == "true")
+			        || (drop[0].id === 'formula' && attributes.isRestricted.value == "false"
+			            && ['numeric', 'calculation', 'composite-boolean'].indexOf(attributes.type.value) != -1)
+			        || (drop[0].id === 'expression')
+			    )
+			)
+		) jstreeIcon.removeClass('jstree-er').addClass('jstree-ok');
 	}).on('dnd_stop.vakata', function (e, data) {
-		var t = $(data.event.target);
+		var target     = $(data.event.target);
 		var attributes = data.element.attributes;
-		var drop = t.closest('.drop');
+		var drop       = target.closest('.drop');
 
-		if (!t.closest('.jstree').length && drop.length) { // field with class "drop" outside of jstree
-			if (attributes.type.value === "null" && drop.hasClass('category')) {
-				drop.val(drop.val() + ' ' + data.element.text + ' ');
+		if (target.closest('.jstree').length || !drop.length) return; // field with class "drop" outside of jstree
+
+		if (attributes.type.value === "null" && drop.hasClass('category')) {
+			drop.val(drop.val() + ' ' + data.element.text + ' ');
+			focusInputEnd(drop);
+		} else if (attributes.type.value !== "null" && drop.hasClass('phenotype')) {
+			if (drop[0].id === 'reason-form-drop-area' && attributes.isSinglePhenotype.value == "true")
+				appendFormField(data.element, drop[0]);
+			else if (drop[0].id === 'expression'
+			    || (drop[0].id === 'formula' && attributes.isRestricted.value == "false"
+                    && ['numeric', 'calculation', 'composite-boolean'].indexOf(attributes.type.value) != -1)
+            ) {
+				drop.val(drop.val() + ' ' + attributes.id.value + ' ');
 				focusInputEnd(drop);
-			} else if (attributes.type.value !== "null" && drop.hasClass('phenotype')) {
-				if (drop[0].id === 'reason-form-drop-area') {
-					if (attributes.isSinglePhenotype.value == "true")
-						appendFormField(data.element, drop[0]);
-				} else if (drop[0].id !== 'formula' || ['string'].indexOf(attributes.type.value) === -1) {
-					drop.val(drop.val() + ' ' + attributes.id.value + ' ');
-					focusInputEnd(drop);
-				} // else: formula does not accept string
 			}
 		}
 	});
 }
 
 function appendFormField(element, target) {
-	var id = element.id.replace("_anchor", "");
-	var type = element.attributes.type.value;
+	var id         = element.id.replace("_anchor", "");
+	var type       = element.attributes.type.value;
+    var inputField = '';
 
 	if (type === "numeric") type = "number";
 	if (type === "string") type = "text";
 
-	var inputField = '';
-	console.log(element.attributes);
 	if (element.attributes.isRestricted.value === "true") {
 		inputField = '<input type="hidden" name="' + id + '">';
 	} else if (['boolean', 'composite-boolean'].indexOf(type) !== -1) {
@@ -121,28 +118,24 @@ function appendFormField(element, target) {
 }
 
 function showPhenotypeForm(id, clear = false) {
-	$('#abstract-phenotype-form, #phenotype-category-form').addClass('hidden');
-	$('#numeric-phenotype-form, #string-phenotype-form, #date-phenotype-form, #boolean-phenotype-form').addClass('hidden');
-	$('#calculation-phenotype-form, #composite-boolean-phenotype-form').addClass('hidden');
+	$('#abstract-phenotype-form, #phenotype-category-form, #numeric-phenotype-form, #string-phenotype-form, '
+	    + '#date-phenotype-form, #boolean-phenotype-form, #calculation-phenotype-form, '
+	    + '#composite-boolean-phenotype-form').addClass('hidden');
 
 	$(id).removeClass('hidden');
 	if (clear === true) clearPhenotypeFormData();
 }
 
 function clearPhenotypeFormData() {
-	$('#message').remove();
+	$('#message, .generated').remove();
 	$('form:not(.hidden) input[type!=checkbox].form-control, form:not(.hidden) textarea.form-control, form:not(.hidden) select').val(null);
 	$('form:not(.hidden) input[type=checkbox]').removeAttr('checked');
-	$('.generated').remove();
-	$('.hidden-language').val('en');
-	$('form:not(.hidden) #title-languages').val('en');
+	$('.hidden-language, form:not(.hidden) #title-languages').val('en');
 	toggleValueDefinition();
 
-	$.getJSON('all?type=list', function(data) { // TODO: remove old awesomplete if exists
+	$.getJSON('all?type=list', function(data) {
 		var input = document.querySelector('form:not(.hidden) input.awesomplete#titles');
-    	if (awesomplete != undefined) {
-    		awesomplete.destroy();
-    	}
+    	if (awesomplete != undefined) awesomplete.destroy();
     	awesomplete = new Awesomplete(input, { list: data });
     });
 }
@@ -191,7 +184,6 @@ function customMenu(node) {
 					case 'calculation': showPhenotypeForm('#calculation-phenotype-form', true); break;
 					default: return;
 				}
-
 				$('form:not(.hidden) #super-phenotype').val(node.a_attr.id);
 			}
 		},
@@ -199,24 +191,21 @@ function customMenu(node) {
 			label: 'Get Decision Tree As PNG',
 			icon: 'fa fa-file-image-o',
 			action: function() {
-				var win = window.open('decision-tree?phenotype=' + node.a_attr.id + '&format=png', '_blank');
-				win.focus();
+				window.open('decision-tree?phenotype=' + node.a_attr.id + '&format=png', '_blank').focus();
 			}
 		},
 		getDecisionTreeGraphml: {
 			label: 'Get Decision Tree As GraphML',
 			icon: 'fa fa-file-text-o',
 			action: function() {
-				var win = window.open('decision-tree?phenotype=' + node.a_attr.id + '&format=graphml', '_blank');
-				win.focus();
+				window.open('decision-tree?phenotype=' + node.a_attr.id + '&format=graphml', '_blank').focus()
 			}
 		},
 		showReasonForm: {
 		    label: 'Show Reason Form',
 		    icon: 'fa fa-comment-o',
 		    action: function() {
-		        var win = window.open('reason-form/' + node.a_attr.id, '_self');
-                win.focus();
+		        window.open('reason-form/' + node.a_attr.id, '_self').focus();
 		    }
 		},
 		delete: {
@@ -243,16 +232,15 @@ function customMenu(node) {
 		delete items.showCategoryForm;
 		delete items.showAbstractPhenotypeForm;
 	}
-
 	if (node.a_attr.isRestricted) {
 		delete items.getDecisionTreePng;
 		delete items.getDecisionTreeGraphml;
 	}
-
 	if (node.a_attr.id === 'Phenotype_Category') {
 		delete items.delete;
 		delete items.inspect;
 	}
+
 	return items;
 }
 
@@ -263,7 +251,7 @@ function deletePhenotypes() {
     });
 
     $.ajax({
-        url: 'delete',
+        url: 'delete-phenotypes',
         dataType: 'text',
         contentType: 'application/json',
         processData: false,
@@ -275,7 +263,6 @@ function deletePhenotypes() {
             showMessage(result, 'success');
         },
         error: function(result) {
-            console.log(result);
             $('#deletePhenotypeModal').modal('hide');
             showMessage(result.responseText, 'danger');
         }
@@ -289,9 +276,7 @@ function focusInputEnd(input) {
 }
 
 function inspectIfExists(id) {
-	$.getJSON(id, function(data) {
-    	if (data != undefined) inspectPhenotype(data);
-    });
+	$.getJSON(id, function(data) { if (data != undefined) inspectPhenotype(data); });
 }
 
 function inspectPhenotype(data) {
@@ -319,7 +304,6 @@ function inspectPhenotype(data) {
 		$(form + ' #super-phenotype').val(data.abstractPhenotypeName);
 	} else {
     	form = '#phenotype-category-form';
-    	// TODO: add super category value to form
     }
 
 	showPhenotypeForm(form);
@@ -399,11 +383,7 @@ function addRange(form, range) {
 }
 
 function convertValue(value, asDate) {
-	if (asDate) {
-		return new Date(value).toISOString().substring(0, 10);
-	} else {
-		return value;
-	}
+	return asDate ? new Date(value).toISOString().substring(0, 10) : value;
 }
 
 function addEnumFieldWithValue(form, value) {
