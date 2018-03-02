@@ -26,16 +26,16 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UpdatePhenotypeTest extends AbstractTest {
-	private static final String ID                               = String.valueOf(new Date().getTime());
-	private static final String ONTOLOGY_PATH                    = RULE.getConfiguration().getPhenotypePath().replace("%id%", ID);
-	private static final String UPDATE_CATEGORY_PATH             = "/phenotype/" + ID + "/create-category";
-	private static final String UPDATE_ABSTRACT_PHENOTYPE_PATH   = "/phenotype/" + ID + "/create-abstract-phenotype";
-	private static final String UPDATE_RESTRICTED_PHENOTYPE_PATH = "/phenotype/" + ID + "/create-restricted-phenotype";
+	private static final String ID            = String.valueOf(new Date().getTime());
+	private static final String ONTOLOGY_PATH = RULE.getConfiguration().getPhenotypePath().replace("%id%", ID);
+	private static final String UPDATE_PATH   = "/phenotype/" + ID + "/create";
 
 	@Before
 	public void createPhenotypes() {
 		String id = "Double_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add("Abstract_" + id);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -48,13 +48,15 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + UPDATE_ABSTRACT_PHENOTYPE_PATH)
+			= client.target(url + UPDATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add("Restricted_" + id);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -70,18 +72,21 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		}};
 
 		response
-			= client.target(url + UPDATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + UPDATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testUpdatePhenotypeWithSameType() {
 		String id = "Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(true);
 			getTitles().add("Restricted_" + id);
 			setDatatype("numeric");
 			setLabels(Arrays.asList("Label EN", "Label DE"));
@@ -97,7 +102,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + UPDATE_RESTRICTED_PHENOTYPE_PATH)
+			= client.target(url + UPDATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
@@ -108,7 +113,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 
 		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
 			"Restricted_" + id, "Abstract_" + id,
-			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Double[] { 8.0, 12.0 }));
+			new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Double[]{ 8.0, 12.0 }));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addLabel("Label EN", "en");
@@ -121,30 +126,34 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected); // TODO: this test fails sometimes because range is not overwritten but appended
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testUpdatePhenotypeWithSameTypeByApi() throws WrongPhenotypeTypeException {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory factory = manager.getPhenotypeFactory();
+		PhenotypeFactory         factory = manager.getPhenotypeFactory();
 
 		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Weight", OWL2Datatype.XSD_DOUBLE));
 		manager.addRestrictedSinglePhenotype(factory.createRestrictedSinglePhenotype(
-			"High weight", "Weight", new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE }, new Double[]{ 100.0 })
+			"High weight", "Weight", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_INCLUSIVE }, new Double[]{ 100.0 })
 		));
 		manager.write();
 
 		RestrictedSinglePhenotype update = factory.createRestrictedSinglePhenotype(
-			"High weight", "Weight", new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE }, new Double[]{ 110.0 })
+			"High weight", "Weight", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_INCLUSIVE }, new Double[]{ 110.0 })
 		);
 		manager.addRestrictedSinglePhenotype(update);
 		manager.write();
 		assertThat(manager.getPhenotype(update.getName())).isEqualTo(update); // TODO: this test fails sometimes because range is not overwritten but appended
 	}
 
-	@Test @Ignore
+	@Test
+	@Ignore
 	public void testUpdatePhenotypeWithDifferentType() {
 		String title = "Abstract_Double_Phenotype_1";
 
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("boolean");
 			setLabels(Arrays.asList("Label EN", "Label2 DE"));
@@ -155,21 +164,23 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		}};
 
 		javax.ws.rs.core.Response response
-			= client.target(url + UPDATE_ABSTRACT_PHENOTYPE_PATH)
+			= client.target(url + UPDATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_INTERNAL_SERVER_ERROR); // TODO: should throw an exception
 	}
 
-	@Test(expected = WrongPhenotypeTypeException.class) @Ignore
+	@Test(expected = WrongPhenotypeTypeException.class)
 	public void testUpdatePhenotypeWithDifferentTypeByApi() throws WrongPhenotypeTypeException {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory factory = manager.getPhenotypeFactory();
+		PhenotypeFactory         factory = manager.getPhenotypeFactory();
 
 		AbstractSinglePhenotype phenotype = factory.createAbstractSinglePhenotype("Weight", OWL2Datatype.XSD_DOUBLE);
-		Category category = factory.createCategory("Anthropometric");
-		try { manager.addAbstractSinglePhenotype(phenotype); } catch (WrongPhenotypeTypeException ignored) { }
+		Category                category  = factory.createCategory("Anthropometric");
+		try {
+			manager.addAbstractSinglePhenotype(phenotype);
+		} catch (WrongPhenotypeTypeException ignored) {	}
 		manager.addPhenotypeCategory(category);
 		manager.write();
 
@@ -177,18 +188,22 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		manager.write();
 	}
 
-	@Test(expected = WrongPhenotypeTypeException.class) @Ignore
+	@Test(expected = WrongPhenotypeTypeException.class)
+	@Ignore
 	public void testUpdatePhenotypeWithDifferentSingleTypeByApi() throws WrongPhenotypeTypeException {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory factory = manager.getPhenotypeFactory();
+		PhenotypeFactory         factory = manager.getPhenotypeFactory();
 
 		AbstractSinglePhenotype phenotype = factory.createAbstractSinglePhenotype("Weight", OWL2Datatype.XSD_DOUBLE);
-		Category category = factory.createCategory("Anthropometric");
+		Category                category  = factory.createCategory("Anthropometric");
 
-		try { manager.addAbstractSinglePhenotype(phenotype); } catch (WrongPhenotypeTypeException ignored) { }
+		try {
+			manager.addAbstractSinglePhenotype(phenotype);
+		} catch (WrongPhenotypeTypeException ignored) { }
 		manager.addPhenotypeCategory(category);
 		manager.write();
 
+		// TODO: Exception should be thrown
 		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype(phenotype.getName(), OWL2Datatype.XSD_INTEGER, category.getName()));
 	}
 

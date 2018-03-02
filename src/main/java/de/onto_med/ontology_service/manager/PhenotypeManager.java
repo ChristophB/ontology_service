@@ -532,7 +532,7 @@ public class PhenotypeManager {
 		}
 	}
 
-	public class AttributeList { // TODO: add superPhenotype and superCategories
+	public class AttributeList { // TODO: add superPhenotype
 		public String type;
 		public String id;
 		public String title;
