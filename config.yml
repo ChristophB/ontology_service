@@ -9,7 +9,7 @@ server:
   adminContextPath: /ontology-service
   requestLog:
     appenders: []
-dataPath: /Web-Service/data/webprotege/
+dataPath: /srv/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
 phenotypePath: /data/ontology-service/cop_%id%.owl

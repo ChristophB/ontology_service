@@ -86,7 +86,7 @@ public class OntologyServiceApplication extends Application<OntologyServiceConfi
 	@Override
 	public void run(OntologyServiceConfiguration configuration, Environment environment) {
 		if (Files.notExists(Paths.get(configuration.getDataPath())))
-			throw new WebApplicationException("The specified WebProtégé data folder does not exist.");
+			throw new WebApplicationException("The specified WebProtégé data (" + configuration.getDataPath() + ") folder does not exist.");
 
 		MetaProjectResource metaProjectResource = new MetaProjectResource(configuration.getDataPath(), configuration.getMongoHost(), configuration.getMongoPort());
 		ProjectResource     projectResource     = new ProjectResource(configuration.getWebprotegeRelativeToWebroot());
