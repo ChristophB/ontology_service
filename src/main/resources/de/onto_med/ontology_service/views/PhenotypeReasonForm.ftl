@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.PhenotypeView" -->
 
 <#assign title = "Phenotype Reasoning Form">
 <#assign current = "Phenotyping">
@@ -15,11 +15,9 @@
 		<#include "partials/phenotype/Links.ftl">
 		<#include "partials/Messages.ftl">
 
-		<main class="container">
-			<section name="content" class="row">
-			    <div class="col-sm-4">
-                	<div id="phenotype-tree" class="well pre-scrollable "></div>
-                </div>
+		<div class="container">
+			<div class="row">
+			    <div id="phenotype-tree" class="well col-sm-4"></div>
 
                 <form id="reason-form" class="col-sm-7" action="" method="post" onSubmit="return false">
                     <div class="panel panel-default">
@@ -39,8 +37,8 @@
                         </div>
                     </div>
                 </form>
-            </section>
-        </main>
+            </div>
+        </div>
 
         <#include "partials/Footer.ftl">
 

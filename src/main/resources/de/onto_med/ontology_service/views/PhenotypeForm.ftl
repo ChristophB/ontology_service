@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.PhenotypeView" -->
 
 <#assign title = "Phenotype Create Form">
 <#assign current = "Phenotyping">
@@ -15,13 +15,11 @@
 		<#include "partials/phenotype/Links.ftl">
 		<#include "partials/Messages.ftl">
 
-		<main class="container">
-			<section name="content" class="row">
-			    <div class="col-md-4">
-                	<div id="phenotype-tree" class="well pre-scrollable "></div>
-                </div>
+		<div class="container">
+			<div class="row">
+			    <div id="phenotype-tree" class="well col-md-4"></div>
 
-				<div class="col-md-8">
+				<div id="phenotype-form" class="well col-md-8">
                     <#include "partials/phenotype/AbstractPhenotypeForm.ftl">
                     <#include "partials/phenotype/CategoryForm.ftl">
                     <#include "partials/phenotype/NumericPhenotypeForm.ftl">
@@ -32,8 +30,8 @@
                     <#include "partials/phenotype/CompositeBooleanPhenotypeForm.ftl">
 					<#include "partials/phenotype/DeletePhenotypeModal.ftl">
 				</div>
-			</section>
-		</main>
+			</div>
+		</div>
 
 		<#include "partials/Footer.ftl">
 

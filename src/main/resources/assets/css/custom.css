@@ -14,7 +14,7 @@
 	border-top-right-radius:4px;
 	border-bottom-left-radius:0;
 }
-#description, #taxonomy-tree, #phenotype-tree {
+#description, #phenotype-form, #taxonomy-tree, #phenotype-tree {
 	height: 60%;
 	overflow: auto;
 }
