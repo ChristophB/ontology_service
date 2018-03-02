@@ -98,20 +98,16 @@ public class IntegrationTest extends AbstractTest {
     
     @Test
     public void testTaxonomy() {
-    	String response
-    		= client.target(url + "/project/372327d4-ff58-41bf-997f-a61a1925ffaa/taxonomy")
+		javax.ws.rs.core.Response response
+    		= client.target(url + "/project/b9053ba6-593b-4a22-a9de-1abcc91e9ff6/taxonomy")
     		.request(MediaType.TEXT_HTML_TYPE)
-    		.get(String.class);
-    	assertThat(response).contains("Patient [1]", "Normal [1]");
+    		.get();
+    	assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+
+		response = client.target(url + "/project/b9053ba6-593b-4a22-a9de-1abcc91e9ff6/taxonomy")
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.get();
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
     }
-    
-//    @Test
-//    public void testImports() {
-//    	String response
-//			= client.target(url + "/project/702fdf23-882e-41cf-9d8d-0f589e7632a0/overview")
-//			.request(MediaType.TEXT_HTML_TYPE)
-//			.get(String.class);
-//    	assertThat(response).contains("http://www.lha.org/duo");
-//    }
-    
+
 }

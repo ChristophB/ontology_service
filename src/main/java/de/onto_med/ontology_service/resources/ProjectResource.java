@@ -149,10 +149,10 @@ public class ProjectResource extends Resource {
 	public Response getTaxonomy(@Context HttpHeaders headers, @Context UriInfo uriInfo, @PathParam("id") String projectId) {
 		try {
 			ProjectManager project = metaProjectManager.getProjectManager(projectId);
-			if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
-				return Response.ok(project.getTaxonomy()).build();
+			if (acceptsMediaType(headers, MediaType.TEXT_HTML_TYPE)) {
+				return Response.ok(new ProjectTaxonomyView(project, rootPath, uriInfo.getBaseUri().getHost() + webprotegeRelativeToWebroot)).build();
 			} else {
-				return Response.ok(new ProjectTaxonomyView(project, rootPath, uriInfo.getBaseUri().getHost() + webprotegeRelativeToWebroot, project.getTaxonomy())).build();
+				return Response.ok(project.getTaxonomy()).build();
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());

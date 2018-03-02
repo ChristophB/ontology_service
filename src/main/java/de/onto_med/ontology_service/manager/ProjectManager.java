@@ -1,7 +1,7 @@
 package de.onto_med.ontology_service.manager;
 
 import de.imise.owl2graphml_view.onto.MainOntology;
-import de.onto_med.ontology_service.api.TaxonomyNode;
+import de.onto_med.ontology_service.data_model.TaxonomyNode;
 import de.onto_med.ontology_service.data_model.Entity;
 import de.onto_med.ontology_service.data_model.Individual;
 import de.onto_med.ontology_service.ontology.BinaryOwlParser;

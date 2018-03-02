@@ -1,6 +1,6 @@
 package de.onto_med.ontology_service.ontology;
 
-import de.onto_med.ontology_service.api.TaxonomyNode;
+import de.onto_med.ontology_service.data_model.TaxonomyNode;
 import de.onto_med.ontology_service.api.Timer;
 import de.onto_med.ontology_service.data_model.Entity;
 import de.onto_med.ontology_service.data_model.Individual;
@@ -8,6 +8,7 @@ import de.onto_med.owlapi_utils.binaryowl.BinaryOwlUtils;
 import de.onto_med.owlapi_utils.owlapi.OwlApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
+import org.semanticweb.owlapi.io.FileDocumentSource;
 import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -105,14 +106,14 @@ public class BinaryOwlParser extends OntologyParser {
 	public List<Entity> annotate(String name, Boolean exact) {
 		return getEntityProperties(null, name, null, null, exact, false);
 	}
-	
+
 	/**
 	 * Search for OWLEntities by name.
 	 */
 	public List<Entity> getEntityProperties(String name, Boolean exact) {
 		return getEntityProperties(null, name, null, null, exact, false);
 	}
-	
+
 	/**
 	 * Search for OWLEntities without specified IRI.
 	 */
@@ -201,8 +202,8 @@ public class BinaryOwlParser extends OntologyParser {
 	public TaxonomyNode getTaxonomy() {
 		OWLReasoner reasoner = OwlApiUtils.getHermiTReasoner(getRootOntology());
 		OWLClass topClass = reasoner.getTopClassNode().iterator().next();
-		
-		return getTaxonomyForOWLClass(topClass, reasoner);
+
+		return getTaxonomyForOWLClass(topClass, reasoner).setOpened(true);
 	}
 	
 	
@@ -323,16 +324,22 @@ public class BinaryOwlParser extends OntologyParser {
 	
 	private TaxonomyNode getTaxonomyForOWLClass(OWLClass cls, OWLReasoner reasoner) {
 		TaxonomyNode taxonomy = new TaxonomyNode(
+			cls.getIRI().toString(),
 			StringUtils.defaultString(OwlApiUtils.getLabel(cls, getRootOntology()), XMLUtils.getNCNameSuffix(cls.getIRI())),
 			cls.getIRI().toString()
 		);
+		taxonomy.icon = "fa fa-folder-open-o text-warning";
 		
 		reasoner.getSubClasses(cls, true).entities().filter(
 			subclass -> !subclass.isBottomEntity()
-		).forEach(subclass -> taxonomy.addSubclassNode(getTaxonomyForOWLClass(subclass, reasoner)));
+		).forEach(subclass -> taxonomy.addCategory(getTaxonomyForOWLClass(subclass, reasoner)));
 		
 		reasoner.getInstances(cls, true).entities().forEach(
-			instance ->	taxonomy.addInstance(OwlApiUtils.getLabel(instance, getRootOntology()), instance.getIRI().toString())
+			instance ->	taxonomy.addInstance(new TaxonomyNode(
+				instance.getIRI().toString(),
+				OwlApiUtils.getLabel(instance, getRootOntology()),
+				instance.getIRI().toString()
+			))
 		);
 		
 		return taxonomy;
@@ -404,11 +411,11 @@ public class BinaryOwlParser extends OntologyParser {
 	/**
 	 * Returns the root-ontology with all loaded imports or null if the ontology loading fails.
 	 * This function tries to load all imports before loading the ontology.
-	 * Depending on their filename, the order of loading may vary and errors can occure.
-	 * When ever an error occures, the concerned document remains as 'not loaded',
+	 * Depending on their filename, the order of loading may vary and errors can occur.
+	 * When ever an error occurs the concerned document remains as 'not loaded',
 	 * so the function can try to load it in the next iteration.
 	 * @return root-ontology
-	 */	
+	 */
 	@SuppressWarnings("unchecked")
 	private OWLOntology getRootOntology() {
 		if (ontology != null) return ontology;
@@ -421,16 +428,20 @@ public class BinaryOwlParser extends OntologyParser {
         documents.removeIf(d -> d.isHidden() || d.isDirectory());
         
         try {
+			OWLOntologyLoaderConfiguration config = new OWLOntologyLoaderConfiguration();
+			config = config.setMissingImportHandlingStrategy(MissingImportHandlingStrategy.SILENT);
+
 	        for (int i = 0; !documents.isEmpty() && i <= documents.size(); i++) {
-	        	((ArrayList<File>) documents.clone()).forEach(document -> {
+				OWLOntologyLoaderConfiguration finalConfig = config;
+				((ArrayList<File>) documents.clone()).forEach(document -> {
 	        		try {
-	        			manager.loadOntologyFromOntologyDocument(document);
+	        			manager.loadOntologyFromOntologyDocument(new FileDocumentSource(document), finalConfig);
 	        			documents.remove(document);
 	        		} catch (OWLOntologyCreationException ignored) {}
 	        	});
 	        }
 
-	        ontology = manager.loadOntologyFromOntologyDocument(new File(rootPath));
+	        ontology = manager.loadOntologyFromOntologyDocument(new FileDocumentSource(new File(rootPath)), config);
         } catch (OWLOntologyCreationException e) {
         	e.printStackTrace();
         }
