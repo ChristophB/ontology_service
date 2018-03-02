@@ -9,7 +9,9 @@ server:
   adminContextPath: /ontology-service
   requestLog:
     appenders: []
-dataPath: /data/webprotege/
+dataPath: /Web-Service/data/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
 phenotypePath: /data/ontology-service/cop_%id%.owl
+mongoHost: localhost
+mongoPort: 27017

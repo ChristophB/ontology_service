@@ -1,29 +1,6 @@
 package de.onto_med.ontology_service.resources;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NoContentException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Singleton;
-
 import de.onto_med.ontology_service.data_model.CondencedProject;
 import de.onto_med.ontology_service.data_model.Entity;
 import de.onto_med.ontology_service.data_model.EntityQuery;
@@ -33,6 +10,13 @@ import de.onto_med.ontology_service.views.EntityFormView;
 import de.onto_med.ontology_service.views.EntityResultsetView;
 import de.onto_med.ontology_service.views.ProjectListView;
 import de.onto_med.ontology_service.views.ReasonFormView;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import java.util.ArrayList;
 
 /**
  * Project resource, which is accessible by the REST API.
@@ -44,25 +28,22 @@ import de.onto_med.ontology_service.views.ReasonFormView;
 @Singleton
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 public class MetaProjectResource extends Resource {
-	final static Logger logger = LoggerFactory.getLogger(MetaProjectResource.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(MetaProjectResource.class);
 	private ProjectResource projectResource;
 	
 	
 	/**
 	 * Constructor.
-	 * @param dataPath path to WebProtegés data folder.
+	 * @param dataPath path to WebProtégé's data folder.
 	 */
-	public MetaProjectResource(String dataPath) {
-		metaProjectManager = new MetaProjectManager(dataPath);
+	public MetaProjectResource(String dataPath, String mongoHost, int mongoPort) {
+		metaProjectManager = new MetaProjectManager(dataPath, mongoHost, mongoPort);
 	}
-	
-	
+
 	public MetaProjectResource setProjectResource(ProjectResource pr) {
 		projectResource = pr;
-		
 		return this;
 	}
-	
 	
 	/**
 	 * Removes all entries of the ProjectManager cache.
@@ -78,8 +59,6 @@ public class MetaProjectResource extends Resource {
 	/**
 	 * Returns a list of public projects with condensed metadata.
 	 * @return List of projects with metadata
-	 * @throws NoContentException 
-	 * @throws ExecutionException 
 	 */
 	@GET
 	@Path("/projects")
@@ -92,19 +71,19 @@ public class MetaProjectResource extends Resource {
 				return Response.ok(new ProjectListView(projectList, rootPath)).build();
 			}
 		} catch (Exception e) {
-			logger.warn(e.getMessage());
+			LOGGER.warn(e.getMessage());
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
 
 	
 	/**
-	 * Searches one or many ontologies for mathing entities.
+	 * Searches one or many ontologies for matching entities.
 	 * @param name localName part of an entity
 	 * @param property property the searched entity is annotated with
 	 * @param value property value
 	 * @param type entity, class or individual
-	 * @param ontologies list of projectids separated by comma
+	 * @param ontologies list of project IDs separated by comma
 	 * @param match matching method for name ('exact' or 'loose'), defaults to 'loose'
 	 * @param operator logical operator to combine name and property, defaults to 'and')
 	 * @return ArrayList of OWLEntityProperties or error message
@@ -122,7 +101,7 @@ public class MetaProjectResource extends Resource {
 		@DefaultValue("loose") @QueryParam("match") String match,
 		@DefaultValue("and") @QueryParam("operator") String operator
 	) {
-		ArrayList<Entity> result = new ArrayList<Entity>();
+		ArrayList<Entity> result = new ArrayList<>();
 		
 		try {
 			if (StringUtils.isEmpty(name) && StringUtils.isEmpty(property) && StringUtils.isEmpty(iri))
@@ -166,7 +145,7 @@ public class MetaProjectResource extends Resource {
 	
 	
 	/**
-	 * Reasons over the specified ontologies with supplied classexpression
+	 * Reasons over the specified ontologies with supplied class expression
 	 * @param ce class expression
 	 * @param ontologies list of ontologies (optional)
 	 * @return search result
@@ -178,7 +157,7 @@ public class MetaProjectResource extends Resource {
 			@QueryParam("ce") String ce,
 			@QueryParam("ontologies") String ontologies
 		) {
-		ArrayList<Entity> result = new ArrayList<Entity>();
+		ArrayList<Entity> result = new ArrayList<>();
 		
 		try {
 			if (StringUtils.isEmpty(ce))

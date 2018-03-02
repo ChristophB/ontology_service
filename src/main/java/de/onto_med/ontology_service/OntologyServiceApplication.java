@@ -22,18 +22,16 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 
 /**
- * This is the main application of the WebProtegé Rest-API.
+ * This is the main application of the WebProtégé Rest-API.
  * @author Christoph Beger
  */
 public class OntologyServiceApplication extends Application<OntologyServiceConfiguration> {
 	private String rootPath = "";
-	private MetaProjectResource metaProjectResource;
-	private ProjectResource projectResource;
-	
+
 	/**
 	 * Main method, which starts the service.
-	 * @param args Dropwizard arguments
-	 * @throws Exception
+	 * @param args DropWizard arguments
+	 * @throws Exception If application start failed.
 	 */
 	public static void main(String[] args) throws Exception {
 		new OntologyServiceApplication().run(args);
@@ -64,7 +62,7 @@ public class OntologyServiceApplication extends Application<OntologyServiceConfi
 	}
 	
 	/**
-	 * This method calls the Dropwizard run method and sets the rootPath of the service.
+	 * This method calls the DropWizard run method and sets the rootPath of the service.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -82,21 +80,21 @@ public class OntologyServiceApplication extends Application<OntologyServiceConfi
     }
 
 	/**
-	 * Registers resources, healthchecks and tasks.
+	 * Registers resources, health checks and tasks.
 	 * Initializes important resources like MetaProjectResource and ProjectResource.
 	 */
 	@Override
-	public void run(OntologyServiceConfiguration configuration, Environment environment) throws Exception {
+	public void run(OntologyServiceConfiguration configuration, Environment environment) {
 		if (Files.notExists(Paths.get(configuration.getDataPath())))
 			throw new WebApplicationException("The specified WebProtégé data folder does not exist.");
-		
-		metaProjectResource = new MetaProjectResource(configuration.getDataPath());
-		projectResource     = new ProjectResource(configuration.getWebprotegeRelativeToWebroot());
+
+		MetaProjectResource metaProjectResource = new MetaProjectResource(configuration.getDataPath(), configuration.getMongoHost(), configuration.getMongoPort());
+		ProjectResource     projectResource     = new ProjectResource(configuration.getWebprotegeRelativeToWebroot());
 		
 		metaProjectResource.setProjectResource(projectResource).setRootPath(configuration.getRootPath());
 		projectResource.setMetaProjectManager(metaProjectResource.getMetaProjectManager()).setRootPath(configuration.getRootPath());
-		
-		/*** Register resources here: ***/
+
+		/* Register resources here: */
 		environment.jersey().register(metaProjectResource);
 		environment.jersey().register(projectResource);
 		environment.jersey().register(new StaticResource(configuration.getRootPath()));
@@ -104,10 +102,10 @@ public class OntologyServiceApplication extends Application<OntologyServiceConfi
 		environment.jersey().register(new PhenotypeResource(configuration.getRootPath(), configuration.getPhenotypePath()));
 		// environment.jersey().register(MultiPartFeature.class);
 		
-		/*** Register health checks here: ***/
+		/* Register health checks here: */
 		environment.healthChecks().register("template", new WebProtegeHealthCheck(configuration));
 		
-		/*** Register tasks here: ***/
+		/* Register tasks here: */
 		environment.admin().addTask(new ClearCacheTask(metaProjectResource));
 	}
 

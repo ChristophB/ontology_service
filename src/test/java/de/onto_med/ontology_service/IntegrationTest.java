@@ -99,7 +99,7 @@ public class IntegrationTest extends AbstractTest {
     @Test
     public void testTaxonomy() {
     	String response
-    		= client.target(url + "/project/e2906cf8-ae16-4162-989c-66b83291b5cf/taxonomy")
+    		= client.target(url + "/project/372327d4-ff58-41bf-997f-a61a1925ffaa/taxonomy")
     		.request(MediaType.TEXT_HTML_TYPE)
     		.get(String.class);
     	assertThat(response).contains("Patient [1]", "Normal [1]");

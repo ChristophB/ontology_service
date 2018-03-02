@@ -1,5 +1,6 @@
 package de.onto_med.ontology_service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,6 +29,14 @@ public class OntologyServiceConfiguration extends Configuration {
 	 * Path to the cop.owl file, which is used to store phenotypes.
 	 */
 	@NotEmpty private String phenotypePath;
+	/**
+	 * The hostname of the WebProtégé MongoDB instance.
+	 */
+	private String mongoHost;
+	/**
+	 * The port of the WebProtégé MongoDB instance.
+	 */
+	private Integer mongoPort;
 	
 	@JsonProperty
 	public String getDataPath() {
@@ -67,6 +76,26 @@ public class OntologyServiceConfiguration extends Configuration {
 	@JsonProperty
 	public void setPhenotypePath(String phenotypePath) {
 		this.phenotypePath = phenotypePath;
+	}
+
+	@JsonProperty
+	public String getMongoHost() {
+		return StringUtils.defaultString(mongoHost, "localhost");
+	}
+
+	@JsonProperty
+	public void setMongoHost(String mongoHost) {
+		this.mongoHost = mongoHost;
+	}
+
+	@JsonProperty
+	public int getMongoPort() {
+		return mongoPort != null ? mongoPort : 27017;
+	}
+
+	@JsonProperty
+	public void setMongoPort(Integer mongoPort) {
+		this.mongoPort = mongoPort;
 	}
 	
 }

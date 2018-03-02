@@ -1,6 +1,5 @@
 package de.onto_med.ontology_service.manager;
 
-//import de.imise.owl2graphml_view.onto.MainOntology;
 import de.imise.owl2graphml_view.onto.MainOntology;
 import de.onto_med.ontology_service.api.TaxonomyNode;
 import de.onto_med.ontology_service.data_model.Entity;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Instances of this class can be used to query a specific project ontology of WebProtegé.
+ * Instances of this class can be used to query a specific project ontology of WebProtégé.
  * @author Christoph Beger
  */
 public class ProjectManager {
@@ -29,7 +28,7 @@ public class ProjectManager {
 	
 	/**
 	 * Constructor.
-	 * @param projectId Instance of class Project in WebProtégé's metaproject
+	 * @param projectId Instance of class Project in WebProtégé's meta project
 	 * @param dataPath 	Absolute path to WebProtégé's data folder.
 	 */
 	public ProjectManager(String projectId, String dataPath) {
@@ -85,11 +84,11 @@ public class ProjectManager {
 	/**
 	 * Returns a list of entities and their properties for a set of search parameters.
 	 * @param iri		IRI
-	 * @param name		localname 
+	 * @param name		local name
 	 * @param property	name of a property the entity has
 	 * @param value		property value
 	 * @param match		matching method for strings: exact (default), loose
-	 * @param operator	logical opperator to connect name and property search: and (default), or
+	 * @param operator	logical operator to connect name and property search: and (default), or
 	 * @param type		ontological type to search for: entity (default), class, individual
 	 * @return list of entities and their properties
 	 */
@@ -189,8 +188,8 @@ public class ProjectManager {
 	
 	
 	/**
-	 * Returns shortforms and iris for each loaded ontology.
-	 * @return HashMap with key: shortform and value: iri
+	 * Returns short forms and iris for each loaded ontology.
+	 * @return HashMap with key: short form and value: iri
 	 */
 	public Map<String, String> getOntologyIris() {
 		return binaryOwlParser.getOntologyIris();

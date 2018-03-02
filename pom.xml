@@ -82,6 +82,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.6.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>de.onto_med</groupId>
             <artifactId>owlapi_utils</artifactId>
             <version>0.0.2</version>
