@@ -47,7 +47,7 @@ public class PhenotypeResource extends Resource {
 			new CacheLoader<String, PhenotypeManager>() {
 				@Override
 				public PhenotypeManager load(@Nonnull String key) {
-					Timer timer = new Timer();
+					Timer            timer   = new Timer();
 					PhenotypeManager manager = new PhenotypeManager(phenotypePath.replace("%id%", key));
 
 					LOGGER.info("Populated cache with phenotype ontology '" + key + "'. " + timer.getDiff());
@@ -64,7 +64,7 @@ public class PhenotypeResource extends Resource {
 	public void setNavigationVisible(boolean navigationVisible) {
 		this.navigationVisible = navigationVisible;
 	}
-	
+
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Response getPhenotypeSelectionView() {
@@ -98,7 +98,7 @@ public class PhenotypeResource extends Resource {
 			throw new WebApplicationException(e.getMessage());
 		}
 	}
-	
+
 	@GET
 	@Path("/{id}/{iri}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -111,10 +111,17 @@ public class PhenotypeResource extends Resource {
 	@Path("{id}/{iri}/dependents")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Category> getDependentPhenotypes(@PathParam("id") String id, @PathParam("iri") String iri) {
-		PhenotypeManager manager = managers.getUnchecked(id);
-		List<Category> phenotypes = manager.getDependentPhenotypes(iri);
+		PhenotypeManager manager    = managers.getUnchecked(id);
+		List<Category>   phenotypes = manager.getDependentPhenotypes(iri);
 		phenotypes.add(manager.getPhenotype(iri));
 		return phenotypes;
+	}
+
+	@GET
+	@Path("{id}/{iri}/parts")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Set<AbstractSinglePhenotype> getPartsOfPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+		return managers.getUnchecked(id).getParts(iri);
 	}
 
 	@POST
@@ -156,7 +163,7 @@ public class PhenotypeResource extends Resource {
 			return Response.ok(managers.getUnchecked(id).getTaxonomy(true)).build();
 		}
 	}
-	
+
 	@GET
 	@Path("/{id}/decision-tree")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -221,17 +228,8 @@ public class PhenotypeResource extends Resource {
 	@Path("/{id}/reason-form/{iri}")
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getReasonFormForPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
-		PhenotypeManager manager = managers.getUnchecked(id);
-		List<Category> relatedPhenotypes = manager.getDependentPhenotypes(iri);
-		relatedPhenotypes.add(manager.getPhenotype(iri));
-		List<AbstractSinglePhenotype> phenotypes = new ArrayList<>();
-
-		for (Category relatedPhenotype : relatedPhenotypes)
-			if (relatedPhenotype.isAbstractSinglePhenotype())
-				phenotypes.add(relatedPhenotype.asAbstractSinglePhenotype());
-
 		PhenotypeView view = new PhenotypeView("PhenotypeReasonFormForPhenotype.ftl", rootPath, id);
-		view.setPhenotypes(phenotypes);
+		view.setPhenotypes(managers.getUnchecked(id).getParts(iri));
 		view.setNavigationVisible(navigationVisible);
 
 		return Response.ok(view).build();

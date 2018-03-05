@@ -1,1 +1,1 @@
-mvn install:install-file -Dfile=lib/phenoman-0.0.3.jar -DgroupId=org.lha -DartifactId=phenoman -Dversion=0.0.3 -Dpackaging=jar
+mvn install:install-file -Dfile=lib/phenoman-0.0.5.jar -DgroupId=org.lha -DartifactId=phenoman -Dversion=0.0.5 -Dpackaging=jar

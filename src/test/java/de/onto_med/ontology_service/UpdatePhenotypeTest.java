@@ -80,7 +80,6 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	@Ignore
 	public void testUpdatePhenotypeWithSameType() {
 		String id = "Double_Phenotype_1";
 
@@ -123,11 +122,10 @@ public class UpdatePhenotypeTest extends AbstractTest {
 
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
 		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DOUBLE);
-		assertThat(actual).isEqualTo(expected); // TODO: this test fails sometimes because range is not overwritten but appended
+		assertThat(actual).isEqualTo(expected);
 	}
 
 	@Test
-	@Ignore
 	public void testUpdatePhenotypeWithSameTypeByApi() throws WrongPhenotypeTypeException {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory         factory = manager.getPhenotypeFactory();
@@ -143,11 +141,10 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		);
 		manager.addRestrictedSinglePhenotype(update);
 		manager.write();
-		assertThat(manager.getPhenotype(update.getName())).isEqualTo(update); // TODO: this test fails sometimes because range is not overwritten but appended
+		assertThat(manager.getPhenotype(update.getName())).isEqualTo(update);
 	}
 
 	@Test
-	@Ignore
 	public void testUpdatePhenotypeWithDifferentType() {
 		String title = "Abstract_Double_Phenotype_1";
 
@@ -168,7 +165,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
 
-		assertThat(response.getStatus()).isEqualTo(Response.SC_INTERNAL_SERVER_ERROR); // TODO: should throw an exception
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 	}
 
 	@Test(expected = WrongPhenotypeTypeException.class)
@@ -188,8 +185,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		manager.write();
 	}
 
-	@Test(expected = WrongPhenotypeTypeException.class)
-	@Ignore
+	@Test
 	public void testUpdatePhenotypeWithDifferentSingleTypeByApi() throws WrongPhenotypeTypeException {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory         factory = manager.getPhenotypeFactory();
@@ -203,7 +199,6 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		manager.addPhenotypeCategory(category);
 		manager.write();
 
-		// TODO: Exception should be thrown
 		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype(phenotype.getName(), OWL2Datatype.XSD_INTEGER, category.getName()));
 	}
 

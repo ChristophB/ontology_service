@@ -10,7 +10,7 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 public abstract class AbstractTest {
 	@ClassRule
     public static final DropwizardAppRule<OntologyServiceConfiguration> RULE
-    	= new DropwizardAppRule<OntologyServiceConfiguration>(
+    	= new DropwizardAppRule<>(
     		OntologyServiceApplication.class, "config_test.yml"
     	);
 

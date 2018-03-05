@@ -2,13 +2,13 @@ package de.onto_med.ontology_service.views;
 
 import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PhenotypeView extends RestApiView {
-	private String                        id;
-	private List<AbstractSinglePhenotype> phenotypes;
-	private Map<String, Long>             ontologies;
+	private String                       id;
+	private Set<AbstractSinglePhenotype> phenotypes;
+	private Map<String, Long>            ontologies;
 
 	public PhenotypeView(String template, String rootPath, String id) {
 		super(template, rootPath);
@@ -24,11 +24,11 @@ public class PhenotypeView extends RestApiView {
 		return id;
 	}
 
-	public void setPhenotypes(List<AbstractSinglePhenotype> phenotypes) {
+	public void setPhenotypes(Set<AbstractSinglePhenotype> phenotypes) {
 		this.phenotypes = phenotypes;
 	}
 
-	public List<AbstractSinglePhenotype> getPhenotypes() {
+	public Set<AbstractSinglePhenotype> getPhenotypes() {
 		return phenotypes;
 	}
 

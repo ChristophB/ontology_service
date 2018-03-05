@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.onto_med</groupId>
     <artifactId>ontology_service</artifactId>
-    <version>0.3</version>
+    <version>0.3.1</version>
     <name>Ontology Service</name>
     <description>REST-full API to access Ontologies developed and stored in WebProtégé and to manage phenotypes.
     </description>
@@ -99,11 +99,11 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- RUN: mvn install:install-file -Dfile=lib/phenoman-0.0.3.jar -DgroupId=org.lha -DartifactId=phenoman -Dversion=0.0.3 -Dpackaging=jar -->
+        <!-- RUN: mvn install:install-file -Dfile=lib/phenoman-0.0.5.jar -DgroupId=org.lha -DartifactId=phenoman -Dversion=0.0.5 -Dpackaging=jar -->
         <dependency>
             <groupId>org.lha</groupId>
             <artifactId>phenoman</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.5</version>
         </dependency>
     </dependencies>
 

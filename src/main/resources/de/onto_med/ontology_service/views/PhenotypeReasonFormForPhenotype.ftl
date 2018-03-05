@@ -29,9 +29,9 @@
                             <div class="clearfix"></div>
                         </div>
                         <div id="reason-form-fields" class="panel-body phenotype">
-                            <table>
+                            <table class="table">
                                 <thead>
-                                    <tr><th>Title</th><th>Description</th><th>Value</th></tr>
+                                    <tr><th>Title</th><th>Description</th><th>Value</th><th>Unit</th></tr>
                                 </thead>
                                 <tbody>
                                     <#list phenotypes as phenotype>
@@ -52,6 +52,7 @@
                                                     <input type="text" class="form-control" name="${phenotype.name}" />
                                                 </#if>
                                             </td>
+                                            <td>${phenotype.unit}</td>
                                         </tr>
                                     </#list>
                                 </tbody>

@@ -13,6 +13,7 @@ import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
 import org.lha.phenoman.model.instance.ComplexPhenotypeInstance;
 import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
+import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
@@ -87,8 +88,8 @@ public class PhenotypeManager {
 	 * @return Top node of the cop.owl taxonomy.
 	 */
 	public TreeNode getTaxonomy(Boolean includePhenotypes) {
-		PhenotypeCategoryTreeNode node = manager.getPhenotypeCategoryTree(includePhenotypes);
-		TreeNode treeNode = getTreeNode(node, includePhenotypes);
+		PhenotypeCategoryTreeNode node     = manager.getPhenotypeCategoryTree(includePhenotypes);
+		TreeNode                  treeNode = getTreeNode(node, includePhenotypes);
 		treeNode.setOpened(true);
 
 		return treeNode;
@@ -161,7 +162,18 @@ public class PhenotypeManager {
 	}
 
 	/**
+	 * Returns a list of all abstract single phenotypes, which are required for the calculation of the provided phenotype.
+	 *
+	 * @param iri The local name or IRI of the phenotype to be calculated.
+	 * @return Set of required abstract single phenotypes for the calculation.
+	 */
+	public Set<AbstractSinglePhenotype> getParts(String iri) {
+		return manager.getParts(XMLUtils.getNCNameSuffix(iri));
+	}
+
+	/**
 	 * Deletes all phenotypes, which are represented in the set with their ID.
+	 *
 	 * @param ids A Set of phenotype IDs
 	 */
 	public void deletePhenotypes(Set<String> ids) {
@@ -533,9 +545,9 @@ public class PhenotypeManager {
 	}
 
 	public class AttributeList { // TODO: add superPhenotype
-		public String type;
-		public String id;
-		public String title;
+		public String       type;
+		public String       id;
+		public String       title;
 		public List<String> categories;
 		public Boolean isPhenotype       = false;
 		public Boolean isRestricted      = false;
