@@ -111,3 +111,6 @@ div.awesomplete {
 .clickable-row {
     cursor: pointer;
 }
+.fixed-table-body {
+    height: auto;
+}
