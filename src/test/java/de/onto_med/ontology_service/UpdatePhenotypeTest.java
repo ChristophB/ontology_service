@@ -200,6 +200,19 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype(phenotype.getName(), OWL2Datatype.XSD_INTEGER, category.getName()));
 	}
 
+	@Test
+	public void testPhenotypeCreation() throws WrongPhenotypeTypeException {
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(
+			RULE.getConfiguration().getPhenotypePath().replace("%id%", "test0815"), false);
+		PhenotypeFactory factory = manager.getPhenotypeFactory();
+
+		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("abstract", OWL2Datatype.XSD_DOUBLE));
+
+		factory.createRestrictedSinglePhenotype(
+			"restricted", "abstract", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_EXCLUSIVE }, new Double[]{ 5.0 })
+		);
+	}
+
 	@Test @Ignore
 	public void test() {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
