@@ -66,7 +66,7 @@ function createPhenotypeTree(id, url, withContext) {
 		if (target.closest('.jstree').length || !drop.length) return; // field with class "drop" outside of jstree
 
 		if (attributes.type.value === "null" && drop.hasClass('category')) {
-			drop.val(drop.val() + ' ' + data.element.text + ' ');
+			drop.val(drop.val() + ' ' + data.element.text + ';');
 			focusInputEnd(drop);
 		} else if (attributes.type.value !== "null" && drop.hasClass('phenotype')) {
 			if (drop[0].id === 'reason-form-drop-area' && attributes.isSinglePhenotype.value == "true")
@@ -228,6 +228,9 @@ function customMenu(node) {
 
 	if (!node.a_attr.isPhenotype) {
 		delete items.showRestrictedPhenotypeForm;
+		delete items.showReasonForm;
+		delete items.getDecisionTreeGraphml;
+		delete items.getDecisionTreePng;
 	} else {
 		delete items.showCategoryForm;
 		delete items.showAbstractPhenotypeForm;

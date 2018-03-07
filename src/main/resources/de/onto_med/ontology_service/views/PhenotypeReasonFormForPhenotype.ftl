@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.PhenotypeView" -->
 
 <#assign title = "Phenotype Reasoning Form">
 <#assign current = "Phenotyping">
@@ -17,7 +17,7 @@
 
 		<main class="container">
 			<div name="content" class="row">
-                <form id="reason-form" class="col-sm-6 col-sm-offset-3" action="" method="post" onSubmit="return false">
+                <form id="reason-form" class="col-sm-8 col-sm-offset-2" action="" method="post" onSubmit="return false">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <div class="panel-title pull-left">
@@ -31,13 +31,12 @@
                         <div id="reason-form-fields" class="panel-body phenotype">
                             <table class="table">
                                 <thead>
-                                    <tr><th>Title</th><th>Description</th><th>Value</th><th>Unit</th></tr>
+                                    <tr><th>Title</th><th>Value</th><th>Unit</th><th></th></tr>
                                 </thead>
                                 <tbody>
-                                    <#list phenotypes as phenotype>
+                                    <#list phenotypes?sort_by("titleText") as phenotype>
                                         <tr>
                                             <td>${phenotype.titleText}</td>
-                                            <td><!-- ... --></td>
                                             <td>
                                                 <#if phenotype.datatypeText == "boolean">
                                                     <select class="form-control" name="${phenotype.name}">
@@ -46,13 +45,24 @@
                                                     </select>
                                                 </#if>
                                                 <#if phenotype.datatypeText == "double">
-                                                    <input type="number" class="form-control" name="${phenotype.name}" />
+                                                    <input type="number" class="form-control" name="${phenotype.name}" placeholder="10.00">
+                                                </#if>
+                                                <#if phenotype.datatypeText == "integer">
+                                                    <input type="number" step="1" class="form-control" name="${phenotype.name}" placeholder="10">
                                                 </#if>
                                                 <#if phenotype.datatypeText == "string">
-                                                    <input type="text" class="form-control" name="${phenotype.name}" />
+                                                    <input type="text" class="form-control" name="${phenotype.name}">
                                                 </#if>
                                             </td>
-                                            <td>${phenotype.unit}</td>
+                                            <td>${(phenotype.unit)!""}</td>
+                                            <td>
+                                                <#if phenotype.descriptions?? && (phenotype.descriptions?size > 0)>
+                                                    <i class="fa fa-info-circle text-primary" aria-hidden="true"
+                                                       data-toggle="tooltip" data-placement="left" data-html="true"
+                                                       title="<#list phenotype.descriptions?keys?sort as key><b>${key?upper_case}:</b> ${phenotype.descriptions[key]?first}<br><br></#list>"
+                                                    ></i>
+                                                </#if>
+                                            </td>
                                         </tr>
                                     </#list>
                                 </tbody>

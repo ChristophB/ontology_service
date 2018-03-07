@@ -1,3 +1,5 @@
+<#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.PhenotypeView" -->
+
 <#assign title = "Phenotyping">
 <#assign current = "Phenotyping">
 <#assign current_submenu = "overview">

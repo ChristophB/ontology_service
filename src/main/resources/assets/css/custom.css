@@ -66,6 +66,8 @@
 	left: 30%;
 	right: 30%;
 	z-index: 1020;
+	max-height: 40%;
+	overflow: auto;
 }
 .jumbotron {
 	padding: 0;

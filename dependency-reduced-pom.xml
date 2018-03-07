@@ -4,7 +4,7 @@
   <groupId>de.onto_med</groupId>
   <artifactId>ontology_service</artifactId>
   <name>Ontology Service</name>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
   <description>REST-full API to access Ontologies developed and stored in WebProtégé and to manage phenotypes.</description>
   <build>
     <finalName>service</finalName>

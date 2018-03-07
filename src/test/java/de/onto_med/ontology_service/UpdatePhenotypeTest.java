@@ -2,15 +2,13 @@ package de.onto_med.ontology_service;
 
 import de.onto_med.ontology_service.data_model.Phenotype;
 import org.eclipse.jetty.server.Response;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
+import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
@@ -202,8 +200,19 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype(phenotype.getName(), OWL2Datatype.XSD_INTEGER, category.getName()));
 	}
 
-	@After
-	public void cleanUp() throws IOException {
+	@Test @Ignore
+	public void test() {
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
+		PhenotypeFactory         factory = manager.getPhenotypeFactory();
+
+		factory.createAbstractSinglePhenotype("Abs", OWL2Datatype.XSD_DOUBLE);
+		factory.createRestrictedSinglePhenotype(
+			new Title("Res"), "Abs", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_EXCLUSIVE }, new Double[]{ 5.0 })
+		);
+	}
+
+	@AfterClass
+	public static void cleanUp() throws IOException {
 		Path path = Paths.get(ONTOLOGY_PATH);
 		if (Files.exists(path)) Files.delete(path);
 	}
