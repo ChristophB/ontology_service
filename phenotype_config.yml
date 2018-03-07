@@ -4,4 +4,4 @@ server:
     port: 8080
   requestLog:
     appenders: []
-phenotypePath: cop_%id%.owl
+phenotypePath: ./cop_%id%.owl
