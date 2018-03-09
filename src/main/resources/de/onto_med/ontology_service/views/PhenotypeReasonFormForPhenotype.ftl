@@ -12,7 +12,21 @@
 	<body>
         <#if navigationVisible><#include "partials/Navbar.ftl"></#if>
 		<#include "partials/Heading.ftl">
-		<#include "partials/phenotype/Links.ftl">
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="list-inline list-group list-group-horizontal">
+                    <#if id??>
+                        <a class="list-group-item" href="${rootPath}/phenotype/${id}/phenotype-form">Edit Phenotypes</a>
+                    </#if>
+
+                    <#if id??>
+                        <a class="list-group-item active" href="#">Reasoning</a>
+                    </#if>
+                </div>
+            </div>
+        </div>
+
 		<#include "partials/Messages.ftl">
 
 		<main class="container">

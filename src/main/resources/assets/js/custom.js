@@ -103,7 +103,7 @@ function appendFormField(element, target) {
 	}
 
 	var html
-		= '<div class="form-group row">'
+		= '<div class="form-group row generated">'
 			+ '<label for="' + id + '" class="control-label col-sm-4">' + element.text + '</label>'
 			+ '<div class="col-sm-6">'
 				+ inputField
@@ -120,10 +120,18 @@ function appendFormField(element, target) {
 function showPhenotypeForm(id, clear = false) {
 	$('#abstract-phenotype-form, #phenotype-category-form, #numeric-phenotype-form, #string-phenotype-form, '
 	    + '#date-phenotype-form, #boolean-phenotype-form, #calculation-phenotype-form, '
-	    + '#composite-boolean-phenotype-form').addClass('hidden');
+	    + '#composite-boolean-phenotype-form, #reason-form').addClass('hidden');
 
 	$(id).removeClass('hidden');
 	if (clear === true) clearPhenotypeFormData();
+
+	if (id == '#reason-form') {
+	    $('#edit-link').removeClass('active');
+	    $('#reason-link').addClass('active');
+	} else {
+	    $('#reason-link').removeClass('active');
+        $('#edit-link').addClass('active');
+	}
 }
 
 function clearPhenotypeFormData() {
@@ -133,11 +141,13 @@ function clearPhenotypeFormData() {
 	$('.hidden-language, form:not(.hidden) #title-languages').val('en');
 	toggleValueDefinition();
 
-	$.getJSON('all?type=list', function(data) {
-		var input = document.querySelector('form:not(.hidden) input.awesomplete#titles');
-    	if (awesomplete != undefined) awesomplete.destroy();
-    	awesomplete = new Awesomplete(input, { list: data });
-    });
+    if (document.querySelector('form:not(.hidden) input.awesomplete#titles')) {
+        $.getJSON('all?type=list', function(data) {
+            var input = document.querySelector('form:not(.hidden) input.awesomplete#titles');
+            if (awesomplete != undefined) awesomplete.destroy();
+            awesomplete = new Awesomplete(input, { list: data });
+        });
+    }
 }
 
 function customMenu(node) {
