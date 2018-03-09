@@ -213,17 +213,6 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		);
 	}
 
-	@Test @Ignore
-	public void test() {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory         factory = manager.getPhenotypeFactory();
-
-		factory.createAbstractSinglePhenotype("Abs", OWL2Datatype.XSD_DOUBLE);
-		factory.createRestrictedSinglePhenotype(
-			new Title("Res"), "Abs", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_EXCLUSIVE }, new Double[]{ 5.0 })
-		);
-	}
-
 	@AfterClass
 	public static void cleanUp() throws IOException {
 		Path path = Paths.get(ONTOLOGY_PATH);

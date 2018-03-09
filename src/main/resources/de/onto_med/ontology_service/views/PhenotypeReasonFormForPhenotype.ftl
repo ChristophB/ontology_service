@@ -3,7 +3,7 @@
 <#assign title = "Phenotype Reasoning Form">
 <#assign current = "Phenotyping">
 <#assign current_submenu = "reason-form">
-<#assign heading = "Phenotype Reasoning Form">
+<#assign heading = "Phenotype Reasoning Form - " + phenotype.titleText>
 <#assign subHeading = "Define properties based on phenotypes and get inferred phenotypes.">
 
 <html>
@@ -34,32 +34,44 @@
                                     <tr><th>Title</th><th>Value</th><th>Unit</th><th></th></tr>
                                 </thead>
                                 <tbody>
-                                    <#list phenotypes?sort_by("titleText") as phenotype>
+                                    <#list parts?sort_by("title") as part>
                                         <tr>
-                                            <td>${phenotype.titleText}</td>
+                                            <td>${part.title}</td>
                                             <td>
-                                                <#if phenotype.datatypeText == "boolean">
-                                                    <select class="form-control" name="${phenotype.name}">
+                                                <#if part.datatype == "boolean">
+                                                    <select class="form-control" name="${part.name}">
                                                         <option value="true">True</option>
                                                         <option value="false">False</option>
                                                     </select>
                                                 </#if>
-                                                <#if phenotype.datatypeText == "double">
-                                                    <input type="number" class="form-control" name="${phenotype.name}" placeholder="10.00">
+                                                <#if part.datatype == "double">
+                                                    <input type="number" class="form-control" name="${part.name}" placeholder="10.00">
                                                 </#if>
-                                                <#if phenotype.datatypeText == "integer">
-                                                    <input type="number" step="1" class="form-control" name="${phenotype.name}" placeholder="10">
+                                                <#if part.datatype == "integer">
+                                                    <input type="number" step="1" class="form-control" name="${part.name}" placeholder="10">
                                                 </#if>
-                                                <#if phenotype.datatypeText == "string">
-                                                    <input type="text" class="form-control" name="${phenotype.name}">
+                                                <#if part.datatype == "string">
+                                                    <#if part.selectOptions?? && (part.selectOptions?size > 0)>
+                                                        <input type="hidden" name="${part.selectOptions?keys?first}" id="${part.name}_select">
+                                                        <select class="form-control" onchange="$('#${part.name}_select').attr('name', this.value)">
+                                                            <#list part.selectOptions?keys as key>
+                                                                <option value="${key}">${part.selectOptions[key]}</option>
+                                                            </#list>
+                                                        </select>
+                                                    <#else>
+                                                        <input type="text" class="form-control" name="${part.name}" placeholder="String value">
+                                                    </#if>
+                                                </#if>
+                                                <#if part.datatype == "dateTime">
+                                                    <input type="date" class="form-control" name="${part.name}">
                                                 </#if>
                                             </td>
-                                            <td>${(phenotype.unit)!""}</td>
+                                            <td>${(part.ucum)!""}</td>
                                             <td>
-                                                <#if phenotype.descriptions?? && (phenotype.descriptions?size > 0)>
+                                                <#if part.descriptionMap?? && (part.descriptionMap?size > 0)>
                                                     <i class="fa fa-info-circle text-primary" aria-hidden="true"
                                                        data-toggle="tooltip" data-placement="left" data-html="true"
-                                                       title="<#list phenotype.descriptions?keys?sort as key><b>${key?upper_case}:</b> ${phenotype.descriptions[key]?first}<br><br></#list>"
+                                                       title="<#list part.descriptionMap?keys?sort as key><b>${key?upper_case}:</b> ${part.descriptionMap[key]?first}<br><br></#list>"
                                                     ></i>
                                                 </#if>
                                             </td>

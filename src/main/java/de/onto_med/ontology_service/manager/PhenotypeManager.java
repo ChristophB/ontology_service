@@ -152,6 +152,17 @@ public class PhenotypeManager {
 	}
 
 	/**
+	 * This method returns Phenotype objects as map, which are associated with the provided abstract phenotype.
+	 * The map contains the names of restricted phenotypes and the title.
+	 * @param abstractPhenotype The abstract Phenotype.
+	 * @return A map of restricted Phenotype names and titles
+	 */
+	private Map<String, String> getRestrictions(String abstractPhenotype) {
+		return manager.getRestrictedPhenotypes(abstractPhenotype).stream()
+			.collect(Collectors.toMap(Category::getName, Category::getTitleText));
+	}
+
+	/**
 	 * Returns a list of all phenotypes, which are referencing this phenotype, thus require it for reasoning.
 	 *
 	 * @param iri The local name or IRI of the phenotype to search for.
@@ -167,8 +178,24 @@ public class PhenotypeManager {
 	 * @param iri The local name or IRI of the phenotype to be calculated.
 	 * @return Set of required abstract single phenotypes for the calculation.
 	 */
-	public Set<AbstractSinglePhenotype> getParts(String iri) {
-		return manager.getParts(XMLUtils.getNCNameSuffix(iri));
+	public List<Phenotype> getParts(String iri) {
+		List<Phenotype> parts = new ArrayList<>();
+
+		manager.getParts(XMLUtils.getNCNameSuffix(iri)).forEach(p -> {
+			Phenotype part = new Phenotype() {{
+				setIsRestricted(false);
+				setIsPhenotype(true);
+				setDatatype(p.getDatatypeText());
+				setTitle(p.getTitleText());
+				setUcum(p.getUnit());
+				setDescriptionMap(p.getDescriptions());
+				setSelectOptions(getRestrictions(p.getName()));
+				setName(p.getName());
+			}};
+			parts.add(part);
+		});
+
+		return parts;
 	}
 
 	/**
@@ -202,8 +229,10 @@ public class PhenotypeManager {
 			if (StringUtils.isBlank(value)) value = null;
 
 			SinglePhenotypeInstance instance;
-			if (value == null || phenotype.isRestrictedPhenotype()) {
-				instance = new SinglePhenotypeInstance(name);
+			if (phenotype.isRestrictedPhenotype()) {
+				instance = new SinglePhenotypeInstance(manager.getRestrictedSinglePhenotype(name));
+			} else if (value == null) {
+				continue;
 			} else if (phenotype.isAbstractBooleanPhenotype()) {
 				instance = new SinglePhenotypeInstance(name, Boolean.valueOf(value));
 			} else if (phenotype.isAbstractCalculationPhenotype()) {
@@ -245,14 +274,14 @@ public class PhenotypeManager {
 	}
 
 	/**
-	 * Returns the result of @code{classifyIndividual} as HTML formated string.
+	 * Returns the result of @code{classifyIndividual} as HTML formatted string.
 	 *
 	 * @param properties A list of properties, which will be used to create the individual.
 	 * @return String representation of the reasoning result.
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public String classifyIndividualAsString(List<Property> properties) throws IllegalArgumentException {
-		return classifyIndividual(properties).toString().replaceAll("\n", "<br>");
+		return classifyIndividual(properties).toString();
 	}
 
 	/**

@@ -2,7 +2,6 @@ package de.onto_med.ontology_service.factory;
 
 import de.onto_med.ontology_service.data_model.Phenotype;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 
 import java.util.List;
@@ -25,7 +24,7 @@ public abstract class PhenotypeFactory {
 	 */
 	protected void setPhenotypeBasicData(Category phenotype, Phenotype formData) {
 		addPhenotypeLabels(phenotype, formData.getLabels(), formData.getLabelLanguages());
-		addPhenotypeDescriptions(phenotype, formData.getDefinitions(), formData.getDefinitionLanguages());
+		addPhenotypeDescriptions(phenotype, formData.getDescriptions(), formData.getDescriptionLanguages());
 		addPhenotypeRelations(phenotype, formData.getRelations());
 	}
 

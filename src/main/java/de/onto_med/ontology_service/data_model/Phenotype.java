@@ -8,8 +8,12 @@ import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Phenotype {
+	private String title;
+
 	@JsonProperty
 	private List<String> titles         = new ArrayList<>();
 	@JsonProperty
@@ -25,15 +29,15 @@ public class Phenotype {
 	@JsonProperty
 	private Boolean isRestricted;
 	@JsonProperty
-	private String superPhenotype;
+	private String  superPhenotype;
 	@JsonProperty
-	private String categories;
+	private String  categories;
 	@JsonProperty
-	private String superCategory;
+	private String  superCategory;
 	@JsonProperty
-	private List<String> definitions         = new ArrayList<>();
+	private List<String> descriptions         = new ArrayList<>();
 	@JsonProperty
-	private List<String> definitionLanguages = new ArrayList<>();
+	private List<String> descriptionLanguages = new ArrayList<>();
 	@JsonProperty
 	private String datatype;
 	@JsonProperty
@@ -59,8 +63,46 @@ public class Phenotype {
 	@JsonProperty
 	private Double  score;
 
+	private String name;
+
+	private Map<String, Set<String>> descriptionMap;
+
+	private Map<String, String> selectOptions;
+
 
 	public Phenotype() {
+	}
+
+	public Map<String, String> getSelectOptions() {
+		return selectOptions;
+	}
+
+	public void setSelectOptions(Map<String, String> selectOptions) {
+		this.selectOptions = selectOptions;
+	}
+
+	public Map<String, Set<String>> getDescriptionMap() {
+		return descriptionMap;
+	}
+
+	public void setDescriptionMap(Map<String, Set<String>> descriptionMap) {
+		this.descriptionMap = descriptionMap;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Double getScore() {
@@ -143,20 +185,20 @@ public class Phenotype {
 		this.categories = categories;
 	}
 
-	public List<String> getDefinitions() {
-		return definitions;
+	public List<String> getDescriptions() {
+		return descriptions;
 	}
 
-	public void setDescriptions(List<String> definitions) {
-		this.definitions = definitions;
+	public void setDescriptions(List<String> descriptions) {
+		this.descriptions = descriptions;
 	}
 
-	public List<String> getDefinitionLanguages() {
-		return definitionLanguages;
+	public List<String> getDescriptionLanguages() {
+		return descriptionLanguages;
 	}
 
-	public void setDescriptionLanguages(List<String> definitionLanguage) {
-		this.definitionLanguages = definitionLanguage;
+	public void setDescriptionLanguages(List<String> descriptionLanguages) {
+		this.descriptionLanguages = descriptionLanguages;
 	}
 
 	public String getDatatype() {
@@ -274,12 +316,12 @@ public class Phenotype {
 	}
 
 	private void addDefinition(String definition) {
-		List<String> definitions = getDefinitions() != null ? getDefinitions() : new ArrayList<>();
+		List<String> definitions = getDescriptions() != null ? getDescriptions() : new ArrayList<>();
 		definitions.add(definition);
 	}
 
 	private void addDefinitionLanguage(String definitionLanguage) {
-		List<String> definitionLanguages = getDefinitionLanguages() != null ? getDefinitionLanguages() : new ArrayList<>();
+		List<String> definitionLanguages = getDescriptionLanguages() != null ? getDescriptionLanguages() : new ArrayList<>();
 		definitionLanguages.add(definitionLanguage);
 	}
 

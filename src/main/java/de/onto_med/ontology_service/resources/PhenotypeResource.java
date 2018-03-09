@@ -117,12 +117,12 @@ public class PhenotypeResource extends Resource {
 		return phenotypes;
 	}
 
-	@GET
-	@Path("{id}/{iri}/parts")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Set<AbstractSinglePhenotype> getPartsOfPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
-		return managers.getUnchecked(id).getParts(iri);
-	}
+//	@GET
+//	@Path("{id}/{iri}/parts")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Set<AbstractSinglePhenotype> getPartsOfPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+//		return managers.getUnchecked(id).getParts(iri);
+//	}
 
 	@POST
 	@Path("{id}/delete")
@@ -229,7 +229,10 @@ public class PhenotypeResource extends Resource {
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getReasonFormForPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
 		PhenotypeView view = new PhenotypeView("PhenotypeReasonFormForPhenotype.ftl", rootPath, id);
-		view.setPhenotypes(managers.getUnchecked(id).getParts(iri));
+		PhenotypeManager manager = managers.getUnchecked(id);
+
+		view.setPhenotype(manager.getPhenotype(iri));
+		view.setParts(manager.getParts(iri));
 		view.setNavigationVisible(navigationVisible);
 
 		return Response.ok(view).build();

@@ -20,7 +20,7 @@ function showMessage(text, state) {
 	$('body').append(
 		'<div id="message" class="alert alert-' + state + ' fade in">'
     	+ '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
-        	+ text
+        	+ $('<div>').text(text).html()
         + '</div>'
     );
 }
