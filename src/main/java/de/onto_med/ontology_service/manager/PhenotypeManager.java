@@ -13,7 +13,6 @@ import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
 import org.lha.phenoman.model.instance.ComplexPhenotypeInstance;
 import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
-import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
@@ -281,7 +280,7 @@ public class PhenotypeManager {
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public String classifyIndividualAsString(List<Property> properties) throws IllegalArgumentException {
-		return classifyIndividual(properties).toString();
+		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getTitleText).collect(Collectors.toList()).toString();
 	}
 
 	/**

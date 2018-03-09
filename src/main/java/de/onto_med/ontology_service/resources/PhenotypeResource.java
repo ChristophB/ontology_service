@@ -11,7 +11,6 @@ import de.onto_med.ontology_service.views.PhenotypeView;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
