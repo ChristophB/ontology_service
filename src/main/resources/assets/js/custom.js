@@ -300,6 +300,7 @@ function inspectPhenotype(data) {
 		form = '#abstract-phenotype-form';
 		$(form + ' #ucum').val(data.unit);
 		$(form + ' #datatype').val(getDatatype(data));
+		$(form + ' #is-decimal')[0].checked = (data.datatype == 'XSD_DOUBLE');
 		toggleValueDefinition();
 	} else if (data.restrictedPhenotype === true) {
 		switch (getDatatype(data)) {
@@ -359,6 +360,7 @@ function inspectPhenotype(data) {
         $(form + ' #relation-div input[type=text].generated:last').val(relation);
     });
     addRange(form, data.phenotypeRange);
+
     if (data.score != undefined) $(form + ' #score').val(data.score);
 }
 

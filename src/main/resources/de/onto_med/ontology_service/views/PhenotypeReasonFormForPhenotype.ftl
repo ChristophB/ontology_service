@@ -66,8 +66,9 @@
                                                 </#if>
                                                 <#if part.datatype == "string">
                                                     <#if part.selectOptions?? && (part.selectOptions?size > 0)>
-                                                        <input type="hidden" name="${part.selectOptions?keys?first}" id="${part.name}_select">
+                                                        <input type="hidden" name="" id="${part.name}_select">
                                                         <select class="form-control" onchange="$('#${part.name}_select').attr('name', this.value)">
+                                                            <option value=""></option>
                                                             <#list part.selectOptions?keys as key>
                                                                 <option value="${key}">${part.selectOptions[key]}</option>
                                                             </#list>
