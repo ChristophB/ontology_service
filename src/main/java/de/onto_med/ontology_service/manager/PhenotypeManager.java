@@ -156,7 +156,7 @@ public class PhenotypeManager {
 	 * @param abstractPhenotype The abstract Phenotype.
 	 * @return A map of restricted Phenotype names and titles
 	 */
-	private Map<String, String> getRestrictions(String abstractPhenotype) {
+	public Map<String, String> getRestrictions(String abstractPhenotype) {
 		return manager.getRestrictedPhenotypes(abstractPhenotype).stream()
 			.collect(Collectors.toMap(Category::getName, Category::getTitleText));
 	}

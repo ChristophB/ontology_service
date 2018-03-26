@@ -116,12 +116,19 @@ public class PhenotypeResource extends Resource {
 		return phenotypes;
 	}
 
-//	@GET
-//	@Path("{id}/{iri}/parts")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Set<AbstractSinglePhenotype> getPartsOfPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
-//		return managers.getUnchecked(id).getParts(iri);
-//	}
+	@GET
+	@Path("{id}/{iri}/parts")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Phenotype> getPartsOfPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+		return managers.getUnchecked(id).getParts(iri);
+	}
+
+	@GET
+	@Path("{id}/{iri}/restrictions")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Map<String, String> getRestrictionsOfPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+		return managers.getUnchecked(id).getRestrictions(iri);
+	}
 
 	@POST
 	@Path("{id}/delete")
@@ -241,7 +248,7 @@ public class PhenotypeResource extends Resource {
 	@Path("{id}/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
-	public synchronized Response classifyIndividualAsImage(
+	public synchronized Response classifyIndividual(
 		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties, @QueryParam("format") String format
 	) {
 		if (properties == null || properties.isEmpty())

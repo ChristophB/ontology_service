@@ -65,13 +65,28 @@ function createPhenotypeTree(id, url, withContext) {
 
 		if (target.closest('.jstree').length || !drop.length) return; // field with class "drop" outside of jstree
 
-		if (attributes.type.value === "null" && drop.hasClass('category')) {
+		if (attributes.type.value === 'null' && drop.hasClass('category')) {
 			drop.val(drop.val() + ' ' + data.element.text + ';');
 			focusInputEnd(drop);
-		} else if (attributes.type.value !== "null" && drop.hasClass('phenotype')) {
-			if (drop[0].id === 'reason-form-drop-area' && attributes.isSinglePhenotype.value == "true")
-				appendFormField(data.element, drop[0]);
-			else if (drop[0].id === 'expression'
+		} else if (attributes.type.value !== 'null' && drop.hasClass('phenotype')) {
+			if (drop[0].id === 'reason-form-drop-area' && attributes.isSinglePhenotype.value == 'true') {
+			    var pathname = window.location.pathname;
+
+			    if (attributes.type.value === 'string' && attributes.isRestricted.value == 'false')
+			        $.ajax({
+			            url: pathname.replace(/\/phenotype.*/i, '') + '/phenotype/' + pathname.replace(/.*phenotype\/(.*)\/.*/i, '$1') + '/' + attributes.id.value + '/restrictions',
+                        dataType: 'text',
+                        contentType: 'application/json; charset=utf-8',
+                        processData: false,
+                        type: 'GET',
+                        success: function(options) { appendFormField(data.element, drop[0], JSON.parse(options)); },
+                        error: function(result) {
+                            var response = JSON.parse(result.responseText);
+                            showMessage(response.message, 'danger');
+                        }
+			        });
+			    else appendFormField(data.element, drop[0]);
+			} else if (drop[0].id === 'expression'
 			    || (drop[0].id === 'formula' && attributes.isRestricted.value == "false"
                     && ['numeric', 'calculation', 'composite-boolean'].indexOf(attributes.type.value) != -1)
             ) {
@@ -82,25 +97,35 @@ function createPhenotypeTree(id, url, withContext) {
 	});
 }
 
-function appendFormField(element, target) {
-	var id         = element.id.replace("_anchor", "");
+function appendFormField(element, target, options = null) {
+	var id         = element.attributes.id.value;
 	var type       = element.attributes.type.value;
     var inputField = '';
 
-	if (type === "numeric") type = "number";
-	if (type === "string") type = "text";
+    if (type === "string" && options != null) {
+        inputField
+            = '<input type="hidden" name="" id="'+ id + '_select">'
+            + '<select class="form-control" onchange="$(\'#' + id + '_select\').attr(\'name\', this.value)">'
+                + '<option value=""></option>';
+        for (var name in options)
+            inputField +=  '<option value="' + name + '">' + options[name] + '</option>';
+        inputField += '</select>';
+    } else {
+        if (type === "numeric") type = "number";
+        if (type === "string") type = "text";
 
-	if (element.attributes.isRestricted.value === "true") {
-		inputField = '<input type="hidden" name="' + id + '">';
-	} else if (['boolean', 'composite-boolean'].indexOf(type) !== -1) {
-		inputField
-			= '<select class="form-control" name="' + id + '">'
-				+ '<option value="true">True</option>'
-				+ '<option value="false">False</option>'
-			+ '</select>';
-	} else {
-		inputField = '<input type="' + type + '" class="form-control" name="' + id + '">';
-	}
+        if (element.attributes.isRestricted.value === "true") {
+            inputField = '<input type="hidden" name="' + id + '">';
+        } else if (['boolean', 'composite-boolean'].indexOf(type) !== -1) {
+            inputField
+                = '<select class="form-control" name="' + id + '">'
+                    + '<option value="true">True</option>'
+                    + '<option value="false">False</option>'
+                + '</select>';
+        } else {
+            inputField = '<input type="' + type + '" class="form-control" name="' + id + '">';
+        }
+    }
 
 	var html
 		= '<div class="form-group row generated">'

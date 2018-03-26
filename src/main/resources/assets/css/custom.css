@@ -15,7 +15,7 @@
 	border-bottom-left-radius:0;
 }
 #description, #phenotype-form, #taxonomy-tree, #phenotype-tree {
-	height: 60%;
+	height: 70%;
 	overflow: auto;
 }
 .entity-result {
