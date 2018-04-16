@@ -80,26 +80,33 @@
 						<tr>
 							<td>/create</td>
 							<td>
-								Creates a phenotype with provided data. <i>/phenotype-form</i> sends its data to this endpoint.<br>
+								Creates or update a phenotype with provided data. <i>/phenotype-form</i> sends its data to this endpoint.<br>
 								All parameters in the following list, which end with '[]' are handled as lists and thus can be provided multiple times. Their order may be important to map for example language to label.
 								<ul>
-									<li><b>id:</b> Unique identifier</li>
-									<li><b>label[]:</b> Label</li>
-									<li><b>labelLanguage[]:</b> Label language</li>
+									<li><b>titles[]:</b> Unique identifying titles</li>
+									<li><b>aliases[]:</b> Aliases</li>
+									<li><b>titleLanguages[]:</b> Respective languages of the titles</li>
+									<li><b>labels:</b> Alternative labels</li>
+									<li><b>labelLanguages:</b> Respective languages of the alternative labels</li>
+									<li><b>isPhenotype:</b> true, if this is a phenotype, false, if this is a category</li>
+									<li><b>isRestricted:</b> true, if this is a restricted phenotype, else false</li>
 									<li><b>superPhenotype:</b> The ID of an existing phenotype, which will be used as super phenotype.</li>
+									<li><b>superCategory:</b> The ID of an existing category, which will be used as super category</li>
 									<li><b>categories:</b> Category ID in which the phenotype will be placed</li>
-									<li><b>definition[]:</b> Textual definition</li>
-									<li><b>definitionLanguage[]:</b> Definition language</li>
-									<li><b>datatype:</b> one of 'integer', 'double', 'string', 'formula', 'expression' (required)</li>
-									<li><b>ucum:</b> Unit of a integer/double/formula phenotype as UCUM</li>
-									<li><b>rangeMin[]:</b> Minimal value for sub phenotype range</li>
-									<li><b>rangeMinOperator[]:</b> Operator for range-min[] ('=', '&ge;', '>')</li>
-									<li><b>rangeMax[]:</b> Maximum value for sub phenotype range</li>
-									<li><b>rangeMaxOperator[]:</b> Operator for range-max[] ('<', '&le;', '=')</li>
-									<li><b>enumValue[]:</b> Enumeration value for string phenotypes</li>
+									<li><b>descriptions[]:</b> Textual descriptions</li>
+									<li><b>descriptionLanguage[]:</b> Description languages</li>
+									<li><b>datatype:</b> one of 'numeric', 'date', 'string', 'formula', 'expression' (required)</li>
+									<li><b>isDecimal:</b> true if the numeric phenotype is decimal, else false</li>
+									<li><b>ucum:</b> Unit of a numeric/formula phenotype as UCUM</li>
+									<li><b>rangeMin:</b> Minimal value for sub phenotype range</li>
+									<li><b>rangeMinOperator:</b> Operator for range-min ('=', '&ge;', '>')</li>
+									<li><b>rangeMax:</b> Maximum value for sub phenotype range</li>
+									<li><b>rangeMaxOperator:</b> Operator for range-max ('<', '&le;', '=')</li>
+									<li><b>enumValues[]:</b> Enumeration value for string phenotypes</li>
 									<li><b>formula:</b> A mathematical formula which may contain other numerical phenotypes.</li>
 									<li><b>expression:</b> A logical expression which may contain other phenotypes and mathematical symbols.</li>
-									<li><b>relation[]:</b> IRI referencing other ontological entities.</li>
+									<li><b>relations[]:</b> IRI referencing other ontological entities.</li>
+									<li><b>score:</b> The score value of this phenotype, if available</li>
 								</ul>	
 							</td>
 						</tr>
@@ -128,7 +135,7 @@
 						</tr>
 						
 						<tr>
-							<td rowspan="4">/project/{id}</td>
+							<td rowspan="7">/project/{id}</td>
 						</tr>
 						
 						<tr>
@@ -155,11 +162,28 @@
 								</p>
 							</td>
 						</tr>
+
+						<tr>
+							<td>/graphml</td>
+							<td>Responses with an GraphML file for the specified ontology.</td>
+						</tr>
+
+						<tr>
+							<td>/imports</td>
+							<td>List the imported ontologies for this project.</td>
+						</tr>
 						
 						<tr>
 							<td>/overview</td>
-							<td><p>Short overview page for the specified project.</p></td>
+							<td>Short overview page for the specified project with meta information and a list of imported ontologies.</td>
 						</tr>
+
+						<tr>
+							<td>/taxonomy</td>
+							<td>A browsable tree of concepts and individuals, where detailed information about entities can be retrieved.</td>
+						</tr>
+
+
 						
 						<tr>
 							<td colspan="2">/projects</td>
