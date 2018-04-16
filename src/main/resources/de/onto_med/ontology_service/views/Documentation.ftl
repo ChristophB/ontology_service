@@ -147,19 +147,16 @@
 							<td>/classify</td>
 							<td>
 								<p>
-									Creates an individual from JSON and returns its infered classes. (only available via JSON request)<br>
+									Creates an individual from JSON and returns its inferred classes. (only available via JSON request)<br>
 									JSON template:
-									<small>
-										<pre>
-[ { "types": [ "http://onto-med.de/auxology#patient" ],
+								</p>
+									<pre><small>[ { "types": [ "http://onto-med.de/auxology#patient" ],
     "properties": [
       { "name":      "http://onto-med.de/auxology#bmi_sds",
         "className": "float",
         "value":     "-1.5f" }
     ] }, ... 
-]</pre>
-    								</small>
-								</p>
+]</small></pre>
 							</td>
 						</tr>
 
