@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.onto_med</groupId>
     <artifactId>ontology_service</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
     <name>Ontology Service</name>
     <description>REST-full API to access Ontologies developed and stored in WebProtégé and to manage phenotypes.
     </description>
@@ -105,6 +105,12 @@
             <artifactId>phenoman</artifactId>
             <version>0.0.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.1.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -113,20 +119,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <createDependencyReducedPom>true</createDependencyReducedPom>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                </configuration>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
