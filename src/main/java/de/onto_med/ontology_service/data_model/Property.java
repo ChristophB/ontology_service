@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * This class represents Properties provided by JSON.
  * Assumption: all values for a property are from the same Java class.
+ *
  * @author Christoph Beger
  */
 public class Property {
@@ -14,32 +15,43 @@ public class Property {
 	private String className;
 	@JsonProperty
 	private String value;
-	
-	public void setName(String name) {
+
+	public Property() {	}
+
+	public Property(String name, String value) {
+		this();
 		this.name = name;
-	}
-	
-	public void setClassName(String className) {
-		this.className = className;
-	}
-	
-	public void setValue(String value) {
 		this.value = value;
 	}
-	
-	
+
+	public Property(String name, String className, String value) {
+		this(name, value);
+		this.className = className;
+	}
+
 	public String getName() {
 		return name;
 	}
-	
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getClassName() {
 		return className;
 	}
-	
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
 	public String getValue() {
 		return value;
 	}
 
+	public void setValue(String value) {
+		this.value = value;
+	}
 
 	public String toString() {
 		return String.format("%s [%s]:%s", name, className, value);

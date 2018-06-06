@@ -215,7 +215,7 @@ public class PhenotypeManager {
 	 * @return A ReasonerReport which contains all found types of the individual.
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
-	private ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
+	public ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
 		ComplexPhenotypeInstance complex = new ComplexPhenotypeInstance();
 
 		for (Property property : properties) {
@@ -334,6 +334,10 @@ public class PhenotypeManager {
 		}
 	}
 
+	/**
+	 * Returns all category and phenotype IDs of the ontology as list.
+	 * @return List of phenotype IDs.
+	 */
 	public List<String> getList() {
 		return taxonomyAsList(manager.getPhenotypeCategoryTree(true));
 	}
