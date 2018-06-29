@@ -1,4 +1,4 @@
 <div class="jumbotron text-center">
-	<h2>${heading}</h2>
-	<p>${subHeading}</p>
+	<h2>${heading?no_esc}</h2>
+	<p>${subHeading?no_esc}</p>
 </div>

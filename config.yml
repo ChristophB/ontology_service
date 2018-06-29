@@ -9,9 +9,11 @@ server:
   adminContextPath: /ontology-service
   requestLog:
     appenders: []
-dataPath: /srv/webprotege/
+logging:
+  level: WARN
+dataPath: H:/Projekte/Leipzig Health Atlas/Development/Web-Service/data/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
-phenotypePath: /data/ontology-service/cop_%id%.owl
-mongoHost: mongodb
+phenotypePath: H:/Projekte/Leipzig Health Atlas/Development/Web-Service/data/ontology-service/cop_%id%.owl
+mongoHost: lha-dev.imise.uni-leipzig.de
 mongoPort: 27017

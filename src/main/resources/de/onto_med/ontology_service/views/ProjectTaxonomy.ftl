@@ -1,9 +1,9 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.ProjectTaxonomyView" -->
-<#assign title = project.name?html>
+<#assign title = project.name>
 <#assign current = "Projects">
 <#assign current_submenu = "Taxonomy">
 <#setting url_escaping_charset="UTF-8">
-<#assign heading = "${project.name?html}">
+<#assign heading = project.name>
 <#assign subHeading ="${project.description}">
 
 <html>

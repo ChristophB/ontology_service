@@ -7,9 +7,11 @@ server:
   - type: http
     port: 8081
   adminContextPath: /ontology-service
+logging:
+  level: INFO
 dataPath: src/test/resources/data/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
 phenotypePath: src/test/resources/data/ontology-service/cop_%id%.owl
-mongoHost: localhost
+mongoHost: lha-dev.imise.uni-leipzig.de
 mongoPort: 27017

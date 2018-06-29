@@ -3,7 +3,7 @@
 		<#list messages[key] as message>
 			<div class="alert alert-${key}">
 				<!--<strong>${key}:</strong> -->
-				${message}
+				${message?no_esc}
 			</div>
 		</#list>
 	</#list>
