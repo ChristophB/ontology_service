@@ -7,6 +7,7 @@ import de.onto_med.ontology_service.data_model.Individual;
 import de.onto_med.owlapi_utils.binaryowl.BinaryOwlUtils;
 import de.onto_med.owlapi_utils.owlapi.OwlApiUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.io.FileDocumentSource;
 import org.semanticweb.owlapi.io.XMLUtils;
@@ -160,7 +161,7 @@ public class BinaryOwlParser extends OntologyParser {
 				if (StringUtils.isNotBlank(iri)) {
 					if (exact && iri.equals(entity.getIRI().getIRIString()))
 						iriMatch = true;
-					else if (!exact && StringUtils.getJaroWinklerDistance(iri, entity.getIRI()) >= MATCH_THRESHOLD)
+					else if (!exact && new JaroWinklerDistance().apply(iri, entity.getIRI()) >= MATCH_THRESHOLD)
 						iriMatch = true;
 				}
 				
@@ -168,10 +169,10 @@ public class BinaryOwlParser extends OntologyParser {
 					if (exact && iri.equals(entity.getIRI().getIRIString()))
 						nameMatch = true;
 					else if (!exact && (
-						StringUtils.getJaroWinklerDistance(
+						new JaroWinklerDistance().apply(
 							name, StringUtils.defaultString(OwlApiUtils.getLabel(entity, getRootOntology()), "")
 						) >= MATCH_THRESHOLD
-						|| StringUtils.getJaroWinklerDistance(
+						|| new JaroWinklerDistance().apply(
 							name, StringUtils.defaultString(XMLUtils.getNCNameSuffix(entity.getIRI()), "")
 						) >= MATCH_THRESHOLD
 					)) nameMatch = true;
@@ -348,7 +349,8 @@ public class BinaryOwlParser extends OntologyParser {
 	private <T> List<T> extractPropertyByNameFromStream(String name, Stream<T> properties, Boolean exact) {
 		return properties.parallel().filter(property -> {
 				String iri = XMLUtils.getNCNameSuffix(((OWLNamedObject) property).getIRI());
-				return !StringUtils.isBlank(iri) && (exact && iri.equals(name) || StringUtils.getJaroWinklerDistance(iri, name) >= MATCH_THRESHOLD);
+				return !StringUtils.isBlank(iri) && (exact && iri.equals(name)
+					|| new JaroWinklerDistance().apply(iri, name) >= MATCH_THRESHOLD);
 			}
 		).collect(Collectors.toList());
 	}

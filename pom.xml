@@ -8,12 +8,12 @@
     <packaging>war</packaging>
     <description>REST-full API to access Ontologies developed and stored in WebProtégé and to manage phenotypes.</description>
     <properties>
-        <dropwizard.version>1.1.3</dropwizard.version>
-        <jackson.version>2.9.4</jackson.version>
-        <hibernate.version>5.2.2.Final</hibernate.version>
-        <guava.version>20.0</guava.version>
-        <mockito.version>2.7.6</mockito.version>
-        <yamlbeans.version>1.11</yamlbeans.version>
+        <dropwizard.version>1.3.5</dropwizard.version>
+        <jackson.version>2.9.6</jackson.version>
+        <hibernate.version>5.3.1.Final</hibernate.version>
+        <guava.version>25.1-jre</guava.version>
+        <mockito.version>2.19.0</mockito.version>
+        <yamlbeans.version>1.13</yamlbeans.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
