@@ -108,22 +108,20 @@
             <groupId>org.lha</groupId>
             <artifactId>phenoman</artifactId>
             <version>0.0.6</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>net.sourceforge.owlapi</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>3.1.1</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -149,6 +147,7 @@
                                     <mainClass>de.onto_med.ontology_service.OntologyServiceApplication</mainClass>
                                 </transformer>
                             </transformers>
+                            <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
                         </configuration>
                     </execution>
                 </executions>
