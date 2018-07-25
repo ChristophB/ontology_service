@@ -11,9 +11,9 @@ server:
     appenders: []
 logging:
   level: WARN
-dataPath: srv/data/webprotege/
+dataPath: /srv/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
-phenotypePath: srv/data/ontology-service/cop_%id%.owl
-mongoHost: localhost
+phenotypePath: /data/ontology-service/cop_%id%.owl
+mongoHost: mongodb
 mongoPort: 27017
