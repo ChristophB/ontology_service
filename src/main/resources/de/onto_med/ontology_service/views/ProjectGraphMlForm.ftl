@@ -88,32 +88,13 @@
 		<#include "partials/Footer.ftl">
 		
 		<script type="text/javascript">
-			function convertToTree(data) {
-				var tree = { children : [], a_attr : {} };
-				
-				data.subclasses.forEach(function(subclass) {
-					tree.children.push(convertToTree(subclass));
-				});
-				
-				tree.a_attr.iri = data.iri;
-				tree.text = data.name;
-				
-				return tree;
-			}
-			
-			$(document).ready(function() {
-				$.getJSON('${rootPath}/project/${project.projectId}/taxonomy', function(data) {
-					$('#' + 'taxonomy-tree').jstree({
-						core : {
-							multiple : false,
-							data : convertToTree(data)
-						}
-					});
-				});
-				
-				$('#taxonomy-tree').bind('select_node.jstree', function(e, selected) {
-					$('#start-class').val(selected.node.a_attr.iri);
-				});
+			$('#taxonomy-tree').jstree({
+				core: {
+					multiple: false,
+					data: { url: '${rootPath}/project/${project.projectId}/taxonomy' }
+				}
+			}).bind('select_node.jstree', function(e, selected) {
+				$('#start-class').val(selected.node.a_attr.iri);
 			});
 		</script>
 	</body>

@@ -118,7 +118,7 @@ public class ProjectResource extends Resource {
 
 		return Response
 			.ok(graphMlOntology.toXml().toString())
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + manager.getProjectIri() + ".GraphML'")
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + manager.getProjectShortForm() + ".GraphML'")
 			.build();
 	}
 	

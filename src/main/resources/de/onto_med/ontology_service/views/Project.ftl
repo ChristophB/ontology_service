@@ -1,9 +1,9 @@
 <#-- @ftlvariable name="" type="de.onto_med.webprotege_rest_api.views.ProjectView" -->
-<#assign title = project.name?html>
+<#assign title = project.name>
 <#assign current = "Projects">
 <#assign current_submenu = "Overview">
-<#assign heading = "${project.name}">
-<#assign subHeading ="${project.description}">
+<#assign heading = project.name>
+<#assign subHeading = project.description>
 
 <#macro coloredBoolean boolean><#if boolean><font color="green">true</font><#else><font color="red">false</font></#if></#macro>
 
@@ -24,7 +24,7 @@
 						<tr><td><b>ProjectID:</b></td> <td>${project.projectId}</td></tr>
 						<tr><td><b>Is Consistent:</b></td> <td><@coloredBoolean project.isConsistent /></td></tr>
 						<tr><td><b>Axioms:</b></td> <td>${project.countAxioms}</td></tr>
-						<tr><td><b>Logical Axioms:</b</td> <td>${project.countLogicalAxioms}</td></tr>
+						<tr><td><b>Logical Axioms:</b></td> <td>${project.countLogicalAxioms}</td></tr>
 						<tr><td><b>Classes:</b></td> <td>${project.countClasses}</td></tr>
 						<tr><td><b>Individuals:</b></td> <td>${project.countIndividuals}</td></tr>
 						<tr><td><b>DataProperties:</b></td> <td>${project.countDataProperties}</td></tr>
