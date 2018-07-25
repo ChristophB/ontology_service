@@ -22,6 +22,6 @@ public class ProjectView extends RestApiView {
 	}
 	
 	public String getWebProtegeUri() {
-		return String.format("http://%s/#Edit:projectId=%s", baseUri, getProject().getProjectId());
+		return String.format("http://%s/#projects/%s/edit/Classes", baseUri, getProject().getProjectId());
 	}
 }
