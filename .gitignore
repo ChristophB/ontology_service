@@ -1,4 +1,3 @@
-!target/service.jar
 target/
 logs/
 .classpath
@@ -13,3 +12,4 @@ out/
 gradle/
 .gradle/
 dependency-reduced-pom.xml
+!/target/service.jar
