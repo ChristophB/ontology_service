@@ -99,12 +99,12 @@ public class IntegrationTest extends AbstractTest {
     @Test
     public void testTaxonomy() {
 		javax.ws.rs.core.Response response
-    		= client.target(url + "/project/b9053ba6-593b-4a22-a9de-1abcc91e9ff6/taxonomy")
+    		= client.target(url + "/project/6460b72d-03e6-4d36-8709-afd187987ee5/taxonomy")
     		.request(MediaType.TEXT_HTML_TYPE)
     		.get();
     	assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		response = client.target(url + "/project/b9053ba6-593b-4a22-a9de-1abcc91e9ff6/taxonomy")
+		response = client.target(url + "/project/6460b72d-03e6-4d36-8709-afd187987ee5/taxonomy")
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.get();
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
