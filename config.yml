@@ -15,5 +15,5 @@ dataPath: /srv/webprotege/
 webprotegeRelativeToWebroot: /webprotege
 rootPath: /ontology-service
 phenotypePath: /data/ontology-service/cop_%id%.owl
-mongoHost: localhost
+mongoHost: mongodb
 mongoPort: 27017
