@@ -2,7 +2,7 @@
 <#assign title = project.name?html>
 <#assign current = "Projects">
 <#assign current_submenu = "Overview">
-<#assign heading = "${project.name?html}">
+<#assign heading = "${project.name}">
 <#assign subHeading ="${project.description}">
 
 <#macro coloredBoolean boolean><#if boolean><font color="green">true</font><#else><font color="red">false</font></#if></#macro>
@@ -41,7 +41,7 @@
 						<tbody>
 							<#list project.importedOntologyIds as import>
 								<tr>
-									<td>${import?html}</td>
+									<td>${import}</td>
 								</tr>
 							</#list>
 						</tbody>
