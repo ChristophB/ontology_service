@@ -326,6 +326,8 @@ function inspectPhenotype(data) {
 		$(form + ' #ucum').val(data.unit);
 		$(form + ' #datatype').val(getDatatype(data));
 		$(form + ' #is-decimal')[0].checked = (data.datatype == 'XSD_DOUBLE');
+		$(form + ' #formula')[0].value = data.formula;
+
 		toggleValueDefinition();
 	} else if (data.restrictedPhenotype === true) {
 		switch (getDatatype(data)) {
