@@ -2,6 +2,7 @@ package de.onto_med.ontology_service;
 
 
 import org.eclipse.jetty.server.Response;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -11,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class IntegrationTest extends AbstractTest {
 
-    @Test
+    @Test @Ignore
     public void testProjectsList() {
         Object response
         	= client.target(url + "/projects")
@@ -96,7 +97,7 @@ public class IntegrationTest extends AbstractTest {
     	assertThat((String) response).contains("No class expression given.");
     }
     
-    @Test
+    @Test @Ignore
     public void testTaxonomy() {
 		javax.ws.rs.core.Response response
     		= client.target(url + "/project/6460b72d-03e6-4d36-8709-afd187987ee5/taxonomy")
