@@ -1,6 +1,6 @@
 <div class="form-group row">
 	<label class="control-label col-sm-2">Super-Phenotype</label>
-	<div class="checkbox col-sm-3">
+	<div class="checkbox col-sm-4">
 		<input type="text" class="form-control" id="super-phenotype" name="superPhenotype" placeholder="Some_Super_Phenotype"
            	<#if phenotype?? & phenotype.superPhenotype??>value="${phenotype.superPhenotype}"</#if>
         >

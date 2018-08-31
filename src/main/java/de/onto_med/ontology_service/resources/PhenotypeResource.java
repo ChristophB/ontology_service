@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -69,8 +70,8 @@ public class PhenotypeResource extends Resource {
 	public Response getPhenotypeSelectionView() {
 		Map<String, Long> ontologies = new HashMap<>();
 
-		for (File file : Objects.requireNonNull(new File(phenotypePath.replaceFirst("\\/[^\\/]*$", "")).listFiles()))
-			if (file.isFile()) ontologies.put(getIdFromFilename(file.getName()), file.length() / 1000);
+		for (File file : Objects.requireNonNull(new File(phenotypePath.replaceFirst("\\/[^\\/]*$", "")).listFiles(new CopFileFilter())))
+			ontologies.put(getIdFromFilename(file.getName()), file.length() / 1000);
 
 		PhenotypeView view = new PhenotypeView("PhenotypeView.ftl", rootPath, ontologies);
 		view.setNavigationVisible(navigationVisible);
@@ -278,5 +279,13 @@ public class PhenotypeResource extends Resource {
 		String prefix      = namePattern.replaceFirst("%id%.*", "");
 
 		return filename.replaceFirst("\\..+$", "").replace(prefix, "");
+	}
+
+	public static class CopFileFilter implements FileFilter {
+		@Override
+		public boolean accept(File pathname) {
+			return pathname.isFile() && pathname.getAbsolutePath().toLowerCase().endsWith(".owl")
+				&& !pathname.getName().startsWith("~") && pathname.getName().startsWith("cop_");
+		}
 	}
 }

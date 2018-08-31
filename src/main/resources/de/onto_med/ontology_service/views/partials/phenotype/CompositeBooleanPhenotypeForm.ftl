@@ -19,6 +19,6 @@
 	</div>
 
 	<div class="form-group">
-		<input type="button" id="submit" class="btn btn-primary" value="Create Composite Boolean Phenotype">
+		<input type="button" id="submit" class="btn btn-primary" value="Create Restricted Composite Boolean Phenotype">
 	</div>
 </form>

@@ -18,6 +18,6 @@
 	</div>
 
 	<div class="form-group">
-		<input type="button" id="submit" class="btn btn-primary" value="Create Boolean Phenotype">
+		<input type="button" id="submit" class="btn btn-primary" value="Create Restricted Boolean Phenotype">
 	</div>
 </form>
