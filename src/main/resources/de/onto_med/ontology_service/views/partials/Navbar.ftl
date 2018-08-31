@@ -1,12 +1,12 @@
 <#macro active name><#if current == name> class="active"</#if></#macro>
 
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav id="main-navbar" class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
 		<a class="navbar-brand" href="https://github.com/ChristophB/ontology_service">Ontology Service</a>
 		<ul class="nav navbar-nav navbar-right">
-			<li<@active "Documentation" />><a href="${rootPath}">Documentation</a></li>
+			<li id="main-navbar-documentation" <@active "Documentation" />><a href="${rootPath}">Documentation</a></li>
 
-			<li role="presentation" class="dropdown<#if current == "Projects" || current == "Query Entities" || current == "Reasoning"> active</#if>">
+			<li id="main-navbar-webprotege" role="presentation" class="dropdown<#if current == "Projects" || current == "Query Entities" || current == "Reasoning"> active</#if>">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 					WebProt&#233;g&#233; <span class="caret"></span>
 				</a>
@@ -17,7 +17,7 @@
                 </ul>
 			</li>
 
-			<li<@active "Phenotyping" />><a href="${rootPath}/phenotype">Phenotyping</a></li>
+			<li id="main-navbar-phenotype" <@active "Phenotyping" />><a href="${rootPath}/phenotype">Phenotyping</a></li>
 		</ul>
 	</div>
 </nav>

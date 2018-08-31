@@ -207,7 +207,45 @@
 		    	</table>
 		    </div>
 	    </div>
+		<div class="modal fade tour-modal-fade" tabindex="-1" role="dialog"></div>
 	    
 	    <#include "partials/Footer.ftl">
+		<script type="text/javascript">
+			let tour = new Shepherd.Tour({ defaults: {
+				classes: 'shepherd-theme-arrows',
+				scrollTo: true,
+				showCancelLink: true
+			} });
+
+			tour.addStep('navigation-bar', {
+				title: '<strong>Navigation Bar<strong>',
+				text: 'In this navigation bar you can switch between the different functionalities of the Ontology Service',
+				attachTo: '#main-navbar bottom',
+				advanceOn: '.docs-link click'
+			});
+
+			tour.addStep('documentation', {
+				title: '<strong>Documentation<strong>',
+				text: 'This is the current active page, it contains an overall documentation of the<br>available functions and their respective REST endpoints and parameters.',
+				attachTo: '#main-navbar-documentation bottom',
+				advanceOn: '.docs-link click'
+			});
+
+			tour.addStep('webprotege', {
+				title: '<strong>WebProt&#233;g&#233;<strong>',
+				text: 'Here you are able to query the ontologies, which were created in WebProt&#233;g&#233;.',
+				attachTo: '#main-navbar-webprotege bottom',
+				advanceOn: '.docs-link click'
+			});
+
+			tour.addStep('phenotyping', {
+				title: '<strong>Phenotyping<strong>',
+				text: 'On this page you will be able to create phenotype ontologies with a very simple user interface.<br>It is also possible to provide individual data to reason phenotypes.',
+				attachTo: '#main-navbar-phenotype bottom',
+				advanceOn: '.docs-link click',
+				buttons: [ { action: tour.next, text: 'Done' }]
+			});
+
+		</script>
 	</body>
 </html>
