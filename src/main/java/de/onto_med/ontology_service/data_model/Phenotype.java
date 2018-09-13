@@ -15,53 +15,55 @@ public class Phenotype {
 	private String title;
 
 	@JsonProperty
-	private List<String> titles         = new ArrayList<>();
+	private String       identifier;
 	@JsonProperty
-	private List<String> aliases        = new ArrayList<>();
+	private List<String> titles               = new ArrayList<>();
 	@JsonProperty
-	private List<String> titleLanguages = new ArrayList<>();
+	private List<String> aliases              = new ArrayList<>();
 	@JsonProperty
-	private List<String> labels         = new ArrayList<>();
+	private List<String> titleLanguages       = new ArrayList<>();
 	@JsonProperty
-	private List<String> labelLanguages = new ArrayList<>();
+	private List<String> synonyms             = new ArrayList<>();
 	@JsonProperty
-	private Boolean isPhenotype;
+	private List<String> synonymLanguages     = new ArrayList<>();
 	@JsonProperty
-	private Boolean isRestricted;
+	private Boolean      isPhenotype;
 	@JsonProperty
-	private String  superPhenotype;
+	private Boolean      isRestricted;
 	@JsonProperty
-	private String  categories;
+	private String       superPhenotype;
 	@JsonProperty
-	private String  superCategory;
+	private String       categories;
+	@JsonProperty
+	private String       superCategory;
 	@JsonProperty
 	private List<String> descriptions         = new ArrayList<>();
 	@JsonProperty
 	private List<String> descriptionLanguages = new ArrayList<>();
 	@JsonProperty
-	private String datatype;
+	private String       datatype;
 	@JsonProperty
-	private String ucum;
+	private String       ucum;
 	@JsonProperty
-	private String rangeMin;
+	private String       rangeMin;
 	@JsonProperty
-	private String rangeMinOperator;
+	private String       rangeMinOperator;
 	@JsonProperty
-	private String rangeMax;
+	private String       rangeMax;
 	@JsonProperty
-	private String rangeMaxOperator;
+	private String       rangeMaxOperator;
 	@JsonProperty
-	private List<String> enumValues = new ArrayList<>();
+	private List<String> enumValues           = new ArrayList<>();
 	@JsonProperty
-	private String formula;
+	private String       formula;
 	@JsonProperty
-	private String expression;
+	private String       expression;
 	@JsonProperty
-	private List<String> relations = new ArrayList<>();
+	private List<String> relations            = new ArrayList<>();
 	@JsonProperty
-	private Boolean isDecimal;
+	private Boolean      isDecimal;
 	@JsonProperty
-	private Double  score;
+	private Double       score;
 
 	private String name;
 
@@ -70,7 +72,14 @@ public class Phenotype {
 	private Map<String, String> selectOptions;
 
 
-	public Phenotype() {
+	public Phenotype() { }
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
 	public Map<String, String> getSelectOptions() {
@@ -153,20 +162,20 @@ public class Phenotype {
 		this.titleLanguages = titleLanguages;
 	}
 
-	public List<String> getLabels() {
-		return labels;
+	public List<String> getSynonyms() {
+		return synonyms;
 	}
 
-	public void setLabels(List<String> labels) {
-		this.labels = labels;
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 
-	public List<String> getLabelLanguages() {
-		return labelLanguages;
+	public List<String> getSynonymLanguages() {
+		return synonymLanguages;
 	}
 
-	public void setLabelLanguages(List<String> labelLanguages) {
-		this.labelLanguages = labelLanguages;
+	public void setSynonymLanguages(List<String> synonymLanguages) {
+		this.synonymLanguages = synonymLanguages;
 	}
 
 	public String getSuperPhenotype() {
@@ -326,12 +335,12 @@ public class Phenotype {
 	}
 
 	private void addLabel(String label) {
-		List<String> labels = getLabels() != null ? getLabels() : new ArrayList<>();
+		List<String> labels = getSynonyms() != null ? getSynonyms() : new ArrayList<>();
 		labels.add(label);
 	}
 
 	private void addLabelLanguage(String labelLanguage) {
-		List<String> labelLanguages = getLabelLanguages() != null ? getLabelLanguages() : new ArrayList<>();
+		List<String> labelLanguages = getSynonymLanguages() != null ? getSynonymLanguages() : new ArrayList<>();
 		labelLanguages.add(labelLanguage);
 	}
 

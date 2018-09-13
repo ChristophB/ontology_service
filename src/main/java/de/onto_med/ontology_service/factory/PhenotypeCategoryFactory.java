@@ -1,9 +1,10 @@
 package de.onto_med.ontology_service.factory;
 
 import de.onto_med.ontology_service.data_model.Phenotype;
+import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.Title;
+import java.util.UUID;
 
 /**
  * Factory for creation of phenotype Categories.
@@ -20,17 +21,11 @@ public class PhenotypeCategoryFactory extends PhenotypeFactory {
 	 * @return A Category.
 	 */
 	public Category createPhenotypeCategory(Phenotype data) throws NullPointerException{
-		Category category = null;
-		for (Title title : data.getTitleObjects()) {
-			if (category == null) {
-				category = factory.createCategory(title);
-			} else {
-				category.addTitle(title);
-			}
-		}
+		if (StringUtils.isBlank(data.getIdentifier()))
+			data.setIdentifier(UUID.randomUUID().toString());
 
-		if (category == null) throw new NullPointerException("Could not create category, because title is missing.");
-
+		Category category = factory.createCategory(data.getIdentifier());
+		data.getTitleObjects().forEach(category::addTitle);
 		setPhenotypeBasicData(category, data);
 
 		return category;

@@ -8,6 +8,6 @@
 		>
 	</div>
 	<small class="form-text text-muted col-sm-4">
-	    Insert multiple categories for this phenotype separated with semicolon.
+	    Insert multiple categories for this phenotype separated by semicolon.
 	</small>
 </div>

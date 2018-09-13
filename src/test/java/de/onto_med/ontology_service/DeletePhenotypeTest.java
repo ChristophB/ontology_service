@@ -36,8 +36,8 @@ public class DeletePhenotypeTest extends AbstractTest {
 			setIsRestricted(false);
 			getTitles().add("Abstract_" + id);
 			setDatatype("numeric");
-			setLabels(Arrays.asList("Label EN", "Label DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
+			setSynonyms(Arrays.asList("Label EN", "Label DE"));
+			setSynonymLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
@@ -57,8 +57,8 @@ public class DeletePhenotypeTest extends AbstractTest {
 			setIsRestricted(true);
 			getTitles().add("Restricted_" + id);
 			setDatatype("numeric");
-			setLabels(Arrays.asList("Label EN", "Label DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
+			setSynonyms(Arrays.asList("Label EN", "Label DE"));
+			setSynonymLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
@@ -91,8 +91,8 @@ public class DeletePhenotypeTest extends AbstractTest {
 			setIsRestricted(false);
 			getTitles().add(id);
 			setDatatype("numeric");
-			setLabels(Arrays.asList("Label EN", "Label DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
+			setSynonyms(Arrays.asList("Label EN", "Label DE"));
+			setSynonymLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));

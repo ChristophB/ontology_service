@@ -7,10 +7,10 @@ import org.lha.phenoman.model.phenotype.AbstractBooleanPhenotype;
 import org.lha.phenoman.model.phenotype.AbstractCalculationPhenotype;
 import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
-import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import javax.activation.UnsupportedDataTypeException;
+import java.util.UUID;
 
 /**
  * Convenient factory to construct AbstractPhenotypes.
@@ -29,6 +29,9 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 */
 	public AbstractPhenotype createAbstractPhenotype(Phenotype data) throws UnsupportedDataTypeException, NullPointerException {
 		String datatype = data.getDatatype();
+
+		if (StringUtils.isBlank(data.getIdentifier()))
+			data.setIdentifier(UUID.randomUUID().toString());
 
 		AbstractPhenotype phenotype;
 		if ("numeric".equals(datatype)) {
@@ -62,20 +65,11 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @return An AbstractSinglePhenotype.
 	 */
 	private AbstractSinglePhenotype createAbstractSinglePhenotype(Phenotype data, OWL2Datatype datatype) throws NullPointerException {
-		AbstractSinglePhenotype phenotype = null;
+		AbstractSinglePhenotype phenotype = data.getCategories() != null
+			? factory.createAbstractSinglePhenotype(data.getIdentifier(), datatype, data.getCategories().split(";"))
+			: factory.createAbstractSinglePhenotype(data.getIdentifier(), datatype);
 
-		for (Title title : data.getTitleObjects()) {
-			if (phenotype == null) {
-				phenotype = data.getCategories() != null
-					? factory.createAbstractSinglePhenotype(title, datatype, data.getCategories().split(";"))
-					: factory.createAbstractSinglePhenotype(title, datatype);
-				if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
-			} else {
-				phenotype.addTitle(title);
-			}
-		}
-
-		if (phenotype == null) throw new NullPointerException("Could not create abstract phenotype, because title is missing.");
+		data.getTitleObjects().forEach(phenotype::addTitle);
 
 		return phenotype;
 	}
@@ -86,19 +80,11 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @return An AbstractBooleanPhenotype
 	 */
 	private AbstractBooleanPhenotype createAbstractBooleanPhenotype(Phenotype data) {
-		AbstractBooleanPhenotype phenotype = null;
+		AbstractBooleanPhenotype phenotype = data.getCategories() != null
+			? factory.createAbstractBooleanPhenotype(data.getIdentifier(), data.getCategories().split(";"))
+			: factory.createAbstractBooleanPhenotype(data.getIdentifier());
 
-		for (Title title : data.getTitleObjects()) {
-			if (phenotype == null) {
-				phenotype = data.getCategories() != null
-					? factory.createAbstractBooleanPhenotype(title, data.getCategories().split(";"))
-					: factory.createAbstractBooleanPhenotype(title);
-			} else {
-				phenotype.addTitle(title);
-			}
-		}
-
-		if (phenotype == null) throw new NullPointerException("Could not create abstract phenotype, because title is missing.");
+		data.getTitleObjects().forEach(phenotype::addTitle);
 
 		return phenotype;
 	}
@@ -109,23 +95,14 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @return An AbstractCalculationPhenotype.
 	 */
 	private AbstractCalculationPhenotype createAbstractCalculationPhenotype(Phenotype data) {
-		AbstractCalculationPhenotype phenotype = null;
-
 		if (StringUtils.isBlank(data.getFormula()))
 			throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
 
-		for (Title title : data.getTitleObjects()) {
-			if (phenotype == null) {
-				phenotype = data.getCategories() != null
-					? factory.createAbstractCalculationPhenotype(title, data.getFormula(), data.getCategories().split(";"))
-					: factory.createAbstractCalculationPhenotype(title, data.getFormula());
-				if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
-			} else {
-				phenotype.addTitle(title);
-			}
-		}
+		AbstractCalculationPhenotype phenotype = data.getCategories() != null
+			? factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getFormula(), data.getCategories().split(";"))
+			: factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getFormula());
 
-		if (phenotype == null) throw new NullPointerException("Could not create abstract phenotype, because title is missing.");
+		data.getTitleObjects().forEach(phenotype::addTitle);
 
 		return phenotype;
 	}

@@ -1,10 +1,11 @@
 <form id="phenotype-category-form" action="" url="${rootPath}/phenotype/${id}/create" method="post" accept-charset="UTF-8" class="hidden">
 	<input type="hidden" name="isPhenotype" value="false">
 
+	<#include "Identifier.ftl">
 	<#include "Title.ftl">
-	<#include "Labels.ftl">
+	<#include "Synonym.ftl">
 	<#include "SuperCategory.ftl">
-	<#include "Descriptions.ftl">
+	<#include "Description.ftl">
     <#include "Relations.ftl">
 
 	<div class="form-group">

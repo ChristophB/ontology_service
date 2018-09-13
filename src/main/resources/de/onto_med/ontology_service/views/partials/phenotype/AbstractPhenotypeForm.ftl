@@ -2,10 +2,11 @@
     <input type="hidden" name="isPhenotype" value="true">
     <input type="hidden" name="isRestricted" value="false">
 
+	<#include "Identifier.ftl">
 	<#include "Title.ftl">
-	<#include "Labels.ftl">
+	<#include "Synonym.ftl">
 	<#include "Category.ftl">
-	<#include "Descriptions.ftl">
+	<#include "Description.ftl">
     <#include "Relations.ftl">
 
     <#assign datatypes = [

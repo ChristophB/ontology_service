@@ -23,7 +23,7 @@ public abstract class PhenotypeFactory {
 	 * @param formData Data which was provided via form or JSON post request.
 	 */
 	protected void setPhenotypeBasicData(Category phenotype, Phenotype formData) {
-		addPhenotypeLabels(phenotype, formData.getLabels(), formData.getLabelLanguages());
+		addPhenotypeSynonyms(phenotype, formData.getSynonyms(), formData.getSynonymLanguages());
 		addPhenotypeDescriptions(phenotype, formData.getDescriptions(), formData.getDescriptionLanguages());
 		addPhenotypeRelations(phenotype, formData.getRelations());
 	}
@@ -31,16 +31,16 @@ public abstract class PhenotypeFactory {
 	/**
 	 * Adds provided labels and languages to the phenotype.
 	 * @param phenotype The phenotype, where the labels will be added to.
-	 * @param labels Labels to be added.
-	 * @param languages The languages of the labels. They must be in the same order as the labels.
+	 * @param synonyms Synonyms to be added.
+	 * @param languages The languages of the synonyms. They must be in the same order as the synonyms.
 	 */
-	private void addPhenotypeLabels(Category phenotype, List<String> labels, List<String> languages) {
-		for (int i = 0; i < labels.size(); i++) {
-			String label = labels.get(i);
-			if (StringUtils.isBlank(label)) continue;
+	private void addPhenotypeSynonyms(Category phenotype, List<String> synonyms, List<String> languages) {
+		for (int i = 0; i < synonyms.size(); i++) {
+			String synonym = synonyms.get(i);
+			if (StringUtils.isBlank(synonym)) continue;
 			if (languages.size() > i && StringUtils.isNoneBlank(languages.get(i)))
-				phenotype.addLabel(label, languages.get(i));
-			else phenotype.addLabel(label, DEFAULT_LANG);
+				phenotype.addLabel(synonym, languages.get(i));
+			else phenotype.addLabel(synonym, DEFAULT_LANG);
 		}
 	}
 

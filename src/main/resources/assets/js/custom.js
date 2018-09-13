@@ -166,9 +166,9 @@ function clearPhenotypeFormData() {
 	$('.hidden-language, form:not(.hidden) #title-languages').val('en');
 	toggleValueDefinition();
 
-    if (document.querySelector('form:not(.hidden) input.awesomplete#titles')) {
+    if (document.querySelector('form:not(.hidden) input.awesomplete#identifier')) {
         $.getJSON('all?type=list', function(data) {
-            var input = document.querySelector('form:not(.hidden) input.awesomplete#titles');
+            var input = document.querySelector('form:not(.hidden) input.awesomplete#identifier');
             if (awesomplete != undefined) awesomplete.destroy();
             awesomplete = new Awesomplete(input, { list: data });
         });

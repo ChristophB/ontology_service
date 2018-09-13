@@ -16,10 +16,7 @@ import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.activation.UnsupportedDataTypeException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Convenient factory to construct RestrictedPhenotypes.
@@ -41,6 +38,9 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 */
 	public RestrictedPhenotype createRestrictedPhenotype(Phenotype data) throws UnsupportedDataTypeException, NullPointerException {
 		Category superPhenotype = manager.getPhenotype(data.getSuperPhenotype());
+
+		if (StringUtils.isBlank(data.getIdentifier()))
+			data.setIdentifier(UUID.randomUUID().toString());
 
 		RestrictedPhenotype phenotype;
 		if (superPhenotype == null) {
@@ -67,22 +67,11 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A RestrictedSinglePhenotype.
 	 */
 	private RestrictedSinglePhenotype createRestrictedSinglePhenotype(Phenotype data, Category superPhenotype) {
-		RestrictedSinglePhenotype phenotype = null;
+		RestrictedSinglePhenotype phenotype = factory.createRestrictedSinglePhenotype(
+			data.getIdentifier(), data.getSuperPhenotype(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
+		);
 
-		for (Title title : data.getTitleObjects()) {
-			if (phenotype == null) {
-				phenotype = factory.createRestrictedSinglePhenotype(
-					title, data.getSuperPhenotype(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
-				);
-			} else {
-				phenotype.addTitle(title);
-			}
-		}
-		if (phenotype == null) {
-			phenotype = factory.createRestrictedSinglePhenotype(
-				data.getSuperPhenotype(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
-			);
-		}
+		data.getTitleObjects().forEach(phenotype::addTitle);
 
 		return phenotype;
 	}
@@ -94,23 +83,11 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A RestrictedCalculationPhenotype.
 	 */
 	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(Phenotype data, Category superPhenotype) {
-		RestrictedCalculationPhenotype phenotype = null;
+		RestrictedCalculationPhenotype phenotype = factory.createRestrictedCalculationPhenotype(
+			data.getIdentifier(), superPhenotype.getName(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
+		);
 
-		for (Title title : data.getTitleObjects()) {
-			if (phenotype == null) {
-				phenotype = factory.createRestrictedCalculationPhenotype(
-					title, superPhenotype.getName(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
-				);
-			} else {
-				phenotype.addTitle(title);
-			}
-		}
-
-		if (phenotype == null) {
-			phenotype = factory.createRestrictedCalculationPhenotype(
-				superPhenotype.getName(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
-			);
-		}
+		data.getTitleObjects().forEach(phenotype::addTitle);
 
 		return phenotype;
 	}
@@ -122,24 +99,16 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A RestrictedBooleanPhenotype.
 	 */
 	private RestrictedBooleanPhenotype createRestrictedBooleanPhenotype(Phenotype data, Category superPhenotype) throws NullPointerException {
-		RestrictedBooleanPhenotype phenotype = null;
-
 		if (StringUtils.isBlank(data.getExpression()))
 			throw new NullPointerException("Boolean expression for restricted boolean phenotype is missing.");
 
-		for (Title title : data.getTitleObjects()) {
-			if (phenotype == null) {
-				phenotype = factory.createRestrictedBooleanPhenotype(
-					title, superPhenotype.getName(), data.getExpression()
-				);
-			} else {
-				phenotype.addTitle(title);
-			}
-		}
+		RestrictedBooleanPhenotype phenotype = factory.createRestrictedBooleanPhenotype(
+			data.getIdentifier(), superPhenotype.getName(), data.getExpression()
+		);
 
-		if (phenotype == null) throw new NullPointerException("Title of restricted boolean phenotype is missing.");
-
+		data.getTitleObjects().forEach(phenotype::addTitle);
 		phenotype.asRestrictedBooleanPhenotype().setScore(data.getScore());
+
 		return phenotype;
 	}
 

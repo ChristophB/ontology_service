@@ -86,8 +86,8 @@
 									<li><b>titles[]:</b> Unique identifying titles</li>
 									<li><b>aliases[]:</b> Aliases</li>
 									<li><b>titleLanguages[]:</b> Respective languages of the titles</li>
-									<li><b>labels:</b> Alternative labels</li>
-									<li><b>labelLanguages:</b> Respective languages of the alternative labels</li>
+									<li><b>synonyms:</b> Alternative synonyms</li>
+									<li><b>synonymLanguages:</b> Respective languages of the alternative synonyms</li>
 									<li><b>isPhenotype:</b> true, if this is a phenotype, false, if this is a category</li>
 									<li><b>isRestricted:</b> true, if this is a restricted phenotype, else false</li>
 									<li><b>superPhenotype:</b> The ID of an existing phenotype, which will be used as super phenotype.</li>

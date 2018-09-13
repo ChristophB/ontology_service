@@ -8,7 +8,6 @@ import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
-import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
@@ -36,8 +35,8 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setIsRestricted(false);
 			getTitles().add("Abstract_" + id);
 			setDatatype("numeric");
-			setLabels(Arrays.asList("Label EN", "Label DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
+			setSynonyms(Arrays.asList("Label EN", "Label DE"));
+			setSynonymLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
@@ -57,8 +56,8 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setIsRestricted(true);
 			getTitles().add("Restricted_" + id);
 			setDatatype("numeric");
-			setLabels(Arrays.asList("Label EN", "Label DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
+			setSynonyms(Arrays.asList("Label EN", "Label DE"));
+			setSynonymLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
@@ -86,8 +85,8 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setIsRestricted(true);
 			getTitles().add("Restricted_" + id);
 			setDatatype("numeric");
-			setLabels(Arrays.asList("Label EN", "Label DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
+			setSynonyms(Arrays.asList("Label EN", "Label DE"));
+			setSynonymLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
@@ -151,8 +150,8 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setIsRestricted(false);
 			getTitles().add(title);
 			setDatatype("boolean");
-			setLabels(Arrays.asList("Label EN", "Label2 DE"));
-			setLabelLanguages(Arrays.asList("en", "de"));
+			setSynonyms(Arrays.asList("Label EN", "Label2 DE"));
+			setSynonymLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 3", "IRI 2"));

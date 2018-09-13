@@ -12,3 +12,4 @@ gradle/
 .gradle/
 dependency-reduced-pom.xml
 !/target/*.jar
+target/

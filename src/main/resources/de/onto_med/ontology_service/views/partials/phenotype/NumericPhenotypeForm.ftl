@@ -3,10 +3,11 @@
 	<input type="hidden" name="isRestricted" value="true">
 	<input type="hidden" name="datatype" value="numeric">
 
+	<#include "Identifier.ftl">
 	<#include "Title.ftl">
-	<#include "Labels.ftl">
+	<#include "Synonym.ftl">
 	<#include "SuperPhenotype.ftl">
-    <#include "Descriptions.ftl">
+    <#include "Description.ftl">
     <#include "Relations.ftl">
 
 	<div class="form-group row">
