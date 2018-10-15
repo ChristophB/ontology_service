@@ -27,7 +27,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Path("/phenotype")
 public class PhenotypeResource extends Resource {
@@ -70,12 +72,30 @@ public class PhenotypeResource extends Resource {
 	public Response getPhenotypeSelectionView() {
 		Map<String, Long> ontologies = new HashMap<>();
 
-		for (File file : Objects.requireNonNull(new File(phenotypePath.replaceFirst("\\/[^\\/]*$", "")).listFiles(new CopFileFilter())))
-			ontologies.put(getIdFromFilename(file.getName()), file.length() / 1000);
+		getPhenotypeOntologyFiles().forEach(file -> ontologies.put(getIdFromFilename(file.getName()), file.length() / 1000));
 
 		PhenotypeView view = new PhenotypeView("PhenotypeView.ftl", rootPath, ontologies);
 		view.setNavigationVisible(navigationVisible);
 		return Response.ok(view).build();
+	}
+
+	public List<File> getPhenotypeOntologyFiles() {
+		return Arrays.asList(
+			Objects.requireNonNull(new File(phenotypePath.replaceFirst("\\/[^\\/]*$", ""))
+				.listFiles(new CopFileFilter())));
+	}
+
+	public List<String> getPhenotypeOntologyIris() {
+		return getPhenotypeOntologyFiles().stream().map(
+			file -> PhenotypeManager.buildIri(getIdFromFilename(file.getName()))).collect(Collectors.toList());
+	}
+
+	public PhenotypeManager getPhenotypeManager(String id) {
+		try {
+			return managers.get(id);
+		} catch (ExecutionException e) {
+			return null;
+		}
 	}
 
 	@POST

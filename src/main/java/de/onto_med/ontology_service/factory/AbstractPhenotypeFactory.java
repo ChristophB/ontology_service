@@ -70,6 +70,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 			: factory.createAbstractSinglePhenotype(data.getIdentifier(), datatype);
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
+		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
 
 		return phenotype;
 	}
@@ -103,6 +104,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 			: factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getFormula());
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
+		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
 
 		return phenotype;
 	}

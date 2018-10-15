@@ -41,6 +41,8 @@ public class PhenotypeManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PhenotypeManager.class);
 
+	public static final String BASE_URL = "http://lha.org/";
+
 	/**
 	 * The PhenoMan manager instance of a phenotype ontology.
 	 */
@@ -59,6 +61,10 @@ public class PhenotypeManager {
 		this.phenotypePath = phenotypePath;
 		manager = new PhenotypeOntologyManager(phenotypePath, false);
 		manager.write();
+	}
+
+	public static String buildIri(String suffix) {
+		return BASE_URL + suffix + "#";
 	}
 
 	/**
@@ -158,7 +164,7 @@ public class PhenotypeManager {
 	 */
 	public Map<String, String> getRestrictions(String abstractPhenotype) {
 		return manager.getRestrictedPhenotypes(abstractPhenotype).stream()
-			.collect(Collectors.toMap(Category::getName, Category::getTitleText));
+			.collect(Collectors.toMap(Category::getName, c -> c.getMainTitle().getTitleText()));
 	}
 
 	/**
@@ -185,7 +191,7 @@ public class PhenotypeManager {
 				setIsRestricted(false);
 				setIsPhenotype(true);
 				setDatatype(p.getDatatypeText());
-				setTitle(p.getTitleText());
+				setTitle(p.getTitleText("en"));
 				setUcum(p.getUnit());
 				setDescriptionMap(p.getDescriptions());
 				setSelectOptions(getRestrictions(p.getName()));
@@ -280,7 +286,7 @@ public class PhenotypeManager {
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public String classifyIndividualAsString(List<Property> properties) throws IllegalArgumentException {
-		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getTitleText).collect(Collectors.toList()).toString();
+		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getName).collect(Collectors.toList()).toString();
 	}
 
 	/**
