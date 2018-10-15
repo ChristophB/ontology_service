@@ -8,6 +8,7 @@ import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
+import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
@@ -33,6 +34,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
+			setIdentifier("Abstract_" + id);
 			getTitles().add("Abstract_" + id);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -54,6 +56,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier("Restricted_" + id);
 			getTitles().add("Restricted_" + id);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -83,6 +86,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier("Restricted_" + id);
 			getTitles().add("Restricted_" + id);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -112,6 +116,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Double[]{ 8.0, 12.0 }));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title("Restricted_" + id));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");

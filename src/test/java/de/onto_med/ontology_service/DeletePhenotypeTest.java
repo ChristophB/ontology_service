@@ -34,6 +34,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
+			setIdentifier("Abstract_" + id);
 			getTitles().add("Abstract_" + id);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -55,6 +56,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 		phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier("Restricted_" + id);
 			getTitles().add("Restricted_" + id);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -79,7 +81,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		List<Category>           list    = manager.getDependentPhenotypes("Abstract_" + id);
 		assertThat(list).isNotEmpty();
-		assertThat(list.get(0).getTitle()).isEqualTo(phenotype.getTitleObjects().get(0));
+		assertThat(list.get(0).getName()).isEqualTo(phenotype.getIdentifier());
 	}
 
 	@Test

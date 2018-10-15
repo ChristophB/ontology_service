@@ -44,8 +44,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(false);
 			setIsRestricted(false);
-			getTitles().add(title);
-			getTitleLanguages().add("de");
+			setIdentifier(title);
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
 			setSynonymLanguages(Arrays.asList("en", "de"));
 			setDescriptions(Arrays.asList("Description EN", "Description NONE"));
@@ -63,7 +62,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getCategory(title);
 
-		Category expected = new Category(new Title(title, "de"));
+		Category expected = new Category(new Title(title, "en"));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addDescription("Description EN", "en");
@@ -127,7 +126,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
-			getTitles().add(title);
+			setIdentifier(title);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
 			setSynonymLanguages(Arrays.asList("en", "de"));
@@ -168,6 +167,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -194,6 +194,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.setUnit("kg");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -210,6 +211,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("string");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -233,6 +235,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_STRING, "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -249,6 +252,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("date");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -272,6 +276,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_DATE_TIME, "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -288,6 +293,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("boolean");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -311,6 +317,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_BOOLEAN, "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -328,6 +335,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("composite-boolean");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -351,6 +359,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		AbstractBooleanPhenotype expected = new AbstractBooleanPhenotype(new Title(title), "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -366,6 +375,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("calculation");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -394,6 +404,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.setUnit("cm");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -414,6 +425,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -443,6 +455,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Integer[] { 5, 10 }));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title, "en"));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -459,6 +472,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -488,6 +502,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -504,6 +519,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("string");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -530,6 +546,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			new PhenotypeRange("a", "b"));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -545,6 +562,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("date");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -582,6 +600,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Date[] { min, max }));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -597,6 +616,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("boolean");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -622,6 +642,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			title, "Abstract_Boolean_Phenotype_1", new PhenotypeRange(true));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -638,6 +659,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("composite-boolean");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -664,6 +686,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			title, "Abstract_Composite_Boolean_Phenotype_1", "Restricted_Integer_Phenotype_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
@@ -680,6 +703,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
+			setIdentifier(title);
 			getTitles().add(title);
 			setDatatype("calculation");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
@@ -709,6 +733,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
+		expected.addTitle(new Title(title));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
