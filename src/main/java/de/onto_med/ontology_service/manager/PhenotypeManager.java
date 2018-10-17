@@ -18,7 +18,6 @@ import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
 import org.lha.phenoman.model.reasoner_result.ReasonerReport;
-import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -369,7 +368,7 @@ public class PhenotypeManager {
 
 	private TreeNode getTreeNode(PhenotypeCategoryTreeNode node, Boolean includePhenotypes) {
 		Category     category = node.getCategory();
-		String       text     = node.getName().replaceAll("_", " ");
+		String       text     = category != null ? category.getMainTitleText() : node.getName();
 		OWL2Datatype datatype = getDatatype(category);
 
 		TreeNode treeNode = new TreeNode(node.getName(), text);
@@ -494,7 +493,7 @@ public class PhenotypeManager {
 
 	public class TreeNode {
 		public String text;
-		public String icon;
+		public String icon = "";
 		public State          state    = new State();
 		public List<TreeNode> children = new ArrayList<>();
 		public AttributeList  a_attr   = new AttributeList();
