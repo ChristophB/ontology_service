@@ -5,6 +5,7 @@ import de.onto_med.ontology_service.data_model.Phenotype;
 import de.onto_med.ontology_service.data_model.Property;
 import de.onto_med.ontology_service.factory.AbstractPhenotypeFactory;
 import de.onto_med.ontology_service.factory.PhenotypeCategoryFactory;
+import de.onto_med.ontology_service.factory.PhenotypeFactory;
 import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
 import de.onto_med.ontology_service.util.Parser;
 import org.apache.commons.lang3.StringUtils;
@@ -76,9 +77,10 @@ public class PhenotypeManager {
 	public Category getPhenotype(String id) {
 		if (StringUtils.isBlank(id)) return null;
 		try {
-			Category category = manager.getPhenotype(XMLUtils.getNCNameSuffix(id));
+			String suffix = PhenotypeFactory.getLocalName(id);
+			Category category = manager.getPhenotype(suffix);
 
-			return category != null ? category : manager.getCategory(XMLUtils.getNCNameSuffix(id));
+			return category != null ? category : manager.getCategory(suffix);
 		} catch (NoSuchElementException e) {
 			LOGGER.info(e.getMessage());
 		}
@@ -174,7 +176,7 @@ public class PhenotypeManager {
 	 * @return List of dependent phenotypes as Category.
 	 */
 	public List<Category> getDependentPhenotypes(String iri) {
-		return manager.getDependentPhenotypes(XMLUtils.getNCNameSuffix(iri));
+		return manager.getDependentPhenotypes(PhenotypeFactory.getLocalName(iri));
 	}
 
 	/**
@@ -186,7 +188,7 @@ public class PhenotypeManager {
 	public List<Phenotype> getParts(String iri) {
 		List<Phenotype> parts = new ArrayList<>();
 
-		manager.getParts(XMLUtils.getNCNameSuffix(iri)).forEach(p -> {
+		manager.getParts(PhenotypeFactory.getLocalName(iri)).forEach(p -> {
 			Phenotype part = new Phenotype() {{
 				setIsRestricted(false);
 				setIsPhenotype(true);

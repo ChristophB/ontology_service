@@ -68,15 +68,27 @@ public class PhenotypeResource extends Resource {
 	}
 
 	@GET
-	@Produces(MediaType.TEXT_HTML)
-	public Response getPhenotypeSelectionView() {
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+	public Response getPhenotypeSelectionView(@Context HttpHeaders headers) {
 		Map<String, Long> ontologies = new HashMap<>();
 
 		getPhenotypeOntologyFiles().forEach(file -> ontologies.put(getIdFromFilename(file.getName()), file.length() / 1000));
 
-		PhenotypeView view = new PhenotypeView("PhenotypeView.ftl", rootPath, ontologies);
-		view.setNavigationVisible(navigationVisible);
-		return Response.ok(view).build();
+		if (acceptsMediaType(headers, MediaType.TEXT_HTML_TYPE)) {
+			PhenotypeView view = new PhenotypeView("PhenotypeView.ftl", rootPath, ontologies);
+			view.setNavigationVisible(navigationVisible);
+			return Response.ok(view).build();
+		} else {
+			List<Map<String, String>> jsonData = new ArrayList<>();
+			ontologies.keySet().forEach(k -> {
+				Map<String, String> hash = new HashMap<>();
+				hash.put("id", k);
+				hash.put("size", ontologies.get(k).toString());
+				jsonData.add(hash);
+			});
+
+			return Response.ok(jsonData).build();
+		}
 	}
 
 	public List<File> getPhenotypeOntologyFiles() {

@@ -1,9 +1,11 @@
 package de.onto_med.ontology_service.factory;
 
 import de.onto_med.ontology_service.data_model.Phenotype;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -26,6 +28,19 @@ public abstract class PhenotypeFactory {
 		addPhenotypeSynonyms(phenotype, formData.getSynonyms(), formData.getSynonymLanguages());
 		addPhenotypeDescriptions(phenotype, formData.getDescriptions(), formData.getDescriptionLanguages());
 		addPhenotypeRelations(phenotype, formData.getRelations());
+	}
+
+	/**
+	 * Returns the local name of given iri. If the iri is already a local name it is returned directly.
+	 * @param iri the iri
+	 * @return the local name
+	 */
+	public static String getLocalName(String iri) {
+		if (iri.contains("#")) {
+			return URI.create(iri).getFragment();
+		} else if (iri.contains("/")) {
+			return FilenameUtils.getName(URI.create(iri).getPath());
+		} else return iri;
 	}
 
 	/**
