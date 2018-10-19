@@ -238,6 +238,7 @@ public class PhenotypeResource extends Resource {
 	public Response createCategory(@PathParam("id") String id, Phenotype formData) {
 		PhenotypeManager manager = managers.getUnchecked(id);
 
+		if (formData == null) return Response.noContent().build();
 		try {
 			if (!formData.getIsPhenotype()) {
 				Category category = manager.createCategory(formData);
