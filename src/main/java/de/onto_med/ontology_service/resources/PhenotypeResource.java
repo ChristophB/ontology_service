@@ -251,6 +251,7 @@ public class PhenotypeResource extends Resource {
 				return Response.ok("Phenotype '" + phenotype.getName() + "' created.").build();
 			}
 		} catch (NullPointerException | UnsupportedDataTypeException | WrongPhenotypeTypeException e) {
+			e.printStackTrace();
 			throw new WebApplicationException(e.getMessage());
 		}
 	}

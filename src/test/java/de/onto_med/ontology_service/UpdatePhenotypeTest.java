@@ -132,7 +132,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory         factory = manager.getPhenotypeFactory();
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Weight", OWL2Datatype.XSD_DOUBLE));
+		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Weight", "Weight", OWL2Datatype.XSD_DOUBLE));
 		manager.addRestrictedSinglePhenotype(factory.createRestrictedSinglePhenotype(
 			"High weight", "Weight", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_INCLUSIVE }, new Double[]{ 100.0 })
 		));
@@ -175,7 +175,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory         factory = manager.getPhenotypeFactory();
 
-		AbstractSinglePhenotype phenotype = factory.createAbstractSinglePhenotype("Weight", OWL2Datatype.XSD_DOUBLE);
+		AbstractSinglePhenotype phenotype = factory.createAbstractSinglePhenotype("Weight", "Weight", OWL2Datatype.XSD_DOUBLE);
 		Category                category  = factory.createCategory("Anthropometric");
 		try {
 			manager.addAbstractSinglePhenotype(phenotype);
@@ -192,7 +192,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory         factory = manager.getPhenotypeFactory();
 
-		AbstractSinglePhenotype phenotype = factory.createAbstractSinglePhenotype("Weight", OWL2Datatype.XSD_DOUBLE);
+		AbstractSinglePhenotype phenotype = factory.createAbstractSinglePhenotype("Weight", "Weight", OWL2Datatype.XSD_DOUBLE);
 		Category                category  = factory.createCategory("Anthropometric");
 
 		try {
@@ -201,7 +201,8 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		manager.addPhenotypeCategory(category);
 		manager.write();
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype(phenotype.getName(), OWL2Datatype.XSD_INTEGER, category.getName()));
+		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype(
+			phenotype.getName(), phenotype.getName(), OWL2Datatype.XSD_INTEGER, category.getName()));
 	}
 
 	@Test
@@ -210,7 +211,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			RULE.getConfiguration().getPhenotypePath().replace("%id%", "test0815"), false);
 		PhenotypeFactory factory = manager.getPhenotypeFactory();
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("abstract", OWL2Datatype.XSD_DOUBLE));
+		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("abstract", "abstract", OWL2Datatype.XSD_DOUBLE));
 
 		factory.createRestrictedSinglePhenotype(
 			"restricted", "abstract", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_EXCLUSIVE }, new Double[]{ 5.0 })

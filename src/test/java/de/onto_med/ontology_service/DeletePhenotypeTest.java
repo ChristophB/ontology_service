@@ -126,7 +126,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 		String id = "Phenotype_to_be_deleted";
 
 		PhenotypeOntologyManager manager   = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		AbstractSinglePhenotype  phenotype = manager.getPhenotypeFactory().createAbstractSinglePhenotype(id, OWL2Datatype.XSD_INTEGER);
+		AbstractSinglePhenotype  phenotype = manager.getPhenotypeFactory().createAbstractSinglePhenotype(id, id, OWL2Datatype.XSD_INTEGER);
 		manager.addAbstractSinglePhenotype(phenotype);
 		manager.write();
 
@@ -141,11 +141,11 @@ public class DeletePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory         factory = manager.getPhenotypeFactory();
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Height", OWL2Datatype.XSD_DOUBLE));
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Weight", OWL2Datatype.XSD_DOUBLE));
+		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Height", "Height", OWL2Datatype.XSD_DOUBLE));
+		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Weight", "Height", OWL2Datatype.XSD_DOUBLE));
 		manager.write();
 
-		manager.addAbstractCalculationPhenotype(factory.createAbstractCalculationPhenotype("BMI", "Weight / Height ^ 2"));
+		manager.addAbstractCalculationPhenotype(factory.createAbstractCalculationPhenotype("BMI", "BMI", "Weight / Height ^ 2"));
 		manager.write();
 
 		((AbstractCalculationPhenotype) manager.getPhenotype("BMI")).getCalculatedValue();

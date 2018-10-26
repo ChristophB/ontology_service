@@ -37,7 +37,7 @@ public class PhenotypeReasoningTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		PhenotypeFactory factory = manager.getPhenotypeFactory();
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("height", OWL2Datatype.XSD_DOUBLE));
+		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("height", "height", OWL2Datatype.XSD_DOUBLE));
 		manager.addRestrictedSinglePhenotype(factory.createRestrictedSinglePhenotype(
 			"height_lt_1m", "height",
 			new PhenotypeRange(new OWLFacet[]{ OWLFacet.MAX_EXCLUSIVE }, new Double[] { 1.0 })

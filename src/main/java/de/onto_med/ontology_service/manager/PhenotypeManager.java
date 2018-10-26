@@ -192,7 +192,6 @@ public class PhenotypeManager {
 				setIsRestricted(false);
 				setIsPhenotype(true);
 				setDatatype(p.getDatatypeText());
-				setTitle(p.getTitleText("en"));
 				setUcum(p.getUnit());
 				setDescriptionMap(p.getDescriptions());
 				setSelectOptions(getRestrictions(p.getName()));

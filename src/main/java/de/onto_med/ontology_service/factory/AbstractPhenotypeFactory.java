@@ -66,8 +66,8 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 */
 	private AbstractSinglePhenotype createAbstractSinglePhenotype(Phenotype data, OWL2Datatype datatype) throws NullPointerException {
 		AbstractSinglePhenotype phenotype = data.getCategories() != null
-			? factory.createAbstractSinglePhenotype(data.getIdentifier(), datatype, data.getCategories().split(";"))
-			: factory.createAbstractSinglePhenotype(data.getIdentifier(), datatype);
+			? factory.createAbstractSinglePhenotype(data.getIdentifier(), data.getMainTitle(), datatype, data.getCategories().split(";"))
+			: factory.createAbstractSinglePhenotype(data.getIdentifier(), data.getMainTitle(), datatype);
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
@@ -82,8 +82,8 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 */
 	private AbstractBooleanPhenotype createAbstractBooleanPhenotype(Phenotype data) {
 		AbstractBooleanPhenotype phenotype = data.getCategories() != null
-			? factory.createAbstractBooleanPhenotype(data.getIdentifier(), data.getCategories().split(";"))
-			: factory.createAbstractBooleanPhenotype(data.getIdentifier());
+			? factory.createAbstractBooleanPhenotype(data.getIdentifier(), data.getMainTitle(), data.getCategories().split(";"))
+			: factory.createAbstractBooleanPhenotype(data.getIdentifier(), data.getMainTitle());
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 
@@ -100,8 +100,8 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 			throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
 
 		AbstractCalculationPhenotype phenotype = data.getCategories() != null
-			? factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getFormula(), data.getCategories().split(";"))
-			: factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getFormula());
+			? factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getMainTitle(), data.getFormula(), data.getCategories().split(";"))
+			: factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getMainTitle(), data.getFormula());
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());

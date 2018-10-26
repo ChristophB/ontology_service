@@ -12,10 +12,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class Phenotype {
-	private String title;
-
 	@JsonProperty
 	private String       identifier;
+	@JsonProperty
+	private String       mainTitle;
 	@JsonProperty
 	private List<String> titles               = new ArrayList<>();
 	@JsonProperty
@@ -65,7 +65,7 @@ public class Phenotype {
 	@JsonProperty
 	private Double       score;
 
-	private String name;
+	private String name; //TODO: what abaout this field? name = mainTitle? or name = identifier?
 
 	private Map<String, Set<String>> descriptionMap;
 
@@ -98,12 +98,12 @@ public class Phenotype {
 		this.descriptionMap = descriptionMap;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getMainTitle() {
+		return StringUtils.isBlank(mainTitle) ? identifier : mainTitle;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setMainTitle(String mainTitle) {
+		this.mainTitle = mainTitle;
 	}
 
 	public String getName() {

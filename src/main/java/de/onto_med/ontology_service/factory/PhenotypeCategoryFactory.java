@@ -24,7 +24,7 @@ public class PhenotypeCategoryFactory extends PhenotypeFactory {
 		if (StringUtils.isBlank(data.getIdentifier()))
 			data.setIdentifier(UUID.randomUUID().toString());
 
-		Category category = factory.createCategory(data.getIdentifier());
+		Category category = factory.createCategory(data.getIdentifier(), data.getMainTitle());
 		data.getTitleObjects().forEach(category::addTitle);
 		setPhenotypeBasicData(category, data);
 

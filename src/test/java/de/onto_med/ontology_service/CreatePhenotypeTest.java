@@ -62,7 +62,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getCategory(title);
 
-		Category expected = new Category(new Title(title, "en"));
+		Category expected = new Category(title, new Title(title, "en"));
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addDescription("Description EN", "en");
@@ -122,11 +122,16 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 	private void testAbstractIntegerPhenotypeCreation() {
 		String title = "Abstract_Integer_Phenotype_1";
+		String title2 = title + "_title2";
 
 		Phenotype phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(title);
+			getTitles().add(title);
+			getTitleLanguages().add("en");
+			getTitles().add(title2);
+			getTitleLanguages().add("de");
 			setDatatype("numeric");
 			setSynonyms(Arrays.asList("Label EN", "Label DE"));
 			setSynonymLanguages(Arrays.asList("en", "de"));
@@ -147,7 +152,9 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 	    Category actual = manager.getPhenotype(title);
 
-	    AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_INTEGER, "Category_1");
+	    AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title, "en"), OWL2Datatype.XSD_INTEGER, "Category_1");
+	    expected.addTitle(new Title(title2, "de"));
+		expected.addTitle(new Title(title, "en"));
 		expected.setUnit("m^2");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
@@ -190,7 +197,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_DOUBLE, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title), OWL2Datatype.XSD_DOUBLE, "Category_1");
 		expected.setUnit("kg");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
@@ -232,7 +239,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_STRING, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title), OWL2Datatype.XSD_STRING, "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -273,7 +280,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_DATE_TIME, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title), OWL2Datatype.XSD_DATE_TIME, "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -314,7 +321,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(new Title(title), OWL2Datatype.XSD_BOOLEAN, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title), OWL2Datatype.XSD_BOOLEAN, "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -356,7 +363,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getPhenotype(title);
 
-		AbstractBooleanPhenotype expected = new AbstractBooleanPhenotype(new Title(title), "Category_1");
+		AbstractBooleanPhenotype expected = new AbstractBooleanPhenotype(title, new Title(title), "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -399,7 +406,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(title);
 
 		AbstractCalculationPhenotype expected = manager.getPhenotypeFactory().createAbstractCalculationPhenotype(
-			new Title(title), "Abstract_Integer_Phenotype_1", "Category_1"
+			title, new Title(title), "Abstract_Integer_Phenotype_1", "Category_1"
 		);
 		expected.setUnit("cm");
 		expected.addDescription("Description EN", "en");
@@ -683,7 +690,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Category actual = manager.getPhenotype(title);
 
 		RestrictedBooleanPhenotype expected = manager.getPhenotypeFactory().createRestrictedBooleanPhenotype(
-			title, "Abstract_Composite_Boolean_Phenotype_1", "Restricted_Integer_Phenotype_1");
+			title, title, "Abstract_Composite_Boolean_Phenotype_1", "Restricted_Integer_Phenotype_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));

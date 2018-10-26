@@ -103,11 +103,11 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 			throw new NullPointerException("Boolean expression for restricted boolean phenotype is missing.");
 
 		RestrictedBooleanPhenotype phenotype = factory.createRestrictedBooleanPhenotype(
-			data.getIdentifier(), superPhenotype.getName(), data.getExpression()
+			data.getIdentifier(), data.getMainTitle(), superPhenotype.getName(), data.getExpression()
 		);
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
-		phenotype.asRestrictedBooleanPhenotype().setScore(data.getScore());
+		if (data.getScore() != null) phenotype.asRestrictedBooleanPhenotype().setScore(data.getScore());
 
 		return phenotype;
 	}
