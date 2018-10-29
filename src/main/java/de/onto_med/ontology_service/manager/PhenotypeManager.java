@@ -244,7 +244,7 @@ public class PhenotypeManager {
 				try {
 					instance = new SinglePhenotypeInstance(name, Double.valueOf(value));
 				} catch (NumberFormatException e) {
-					throw new IllegalArgumentException("Could not parse Double from String '" + value + "'." + e.getMessage());
+					throw new IllegalArgumentException("Could not parse Double from String '" + value + "'. " + e.getMessage());
 				}
 			} else if (phenotype.isAbstractSinglePhenotype()) {
 				if (OWL2Datatype.XSD_INTEGER.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
@@ -257,7 +257,7 @@ public class PhenotypeManager {
 					try {
 						instance = new SinglePhenotypeInstance(name, Double.valueOf(value));
 					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException("Could not parse Double from String '" + value + "'." + e.getMessage());
+						throw new IllegalArgumentException("Could not parse Double from String '" + value + "'. " + e.getMessage());
 					}
 				} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 					try {
