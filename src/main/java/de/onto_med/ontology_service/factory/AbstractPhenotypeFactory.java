@@ -99,7 +99,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	private AbstractCalculationPhenotype createAbstractCalculationPhenotype(Phenotype data) {
 		if (StringUtils.isBlank(data.getFormula()))
 			throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
-System.err.println(Arrays.toString(data.getSuperCategories()));
+
 		AbstractCalculationPhenotype phenotype = data.getSuperCategories() != null
 			? factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getMainTitle(), data.getFormula(), data.getSuperCategories())
 			: factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getMainTitle(), data.getFormula());
