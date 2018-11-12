@@ -97,7 +97,7 @@ function createPhenotypeTree(id, url, withContext) {
 	});
 }
 
-function appendFormField(element, target, options = null) {
+function appendFormField(element, target, options) {
 	var id         = element.attributes.id.value;
 	var type       = element.attributes.type.value;
     var inputField = '';
@@ -142,7 +142,7 @@ function appendFormField(element, target, options = null) {
 	$('.form-control:last').focus();
 }
 
-function showPhenotypeForm(id, clear = false) {
+function showPhenotypeForm(id, clear) {
 	$('#abstract-phenotype-form, #phenotype-category-form, #numeric-phenotype-form, #string-phenotype-form, '
 	    + '#date-phenotype-form, #boolean-phenotype-form, #calculation-phenotype-form, '
 	    + '#composite-boolean-phenotype-form, #reason-form').addClass('hidden');
