@@ -30,8 +30,34 @@ public class UpdatePhenotypeTest extends AbstractTest {
 
 	@Before
 	public void createPhenotypes() {
-		String id = "Double_Phenotype_1";
 		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(false);
+			setIsRestricted(false);
+			setIdentifier("Category_1");
+		}};
+
+		javax.ws.rs.core.Response response
+			= client.target(url + UPDATE_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(phenotype));
+
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+
+		phenotype = new Phenotype() {{
+			setIsPhenotype(false);
+			setIsRestricted(false);
+			setIdentifier("Category_2");
+		}};
+
+		response
+			= client.target(url + UPDATE_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(phenotype));
+
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+
+		String id = "Double_Phenotype_1";
+		phenotype = new Phenotype() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier("Abstract_" + id);
@@ -44,9 +70,10 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setUcum("kg");
 			setIsDecimal(true);
+			setSuperCategory("Category_1");
 		}};
 
-		javax.ws.rs.core.Response response
+		response
 			= client.target(url + UPDATE_PATH)
 			.request(MediaType.APPLICATION_JSON_TYPE)
 			.post(Entity.json(phenotype));
@@ -77,6 +104,38 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			.post(Entity.json(phenotype));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+	}
+
+	@Test
+	public void testUpdateCategoriesOfPhenotype() {
+		String id = "Abstract_Double_Phenotype_1";
+		Phenotype phenotype = new Phenotype() {{
+			setIsPhenotype(true);
+			setIsRestricted(false);
+			setIdentifier(id);
+			getTitles().add(id);
+			setDatatype("numeric");
+			setSynonyms(Arrays.asList("Label EN", "Label DE"));
+			setSynonymLanguages(Arrays.asList("en", "de"));
+			setDescriptions(Arrays.asList("Description EN", "Description DE"));
+			setDescriptionLanguages(Arrays.asList("en", "de"));
+			setRelations(Arrays.asList("IRI 1", "IRI 2"));
+			setUcum("kg");
+			setIsDecimal(true);
+			setSuperCategory("Category_1;Category_2");
+		}};
+
+		javax.ws.rs.core.Response response
+			= client.target(url + UPDATE_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(phenotype));
+
+		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
+
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
+		Category                 actual  = manager.getPhenotype(id);
+
+		assertThat(actual.asAbstractSinglePhenotype().getPhenotypeCategories()).isEqualTo(phenotype.getSuperCategories());
 	}
 
 	@Test

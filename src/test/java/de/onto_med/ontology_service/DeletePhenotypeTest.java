@@ -98,7 +98,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setCategories("Category_1");
+			setSuperCategory("Category_1");
 			setUcum("kg");
 			setIsDecimal(false);
 		}};

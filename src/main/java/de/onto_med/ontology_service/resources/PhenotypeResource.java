@@ -238,17 +238,17 @@ public class PhenotypeResource extends Resource {
 	public Response createCategory(@PathParam("id") String id, Phenotype formData) {
 		PhenotypeManager manager = managers.getUnchecked(id);
 
-		if (formData == null) return Response.noContent().build();
+		if (formData == null) return null;
 		try {
 			if (!formData.getIsPhenotype()) {
 				Category category = manager.createCategory(formData);
-				return Response.ok("Category '" + category.getName() + "' created.").build();
+				return Response.ok(new CrudeResponse(category.getName(), "Category '" + category.getName() + "' created.")).build();
 			} else if (!formData.getIsRestricted()) {
 				AbstractPhenotype phenotype = manager.createAbstractPhenotype(formData);
-				return Response.ok("Abstract phenotype '" + phenotype.getName() + "' created.").build();
+				return Response.ok(new CrudeResponse(phenotype.getName(), "Abstract phenotype '" + phenotype.getName() + "' created.")).build();
 			} else {
 				RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
-				return Response.ok("Phenotype '" + phenotype.getName() + "' created.").build();
+				return Response.ok(new CrudeResponse(phenotype.getName(), "Phenotype '" + phenotype.getName() + "' created.")).build();
 			}
 		} catch (NullPointerException | UnsupportedDataTypeException | WrongPhenotypeTypeException e) {
 			e.printStackTrace();
@@ -320,6 +320,16 @@ public class PhenotypeResource extends Resource {
 		public boolean accept(File pathname) {
 			return pathname.isFile() && pathname.getAbsolutePath().toLowerCase().endsWith(".owl")
 				&& !pathname.getName().startsWith("~") && pathname.getName().startsWith("cop_");
+		}
+	}
+
+	public class CrudeResponse {
+		public String id;
+		public String message;
+
+		public CrudeResponse(String id, String message) {
+			this.id = id;
+			this.message = message;
 		}
 	}
 }

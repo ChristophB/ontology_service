@@ -113,7 +113,7 @@ public class PhenotypeManager {
 
 		if (StringUtils.isBlank(formData.getSuperCategory()))
 			manager.addPhenotypeCategory(category);
-		else manager.addPhenotypeCategory(category, formData.getSuperCategory());
+		else manager.addPhenotypeCategory(category, formData.getSuperCategories());
 		manager.write();
 
 		return category;

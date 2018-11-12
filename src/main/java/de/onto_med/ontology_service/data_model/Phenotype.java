@@ -186,14 +186,6 @@ public class Phenotype {
 		this.superPhenotype = superPhenotype;
 	}
 
-	public String getCategories() {
-		return categories;
-	}
-
-	public void setCategories(String categories) {
-		this.categories = categories;
-	}
-
 	public List<String> getDescriptions() {
 		return descriptions;
 	}
@@ -322,6 +314,17 @@ public class Phenotype {
 		}
 
 		return result;
+	}
+
+	@JsonIgnore
+	public String[] getSuperCategories() {
+		if (getSuperCategory() == null) return null;
+		List<String> result = new ArrayList<>();
+
+		for (String superCategory : getSuperCategory().split(";")) {
+			result.add(superCategory.trim());
+		}
+		return result.toArray(new String[0]);
 	}
 
 	private void addDefinition(String definition) {

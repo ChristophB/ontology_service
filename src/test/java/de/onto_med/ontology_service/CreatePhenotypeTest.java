@@ -138,7 +138,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setCategories("Category_1");
+			setSuperCategory("Category_1");
 			setUcum("m^2");
 		}};
 
@@ -182,7 +182,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setCategories("Category_1");
+			setSuperCategory("Category_1");
 			setUcum("kg");
 			setIsDecimal(true);
 		}};
@@ -226,7 +226,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setCategories("Category_1");
+			setSuperCategory("Category_1");
 		}};
 
 		javax.ws.rs.core.Response response
@@ -267,7 +267,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setCategories("Category_1");
+			setSuperCategory("Category_1");
 		}};
 
 		javax.ws.rs.core.Response response
@@ -308,7 +308,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setCategories("Category_1");
+			setSuperCategory("Category_1");
 		}};
 
 		javax.ws.rs.core.Response response
@@ -350,7 +350,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setCategories("Category_1");
+			setSuperCategory("Category_1");
 		}};
 
 		javax.ws.rs.core.Response response
@@ -390,7 +390,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setDescriptions(Arrays.asList("Description EN", "Description DE"));
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
-			setCategories("Category_1");
+			setSuperCategory("Category_1");
 			setUcum("cm");
 			setFormula("Abstract_Integer_Phenotype_1");
 		}};
