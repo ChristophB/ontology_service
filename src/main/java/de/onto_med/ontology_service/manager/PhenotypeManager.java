@@ -195,7 +195,8 @@ public class PhenotypeManager {
 				setUcum(p.getUnit());
 				setDescriptionMap(p.getDescriptions());
 				setSelectOptions(getRestrictions(p.getName()));
-				setName(p.getName());
+				setIdentifier(p.getName());
+				setMainTitle(p.getMainTitleText());
 			}};
 			parts.add(part);
 		});

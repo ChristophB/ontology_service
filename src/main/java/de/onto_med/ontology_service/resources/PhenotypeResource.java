@@ -127,7 +127,7 @@ public class PhenotypeResource extends Resource {
 					String.format("attachment; filename='cop_%s.owl'", id))
 				.build();
 		} catch (IOException e) {
-			throw new WebApplicationException(e.getMessage());
+			return Response.ok(e.getMessage()).status(500).build();
 		}
 	}
 
@@ -209,7 +209,8 @@ public class PhenotypeResource extends Resource {
 	public Response getDecisionTree(
 		@PathParam("id") String id, @QueryParam("phenotype") String phenotype, @QueryParam("format") String format
 	) {
-		if (StringUtils.isBlank(phenotype)) throw new WebApplicationException("Query parameter 'phenotype' missing.");
+		if (StringUtils.isBlank(phenotype))
+			return Response.ok("Query parameter 'phenotype' missing.").status(500).build();
 
 		PhenotypeManager manager = managers.getUnchecked(id);
 
@@ -218,7 +219,7 @@ public class PhenotypeResource extends Resource {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='" + phenotype + "_decisiontree." + format + "'")
 				.build();
 		} catch (IllegalArgumentException | IOException e) {
-			throw new WebApplicationException(e.getMessage());
+			return Response.ok(e.getMessage()).status(500).build();
 		}
 	}
 
@@ -251,8 +252,7 @@ public class PhenotypeResource extends Resource {
 				return Response.ok(new CrudeResponse(phenotype.getName(), "Phenotype '" + phenotype.getName() + "' created.")).build();
 			}
 		} catch (NullPointerException | UnsupportedDataTypeException | WrongPhenotypeTypeException e) {
-			e.printStackTrace();
-			throw new WebApplicationException(e.getMessage());
+			return Response.ok(e.getMessage()).status(500).build();
 		}
 	}
 
@@ -287,7 +287,7 @@ public class PhenotypeResource extends Resource {
 		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties, @QueryParam("format") String format
 	) {
 		if (properties == null || properties.isEmpty())
-			throw new WebApplicationException("No properties were provided.");
+			return Response.ok("No properties were provided.").status(500).build();
 
 		PhenotypeManager manager = managers.getUnchecked(id);
 
@@ -303,8 +303,8 @@ public class PhenotypeResource extends Resource {
 					return Response.ok(manager.classifyIndividualAsString(properties)).build();
 				}
 			}
-		} catch (IOException e) {
-			throw new WebApplicationException(e.getMessage());
+		} catch (Exception e) {
+			return Response.ok(e.getMessage()).status(500).build();
 		}
 	}
 
