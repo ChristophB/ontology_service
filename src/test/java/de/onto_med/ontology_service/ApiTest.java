@@ -2,9 +2,11 @@ package de.onto_med.ontology_service;
 
 import de.onto_med.ontology_service.factory.PhenotypeFactory;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.lha.phenoman.man.PhenotypeOntologyManager;
 import org.lha.phenoman.model.phenotype.AbstractBooleanPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.Title;
 
 import java.io.IOException;
@@ -44,5 +46,22 @@ public class ApiTest extends AbstractTest {
 		manager.addRestrictedBooleanPhenotype(factory.createRestrictedBooleanPhenotype(
 			title_res, new Title(title_res), title, "Thing"));
 		manager.getPhenotype(title_res).asRestrictedBooleanPhenotype().getScore();
+	}
+
+	@Test @Ignore
+	public void testCategoryMethodPhenotypeCategories() throws Exception {
+		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, true);
+		org.lha.phenoman.model.phenotype.PhenotypeFactory factory = manager.getPhenotypeFactory();
+
+		Category superCategory = factory.createCategory("super_category");
+		Category subCategory   = factory.createCategory("sub_category");
+
+		manager.addPhenotypeCategory(superCategory);
+		manager.addPhenotypeCategory(subCategory, superCategory.getName());
+
+		Category actual = manager.getCategory(subCategory.getName());
+
+		assertThat(actual).isNotNull();
+		Category.class.getMethod("getPhenotypeCategories");
 	}
 }
