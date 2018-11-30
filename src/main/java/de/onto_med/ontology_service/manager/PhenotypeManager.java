@@ -328,7 +328,13 @@ public class PhenotypeManager {
 	 * @throws IOException              If BufferedImage could not be written to ByteArrayOutputStream.
 	 */
 	public Object getPhenotypeDecisionTree(String phenotypeId, String format) throws IllegalArgumentException, IOException {
-		Graph graph = manager.createAbstractPhenotypeGraph(phenotypeId);
+		Graph graph;
+
+		try {
+			graph = manager.createAbstractPhenotypeGraph(phenotypeId);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Decision tree could not be generated! " + e.getMessage());
+		}
 
 		if ("png".equalsIgnoreCase(format)) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
