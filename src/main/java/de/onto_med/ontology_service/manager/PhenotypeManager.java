@@ -157,7 +157,7 @@ public class PhenotypeManager {
 		if (StringUtils.isBlank(formData.getDatatype()))
 			throw new NullPointerException("Datatype of the abstract phenotype is missing.");
 
-		AbstractPhenotype phenotype = new AbstractPhenotypeFactory().createAbstractPhenotype(formData);
+		AbstractPhenotype phenotype = new AbstractPhenotypeFactory(manager).createAbstractPhenotype(formData);
 		addPhenotype(phenotype);
 
 		manager.write();

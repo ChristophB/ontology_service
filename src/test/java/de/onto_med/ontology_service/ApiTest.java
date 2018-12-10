@@ -2,10 +2,12 @@ package de.onto_med.ontology_service;
 
 import de.onto_med.ontology_service.factory.PhenotypeFactory;
 import org.junit.AfterClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.man.PhenotypeManager;
 import org.lha.phenoman.model.phenotype.AbstractBooleanPhenotype;
+import org.lha.phenoman.model.phenotype.AbstractCalculationPhenotype;
+import org.lha.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.Title;
 
@@ -16,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ApiTest extends AbstractTest {
@@ -68,5 +69,14 @@ public class ApiTest extends AbstractTest {
 		} catch (NoSuchMethodException e) {
 			fail("Category does not have method getCategories()");
 		}
+	}
+
+	@Test
+	public void testFormulaRetrieval() throws WrongPhenotypeTypeException {
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, true);
+
+		AbstractSingleDecimalPhenotype singlePhenotype = new AbstractSingleDecimalPhenotype("single_phen", "single_phen");
+		manager.addAbstractSinglePhenotype(singlePhenotype);
+		manager.getFormula("single_phen");
 	}
 }

@@ -11,14 +11,24 @@ import java.util.UUID;
 
 /**
  * Convenient factory to construct AbstractPhenotypes.
+ *
  * @author Christoph Beger
  */
 public class AbstractPhenotypeFactory extends PhenotypeFactory {
-
 	protected PhenotypeManager manager;
 
 	/**
+	 * Constructor for Abstract Phenotype Factories.
+	 * This Factory requires a PhenotypeManager, because formulas are only processable by the manager.
+	 * @param manager The PhenotypeManager
+	 */
+	public AbstractPhenotypeFactory(PhenotypeManager manager) {
+		this.manager = manager;
+	}
+
+	/**
 	 * Creates an AbstractPhenotype depending on the provided phenotype data.
+	 *
 	 * @param data Phenotype data.
 	 * @return An AbstractPhenotype.
 	 * @throws UnsupportedDataTypeException If the provided phenotype data contains invalid values.
@@ -47,7 +57,8 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 
 	/**
 	 * Creates an AbstractSinglePhenotype.
-	 * @param data Phenotype data.
+	 *
+	 * @param data     Phenotype data.
 	 * @param datatype An OWL2Datatype.
 	 * @return An AbstractSinglePhenotype.
 	 */
@@ -73,6 +84,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 
 	/**
 	 * Creates an AbstractBooleanPhenotype.
+	 *
 	 * @param data Phenotype data.
 	 * @return An AbstractBooleanPhenotype
 	 */
@@ -87,6 +99,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 
 	/**
 	 * Creates an AbstractCalculationPhenotype.
+	 *
 	 * @param data Phenotype data.
 	 * @return An AbstractCalculationPhenotype.
 	 */

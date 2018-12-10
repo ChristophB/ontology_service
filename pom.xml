@@ -134,7 +134,7 @@
         <dependency>
             <groupId>org.lha</groupId>
             <artifactId>phenoman</artifactId>
-            <version>0.1.3</version>
+            <version>0.1.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.sourceforge.owlapi</groupId>

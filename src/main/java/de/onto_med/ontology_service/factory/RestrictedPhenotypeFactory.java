@@ -83,7 +83,7 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data).asDateRange()
 			);
 		} else if (abstractPhenotype.hasStringDatatype()) {
-			phenotype = abstractPhenotype.asAbstractSingleStringPhenotype().createRestrictedSinglePhenotype(
+			phenotype = abstractPhenotype.asAbstractSingleStringPhenotype().createRestrictedPhenotype(
 				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data).asStringRange()
 			);
 		} else {
