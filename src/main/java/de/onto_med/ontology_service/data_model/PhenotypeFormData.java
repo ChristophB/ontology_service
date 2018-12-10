@@ -62,6 +62,8 @@ public class PhenotypeFormData {
 	private List<String> relations            = new ArrayList<>();
 	@JsonProperty
 	private Double       score;
+	@JsonProperty
+	private String aggregateFunction;
 
 	private String name; //TODO: what abaout this field? name = mainTitle? or name = identifier?
 
@@ -118,6 +120,14 @@ public class PhenotypeFormData {
 
 	public void setScore(Double score) {
 		this.score = score;
+	}
+
+	public String getAggregateFunction() {
+		return aggregateFunction;
+	}
+
+	public void setAggregateFunction(String aggregateFunction) {
+		this.aggregateFunction = aggregateFunction;
 	}
 
 	public String getSuperCategory() {

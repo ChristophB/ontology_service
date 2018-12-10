@@ -3,6 +3,7 @@ package de.onto_med.ontology_service.factory;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.man.PhenotypeManager;
+import org.lha.phenoman.math.Function;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 
@@ -62,18 +63,31 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @param datatype An OWL2Datatype.
 	 * @return An AbstractSinglePhenotype.
 	 */
-	private AbstractSinglePhenotype createAbstractSinglePhenotype(PhenotypeFormData data, String datatype) throws NullPointerException, UnsupportedDataTypeException {
+	private AbstractSinglePhenotype createAbstractSinglePhenotype(PhenotypeFormData data, String datatype)
+		throws NullPointerException, UnsupportedDataTypeException
+	{
 		AbstractSinglePhenotype phenotype;
-		if ("string".equals(datatype)) {
-			phenotype = new AbstractSingleStringPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
-		} else if ("numeric".equals(datatype)) {
-			phenotype = new AbstractSingleDecimalPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
-		} else if ("date".equals(datatype)) {
-			phenotype = new AbstractSingleDatePhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
-		} else if ("boolean".equals(datatype)) {
-			phenotype = new AbstractSingleBooleanPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
-		} else {
-			throw new UnsupportedDataTypeException("Could not determine Datatype.");
+		switch (datatype) {
+			case "string":
+				phenotype = new AbstractSingleStringPhenotype(
+					data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
+				break;
+			case "numeric":
+				Function function = null;
+				try { function = Function.valueOf(data.getAggregateFunction()); } catch (IllegalArgumentException ignored) { }
+
+				phenotype = new AbstractSingleDecimalPhenotype(
+					data.getIdentifier(), data.getMainTitle(), function, data.getSuperCategories());
+				break;
+			case "date":
+				phenotype = new AbstractSingleDatePhenotype(
+					data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
+				break;
+			case "boolean":
+				phenotype = new AbstractSingleBooleanPhenotype(
+					data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
+				break;
+			default: throw new UnsupportedDataTypeException("Could not determine Datatype.");
 		}
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
