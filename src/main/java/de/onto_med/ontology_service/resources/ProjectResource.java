@@ -2,6 +2,7 @@ package de.onto_med.ontology_service.resources;
 
 import java.util.List;
 import java.util.Map;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,8 +20,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Singleton;
 
 import de.imise.owl2graphml_view.onto.MainOntology;
 import de.onto_med.ontology_service.data_model.Entity;

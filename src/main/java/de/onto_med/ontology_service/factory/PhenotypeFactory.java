@@ -1,9 +1,9 @@
 package de.onto_med.ontology_service.factory;
 
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.model.phenotype.top_level.Category;
+import org.lha.phenoman.model.phenotype.top_level.Entity;
 
 import java.net.URI;
 import java.util.List;
@@ -15,8 +15,6 @@ import java.util.List;
 public abstract class PhenotypeFactory {
 	protected static final String DEFAULT_LANG = "en";
 
-	protected org.lha.phenoman.model.phenotype.PhenotypeFactory factory;
-
 	/**
 	 * Adds basic information to the provided phenotype based on formData.
 	 * Basic information includes only fields, which are available for all types of phenotypes.
@@ -24,7 +22,7 @@ public abstract class PhenotypeFactory {
 	 * @param phenotype An abstract or restricted phenotype.
 	 * @param formData Data which was provided via form or JSON post request.
 	 */
-	protected void setPhenotypeBasicData(Category phenotype, Phenotype formData) {
+	protected void setPhenotypeBasicData(Entity phenotype, PhenotypeFormData formData) {
 		addPhenotypeSynonyms(phenotype, formData.getSynonyms(), formData.getSynonymLanguages());
 		addPhenotypeDescriptions(phenotype, formData.getDescriptions(), formData.getDescriptionLanguages());
 		addPhenotypeRelations(phenotype, formData.getRelations());
@@ -49,7 +47,7 @@ public abstract class PhenotypeFactory {
 	 * @param synonyms Synonyms to be added.
 	 * @param languages The languages of the synonyms. They must be in the same order as the synonyms.
 	 */
-	private void addPhenotypeSynonyms(Category phenotype, List<String> synonyms, List<String> languages) {
+	private void addPhenotypeSynonyms(Entity phenotype, List<String> synonyms, List<String> languages) {
 		for (int i = 0; i < synonyms.size(); i++) {
 			String synonym = synonyms.get(i);
 			if (StringUtils.isBlank(synonym)) continue;
@@ -65,7 +63,7 @@ public abstract class PhenotypeFactory {
 	 * @param descriptions The descriptions.
 	 * @param languages The languages of the descriptions. They must be in the same order as the descriptions.
 	 */
-	private void addPhenotypeDescriptions(Category phenotype, List<String> descriptions, List<String> languages) {
+	private void addPhenotypeDescriptions(Entity phenotype, List<String> descriptions, List<String> languages) {
 		for (int i = 0; i < descriptions.size(); i++) {
 			String description = descriptions.get(i);
 			if (StringUtils.isBlank(description)) continue;
@@ -80,7 +78,7 @@ public abstract class PhenotypeFactory {
 	 * @param phenotype The phenotype, where the relations will be added to.
 	 * @param relations The relations.
 	 */
-	private void addPhenotypeRelations(Category phenotype, List<String> relations) {
+	private void addPhenotypeRelations(Entity phenotype, List<String> relations) {
 		for (String relation : relations)
 			if (StringUtils.isNoneBlank(relation))
 				phenotype.addRelatedConcept(relation);

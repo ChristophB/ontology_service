@@ -1,13 +1,14 @@
 package de.onto_med.ontology_service;
 
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeLimited;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.eclipse.jetty.server.Response;
 import org.junit.*;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
+import org.lha.phenoman.man.PhenotypeManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
+import org.lha.phenoman.model.phenotype.top_level.Phenotype;
 import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
@@ -28,9 +29,15 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	private static final String ONTOLOGY_PATH = RULE.getConfiguration().getPhenotypePath().replace("%id%", ID);
 	private static final String UPDATE_PATH   = "/phenotype/" + ID + "/create";
 
+	@AfterClass
+	public static void cleanUp() throws IOException {
+		Path path = Paths.get(ONTOLOGY_PATH);
+		if (Files.exists(path)) Files.delete(path);
+	}
+
 	@Before
 	public void createPhenotypes() {
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(false);
 			setIsRestricted(false);
 			setIdentifier("Category_1");
@@ -43,7 +50,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		phenotype = new Phenotype() {{
+		phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(false);
 			setIsRestricted(false);
 			setIdentifier("Category_2");
@@ -57,7 +64,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
 		String id = "Double_Phenotype_1";
-		phenotype = new Phenotype() {{
+		phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier("Abstract_" + id);
@@ -69,7 +76,6 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setUcum("kg");
-			setIsDecimal(true);
 			setSuperCategory("Category_1");
 		}};
 
@@ -80,7 +86,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		phenotype = new Phenotype() {{
+		phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier("Restricted_" + id);
@@ -109,7 +115,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	@Test
 	public void testUpdateCategoriesOfPhenotype() {
 		String id = "Abstract_Double_Phenotype_1";
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(id);
@@ -121,7 +127,6 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setUcum("kg");
-			setIsDecimal(true);
 			setSuperCategory("Category_1;Category_2");
 		}};
 
@@ -132,17 +137,17 @@ public class UpdatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category                 actual  = manager.getPhenotype(id);
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		Phenotype        actual  = manager.getPhenotype(id);
 
-		assertThat(actual.asAbstractSinglePhenotype().getPhenotypeCategories()).isEqualTo(phenotype.getSuperCategories());
+		assertThat(actual.asAbstractSinglePhenotype().getCategories()).isEqualTo(phenotype.getSuperCategories());
 	}
 
 	@Test
 	public void testUpdatePhenotypeWithSameType() {
 		String id = "Double_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier("Restricted_" + id);
@@ -154,9 +159,9 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperPhenotype("Abstract_" + id);
-			setRangeMin("8");
+			setRangeMin("8.0");
 			setRangeMinOperator(">");
-			setRangeMax("12");
+			setRangeMax("12.0");
 			setRangeMaxOperator("<=");
 		}};
 
@@ -167,12 +172,12 @@ public class UpdatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category                 actual  = manager.getPhenotype("Restricted_" + id);
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		Phenotype        actual  = manager.getPhenotype("Restricted_" + id);
 
-		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
-			"Restricted_" + id, "Abstract_" + id,
-			new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Double[]{ 8.0, 12.0 }));
+		RestrictedSinglePhenotype expected = manager.getPhenotype("Abstract_" + id)
+			.asAbstractSinglePhenotype().asAbstractSingleDecimalPhenotype().createRestrictedPhenotype(
+				"Restricted_" + id, "Restricted_" + id, new DecimalRangeLimited().setLimit(OWLFacet.MIN_EXCLUSIVE, "8.0").setLimit(OWLFacet.MAX_INCLUSIVE, "12.0" ));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title("Restricted_" + id));
@@ -182,24 +187,22 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		expected.addRelatedConcept("IRI 2");
 
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
-		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DOUBLE);
+		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DECIMAL);
 		assertThat(actual).isEqualTo(expected);
 	}
 
 	@Test
 	public void testUpdatePhenotypeWithSameTypeByApi() throws WrongPhenotypeTypeException {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory         factory = manager.getPhenotypeFactory();
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		AbstractSingleDecimalPhenotype abstractPhenotype = new AbstractSingleDecimalPhenotype("Weight", "Weight");
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Weight", "Weight", OWL2Datatype.XSD_DOUBLE));
-		manager.addRestrictedSinglePhenotype(factory.createRestrictedSinglePhenotype(
-			"High weight", "Weight", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_INCLUSIVE }, new Double[]{ 100.0 })
-		));
+		manager.addAbstractSinglePhenotype(abstractPhenotype);
+		manager.addRestrictedSinglePhenotype(abstractPhenotype.createRestrictedPhenotype(
+			"High weight", "Weight", new DecimalRangeLimited().setLimit(OWLFacet.MIN_INCLUSIVE, "100.0")));
 		manager.write();
 
-		RestrictedSinglePhenotype update = factory.createRestrictedSinglePhenotype(
-			"High weight", "Weight", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_INCLUSIVE }, new Double[]{ 110.0 })
-		);
+		RestrictedSinglePhenotype update = abstractPhenotype.createRestrictedPhenotype(
+			"High weight", "Weight", new DecimalRangeLimited().setLimit(OWLFacet.MIN_INCLUSIVE, "110.0")	);
 		manager.addRestrictedSinglePhenotype(update);
 		manager.write();
 		assertThat(manager.getPhenotype(update.getName())).isEqualTo(update);
@@ -209,7 +212,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	public void testUpdatePhenotypeWithDifferentType() {
 		String title = "Abstract_Double_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			getTitles().add(title);
@@ -231,55 +234,46 @@ public class UpdatePhenotypeTest extends AbstractTest {
 
 	@Test(expected = WrongPhenotypeTypeException.class)
 	public void testUpdatePhenotypeWithDifferentTypeByApi() throws WrongPhenotypeTypeException {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory         factory = manager.getPhenotypeFactory();
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 
-		AbstractSinglePhenotype phenotype = factory.createAbstractSinglePhenotype("Weight", "Weight", OWL2Datatype.XSD_DOUBLE);
-		Category                category  = factory.createCategory("Anthropometric");
+		AbstractSinglePhenotype phenotype = new AbstractSingleDecimalPhenotype("Weight", "Weight");
+		Category                category  = new Category("Anthropometric");
 		try {
 			manager.addAbstractSinglePhenotype(phenotype);
-		} catch (WrongPhenotypeTypeException ignored) {	}
-		manager.addPhenotypeCategory(category);
+		} catch (WrongPhenotypeTypeException ignored) { }
+		manager.addCategory(category);
 		manager.write();
 
-		manager.addAbstractBooleanPhenotype(factory.createAbstractBooleanPhenotype(phenotype.getName(), category.getName()));
+		manager.addAbstractBooleanPhenotype(new AbstractBooleanPhenotype(phenotype.getName(), category.getName()));
 		manager.write();
 	}
 
 	@Test
 	public void testUpdatePhenotypeWithDifferentSingleTypeByApi() throws WrongPhenotypeTypeException {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory         factory = manager.getPhenotypeFactory();
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 
-		AbstractSinglePhenotype phenotype = factory.createAbstractSinglePhenotype("Weight", "Weight", OWL2Datatype.XSD_DOUBLE);
-		Category                category  = factory.createCategory("Anthropometric");
+		AbstractSinglePhenotype phenotype = new AbstractSingleDecimalPhenotype("Weight", "Weight");
+		Category                category  = new Category("Anthropometric");
 
 		try {
 			manager.addAbstractSinglePhenotype(phenotype);
 		} catch (WrongPhenotypeTypeException ignored) { }
-		manager.addPhenotypeCategory(category);
+		manager.addCategory(category);
 		manager.write();
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype(
-			phenotype.getName(), phenotype.getName(), OWL2Datatype.XSD_INTEGER, category.getName()));
+		manager.addAbstractSinglePhenotype(new AbstractSingleDecimalPhenotype(
+			phenotype.getName(), phenotype.getName(), category.getName()));
 	}
 
 	@Test
 	public void testPhenotypeCreation() throws WrongPhenotypeTypeException {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(
+		PhenotypeManager manager = new PhenotypeManager(
 			RULE.getConfiguration().getPhenotypePath().replace("%id%", "test0815"), false);
-		PhenotypeFactory factory = manager.getPhenotypeFactory();
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("abstract", "abstract", OWL2Datatype.XSD_DOUBLE));
+		AbstractSingleDecimalPhenotype abstractPhenotype = new AbstractSingleDecimalPhenotype("abstract", "abstract");
+		manager.addAbstractSinglePhenotype(new AbstractSingleDecimalPhenotype("abstract", "abstract"));
 
-		factory.createRestrictedSinglePhenotype(
-			"restricted", "abstract", new PhenotypeRange(new OWLFacet[]{ OWLFacet.MIN_EXCLUSIVE }, new Double[]{ 5.0 })
-		);
-	}
-
-	@AfterClass
-	public static void cleanUp() throws IOException {
-		Path path = Paths.get(ONTOLOGY_PATH);
-		if (Files.exists(path)) Files.delete(path);
+		abstractPhenotype.createRestrictedPhenotype(
+			"restricted", "abstract", new DecimalRangeLimited().setLimit(OWLFacet.MIN_EXCLUSIVE, "5.0"));
 	}
 }

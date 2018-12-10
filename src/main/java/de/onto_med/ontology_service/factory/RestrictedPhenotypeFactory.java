@@ -1,20 +1,21 @@
 package de.onto_med.ontology_service.factory;
 
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.imise.onto_api.entities.restrictions.data_range.*;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.util.Parser;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
+import org.lha.phenoman.man.PhenotypeManager;
+import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
 import org.lha.phenoman.model.phenotype.RestrictedBooleanPhenotype;
 import org.lha.phenoman.model.phenotype.RestrictedCalculationPhenotype;
 import org.lha.phenoman.model.phenotype.RestrictedSinglePhenotype;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
+import org.lha.phenoman.model.phenotype.top_level.Phenotype;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
-import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.activation.UnsupportedDataTypeException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 
@@ -23,11 +24,10 @@ import java.util.*;
  * @author Christoph Beger
  */
 public class RestrictedPhenotypeFactory extends PhenotypeFactory {
-	public PhenotypeOntologyManager manager;
+	public PhenotypeManager manager;
 
-	public RestrictedPhenotypeFactory(PhenotypeOntologyManager manager) {
+	public RestrictedPhenotypeFactory(PhenotypeManager manager) {
 		this.manager = manager;
-		this.factory = manager.getPhenotypeFactory();
 	}
 
 	/**
@@ -36,8 +36,8 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A Restricted Phenotype.
 	 * @throws UnsupportedDataTypeException If thr provided phenotype data contains invalid data.
 	 */
-	public RestrictedPhenotype createRestrictedPhenotype(Phenotype data) throws UnsupportedDataTypeException, NullPointerException {
-		Category superPhenotype = manager.getPhenotype(data.getSuperPhenotype());
+	public RestrictedPhenotype createRestrictedPhenotype(PhenotypeFormData data) throws UnsupportedDataTypeException, NullPointerException, ParseException {
+		Phenotype superPhenotype = manager.getPhenotype(data.getSuperPhenotype());
 
 		if (StringUtils.isBlank(data.getIdentifier()))
 			data.setIdentifier(UUID.randomUUID().toString());
@@ -66,10 +66,31 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param superPhenotype The super phenotype.
 	 * @return A RestrictedSinglePhenotype.
 	 */
-	private RestrictedSinglePhenotype createRestrictedSinglePhenotype(Phenotype data, Category superPhenotype) {
-		RestrictedSinglePhenotype phenotype = factory.createRestrictedSinglePhenotype(
-			data.getIdentifier(), data.getSuperPhenotype(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data)
-		);
+	private RestrictedSinglePhenotype createRestrictedSinglePhenotype(PhenotypeFormData data, Phenotype superPhenotype) throws UnsupportedDataTypeException, ParseException {
+		RestrictedSinglePhenotype phenotype;
+		AbstractSinglePhenotype abstractPhenotype = superPhenotype.asAbstractSinglePhenotype();
+
+		if (abstractPhenotype.hasBooleanDatatype()) {
+			phenotype = abstractPhenotype.asAbstractSingleBooleanPhenotype().createRestrictedPhenotype(
+				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data).asBooleanRange()
+			);
+		} else if (abstractPhenotype.hasDecimalDatatype()) {
+			phenotype = abstractPhenotype.asAbstractSingleDecimalPhenotype().createRestrictedPhenotype(
+				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data).asDecimalRange()
+			);
+		} else if (abstractPhenotype.hasDateDatatype()) {
+			phenotype = abstractPhenotype.asAbstractSingleDatePhenotype().createRestrictedPhenotype(
+				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data).asDateRange()
+			);
+		} else if (abstractPhenotype.hasStringDatatype()) {
+			phenotype = abstractPhenotype.asAbstractSingleStringPhenotype().createRestrictedSinglePhenotype(
+				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(superPhenotype.asAbstractSinglePhenotype().getDatatype(), data).asStringRange()
+			);
+		} else {
+			throw new UnsupportedDataTypeException(
+				"Super phenotype has a not supported data type."
+				+ "Maybe the ontology is inconsistent or was created with an old version of PhenoMan?");
+		}
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 
@@ -82,9 +103,9 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param superPhenotype The super phenotype.
 	 * @return A RestrictedCalculationPhenotype.
 	 */
-	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(Phenotype data, Category superPhenotype) {
-		RestrictedCalculationPhenotype phenotype = factory.createRestrictedCalculationPhenotype(
-			data.getIdentifier(), superPhenotype.getName(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DOUBLE, data)
+	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(PhenotypeFormData data, org.lha.phenoman.model.phenotype.top_level.Phenotype superPhenotype) throws ParseException {
+		RestrictedCalculationPhenotype phenotype = superPhenotype.asAbstractCalculationPhenotype().createRestrictedPhenotype(
+			data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DECIMAL, data).asDecimalRange()
 		);
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
@@ -98,12 +119,12 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param superPhenotype The super phenotype.
 	 * @return A RestrictedBooleanPhenotype.
 	 */
-	private RestrictedBooleanPhenotype createRestrictedBooleanPhenotype(Phenotype data, Category superPhenotype) throws NullPointerException {
+	private RestrictedBooleanPhenotype createRestrictedBooleanPhenotype(PhenotypeFormData data, org.lha.phenoman.model.phenotype.top_level.Phenotype superPhenotype) throws NullPointerException {
 		if (StringUtils.isBlank(data.getExpression()))
 			throw new NullPointerException("Boolean expression for restricted boolean phenotype is missing.");
 
-		RestrictedBooleanPhenotype phenotype = factory.createRestrictedBooleanPhenotype(
-			data.getIdentifier(), data.getMainTitle(), superPhenotype.getName(), data.getExpression()
+		RestrictedBooleanPhenotype phenotype = superPhenotype.asAbstractBooleanPhenotype().createRestrictedPhenotype(
+			data.getIdentifier(), data.getMainTitle(), manager.getManchesterSyntaxExpression(data.getExpression())
 		);
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
@@ -119,8 +140,8 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A value range for a restricted phenotype.
 	 * @throws NullPointerException If no range could be generated.
 	 */
-	private PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, Phenotype data) throws NullPointerException {
-		PhenotypeRange range = Optional.ofNullable(createRestrictedPhenotypeRange(
+	private DataRange createRestrictedPhenotypeRange(OWL2Datatype datatype, PhenotypeFormData data) throws NullPointerException, ParseException {
+		DataRange range = Optional.ofNullable(createRestrictedPhenotypeRange(
 			datatype,
 			data.getRangeMin(), data.getRangeMinOperator(),
 			data.getRangeMax(), data.getRangeMaxOperator()
@@ -139,48 +160,31 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param minOperator Operator for bottom border.
 	 * @param maxOperator Operator for top border.
 	 */
-	private PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, String min, String minOperator, String max, String maxOperator) {
-		List<OWLFacet> facets = new ArrayList<>();
-
+	private DataRange createRestrictedPhenotypeRange(OWL2Datatype datatype, String min, String minOperator, String max, String maxOperator) throws ParseException {
 		if ((StringUtils.isBlank(min) || StringUtils.isBlank(minOperator)) && (StringUtils.isBlank(max) || StringUtils.isBlank(maxOperator))) {
 			return null;
-		} else if (datatype.equals(OWL2Datatype.XSD_INTEGER)) {
-			List<Integer> values = new ArrayList<>();
+		} else if (OWL2Datatype.XSD_DECIMAL.equals(datatype)) {
+			DecimalRangeLimited range = new DecimalRangeLimited();
 
 			if (StringUtils.isNoneBlank(min) && StringUtils.isNoneBlank(minOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(minOperator));
-				values.add(Integer.valueOf(min));
+				range.setLimit(Objects.requireNonNull(OWLFacet.getFacetBySymbolicName(minOperator)), min);
 			}
 			if (StringUtils.isNoneBlank(max) && StringUtils.isNoneBlank(maxOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(maxOperator));
-				values.add(Integer.valueOf(max));
+				range.setLimit(Objects.requireNonNull(OWLFacet.getFacetBySymbolicName(maxOperator)), max);
 			}
-			return new PhenotypeRange(facets.toArray(new OWLFacet[facets.size()]), values.toArray(new Integer[values.size()]));
-		} else if (datatype.equals(OWL2Datatype.XSD_DOUBLE)) {
-			List<Double> values = new ArrayList<>();
+			return range;
+		} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype) || OWL2Datatype.XSD_LONG.equals(datatype)) {
+			DateRangeLimited range = new DateRangeLimited();
 
 			if (StringUtils.isNoneBlank(min) && StringUtils.isNoneBlank(minOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(minOperator));
-				values.add(Double.valueOf(min));
+				range.setLimit(Objects.requireNonNull(OWLFacet.getFacetBySymbolicName(minOperator)), min);
 			}
 			if (StringUtils.isNoneBlank(max) && StringUtils.isNoneBlank(maxOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(maxOperator));
-				values.add(Double.valueOf(max));
+				range.setLimit(Objects.requireNonNull(OWLFacet.getFacetBySymbolicName(maxOperator)), max);
 			}
-			return new PhenotypeRange(facets.toArray(new OWLFacet[facets.size()]), values.toArray(new Double[values.size()]));
-		} else if (datatype.equals(OWL2Datatype.XSD_DATE_TIME)) {
-			List<Date> values = new ArrayList<>();
-
-			if (StringUtils.isNoneBlank(min) && StringUtils.isNoneBlank(minOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(minOperator));
-				try { values.add(Parser.parseStringToDate(min)); } catch (Exception e) { values.add(null); }
-			}
-			if (StringUtils.isNoneBlank(max) && StringUtils.isNoneBlank(maxOperator)) {
-				facets.add(OWLFacet.getFacetBySymbolicName(maxOperator));
-				try { values.add(Parser.parseStringToDate(max)); } catch (Exception e) { values.add(null); }
-			}
-			return new PhenotypeRange(facets.toArray(new OWLFacet[facets.size()]), values.toArray(new Date[values.size()]));
+			return range;
 		}
+
 		return null;
 	}
 
@@ -190,29 +194,18 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param datatype The OWL2Datatype, which will be used to generate a PhenotypeRange.
 	 * @param enumValues A list of enumeration values.
 	 */
-	private PhenotypeRange createRestrictedPhenotypeRange(OWL2Datatype datatype, List<String> enumValues) {
-		if (OWL2Datatype.XSD_INTEGER.equals(datatype)) {
-			List<Integer> values = new ArrayList<>();
-			enumValues.stream().filter(StringUtils::isNoneBlank).forEach(
-				v -> { try { values.add(Integer.valueOf(v)); } catch (Exception ignored) { } });
-			return new PhenotypeRange(values.toArray(new Integer[values.size()]));
-		} else if (OWL2Datatype.XSD_DOUBLE.equals(datatype)) {
-			List<Double> values = new ArrayList<>();
-			enumValues.stream().filter(StringUtils::isNoneBlank).forEach(
-				v -> { try { values.add(Double.valueOf(v)); } catch (Exception ignored) { } });
-			return new PhenotypeRange(values.toArray(new Double[values.size()]));
+	private DataRange createRestrictedPhenotypeRange(OWL2Datatype datatype, List<String> enumValues) {
+		if (OWL2Datatype.XSD_DECIMAL.equals(datatype)) {
+			return new DecimalRangeEnumerated(enumValues.stream().filter(StringUtils::isNoneBlank).map(
+				v -> { try { return BigDecimal.valueOf(Double.valueOf(v)); } catch (Exception ignored) { return null; } }).toArray(BigDecimal[]::new));
 		} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype)) {
-			List<Date> values = new ArrayList<>();
-			enumValues.stream().filter(StringUtils::isNoneBlank).forEach(
-				v -> { try {
-					values.add(Parser.parseStringToDate(v));
-				} catch (ParseException ignored) { } });
-			return new PhenotypeRange(values.toArray(new Date[values.size()]));
+			return new DateRangeEnumerated(enumValues.stream().filter(StringUtils::isNoneBlank).map(
+				v -> { try { return Parser.parseStringToDate(v); } catch (ParseException ignored) { return null; } }).toArray(Date[]::new));
 		} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
-			return new PhenotypeRange(enumValues.stream().filter(StringUtils::isNoneBlank).toArray(String[]::new));
+			return new StringRange(enumValues.stream().filter(StringUtils::isNoneBlank).toArray(String[]::new));
 		} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
 			if (enumValues.size() > 0 && StringUtils.isNoneBlank(enumValues.get(0)))
-				return new PhenotypeRange(Boolean.valueOf(enumValues.get(0)));
+				return new BooleanRange(Boolean.valueOf(enumValues.get(0)));
 		}
 
 		return null;

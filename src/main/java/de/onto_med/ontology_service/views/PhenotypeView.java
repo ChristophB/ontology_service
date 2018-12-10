@@ -1,18 +1,18 @@
 package de.onto_med.ontology_service.views;
 
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
-import org.lha.phenoman.model.phenotype.top_level.Category;
+import org.lha.phenoman.model.phenotype.top_level.Entity;
 
 import java.util.List;
 import java.util.Map;
 
 public class PhenotypeView extends RestApiView {
-	private String            id;
-	private Category          phenotype;
-	private PhenotypeManager  manager;
-	private List<Phenotype>   parts;
-	private Map<String, Long> ontologies;
+	private String                  id;
+	private Entity                  phenotype;
+	private PhenotypeManager        manager;
+	private List<PhenotypeFormData> parts;
+	private Map<String, Long>       ontologies;
 
 	public PhenotypeView(String template, String rootPath, String id) {
 		super(template, rootPath);
@@ -36,20 +36,20 @@ public class PhenotypeView extends RestApiView {
 		this.manager = manager;
 	}
 
-	public void setPhenotype(Category phenotype) {
-		this.phenotype = phenotype;
-	}
-
-	public Category getPhenotype() {
+	public Entity getPhenotype() {
 		return phenotype;
 	}
 
-	public void setParts(List<Phenotype> parts) {
-		this.parts = parts;
+	public void setPhenotype(Entity phenotype) {
+		this.phenotype = phenotype;
 	}
 
-	public List<Phenotype> getParts() {
+	public List<PhenotypeFormData> getParts() {
 		return parts;
+	}
+
+	public void setParts(List<PhenotypeFormData> parts) {
+		this.parts = parts;
 	}
 
 	public Map<String, Long> getOntologies() {

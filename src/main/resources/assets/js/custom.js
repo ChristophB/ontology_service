@@ -325,7 +325,7 @@ function inspectPhenotype(data) {
 		form = '#abstract-phenotype-form';
 		$(form + ' #ucum').val(data.unit);
 		$(form + ' #datatype').val(getDatatype(data));
-		$(form + ' #is-decimal')[0].checked = (data.datatype == 'XSD_DOUBLE');
+		$(form + ' #is-decimal')[0].checked = (data.datatype == 'XSD_DECIMAL');
 		$(form + ' #formula')[0].value = data.formula;
 
 		toggleValueDefinition();
@@ -442,7 +442,7 @@ function getDatatype(data) {
     	return "string";
     } else if (data.datatype == 'XSD_DATE_TIME' || data.datatype == 'XSD_LONG') {
     	return "date";
-    } else if (data.datatype == 'XSD_INTEGER' || data.datatype == 'XSD_DOUBLE') {
+    } else if (data.datatype == 'XSD_DECIMAL') {
     	return "numeric";
     } else if (data.datatype == 'XSD_BOOLEAN') {
     	return "boolean";

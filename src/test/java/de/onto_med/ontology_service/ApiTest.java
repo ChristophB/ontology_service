@@ -4,7 +4,7 @@ import de.onto_med.ontology_service.factory.PhenotypeFactory;
 import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
+import org.lha.phenoman.man.PhenotypeManager;
 import org.lha.phenoman.model.phenotype.AbstractBooleanPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.Title;
@@ -16,6 +16,8 @@ import java.nio.file.Paths;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ApiTest extends AbstractTest {
 	private static final String ID            = String.valueOf(new Date().getTime());
@@ -39,29 +41,32 @@ public class ApiTest extends AbstractTest {
 	public void testRestrictedCompositeBooleanWithoutScore() throws Exception {
 		String title = "abs_bool_phen";
 		String title_res = title + "_res";
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, true);
-		org.lha.phenoman.model.phenotype.PhenotypeFactory factory = manager.getPhenotypeFactory();
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, true);
+		AbstractBooleanPhenotype abstractPhenotype = new AbstractBooleanPhenotype(title, new Title(title));
 
-		manager.addAbstractBooleanPhenotype(new AbstractBooleanPhenotype(title, new Title(title)));
-		manager.addRestrictedBooleanPhenotype(factory.createRestrictedBooleanPhenotype(
-			title_res, new Title(title_res), title, "Thing"));
+		manager.addAbstractBooleanPhenotype(abstractPhenotype);
+		manager.addRestrictedBooleanPhenotype(abstractPhenotype.createRestrictedPhenotype(
+			title_res, new Title(title_res), manager.getManchesterSyntaxExpression("Thing")));
 		manager.getPhenotype(title_res).asRestrictedBooleanPhenotype().getScore();
 	}
 
-	@Test @Ignore
+	@Test
 	public void testCategoryMethodPhenotypeCategories() throws Exception {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, true);
-		org.lha.phenoman.model.phenotype.PhenotypeFactory factory = manager.getPhenotypeFactory();
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, true);
 
-		Category superCategory = factory.createCategory("super_category");
-		Category subCategory   = factory.createCategory("sub_category");
+		Category superCategory = new Category("super_category");
+		Category subCategory   = new Category("sub_category");
 
-		manager.addPhenotypeCategory(superCategory);
-		manager.addPhenotypeCategory(subCategory, superCategory.getName());
+		manager.addCategory(superCategory);
+		manager.addCategory(subCategory, superCategory.getName());
 
 		Category actual = manager.getCategory(subCategory.getName());
 
 		assertThat(actual).isNotNull();
-		Category.class.getMethod("getPhenotypeCategories");
+		try {
+			Category.class.getMethod("getCategories");
+		} catch (NoSuchMethodException e) {
+			fail("Category does not have method getCategories()");
+		}
 	}
 }

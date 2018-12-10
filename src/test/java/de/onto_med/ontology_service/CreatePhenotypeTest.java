@@ -1,16 +1,19 @@
 package de.onto_med.ontology_service;
 
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.imise.onto_api.entities.restrictions.data_range.BooleanRange;
+import de.imise.onto_api.entities.restrictions.data_range.DateRangeLimited;
+import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeLimited;
+import de.imise.onto_api.entities.restrictions.data_range.StringRange;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.eclipse.jetty.server.Response;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
+import org.lha.phenoman.man.PhenotypeManager;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
 import org.lha.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
@@ -21,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +45,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	public void createCategory() {
 		String title = "Category_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(false);
 			setIsRestricted(false);
 			setIdentifier(title);
@@ -59,7 +63,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 		Category actual = manager.getCategory(title);
 
 		Category expected = new Category(title, new Title(title, "en"));
@@ -92,7 +96,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testDatePhenotypeCreation() {
+	public void testDatePhenotypeCreation() throws ParseException {
 		testAbstractDatePhenotypeCreation();
 		testRestrictedDatePhenotypeCreation();
 	}
@@ -124,7 +128,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Abstract_Integer_Phenotype_1";
 		String title2 = title + "_title2";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(title);
@@ -149,10 +153,10 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 	    assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-	    Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+	    org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-	    AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title, "en"), OWL2Datatype.XSD_INTEGER, "Category_1");
+	    AbstractSinglePhenotype expected = new AbstractSingleDecimalPhenotype(title, new Title(title, "en"), "Category_1");
 	    expected.addTitle(new Title(title2, "de"));
 		expected.addTitle(new Title(title, "en"));
 		expected.setUnit("m^2");
@@ -164,14 +168,14 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.addRelatedConcept("IRI 2");
 
 		assertThat(actual.isAbstractSinglePhenotype()).isTrue();
-		assertThat(actual.asAbstractSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_INTEGER);
+		assertThat(actual.asAbstractSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DECIMAL);
 		assertThat(actual).isEqualTo(expected);
 	}
 
 	private void testAbstractDoublePhenotypeCreation() {
 		String title = "Abstract_Double_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(title);
@@ -184,7 +188,6 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperCategory("Category_1");
 			setUcum("kg");
-			setIsDecimal(true);
 		}};
 
 		javax.ws.rs.core.Response response
@@ -194,10 +197,10 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title), OWL2Datatype.XSD_DOUBLE, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSingleDecimalPhenotype(title, new Title(title), "Category_1");
 		expected.setUnit("kg");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
@@ -208,14 +211,14 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.addRelatedConcept("IRI 2");
 
 		assertThat(actual.isAbstractSinglePhenotype()).isTrue();
-		assertThat(actual.asAbstractSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DOUBLE);
+		assertThat(actual.asAbstractSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DECIMAL);
 		assertThat(actual).isEqualTo(expected);
 	}
 
 	private void testAbstractStringPhenotypeCreation() {
 		String title = "Abstract_String_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(title);
@@ -236,10 +239,10 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title), OWL2Datatype.XSD_STRING, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSingleStringPhenotype(title, new Title(title), "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -256,7 +259,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private void testAbstractDatePhenotypeCreation() {
 		String title = "Abstract_Date_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(title);
@@ -277,10 +280,10 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title), OWL2Datatype.XSD_DATE_TIME, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSingleDatePhenotype(title, new Title(title), "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -297,7 +300,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private void testAbstractBooleanPhenotypeCreation() {
 		String title = "Abstract_Boolean_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(title);
@@ -318,10 +321,10 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		AbstractSinglePhenotype expected = new AbstractSinglePhenotype(title, new Title(title), OWL2Datatype.XSD_BOOLEAN, "Category_1");
+		AbstractSinglePhenotype expected = new AbstractSingleBooleanPhenotype(title, new Title(title), "Category_1");
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -339,7 +342,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		String title = "Abstract_Composite_Boolean_Phenotype_1";
 
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(title);
@@ -360,8 +363,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
 		AbstractBooleanPhenotype expected = new AbstractBooleanPhenotype(title, new Title(title), "Category_1");
 		expected.addDescription("Description EN", "en");
@@ -379,7 +382,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private void testAbstractCalculationPhenotypeCreation() {
 		String title = "Abstract_Calculation_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier(title);
@@ -402,11 +405,11 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		AbstractCalculationPhenotype expected = manager.getPhenotypeFactory().createAbstractCalculationPhenotype(
-			title, new Title(title), "Abstract_Integer_Phenotype_1", "Category_1"
+		AbstractCalculationPhenotype expected = new AbstractCalculationPhenotype(
+			title, new Title(title), manager.getFormula("Abstract_Integer_Phenotype_1"), "Category_1"
 		);
 		expected.setUnit("cm");
 		expected.addDescription("Description EN", "en");
@@ -429,7 +432,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private void testRestrictedIntegerPhenotypeCreation() {
 		String title = "Restricted_Integer_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier(title);
@@ -454,12 +457,12 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
-			title, "Abstract_Integer_Phenotype_1",
-			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_EXCLUSIVE, OWLFacet.MAX_INCLUSIVE }, new Integer[] { 5, 10 }));
+		RestrictedSinglePhenotype expected = manager.getPhenotype("Abstract_Integer_Phenotype_1")
+			.asAbstractSinglePhenotype().asAbstractSingleDecimalPhenotype().createRestrictedPhenotype(
+				title, new DecimalRangeLimited().setLimit(OWLFacet.MIN_EXCLUSIVE, "5").setLimit(OWLFacet.MAX_INCLUSIVE, "10"));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title, "en"));
@@ -469,14 +472,14 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.addRelatedConcept("IRI 2");
 
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
-		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_INTEGER);
+		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DECIMAL);
 		assertThat(actual).isEqualTo(expected);
 	}
 
 	private void testRestrictedDoublePhenotypeCreation() {
 		String title = "Restricted_Double_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier(title);
@@ -501,12 +504,12 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
-			title, "Abstract_Double_Phenotype_1",
-			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
+		RestrictedSinglePhenotype expected = manager.getPhenotype("Abstract_Double_Phenotype_1")
+			.asAbstractSinglePhenotype().asAbstractSingleDecimalPhenotype().createRestrictedPhenotype(
+				title, new DecimalRangeLimited().setLimit(OWLFacet.MIN_INCLUSIVE, "5.3").setLimit(OWLFacet.MAX_EXCLUSIVE, "10.7"));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -516,14 +519,14 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.addRelatedConcept("IRI 2");
 
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
-		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DOUBLE);
+		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DECIMAL);
 		assertThat(actual).isEqualTo(expected);
 	}
 
 	private void testRestrictedStringPhenotypeCreation() {
 		String title = "Restricted_String_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier(title);
@@ -545,12 +548,12 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
-			title, "Abstract_String_Phenotype_1",
-			new PhenotypeRange("a", "b"));
+		RestrictedSinglePhenotype expected = manager.getPhenotype("Abstract_String_Phenotype_1")
+			.asAbstractSinglePhenotype().asAbstractSingleStringPhenotype().createRestrictedSinglePhenotype(
+				title, new StringRange("a", "b"));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -564,9 +567,9 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedDatePhenotypeCreation() {
+	private void testRestrictedDatePhenotypeCreation() throws ParseException {
 		String title = "Restricted_Date_Phenotype_1";
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier(title);
@@ -591,8 +594,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2015, Calendar.MARCH, 2, 0, 0, 0);
@@ -602,9 +605,9 @@ public class CreatePhenotypeTest extends AbstractTest {
 		calendar.set(Calendar.MILLISECOND, 0);
 		Date max = calendar.getTime();
 
-		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
-			title, "Abstract_Date_Phenotype_1",
-			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Date[] { min, max }));
+		RestrictedSinglePhenotype expected = manager.getPhenotype("Abstract_Date_Phenotype_1")
+			.asAbstractSinglePhenotype().asAbstractSingleDatePhenotype().createRestrictedPhenotype(
+				title, new DateRangeLimited().setLimit(OWLFacet.MIN_INCLUSIVE, min.toString()).setLimit(OWLFacet.MAX_EXCLUSIVE, max.toString()));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -620,7 +623,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 	private void testRestrictedBooleanPhenotypeCreation() {
 		String title = "Restricted_Boolean_Phenotype_1";
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier(title);
@@ -642,11 +645,12 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		RestrictedSinglePhenotype expected = manager.getPhenotypeFactory().createRestrictedSinglePhenotype(
-			title, "Abstract_Boolean_Phenotype_1", new PhenotypeRange(true));
+		RestrictedSinglePhenotype expected = manager.getPhenotype("Abstract_Boolean_Phenotype_1")
+			.asAbstractSinglePhenotype().asAbstractSingleBooleanPhenotype().createRestrictedPhenotype(
+				title, new BooleanRange(true));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -663,7 +667,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private void testRestrictedCompositeBooleanPhenotypeCreation() {
 		String title = "Restricted_Composite_Boolean_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier(title);
@@ -686,11 +690,12 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		RestrictedBooleanPhenotype expected = manager.getPhenotypeFactory().createRestrictedBooleanPhenotype(
-			title, title, "Abstract_Composite_Boolean_Phenotype_1", "Restricted_Integer_Phenotype_1");
+		RestrictedBooleanPhenotype expected = manager.getPhenotype("Abstract_Composite_Boolean_Phenotype_1")
+			.asAbstractBooleanPhenotype().createRestrictedPhenotype(
+				title, title, manager.getManchesterSyntaxExpression("Restricted_Integer_Phenotype_1"));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));
@@ -707,7 +712,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	private void testRestrictedCalculationPhenotypeCreation() {
 		String title = "Restricted_Calculation_Phenotype_1";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier(title);
@@ -732,12 +737,12 @@ public class CreatePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		Category actual = manager.getPhenotype(title);
+		PhenotypeManager                                     manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		org.lha.phenoman.model.phenotype.top_level.Phenotype actual  = manager.getPhenotype(title);
 
-		RestrictedCalculationPhenotype expected = manager.getPhenotypeFactory().createRestrictedCalculationPhenotype(
-			title, "Abstract_Calculation_Phenotype_1",
-			new PhenotypeRange(new OWLFacet[] { OWLFacet.MIN_INCLUSIVE, OWLFacet.MAX_EXCLUSIVE }, new Double[] { 5.3, 10.7 }));
+		RestrictedCalculationPhenotype expected = manager.getPhenotype("Abstract_Calculation_Phenotype_1")
+			.asAbstractCalculationPhenotype().createRestrictedPhenotype(
+				title, new DecimalRangeLimited().setLimit(OWLFacet.MIN_INCLUSIVE, "5.3").setLimit(OWLFacet.MAX_EXCLUSIVE, "10.7" ));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");
 		expected.addTitle(new Title(title));

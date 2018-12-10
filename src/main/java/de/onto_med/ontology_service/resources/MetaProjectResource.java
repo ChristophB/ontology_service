@@ -1,6 +1,5 @@
 package de.onto_med.ontology_service.resources;
 
-import com.google.inject.Singleton;
 import de.onto_med.ontology_service.data_model.CondencedProject;
 import de.onto_med.ontology_service.data_model.Entity;
 import de.onto_med.ontology_service.data_model.EntityQuery;
@@ -14,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.ArrayList;

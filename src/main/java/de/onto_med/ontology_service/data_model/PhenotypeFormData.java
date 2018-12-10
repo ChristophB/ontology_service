@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Phenotype {
+public class PhenotypeFormData {
 	@JsonProperty
 	private String       identifier;
 	@JsonProperty
@@ -61,8 +61,6 @@ public class Phenotype {
 	@JsonProperty
 	private List<String> relations            = new ArrayList<>();
 	@JsonProperty
-	private Boolean      isDecimal;
-	@JsonProperty
 	private Double       score;
 
 	private String name; //TODO: what abaout this field? name = mainTitle? or name = identifier?
@@ -72,7 +70,7 @@ public class Phenotype {
 	private Map<String, String> selectOptions;
 
 
-	public Phenotype() { }
+	public PhenotypeFormData() { }
 
 	public String getIdentifier() {
 		return identifier;
@@ -128,14 +126,6 @@ public class Phenotype {
 
 	public void setSuperCategory(String superCategory) {
 		this.superCategory = superCategory;
-	}
-
-	public Boolean getIsDecimal() {
-		return isDecimal;
-	}
-
-	public void setIsDecimal(Boolean isDecimal) {
-		this.isDecimal = isDecimal;
 	}
 
 	public List<String> getTitles() {
@@ -318,7 +308,7 @@ public class Phenotype {
 
 	@JsonIgnore
 	public String[] getSuperCategories() {
-		if (getSuperCategory() == null) return null;
+		if (getSuperCategory() == null) return new String[0];
 		List<String> result = new ArrayList<>();
 
 		for (String superCategory : getSuperCategory().split(";")) {
@@ -348,7 +338,7 @@ public class Phenotype {
 	}
 
 	private String owl2DatatypeToString(OWL2Datatype datatype) {
-		if (OWL2Datatype.XSD_INTEGER.equals(datatype) || OWL2Datatype.XSD_DOUBLE.equals(datatype))
+		if (OWL2Datatype.XSD_DECIMAL.equals(datatype))
 			return "numeric";
 		else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype))
 			return "date";

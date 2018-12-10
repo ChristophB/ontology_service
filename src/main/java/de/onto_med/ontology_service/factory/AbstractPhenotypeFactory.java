@@ -1,16 +1,12 @@
 package de.onto_med.ontology_service.factory;
 
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
-import org.lha.phenoman.model.phenotype.AbstractBooleanPhenotype;
-import org.lha.phenoman.model.phenotype.AbstractCalculationPhenotype;
-import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
+import org.lha.phenoman.man.PhenotypeManager;
+import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
-import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 import javax.activation.UnsupportedDataTypeException;
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -19,39 +15,29 @@ import java.util.UUID;
  */
 public class AbstractPhenotypeFactory extends PhenotypeFactory {
 
-	public AbstractPhenotypeFactory(PhenotypeOntologyManager manager) {
-		this.factory = manager.getPhenotypeFactory();
-	}
+	protected PhenotypeManager manager;
+
 	/**
 	 * Creates an AbstractPhenotype depending on the provided phenotype data.
 	 * @param data Phenotype data.
 	 * @return An AbstractPhenotype.
 	 * @throws UnsupportedDataTypeException If the provided phenotype data contains invalid values.
 	 */
-	public AbstractPhenotype createAbstractPhenotype(Phenotype data) throws UnsupportedDataTypeException, NullPointerException {
+	public AbstractPhenotype createAbstractPhenotype(PhenotypeFormData data) throws UnsupportedDataTypeException, NullPointerException {
 		String datatype = data.getDatatype();
 
 		if (StringUtils.isBlank(data.getIdentifier()))
 			data.setIdentifier(UUID.randomUUID().toString());
 
 		AbstractPhenotype phenotype;
-		if ("numeric".equals(datatype)) {
-			phenotype = createAbstractSinglePhenotype(
-				data, data.getIsDecimal() != null && data.getIsDecimal()
-					? OWL2Datatype.XSD_DOUBLE : OWL2Datatype.XSD_INTEGER
-			);
-		} else if ("string".equals(datatype)) {
-			phenotype = createAbstractSinglePhenotype(data, OWL2Datatype.XSD_STRING);
-		} else if ("date".equals(datatype)) {
-			phenotype = createAbstractSinglePhenotype(data, OWL2Datatype.XSD_DATE_TIME);
-		} else if ("boolean".equals(datatype)) {
-			phenotype = createAbstractSinglePhenotype(data, OWL2Datatype.XSD_BOOLEAN);
-		} else if ("composite-boolean".equals(datatype)) {
+		if ("composite-boolean".equals(datatype)) {
 			phenotype = createAbstractBooleanPhenotype(data);
 		} else if ("calculation".equals(datatype)) {
 			phenotype = createAbstractCalculationPhenotype(data);
+		} else if (StringUtils.isNoneBlank(datatype)) {
+			phenotype = createAbstractSinglePhenotype(data, datatype);
 		} else {
-			throw new UnsupportedDataTypeException("Could not determine Datatype.");
+			throw new UnsupportedDataTypeException("Datatype is missing.");
 		}
 
 		setPhenotypeBasicData(phenotype, data);
@@ -65,10 +51,19 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @param datatype An OWL2Datatype.
 	 * @return An AbstractSinglePhenotype.
 	 */
-	private AbstractSinglePhenotype createAbstractSinglePhenotype(Phenotype data, OWL2Datatype datatype) throws NullPointerException {
-		AbstractSinglePhenotype phenotype = data.getSuperCategories() != null
-			? factory.createAbstractSinglePhenotype(data.getIdentifier(), data.getMainTitle(), datatype, data.getSuperCategories())
-			: factory.createAbstractSinglePhenotype(data.getIdentifier(), data.getMainTitle(), datatype);
+	private AbstractSinglePhenotype createAbstractSinglePhenotype(PhenotypeFormData data, String datatype) throws NullPointerException, UnsupportedDataTypeException {
+		AbstractSinglePhenotype phenotype;
+		if ("string".equals(datatype)) {
+			phenotype = new AbstractSingleStringPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
+		} else if ("numeric".equals(datatype)) {
+			phenotype = new AbstractSingleDecimalPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
+		} else if ("date".equals(datatype)) {
+			phenotype = new AbstractSingleDatePhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
+		} else if ("boolean".equals(datatype)) {
+			phenotype = new AbstractSingleBooleanPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
+		} else {
+			throw new UnsupportedDataTypeException("Could not determine Datatype.");
+		}
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
@@ -81,10 +76,9 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @param data Phenotype data.
 	 * @return An AbstractBooleanPhenotype
 	 */
-	private AbstractBooleanPhenotype createAbstractBooleanPhenotype(Phenotype data) {
-		AbstractBooleanPhenotype phenotype = data.getSuperCategories() != null
-			? factory.createAbstractBooleanPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories())
-			: factory.createAbstractBooleanPhenotype(data.getIdentifier(), data.getMainTitle());
+	private AbstractBooleanPhenotype createAbstractBooleanPhenotype(PhenotypeFormData data) {
+		AbstractBooleanPhenotype phenotype =
+			new AbstractBooleanPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 
@@ -96,13 +90,12 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 	 * @param data Phenotype data.
 	 * @return An AbstractCalculationPhenotype.
 	 */
-	private AbstractCalculationPhenotype createAbstractCalculationPhenotype(Phenotype data) {
+	private AbstractCalculationPhenotype createAbstractCalculationPhenotype(PhenotypeFormData data) {
 		if (StringUtils.isBlank(data.getFormula()))
 			throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
 
-		AbstractCalculationPhenotype phenotype = data.getSuperCategories() != null
-			? factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getMainTitle(), data.getFormula(), data.getSuperCategories())
-			: factory.createAbstractCalculationPhenotype(data.getIdentifier(), data.getMainTitle(), data.getFormula());
+		AbstractCalculationPhenotype phenotype =
+			new AbstractCalculationPhenotype(data.getIdentifier(), data.getMainTitle(), manager.getFormula(data.getFormula()), data.getSuperCategories());
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());

@@ -1,16 +1,15 @@
 package de.onto_med.ontology_service;
 
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.eclipse.jetty.server.Response;
 import org.junit.After;
 import org.junit.Test;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
+import org.lha.phenoman.man.PhenotypeManager;
 import org.lha.phenoman.model.phenotype.AbstractCalculationPhenotype;
+import org.lha.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
 import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
-import org.lha.phenoman.model.phenotype.PhenotypeFactory;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.semanticweb.owlapi.vocab.OWL2Datatype;
+import org.lha.phenoman.model.phenotype.top_level.Phenotype;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -31,7 +30,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 	public void testGetDependentPhenotypes() {
 		String id = "Double_Phenotype";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			setIdentifier("Abstract_" + id);
@@ -43,7 +42,6 @@ public class DeletePhenotypeTest extends AbstractTest {
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setUcum("kg");
-			setIsDecimal(true);
 		}};
 
 		javax.ws.rs.core.Response response
@@ -53,7 +51,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		phenotype = new Phenotype() {{
+		phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(true);
 			setIdentifier("Restricted_" + id);
@@ -78,8 +76,8 @@ public class DeletePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		List<Category>           list    = manager.getDependentPhenotypes("Abstract_" + id);
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
+		List<Phenotype>  list    = manager.getDependentPhenotypes("Abstract_" + id);
 		assertThat(list).isNotEmpty();
 		assertThat(list.get(0).getName()).isEqualTo(phenotype.getIdentifier());
 	}
@@ -88,7 +86,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 	public void testDeletePhenotype() {
 		String id = "Abstract_Integer_Phenotype";
 
-		Phenotype phenotype = new Phenotype() {{
+		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
 			setIsRestricted(false);
 			getTitles().add(id);
@@ -100,7 +98,6 @@ public class DeletePhenotypeTest extends AbstractTest {
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperCategory("Category_1");
 			setUcum("kg");
-			setIsDecimal(false);
 		}};
 
 		javax.ws.rs.core.Response response
@@ -117,7 +114,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
 
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 		assertThat(manager.getPhenotype(id)).isNull();
 	}
 
@@ -125,8 +122,8 @@ public class DeletePhenotypeTest extends AbstractTest {
 	public void testDeletePhenotypeByApi() throws WrongPhenotypeTypeException {
 		String id = "Phenotype_to_be_deleted";
 
-		PhenotypeOntologyManager manager   = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		AbstractSinglePhenotype  phenotype = manager.getPhenotypeFactory().createAbstractSinglePhenotype(id, id, OWL2Datatype.XSD_INTEGER);
+		PhenotypeManager manager   = new PhenotypeManager(ONTOLOGY_PATH, false);
+		AbstractSinglePhenotype  phenotype = new AbstractSingleDecimalPhenotype(id, id);
 		manager.addAbstractSinglePhenotype(phenotype);
 		manager.write();
 
@@ -138,14 +135,13 @@ public class DeletePhenotypeTest extends AbstractTest {
 
 	@Test
 	public void testDeleteDependentInCalculation() throws WrongPhenotypeTypeException {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory         factory = manager.getPhenotypeFactory();
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Height", "Height", OWL2Datatype.XSD_DOUBLE));
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("Weight", "Height", OWL2Datatype.XSD_DOUBLE));
+		manager.addAbstractSinglePhenotype(new AbstractSingleDecimalPhenotype("Height", "Height"));
+		manager.addAbstractSinglePhenotype(new AbstractSingleDecimalPhenotype("Weight", "Height"));
 		manager.write();
 
-		manager.addAbstractCalculationPhenotype(factory.createAbstractCalculationPhenotype("BMI", "BMI", "Weight / Height ^ 2"));
+		manager.addAbstractCalculationPhenotype(new AbstractCalculationPhenotype("BMI", "BMI", manager.getFormula("Weight / Height ^ 2")));
 		manager.write();
 
 		((AbstractCalculationPhenotype) manager.getPhenotype("BMI")).getCalculatedValue();

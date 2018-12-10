@@ -1,16 +1,13 @@
 package de.onto_med.ontology_service;
 
+import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeLimited;
 import de.onto_med.ontology_service.data_model.Property;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
-import org.lha.phenoman.model.instance.ComplexPhenotypeInstance;
-import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
-import org.lha.phenoman.model.phenotype.PhenotypeFactory;
-import org.lha.phenoman.model.phenotype.top_level.PhenotypeRange;
-import org.semanticweb.owlapi.vocab.OWL2Datatype;
+import org.lha.phenoman.man.PhenotypeManager;
+import org.lha.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.ws.rs.client.Entity;
@@ -34,13 +31,13 @@ public class PhenotypeReasoningTest extends AbstractTest {
 
 	@BeforeClass
 	public static void init() throws WrongPhenotypeTypeException {
-		PhenotypeOntologyManager manager = new PhenotypeOntologyManager(ONTOLOGY_PATH, false);
-		PhenotypeFactory factory = manager.getPhenotypeFactory();
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 
-		manager.addAbstractSinglePhenotype(factory.createAbstractSinglePhenotype("height", "height", OWL2Datatype.XSD_DOUBLE));
-		manager.addRestrictedSinglePhenotype(factory.createRestrictedSinglePhenotype(
-			"height_lt_1m", "height",
-			new PhenotypeRange(new OWLFacet[]{ OWLFacet.MAX_EXCLUSIVE }, new Double[] { 1.0 })
+		AbstractSingleDecimalPhenotype abstractPhenotype = new AbstractSingleDecimalPhenotype("height", "height");
+		manager.addAbstractSinglePhenotype(abstractPhenotype);
+		manager.addRestrictedSinglePhenotype(abstractPhenotype.createRestrictedPhenotype(
+			"height_lt_1m", "height_lt_1m",
+			new DecimalRangeLimited().setLimit(OWLFacet.MAX_EXCLUSIVE, "1.0")
 		));
 		manager.write();
 	}

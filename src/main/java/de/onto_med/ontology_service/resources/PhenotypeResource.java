@@ -4,16 +4,14 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import de.onto_med.ontology_service.api.Timer;
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.data_model.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
 import de.onto_med.ontology_service.views.PhenotypeView;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +24,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 public class PhenotypeResource extends Resource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PhenotypeManager.class);
 
-	private String phenotypePath;
+	private String  phenotypePath;
 	private boolean navigationVisible = true;
 
 	/**
@@ -134,25 +133,30 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/{id}/{iri}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Category getPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+	public Entity getPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
 		PhenotypeManager manager = managers.getUnchecked(id);
-		return manager.getPhenotype(iri);
+		return manager.getEntity(iri);
 	}
 
 	@GET
 	@Path("{id}/{iri}/dependents")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Category> getDependentPhenotypes(@PathParam("id") String id, @PathParam("iri") String iri) {
+	public List<Entity> getDependentPhenotypes(@PathParam("id") String id, @PathParam("iri") String iri) {
 		PhenotypeManager manager    = managers.getUnchecked(id);
-		List<Category>   phenotypes = manager.getDependentPhenotypes(iri);
-		phenotypes.add(manager.getPhenotype(iri));
+		List<Entity>  phenotypes = new ArrayList<>();
+
+		if (manager.getEntity(iri).isPhenotype()) {
+			phenotypes.addAll(manager.getDependentPhenotypes(iri));
+		}
+		phenotypes.add(manager.getEntity(iri));
+
 		return phenotypes;
 	}
 
 	@GET
 	@Path("{id}/{iri}/parts")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Phenotype> getPartsOfPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+	public List<PhenotypeFormData> getPartsOfPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
 		return managers.getUnchecked(id).getParts(iri);
 	}
 
@@ -236,7 +240,7 @@ public class PhenotypeResource extends Resource {
 	@Path("/{id}/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createCategory(@PathParam("id") String id, Phenotype formData) {
+	public Response createEntity(@PathParam("id") String id, PhenotypeFormData formData) {
 		PhenotypeManager manager = managers.getUnchecked(id);
 
 		if (formData == null) return null;
@@ -251,7 +255,8 @@ public class PhenotypeResource extends Resource {
 				RestrictedPhenotype phenotype = manager.createRestrictedPhenotype(formData);
 				return Response.ok(new CrudeResponse(phenotype.getName(), "Phenotype '" + phenotype.getName() + "' created.")).build();
 			}
-		} catch (NullPointerException | UnsupportedDataTypeException | WrongPhenotypeTypeException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			return Response.ok(e.getMessage()).status(500).build();
 		}
 	}
@@ -269,7 +274,7 @@ public class PhenotypeResource extends Resource {
 	@Path("/{id}/reason-form/{iri}")
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getReasonFormForPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
-		PhenotypeView view = new PhenotypeView("PhenotypeReasonFormForPhenotype.ftl", rootPath, id);
+		PhenotypeView    view    = new PhenotypeView("PhenotypeReasonFormForPhenotype.ftl", rootPath, id);
 		PhenotypeManager manager = managers.getUnchecked(id);
 
 		view.setPhenotype(manager.getPhenotype(iri));
@@ -286,8 +291,10 @@ public class PhenotypeResource extends Resource {
 	public synchronized Response classifyIndividual(
 		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties, @QueryParam("format") String format
 	) {
-		if (properties == null || properties.isEmpty())
+		if (properties == null || properties.isEmpty()) {
+			LOGGER.warn("Reasoning request without properties");
 			return Response.ok("No properties were provided.").status(500).build();
+		}
 
 		PhenotypeManager manager = managers.getUnchecked(id);
 
@@ -304,6 +311,7 @@ public class PhenotypeResource extends Resource {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return Response.ok(e.getMessage()).status(500).build();
 		}
 	}
@@ -319,7 +327,7 @@ public class PhenotypeResource extends Resource {
 		@Override
 		public boolean accept(File pathname) {
 			return pathname.isFile() && pathname.getAbsolutePath().toLowerCase().endsWith(".owl")
-				&& !pathname.getName().startsWith("~") && pathname.getName().startsWith("cop_");
+				   && !pathname.getName().startsWith("~") && pathname.getName().startsWith("cop_");
 		}
 	}
 

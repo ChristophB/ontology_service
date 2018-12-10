@@ -1,7 +1,11 @@
 package de.onto_med.ontology_service.manager;
 
 import de.imise.graph_api.graph.Graph;
-import de.onto_med.ontology_service.data_model.Phenotype;
+import de.imise.onto_api.entities.restrictions.data_range.BooleanRange;
+import de.imise.onto_api.entities.restrictions.data_range.DateRangeEnumerated;
+import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeEnumerated;
+import de.imise.onto_api.entities.restrictions.data_range.StringRange;
+import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.data_model.Property;
 import de.onto_med.ontology_service.factory.AbstractPhenotypeFactory;
 import de.onto_med.ontology_service.factory.PhenotypeCategoryFactory;
@@ -10,12 +14,12 @@ import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
 import de.onto_med.ontology_service.util.Parser;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.man.PhenotypeOntologyManager;
-import org.lha.phenoman.model.category_tree.PhenotypeCategoryTreeNode;
-import org.lha.phenoman.model.instance.ComplexPhenotypeInstance;
+import org.lha.phenoman.model.category_tree.EntityTreeNode;
+import org.lha.phenoman.model.instance.CompositePhenotypeInstance;
 import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
+import org.lha.phenoman.model.phenotype.top_level.Entity;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
 import org.lha.phenoman.model.reasoner_result.ReasonerReport;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
@@ -41,13 +45,13 @@ public class PhenotypeManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PhenotypeManager.class);
 
-	public static final String BASE_URL = "http://lha.org/";
+	private static final String BASE_URL = "http://lha.org/";
 
 	/**
 	 * The PhenoMan manager instance of a phenotype ontology.
 	 */
-	private PhenotypeOntologyManager manager;
-	private String                   phenotypePath;
+	private org.lha.phenoman.man.PhenotypeManager manager;
+	private String                                phenotypePath;
 
 	/**
 	 * This constructor opens an existing phenotype ontology or creates a new one.
@@ -59,7 +63,7 @@ public class PhenotypeManager {
 	 */
 	public PhenotypeManager(String phenotypePath) {
 		this.phenotypePath = phenotypePath;
-		manager = new PhenotypeOntologyManager(phenotypePath, false);
+		manager = new org.lha.phenoman.man.PhenotypeManager(phenotypePath, false);
 		manager.write();
 	}
 
@@ -73,13 +77,35 @@ public class PhenotypeManager {
 	 * @param id Identifier to search for. Can be suffix or full IRI.
 	 * @return The found phenotype as Category object.
 	 */
-	public Category getPhenotype(String id) {
+	public Entity getEntity(String id) {
+		if (StringUtils.isBlank(id)) return null;
+		try {
+			String   suffix   = PhenotypeFactory.getLocalName(id);
+			Category category = manager.getCategory(suffix);
+
+			return category != null ? category : manager.getPhenotype(suffix);
+		} catch (NoSuchElementException e) {
+			LOGGER.info(e.getMessage());
+		}
+		return null;
+	}
+
+	public org.lha.phenoman.model.phenotype.top_level.Phenotype getPhenotype(String id) {
 		if (StringUtils.isBlank(id)) return null;
 		try {
 			String suffix = PhenotypeFactory.getLocalName(id);
-			Category category = manager.getPhenotype(suffix);
+			return manager.getPhenotype(suffix);
+		} catch (NoSuchElementException e) {
+			LOGGER.info(e.getMessage());
+		}
+		return null;
+	}
 
-			return category != null ? category : manager.getCategory(suffix);
+	public Category getCategory(String id) {
+		if (StringUtils.isBlank(id)) return null;
+		try {
+			String suffix = PhenotypeFactory.getLocalName(id);
+			return manager.getCategory(suffix);
 		} catch (NoSuchElementException e) {
 			LOGGER.info(e.getMessage());
 		}
@@ -94,8 +120,8 @@ public class PhenotypeManager {
 	 * @return Top node of the cop.owl taxonomy.
 	 */
 	public TreeNode getTaxonomy(Boolean includePhenotypes) {
-		PhenotypeCategoryTreeNode node     = manager.getPhenotypeCategoryTree(includePhenotypes);
-		TreeNode                  treeNode = getTreeNode(node, includePhenotypes);
+		EntityTreeNode node     = manager.getEntityTree(includePhenotypes);
+		TreeNode       treeNode = getTreeNode(node, includePhenotypes);
 		treeNode.setOpened(true);
 
 		return treeNode;
@@ -108,12 +134,12 @@ public class PhenotypeManager {
 	 * @return The created category.
 	 * @throws NullPointerException If a required parameter is missing.
 	 */
-	public Category createCategory(Phenotype formData) throws NullPointerException {
-		Category category = new PhenotypeCategoryFactory(manager).createPhenotypeCategory(formData);
+	public Category createCategory(PhenotypeFormData formData) throws NullPointerException {
+		Category category = new PhenotypeCategoryFactory().createPhenotypeCategory(formData);
 
 		if (StringUtils.isBlank(formData.getSuperCategory()))
-			manager.addPhenotypeCategory(category);
-		else manager.addPhenotypeCategory(category, formData.getSuperCategories());
+			manager.addCategory(category);
+		else manager.addCategory(category, formData.getSuperCategories());
 		manager.write();
 
 		return category;
@@ -127,11 +153,11 @@ public class PhenotypeManager {
 	 * @throws NullPointerException         If a required parameter is missing.
 	 * @throws UnsupportedDataTypeException If the provided datatype of the phenotype is not supported.
 	 */
-	public AbstractPhenotype createAbstractPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException, WrongPhenotypeTypeException {
+	public AbstractPhenotype createAbstractPhenotype(PhenotypeFormData formData) throws NullPointerException, UnsupportedDataTypeException, WrongPhenotypeTypeException {
 		if (StringUtils.isBlank(formData.getDatatype()))
 			throw new NullPointerException("Datatype of the abstract phenotype is missing.");
 
-		AbstractPhenotype phenotype = new AbstractPhenotypeFactory(manager).createAbstractPhenotype(formData);
+		AbstractPhenotype phenotype = new AbstractPhenotypeFactory().createAbstractPhenotype(formData);
 		addPhenotype(phenotype);
 
 		manager.write();
@@ -146,7 +172,7 @@ public class PhenotypeManager {
 	 * @throws NullPointerException         If a required parameter is missing.
 	 * @throws UnsupportedDataTypeException If the provided data type of the phenotype is not supported.
 	 */
-	public RestrictedPhenotype createRestrictedPhenotype(Phenotype formData) throws NullPointerException, UnsupportedDataTypeException, WrongPhenotypeTypeException {
+	public RestrictedPhenotype createRestrictedPhenotype(PhenotypeFormData formData) throws NullPointerException, UnsupportedDataTypeException, WrongPhenotypeTypeException, ParseException {
 		if (StringUtils.isBlank(formData.getSuperPhenotype()))
 			throw new NullPointerException("Super phenotype is missing.");
 
@@ -160,12 +186,13 @@ public class PhenotypeManager {
 	/**
 	 * This method returns Phenotype objects as map, which are associated with the provided abstract phenotype.
 	 * The map contains the names of restricted phenotypes and the title.
+	 *
 	 * @param abstractPhenotype The abstract Phenotype.
 	 * @return A map of restricted Phenotype names and titles
 	 */
 	public Map<String, String> getRestrictions(String abstractPhenotype) {
 		return manager.getRestrictedPhenotypes(abstractPhenotype).stream()
-			.collect(Collectors.toMap(Category::getName, c -> c.getMainTitle().getTitleText()));
+			.collect(Collectors.toMap(org.lha.phenoman.model.phenotype.top_level.Phenotype::getName, c -> c.getMainTitle().getTitleText()));
 	}
 
 	/**
@@ -174,7 +201,7 @@ public class PhenotypeManager {
 	 * @param iri The local name or IRI of the phenotype to search for.
 	 * @return List of dependent phenotypes as Category.
 	 */
-	public List<Category> getDependentPhenotypes(String iri) {
+	public List<org.lha.phenoman.model.phenotype.top_level.Phenotype> getDependentPhenotypes(String iri) {
 		return manager.getDependentPhenotypes(PhenotypeFactory.getLocalName(iri));
 	}
 
@@ -184,11 +211,11 @@ public class PhenotypeManager {
 	 * @param iri The local name or IRI of the phenotype to be calculated.
 	 * @return Set of required abstract single phenotypes for the calculation.
 	 */
-	public List<Phenotype> getParts(String iri) {
-		List<Phenotype> parts = new ArrayList<>();
+	public List<PhenotypeFormData> getParts(String iri) {
+		List<PhenotypeFormData> parts = new ArrayList<>();
 
 		manager.getParts(PhenotypeFactory.getLocalName(iri)).forEach(p -> {
-			Phenotype part = new Phenotype() {{
+			PhenotypeFormData part = new PhenotypeFormData() {{
 				setIsRestricted(false);
 				setIsPhenotype(true);
 				setDatatype(p.getDatatypeText());
@@ -223,57 +250,50 @@ public class PhenotypeManager {
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
-		ComplexPhenotypeInstance complex = new ComplexPhenotypeInstance();
+		CompositePhenotypeInstance complex = new CompositePhenotypeInstance();
 
 		for (Property property : properties) {
 			if (StringUtils.isBlank(property.getName())) continue;
-			Category phenotype = manager.getPhenotype(property.getName());
+			org.lha.phenoman.model.phenotype.top_level.Phenotype phenotype = manager.getPhenotype(property.getName());
 			if (phenotype == null) continue;
 
 			String value = property.getValue();
 			String name  = property.getName();
 			if (StringUtils.isBlank(value)) value = null;
 
-			SinglePhenotypeInstance instance;
 			if (phenotype.isRestrictedPhenotype()) {
-				instance = new SinglePhenotypeInstance(manager.getRestrictedSinglePhenotype(name));
-			} else if (value == null) {
-				continue;
-			} else if (phenotype.isAbstractBooleanPhenotype()) {
-				instance = new SinglePhenotypeInstance(name, Boolean.valueOf(value));
+				if (phenotype.isRestrictedSinglePhenotype()) {
+					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+						manager.getAbstractSinglePhenotype(phenotype.asRestrictedSinglePhenotype().getAbstractPhenotypeName()), manager.getRestrictedSinglePhenotype(name)));
+				}
+			} else if (value == null) { // skip
+			// } else if (phenotype.isAbstractBooleanPhenotype()) {
+				// complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractBooleanPhenotype(), new BooleanRange(Boolean.valueOf(value))));
 			} else if (phenotype.isAbstractCalculationPhenotype()) {
 				try {
-					instance = new SinglePhenotypeInstance(name, Double.valueOf(value));
+					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractCalculationPhenotype(), new DecimalRangeEnumerated(Double.valueOf(value))));
 				} catch (NumberFormatException e) {
 					throw new IllegalArgumentException("Could not parse Double from String '" + value + "'. " + e.getMessage());
 				}
 			} else if (phenotype.isAbstractSinglePhenotype()) {
-				if (OWL2Datatype.XSD_INTEGER.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
+				if (OWL2Datatype.XSD_DECIMAL.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 					try {
-						instance = new SinglePhenotypeInstance(name, Integer.valueOf(value));
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new DecimalRangeEnumerated(Double.valueOf(value))));
 					} catch (NumberFormatException e) {
 						throw new IllegalArgumentException("Could not parse Integer from String '" + value + "'.");
 					}
-				} else if (OWL2Datatype.XSD_DOUBLE.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					try {
-						instance = new SinglePhenotypeInstance(name, Double.valueOf(value));
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException("Could not parse Double from String '" + value + "'. " + e.getMessage());
-					}
 				} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 					try {
-						instance = new SinglePhenotypeInstance(name, Parser.parseStringToDate(value));
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new DateRangeEnumerated(Parser.parseStringToDate(value))));
 					} catch (ParseException e) {
 						throw new IllegalArgumentException("Could not parse Date from String '" + value + "'. " + e.getMessage());
 					}
 				} else if (OWL2Datatype.XSD_BOOLEAN.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					instance = new SinglePhenotypeInstance(name, Boolean.valueOf(value));
+					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new BooleanRange(Boolean.valueOf(value))));
 				} else {
-					instance = new SinglePhenotypeInstance(name, value);
+					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new StringRange(value)));
 				}
-			} else continue;
-
-			complex.addSinglePhenotypeInstance(instance);
+			}
 		}
 
 		return manager.derivePhenotypes(complex, 0).getFinalReport();
@@ -287,7 +307,7 @@ public class PhenotypeManager {
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public String classifyIndividualAsString(List<Property> properties) throws IllegalArgumentException {
-		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getName).collect(Collectors.toList()).toString();
+		return classifyIndividual(properties).getPhenotypes().stream().map(org.lha.phenoman.model.phenotype.top_level.Phenotype::getName).collect(Collectors.toList()).toString();
 	}
 
 	/**
@@ -298,7 +318,7 @@ public class PhenotypeManager {
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public List<String> classifyIndividualAsList(List<Property> properties) throws IllegalArgumentException {
-		return classifyIndividual(properties).getPhenotypes().stream().map(Category::getName).collect(Collectors.toList());
+		return classifyIndividual(properties).getPhenotypes().stream().map(org.lha.phenoman.model.phenotype.top_level.Phenotype::getName).collect(Collectors.toList());
 	}
 
 	/**
@@ -349,10 +369,11 @@ public class PhenotypeManager {
 
 	/**
 	 * Returns all category and phenotype IDs of the ontology as list.
+	 *
 	 * @return List of phenotype IDs.
 	 */
 	public List<String> getList() {
-		return taxonomyAsList(manager.getPhenotypeCategoryTree(true));
+		return taxonomyAsList(manager.getEntityTree(true));
 	}
 
 	/**
@@ -365,43 +386,43 @@ public class PhenotypeManager {
 	}
 
 
-	private List<String> taxonomyAsList(PhenotypeCategoryTreeNode node) {
+	private List<String> taxonomyAsList(EntityTreeNode node) {
 		List<String> result = new ArrayList<>();
 		result.add(node.getName());
 		node.getChildren().forEach(c -> result.addAll(taxonomyAsList(c)));
 		return result;
 	}
 
-	private TreeNode getTreeNode(PhenotypeCategoryTreeNode node, Boolean includePhenotypes) {
-		Category     category = node.getCategory();
-		String       text     = category != null ? category.getMainTitleText() : node.getName();
-		OWL2Datatype datatype = getDatatype(category);
+	private TreeNode getTreeNode(EntityTreeNode node, Boolean includePhenotypes) {
+		Entity       entity   = node.getEntity();
+		String       text     = entity != null ? entity.getMainTitleText() : node.getName();
+		OWL2Datatype datatype = getDatatype(entity);
 
 		TreeNode treeNode = new TreeNode(node.getName(), text);
-		treeNode.setType(owl2DatatypeToString(datatype, category));
+		treeNode.setType(owl2DatatypeToString(datatype, entity));
 
-		if (category != null) {
+		if (entity != null) {
 			StringBuilder tooltip = new StringBuilder();
-			for (String lang : category.getTitles().keySet()) {
+			for (String lang : entity.getTitles().keySet()) {
 				tooltip.append(String.format(
 					"%s: %s (%s)" + System.lineSeparator(),
-					lang, category.getTitle(lang).getTitleText(),
-					StringUtils.defaultString(category.getTitle(lang).getAlias(), "none")
+					lang, entity.getTitle(lang).getTitleText(),
+					StringUtils.defaultString(entity.getTitle(lang).getAlias(), "none")
 				));
 			}
 			treeNode.setTitle(tooltip.toString());
 
-			if (category.isRestrictedPhenotype()) {
+			if (entity.isRestrictedPhenotype()) {
 				treeNode.setRestrictedPhenotype();
-			} else if (category.isAbstractPhenotype()) {
+			} else if (entity.isAbstractPhenotype()) {
 				treeNode.setAbstractPhenotype();
 			} else {
 				treeNode.setCategory();
 			}
 
-			if (category.isAbstractSinglePhenotype() || category.isRestrictedSinglePhenotype()) {
+			if (entity.isAbstractSinglePhenotype() || entity.isRestrictedSinglePhenotype()) {
 				treeNode.setSinglePhenotype();
-				if (OWL2Datatype.XSD_DOUBLE.equals(datatype) || OWL2Datatype.XSD_INTEGER.equals(datatype)) {
+				if (OWL2Datatype.XSD_DECIMAL.equals(datatype)) {
 					treeNode.setNumericPhenotype();
 				} else if (OWL2Datatype.XSD_STRING.equals(datatype)) {
 					treeNode.setStringPhenotype();
@@ -410,15 +431,15 @@ public class PhenotypeManager {
 				} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
 					treeNode.setBooleanPhenotype();
 				}
-			} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+			} else if (entity.isAbstractBooleanPhenotype() || entity.isRestrictedBooleanPhenotype()) {
 				treeNode.setCompositeBooleanPhenotype();
-			} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
+			} else if (entity.isAbstractCalculationPhenotype() || entity.isRestrictedCalculationPhenotype()) {
 				treeNode.setCalculationPhenotype();
 			}
 		} else treeNode.setCategory();
 
-		node.getChildren().stream().sorted(Comparator.comparing(PhenotypeCategoryTreeNode::getName)).forEach(child -> {
-			if (includePhenotypes || !child.getCategory().isPhenotype())
+		node.getChildren().stream().sorted(Comparator.comparing(EntityTreeNode::getName)).forEach(child -> {
+			if (includePhenotypes || !child.getEntity().isPhenotype())
 				treeNode.addChild(getTreeNode(child, includePhenotypes));
 		});
 
@@ -432,10 +453,11 @@ public class PhenotypeManager {
 	 * @param category The category or phenotype object.
 	 * @return A string for representation of the OWL2Datatype.
 	 */
-	private String owl2DatatypeToString(OWL2Datatype datatype, Category category) {
+	private String owl2DatatypeToString(OWL2Datatype datatype, Entity category) {
 		if (datatype == null || category == null) {
 			return null;
-		} if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+		}
+		if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
 			return "composite-boolean";
 		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
 			return "calculation";
@@ -443,7 +465,7 @@ public class PhenotypeManager {
 			return "string";
 		} else if (OWL2Datatype.XSD_DATE_TIME.equals(datatype)) {
 			return "date";
-		} else if (OWL2Datatype.XSD_INTEGER.equals(datatype) || OWL2Datatype.XSD_DOUBLE.equals(datatype)) {
+		} else if (OWL2Datatype.XSD_DECIMAL.equals(datatype)) {
 			return "numeric";
 		} else if (OWL2Datatype.XSD_BOOLEAN.equals(datatype)) {
 			return "boolean";
@@ -454,19 +476,20 @@ public class PhenotypeManager {
 	/**
 	 * Returns the OWL2Datatype of a category or phenotype.
 	 *
-	 * @param category The category or phenotype object.
+	 * @param entity The category or phenotype object.
 	 * @return The OWL2Datatype of the category.
 	 */
-	private OWL2Datatype getDatatype(Category category) {
-		if (category == null) {
+	private OWL2Datatype getDatatype(Entity entity) {
+		if (entity == null) {
 			return null;
-		} if (category.isAbstractSinglePhenotype()) {
-			return category.asAbstractSinglePhenotype().getDatatype();
-		} else if (category.isRestrictedSinglePhenotype()) {
-			return category.asRestrictedSinglePhenotype().getDatatype();
-		} else if (category.isAbstractCalculationPhenotype() || category.isRestrictedCalculationPhenotype()) {
-			return OWL2Datatype.XSD_DOUBLE;
-		} else if (category.isAbstractBooleanPhenotype() || category.isRestrictedBooleanPhenotype()) {
+		}
+		if (entity.isAbstractSinglePhenotype()) {
+			return entity.asAbstractSinglePhenotype().getDatatype();
+		} else if (entity.isRestrictedSinglePhenotype()) {
+			return entity.asRestrictedSinglePhenotype().getDatatype();
+		} else if (entity.isAbstractCalculationPhenotype() || entity.isRestrictedCalculationPhenotype()) {
+			return OWL2Datatype.XSD_DECIMAL;
+		} else if (entity.isAbstractBooleanPhenotype() || entity.isRestrictedBooleanPhenotype()) {
 			return OWL2Datatype.XSD_BOOLEAN;
 		}
 		return null;
@@ -481,7 +504,7 @@ public class PhenotypeManager {
 	 *
 	 * @param phenotype A phenotype which will be added to the manager.
 	 */
-	private void addPhenotype(Category phenotype) throws WrongPhenotypeTypeException {
+	private void addPhenotype(org.lha.phenoman.model.phenotype.top_level.Phenotype phenotype) throws WrongPhenotypeTypeException {
 		if (phenotype.isRestrictedCalculationPhenotype()) {
 			manager.addRestrictedCalculationPhenotype(phenotype.asRestrictedCalculationPhenotype());
 		} else if (phenotype.isRestrictedBooleanPhenotype()) {
@@ -498,8 +521,8 @@ public class PhenotypeManager {
 	}
 
 	public class TreeNode {
-		public String text;
-		public String icon = "";
+		public String         text;
+		public String         icon     = "";
 		public State          state    = new State();
 		public List<TreeNode> children = new ArrayList<>();
 		public AttributeList  a_attr   = new AttributeList();
@@ -586,14 +609,14 @@ public class PhenotypeManager {
 		}
 	}
 
-	public class AttributeList { // TODO: add superPhenotype
+	public class AttributeList {
 		public String       type;
 		public String       id;
 		public String       title;
 		public List<String> categories;
-		public Boolean isPhenotype       = false;
-		public Boolean isRestricted      = false;
-		public Boolean isSinglePhenotype = false;
+		public Boolean      isPhenotype       = false;
+		public Boolean      isRestricted      = false;
+		public Boolean      isSinglePhenotype = false;
 	}
 
 	public class State {
