@@ -33,8 +33,6 @@ public class PhenotypeFormData {
 	@JsonProperty
 	private String       superPhenotype;
 	@JsonProperty
-	private String       categories;
-	@JsonProperty
 	private String       superCategory;
 	@JsonProperty
 	private List<String> descriptions         = new ArrayList<>();
@@ -66,8 +64,6 @@ public class PhenotypeFormData {
 	private Double       score;
 	@JsonProperty
 	private String       aggregateFunction;
-
-	private String name; //TODO: what abaout this field? name = mainTitle? or name = identifier?
 
 	private Map<String, Set<String>> descriptionMap;
 
@@ -106,14 +102,6 @@ public class PhenotypeFormData {
 
 	public void setMainTitle(String mainTitle) {
 		this.mainTitle = mainTitle;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Double getScore() {

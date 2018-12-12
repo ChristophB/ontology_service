@@ -133,9 +133,13 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/{id}/{iri}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Entity getPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
+	public Response getPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
 		PhenotypeManager manager = managers.getUnchecked(id);
-		return manager.getEntity(iri);
+		try {
+			return Response.ok(manager.getEntity(iri)).build();
+		} catch (Exception e) {
+			return Response.ok(e.getMessage()).status(500).build();
+		}
 	}
 
 	@GET
