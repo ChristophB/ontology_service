@@ -17,6 +17,10 @@ import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.model.category_tree.EntityTreeNode;
 import org.lha.phenoman.model.instance.CompositePhenotypeInstance;
 import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
+import org.lha.phenoman.model.instance.value.BooleanValue;
+import org.lha.phenoman.model.instance.value.DateValue;
+import org.lha.phenoman.model.instance.value.DecimalValue;
+import org.lha.phenoman.model.instance.value.StringValue;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 import org.lha.phenoman.model.phenotype.top_level.Category;
 import org.lha.phenoman.model.phenotype.top_level.Entity;
@@ -271,27 +275,27 @@ public class PhenotypeManager {
 				// complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractBooleanPhenotype(), new BooleanRange(Boolean.valueOf(value))));
 			} else if (phenotype.isAbstractCalculationPhenotype()) {
 				try {
-					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractCalculationPhenotype(), new DecimalRangeEnumerated(Double.valueOf(value))));
+					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractCalculationPhenotype(), new DecimalValue(value, (Date) null)));
 				} catch (NumberFormatException e) {
 					throw new IllegalArgumentException("Could not parse Double from String '" + value + "'. " + e.getMessage());
 				}
 			} else if (phenotype.isAbstractSinglePhenotype()) {
 				if (OWL2Datatype.XSD_DECIMAL.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 					try {
-						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new DecimalRangeEnumerated(Double.valueOf(value))));
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new DecimalValue(value, (Date) null)));
 					} catch (NumberFormatException e) {
 						throw new IllegalArgumentException("Could not parse Integer from String '" + value + "'.");
 					}
 				} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 					try {
-						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new DateRangeEnumerated(Parser.parseStringToDate(value))));
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new DateValue(value, (Date) null)));
 					} catch (ParseException e) {
 						throw new IllegalArgumentException("Could not parse Date from String '" + value + "'. " + e.getMessage());
 					}
 				} else if (OWL2Datatype.XSD_BOOLEAN.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new BooleanRange(Boolean.valueOf(value))));
+					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new BooleanValue(Boolean.valueOf(value), (Date) null)));
 				} else {
-					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new StringRange(value)));
+					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new StringValue(value, (Date) null)));
 				}
 			}
 		}

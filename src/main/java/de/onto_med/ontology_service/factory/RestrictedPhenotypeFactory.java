@@ -5,10 +5,7 @@ import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.util.Parser;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.man.PhenotypeManager;
-import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
-import org.lha.phenoman.model.phenotype.RestrictedBooleanPhenotype;
-import org.lha.phenoman.model.phenotype.RestrictedCalculationPhenotype;
-import org.lha.phenoman.model.phenotype.RestrictedSinglePhenotype;
+import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.Phenotype;
 import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
@@ -104,9 +101,22 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @return A RestrictedCalculationPhenotype.
 	 */
 	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(PhenotypeFormData data, org.lha.phenoman.model.phenotype.top_level.Phenotype superPhenotype) throws ParseException {
-		RestrictedCalculationPhenotype phenotype = superPhenotype.asAbstractCalculationPhenotype().createRestrictedPhenotype(
-			data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DECIMAL, data).asDecimalRange()
-		);
+		AbstractCalculationPhenotype abstractPhenotype = superPhenotype.asAbstractCalculationPhenotype();
+		RestrictedCalculationPhenotype phenotype;
+
+		if (abstractPhenotype.hasBooleanDatatype()) {
+			phenotype = superPhenotype.asAbstractCalculationPhenotype().asAbstractCalculationBooleanPhenotype().createRestrictedPhenotype(
+				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DECIMAL, data).asBooleanRange()
+			);
+		} else if (abstractPhenotype.hasDateDatatype()) {
+			phenotype = superPhenotype.asAbstractCalculationPhenotype().asAbstractCalculationDatePhenotype().createRestrictedPhenotype(
+				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DECIMAL, data).asDateRange()
+			);
+		} else if (abstractPhenotype.hasDecimalDatatype()) {
+			phenotype = superPhenotype.asAbstractCalculationPhenotype().asAbstractCalculationDecimalPhenotype().createRestrictedPhenotype(
+				data.getIdentifier(), data.getMainTitle(), createRestrictedPhenotypeRange(OWL2Datatype.XSD_DECIMAL, data).asDecimalRange()
+			);
+		} else throw new IllegalArgumentException("RestrictedCalculationPhenotype could not be created because its super phenotype has an invalid datatype");
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 

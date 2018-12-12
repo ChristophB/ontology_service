@@ -2,12 +2,14 @@ package de.onto_med.ontology_service.factory;
 
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.apache.commons.lang3.StringUtils;
+import org.lha.phenoman.man.Formula;
 import org.lha.phenoman.man.PhenotypeManager;
 import org.lha.phenoman.math.Function;
 import org.lha.phenoman.model.phenotype.*;
 import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
 
 import javax.activation.UnsupportedDataTypeException;
+import java.lang.reflect.Constructor;
 import java.util.UUID;
 
 /**
@@ -74,7 +76,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 				break;
 			case "numeric":
 				Function function = null;
-				try { function = Function.valueOf(data.getAggregateFunction()); } catch (IllegalArgumentException ignored) { }
+				try { function = Function.valueOf(data.getAggregateFunction()); } catch (IllegalArgumentException | NullPointerException ignored) { }
 
 				phenotype = new AbstractSingleDecimalPhenotype(
 					data.getIdentifier(), data.getMainTitle(), function, data.getSuperCategories());
@@ -121,8 +123,14 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 		if (StringUtils.isBlank(data.getFormula()))
 			throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
 
-		AbstractCalculationPhenotype phenotype =
-			new AbstractCalculationPhenotype(data.getIdentifier(), data.getMainTitle(), manager.getFormula(data.getFormula()), data.getSuperCategories());
+		AbstractCalculationPhenotype phenotype;
+		if ("numeric".equals(data.getFormulaDatatype())) {
+			phenotype = new AbstractCalculationDecimalPhenotype(data.getIdentifier(), data.getMainTitle(), manager.getFormula(data.getFormula()), data.getSuperCategories());
+		} else if ("date".equals(data.getFormulaDatatype())) {
+			phenotype = new AbstractCalculationDatePhenotype(data.getIdentifier(), data.getMainTitle(), manager.getFormula(data.getFormula()), data.getSuperCategories());
+		} else if ("boolean".equals(data.getFormulaDatatype())) {
+			phenotype = new AbstractCalculationBooleanPhenotype(data.getIdentifier(), data.getMainTitle(), manager.getFormula(data.getFormula()), data.getSuperCategories());
+		} else throw new IllegalArgumentException("Missing formula datatype");
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());

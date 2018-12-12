@@ -349,6 +349,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setSuperCategory("Category_1");
 			setUcum("cm");
 			setFormula("Abstract_Integer_Phenotype_1");
+			setFormulaDatatype("numeric");
 		}};
 
 		javax.ws.rs.core.Response response
@@ -361,7 +362,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 		Phenotype        actual  = manager.getPhenotype(title);
 
-		AbstractCalculationPhenotype expected = new AbstractCalculationPhenotype(
+		AbstractCalculationPhenotype expected = new AbstractCalculationDecimalPhenotype(
 			title, new Title(title), manager.getFormula("Abstract_Integer_Phenotype_1"), "Category_1"
 		);
 		expected.setUnit("cm");
@@ -639,7 +640,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		Phenotype        actual  = manager.getPhenotype(title);
 
 		RestrictedCalculationPhenotype expected = manager.getPhenotype("Abstract_Calculation_Phenotype_1")
-			.asAbstractCalculationPhenotype().createRestrictedPhenotype(
+			.asAbstractCalculationPhenotype().asAbstractCalculationDecimalPhenotype().createRestrictedPhenotype(
 				title, title, new DecimalRangeLimited().setLimit(OWLFacet.MIN_INCLUSIVE, "5.3").setLimit(OWLFacet.MAX_EXCLUSIVE, "10.7"));
 		expected.addDescription("Description EN", "en");
 		expected.addDescription("Description DE", "de");

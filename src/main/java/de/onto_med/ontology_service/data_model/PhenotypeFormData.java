@@ -57,13 +57,15 @@ public class PhenotypeFormData {
 	@JsonProperty
 	private String       formula;
 	@JsonProperty
+	private String       formulaDatatype;
+	@JsonProperty
 	private String       expression;
 	@JsonProperty
 	private List<String> relations            = new ArrayList<>();
 	@JsonProperty
 	private Double       score;
 	@JsonProperty
-	private String aggregateFunction;
+	private String       aggregateFunction;
 
 	private String name; //TODO: what abaout this field? name = mainTitle? or name = identifier?
 
@@ -264,6 +266,14 @@ public class PhenotypeFormData {
 
 	public void setFormula(String formula) {
 		this.formula = formula;
+	}
+
+	public String getFormulaDatatype() {
+		return formulaDatatype;
+	}
+
+	public void setFormulaDatatype(String formulaDatatype) {
+		this.formulaDatatype = formulaDatatype;
 	}
 
 	public String getExpression() {

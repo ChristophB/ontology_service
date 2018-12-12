@@ -130,11 +130,10 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- RUN: mvn install:install-file -Dfile=lib/phenoman-0.0.6.jar -DgroupId=org.lha -DartifactId=phenoman -Dversion=0.0.6 -Dpackaging=jar -->
         <dependency>
             <groupId>org.lha</groupId>
             <artifactId>phenoman</artifactId>
-            <version>0.1.4</version>
+            <version>0.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.sourceforge.owlapi</groupId>

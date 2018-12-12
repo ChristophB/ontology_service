@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.man.PhenotypeManager;
+import org.lha.phenoman.model.phenotype.AbstractCalculationDecimalPhenotype;
 import org.lha.phenoman.model.phenotype.AbstractCalculationPhenotype;
 import org.lha.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
 import org.lha.phenoman.model.phenotype.AbstractSinglePhenotype;
@@ -141,7 +142,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 		manager.addAbstractSinglePhenotype(new AbstractSingleDecimalPhenotype("Weight", "Height"));
 		manager.write();
 
-		manager.addAbstractCalculationPhenotype(new AbstractCalculationPhenotype("BMI", "BMI", manager.getFormula("Weight / Height ^ 2")));
+		manager.addAbstractCalculationPhenotype(new AbstractCalculationDecimalPhenotype("BMI", "BMI", manager.getFormula("Weight / Height ^ 2")));
 		manager.write();
 
 		((AbstractCalculationPhenotype) manager.getPhenotype("BMI")).getCalculatedValue();
