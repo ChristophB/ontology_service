@@ -4,6 +4,7 @@ import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeLimited;
 import de.onto_med.ontology_service.data_model.Property;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.man.PhenotypeManager;
@@ -78,7 +79,7 @@ public class PhenotypeReasoningTest extends AbstractTest {
 		assertThat(response.readEntity(new GenericType<List<String>>(){})).contains("height_lt_1m");
 	}
 
-	@Test
+	@Test @Ignore
 	public void testReasoningWithSinglePhenotypeWithoutObservationDate() {
 		List<Property> properties = new ArrayList<Property>() {{
 			add(new Property() {{ setName("weight"); setValue("120"); }});
