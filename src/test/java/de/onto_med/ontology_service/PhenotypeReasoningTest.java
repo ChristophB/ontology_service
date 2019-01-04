@@ -39,6 +39,12 @@ public class PhenotypeReasoningTest extends AbstractTest {
 			"height_lt_1m", "height_lt_1m",
 			new DecimalRangeLimited().setLimit(OWLFacet.MAX_EXCLUSIVE, "1.0")
 		));
+		abstractPhenotype = new AbstractSingleDecimalPhenotype("weight", "weight");
+		manager.addAbstractSinglePhenotype(abstractPhenotype);
+		manager.addRestrictedSinglePhenotype(abstractPhenotype.createRestrictedPhenotype(
+			"weight_ge_100kg", "weight_ge_100kg",
+			new DecimalRangeLimited().setLimit(OWLFacet.MIN_INCLUSIVE, "100")
+		));
 		manager.write();
 	}
 
@@ -55,6 +61,36 @@ public class PhenotypeReasoningTest extends AbstractTest {
 
 		assertThat(response.getStatus()).isEqualTo(SC_OK);
 		assertThat(response.readEntity(new GenericType<List<String>>(){})).contains("height_lt_1m");
+	}
+
+	@Test
+	public void testReasoningWithSinglePhenotypeWithObservationDate() {
+		List<Property> properties = new ArrayList<Property>() {{
+			add(new Property() {{ setName("height"); setValue("0.5"); setObservationDate("2000-01-01"); }});
+		}};
+
+		javax.ws.rs.core.Response response
+			= client.target(url + REASON_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(properties));
+
+		assertThat(response.getStatus()).isEqualTo(SC_OK);
+		assertThat(response.readEntity(new GenericType<List<String>>(){})).contains("height_lt_1m");
+	}
+
+	@Test
+	public void testReasoningWithSinglePhenotypeWithoutObservationDate() {
+		List<Property> properties = new ArrayList<Property>() {{
+			add(new Property() {{ setName("weight"); setValue("120"); }});
+		}};
+
+		javax.ws.rs.core.Response response
+			= client.target(url + REASON_PATH)
+			.request(MediaType.APPLICATION_JSON_TYPE)
+			.post(Entity.json(properties));
+
+		assertThat(response.getStatus()).isEqualTo(SC_OK);
+		assertThat(response.readEntity(new GenericType<List<String>>(){})).contains("weight_ge_100kg");
 	}
 
 	@AfterClass

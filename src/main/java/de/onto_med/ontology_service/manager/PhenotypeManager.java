@@ -1,17 +1,12 @@
 package de.onto_med.ontology_service.manager;
 
 import de.imise.graph_api.graph.Graph;
-import de.imise.onto_api.entities.restrictions.data_range.BooleanRange;
-import de.imise.onto_api.entities.restrictions.data_range.DateRangeEnumerated;
-import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeEnumerated;
-import de.imise.onto_api.entities.restrictions.data_range.StringRange;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.data_model.Property;
 import de.onto_med.ontology_service.factory.AbstractPhenotypeFactory;
 import de.onto_med.ontology_service.factory.PhenotypeCategoryFactory;
 import de.onto_med.ontology_service.factory.PhenotypeFactory;
 import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
-import de.onto_med.ontology_service.util.Parser;
 import org.apache.commons.lang3.StringUtils;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
 import org.lha.phenoman.model.category_tree.EntityTreeNode;
@@ -21,10 +16,7 @@ import org.lha.phenoman.model.instance.value.BooleanValue;
 import org.lha.phenoman.model.instance.value.DateValue;
 import org.lha.phenoman.model.instance.value.DecimalValue;
 import org.lha.phenoman.model.instance.value.StringValue;
-import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.Entity;
-import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.*;
 import org.lha.phenoman.model.reasoner_result.ReasonerReport;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.slf4j.Logger;
@@ -263,38 +255,43 @@ public class PhenotypeManager {
 			String name  = property.getName();
 			if (StringUtils.isBlank(value)) value = null;
 
-			if (phenotype.isRestrictedPhenotype()) {
-				if (phenotype.isRestrictedSinglePhenotype()) {
-					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
-						manager.getAbstractSinglePhenotype(phenotype.asRestrictedSinglePhenotype().getAbstractPhenotypeName()), manager.getRestrictedSinglePhenotype(name)));
-				}
-			} else if (value == null) { // skip
-			// } else if (phenotype.isAbstractBooleanPhenotype()) {
-				// complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractBooleanPhenotype(), new BooleanRange(Boolean.valueOf(value))));
-			} else if (phenotype.isAbstractCalculationPhenotype()) {
-				try {
-					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractCalculationPhenotype(), new DecimalValue(value, (Date) null)));
-				} catch (NumberFormatException e) {
-					throw new IllegalArgumentException("Could not parse Double from String '" + value + "'. " + e.getMessage());
-				}
-			} else if (phenotype.isAbstractSinglePhenotype()) {
-				if (OWL2Datatype.XSD_DECIMAL.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					try {
-						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new DecimalValue(value, (Date) null)));
-					} catch (NumberFormatException e) {
-						throw new IllegalArgumentException("Could not parse Integer from String '" + value + "'.");
+			try {
+				if (phenotype.isRestrictedPhenotype()) {
+					if (phenotype.isRestrictedSinglePhenotype()) {
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+							manager.getAbstractSinglePhenotype(phenotype.asRestrictedSinglePhenotype().getAbstractPhenotypeName()),
+							manager.getRestrictedSinglePhenotype(name)));
 					}
-				} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					try {
-						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new DateValue(value, (Date) null)));
-					} catch (ParseException e) {
-						throw new IllegalArgumentException("Could not parse Date from String '" + value + "'. " + e.getMessage());
+				} else if (value == null) { // skip
+				// } else if (phenotype.isAbstractBooleanPhenotype()) {
+					// complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractBooleanPhenotype(), new BooleanRange(Boolean.valueOf(value))));
+				} else if (phenotype.isAbstractCalculationPhenotype()) {
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+							phenotype.asAbstractCalculationPhenotype(),
+							new DecimalValue(value, property.getObservationDate())));
+				} else if (phenotype.isAbstractSinglePhenotype()) {
+					if (OWL2Datatype.XSD_DECIMAL.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
+							complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+								phenotype.asAbstractSinglePhenotype(),
+								new DecimalValue(value, property.getObservationDate())));
+					} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
+							complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+								phenotype.asAbstractSinglePhenotype(),
+								new DateValue(value, property.getObservationDate())));
+					} else if (OWL2Datatype.XSD_BOOLEAN.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+							phenotype.asAbstractSinglePhenotype(),
+							new BooleanValue(Boolean.valueOf(value), property.getObservationDate())));
+					} else {
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+							phenotype.asAbstractSinglePhenotype(),
+							new StringValue(value, property.getObservationDate())));
 					}
-				} else if (OWL2Datatype.XSD_BOOLEAN.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new BooleanValue(Boolean.valueOf(value), (Date) null)));
-				} else {
-					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractSinglePhenotype(), new StringValue(value, (Date) null)));
 				}
+			} catch (ParseException e){
+				throw new IllegalArgumentException("Could not parse Date from String '" + value + "'. " + e.getMessage());
+			} catch (NumberFormatException e) {
+				throw new IllegalArgumentException("Could not parse Number from String '" + value + "'.");
 			}
 		}
 
@@ -309,7 +306,7 @@ public class PhenotypeManager {
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public String classifyIndividualAsString(List<Property> properties) throws IllegalArgumentException {
-		return classifyIndividual(properties).getPhenotypes().stream().map(org.lha.phenoman.model.phenotype.top_level.Phenotype::getName).collect(Collectors.toList()).toString();
+		return classifyIndividual(properties).getPhenotypes().stream().map(Phenotype::getMainTitleText).collect(Collectors.toList()).toString();
 	}
 
 	/**
@@ -320,7 +317,7 @@ public class PhenotypeManager {
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
 	public List<String> classifyIndividualAsList(List<Property> properties) throws IllegalArgumentException {
-		return classifyIndividual(properties).getPhenotypes().stream().map(org.lha.phenoman.model.phenotype.top_level.Phenotype::getName).collect(Collectors.toList());
+		return classifyIndividual(properties).getPhenotypes().stream().map(Phenotype::getMainTitleText).collect(Collectors.toList());
 	}
 
 	/**

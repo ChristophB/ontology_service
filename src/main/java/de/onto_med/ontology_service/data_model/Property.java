@@ -1,6 +1,7 @@
 package de.onto_med.ontology_service.data_model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This class represents Properties provided by JSON.
@@ -15,6 +16,8 @@ public class Property {
 	private String className;
 	@JsonProperty
 	private String value;
+	@JsonProperty
+	private String observationDate;
 
 	public Property() {	}
 
@@ -51,6 +54,14 @@ public class Property {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public String getObservationDate() {
+		return StringUtils.trimToNull(observationDate);
+	}
+
+	public void setObservationDate(String observationDate) {
+		this.observationDate = observationDate;
 	}
 
 	public String toString() {
