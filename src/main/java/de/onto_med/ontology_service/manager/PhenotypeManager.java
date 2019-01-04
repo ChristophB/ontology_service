@@ -141,9 +141,7 @@ public class PhenotypeManager {
 	public Category createCategory(PhenotypeFormData formData) throws NullPointerException {
 		Category category = new PhenotypeCategoryFactory().createPhenotypeCategory(formData);
 
-		if (StringUtils.isBlank(formData.getSuperCategory()))
-			manager.addCategory(category);
-		else manager.addCategory(category, formData.getSuperCategories());
+		manager.addCategory(category);
 		manager.write();
 
 		return category;
@@ -241,7 +239,7 @@ public class PhenotypeManager {
 	 * @param ids A Set of phenotype IDs
 	 */
 	public void deletePhenotypes(Set<String> ids) {
-		manager.removePhenotypes(ids);
+		manager.removeEntities(ids);
 		manager.write();
 	}
 

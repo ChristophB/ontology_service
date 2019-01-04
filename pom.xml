@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.onto_med</groupId>
     <artifactId>ontology_service</artifactId>
-    <version>0.3.6</version>
+    <version>0.3.7</version>
     <name>Ontology Service</name>
     <packaging>jar</packaging>
     <description>REST-full API to access Ontologies developed and stored in WebProtégé and to manage phenotypes.</description>
@@ -133,7 +133,7 @@
         <dependency>
             <groupId>org.lha</groupId>
             <artifactId>phenoman</artifactId>
-            <version>0.1.5</version>
+            <version>0.1.6</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.sourceforge.owlapi</groupId>

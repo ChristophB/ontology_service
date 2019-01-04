@@ -23,6 +23,7 @@ public class PhenotypeCategoryFactory extends PhenotypeFactory {
 
 		Category category = new Category(data.getIdentifier(), data.getMainTitle());
 		data.getTitleObjects().forEach(category::addTitle);
+		category.setSuperCategories(data.getSuperCategories());
 		setPhenotypeBasicData(category, data);
 
 		return category;

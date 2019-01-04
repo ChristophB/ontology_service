@@ -128,7 +128,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 		manager.addAbstractSinglePhenotype(phenotype);
 		manager.write();
 
-		manager.removePhenotypes(new HashSet<>(Collections.singletonList(id)));
+		manager.removeEntities(new HashSet<>(Collections.singletonList(id)));
 		manager.write();
 
 		assertThat(manager.getPhenotype(id)).isNull();

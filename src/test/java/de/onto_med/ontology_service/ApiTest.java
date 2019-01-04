@@ -57,17 +57,18 @@ public class ApiTest extends AbstractTest {
 
 		Category superCategory = new Category("super_category");
 		Category subCategory   = new Category("sub_category");
+		subCategory.setSuperCategories(superCategory.getName());
 
 		manager.addCategory(superCategory);
-		manager.addCategory(subCategory, superCategory.getName());
+		manager.addCategory(subCategory);
 
 		Category actual = manager.getCategory(subCategory.getName());
 
 		assertThat(actual).isNotNull();
 		try {
-			Category.class.getMethod("getCategories");
+			Category.class.getMethod("getSuperCategories");
 		} catch (NoSuchMethodException e) {
-			fail("Category does not have method getCategories()");
+			fail("Category does not have method getSuperCategories()");
 		}
 	}
 
