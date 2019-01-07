@@ -268,18 +268,18 @@ public class PhenotypeManager {
 //				} else if (phenotype.isAbstractBooleanPhenotype()) {
 //					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractBooleanPhenotype(), new BooleanRange(Boolean.valueOf(value))));
 //				} else if (phenotype.isAbstractCalculationPhenotype()) {
-//						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
-//							phenotype.asAbstractCalculationPhenotype(),
-//							new DecimalValue(value, property.getObservationDate())));
+//					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+//						phenotype.asAbstractCalculationPhenotype(),
+//						new DecimalValue(value, property.getObservationDate())));
 				} else if (phenotype.isAbstractSinglePhenotype()) {
 					if (OWL2Datatype.XSD_DECIMAL.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-							complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
-								phenotype.asAbstractSinglePhenotype(),
-								new DecimalValue(value, property.getObservationDate())));
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+							phenotype.asAbstractSinglePhenotype(),
+							new DecimalValue(value, property.getObservationDate())));
 					} else if (OWL2Datatype.XSD_DATE_TIME.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
-							complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
-								phenotype.asAbstractSinglePhenotype(),
-								new DateValue(value, property.getObservationDate())));
+						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+							phenotype.asAbstractSinglePhenotype(),
+							new DateValue(value, property.getObservationDate())));
 					} else if (OWL2Datatype.XSD_BOOLEAN.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
 							phenotype.asAbstractSinglePhenotype(),
