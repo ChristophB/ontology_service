@@ -12,7 +12,7 @@ public class PhenotypeServiceApplication extends Application<PhenotypeServiceCon
 	/**
 	 * Main method, which starts the service.
 	 * @param args Dropwizard arguments
-	 * @throws Exception
+	 * @throws Exception If App initialization failed
 	 */
 	public static void main(String[] args) throws Exception {
 		new PhenotypeServiceApplication().run(args);
@@ -49,12 +49,11 @@ public class PhenotypeServiceApplication extends Application<PhenotypeServiceCon
 	@Override
 	public void run(PhenotypeServiceConfiguration configuration, Environment environment) {
 		PhenotypeResource phenotypeResource = new PhenotypeResource("", configuration.getPhenotypePath());
-		phenotypeResource.setNavigationVisible(false);
 
-		/*** Register resources here: ***/
+		/* Register resources here: */
 		environment.jersey().register(phenotypeResource);
 
-		/*** Register health checks here: ***/
+		/* Register health checks here: */
 		environment.healthChecks().register("template", new PhenotypeHealthCheck(configuration));
 	}
 }

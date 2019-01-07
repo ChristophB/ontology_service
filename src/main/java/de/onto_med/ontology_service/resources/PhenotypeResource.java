@@ -7,15 +7,15 @@ import de.onto_med.ontology_service.api.Timer;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.data_model.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
-import de.onto_med.ontology_service.views.PhenotypeView;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.model.phenotype.top_level.*;
+import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
+import org.lha.phenoman.model.phenotype.top_level.Category;
+import org.lha.phenoman.model.phenotype.top_level.Entity;
+import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Nonnull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -24,7 +24,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +34,6 @@ public class PhenotypeResource extends Resource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PhenotypeManager.class);
 
 	private String  phenotypePath;
-	private boolean navigationVisible = true;
 
 	/**
 	 * This is the Cache, which contains all previously loaded phenotypeManagers.
@@ -62,58 +60,22 @@ public class PhenotypeResource extends Resource {
 		this.phenotypePath = phenotypePath;
 	}
 
-	public void setNavigationVisible(boolean navigationVisible) {
-		this.navigationVisible = navigationVisible;
-	}
-
 	@GET
-	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
-	public Response getPhenotypeSelectionView(@Context HttpHeaders headers) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPhenotypeSelectionView() {
 		Map<String, Long> ontologies = new HashMap<>();
 
 		getPhenotypeOntologyFiles().forEach(file -> ontologies.put(getIdFromFilename(file.getName()), file.length() / 1000));
 
-		if (acceptsMediaType(headers, MediaType.TEXT_HTML_TYPE)) {
-			PhenotypeView view = new PhenotypeView("PhenotypeView.ftl", rootPath, ontologies);
-			view.setNavigationVisible(navigationVisible);
-			return Response.ok(view).build();
-		} else {
-			List<Map<String, String>> jsonData = new ArrayList<>();
-			ontologies.keySet().forEach(k -> {
-				Map<String, String> hash = new HashMap<>();
-				hash.put("id", k);
-				hash.put("size", ontologies.get(k).toString());
-				jsonData.add(hash);
-			});
+		List<Map<String, String>> jsonData = new ArrayList<>();
+		ontologies.keySet().forEach(k -> {
+			Map<String, String> hash = new HashMap<>();
+			hash.put("id", k);
+			hash.put("size", ontologies.get(k).toString());
+			jsonData.add(hash);
+		});
 
-			return Response.ok(jsonData).build();
-		}
-	}
-
-	public List<File> getPhenotypeOntologyFiles() {
-		return Arrays.asList(
-			Objects.requireNonNull(new File(phenotypePath.replaceFirst("\\/[^\\/]*$", ""))
-				.listFiles(new CopFileFilter())));
-	}
-
-	public List<String> getPhenotypeOntologyIris() {
-		return getPhenotypeOntologyFiles().stream().map(
-			file -> PhenotypeManager.buildIri(getIdFromFilename(file.getName()))).collect(Collectors.toList());
-	}
-
-	public PhenotypeManager getPhenotypeManager(String id) {
-		try {
-			return managers.get(id);
-		} catch (ExecutionException e) {
-			return null;
-		}
-	}
-
-	@POST
-	@Path("/create")
-	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
-	public Response create(@Context HttpHeaders headers, @FormParam("id") String id) {
-		return Response.seeOther(UriBuilder.fromUri(rootPath + "/phenotype/" + id + "/phenotype-form").build()).build();
+		return Response.ok(jsonData).build();
 	}
 
 	@GET
@@ -173,7 +135,7 @@ public class PhenotypeResource extends Resource {
 
 	@POST
 	@Path("{id}/delete")
-	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON })
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(@Context HttpHeaders headers, @PathParam("id") String id) {
 		managers.invalidate(id);
 		try {
@@ -184,13 +146,13 @@ public class PhenotypeResource extends Resource {
 		}
 		if (acceptsMediaType(headers, MediaType.TEXT_HTML_TYPE))
 			return Response.seeOther(UriBuilder.fromUri(rootPath + "/phenotype").build()).build();
-		return Response.ok("Ontology deleted.").build();
+		return Response.ok("Ontology 'id' deleted.").build();
 	}
 
 	@POST
 	@Path("{id}/delete-phenotypes")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_HTML)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response deletePhenotypes(@PathParam("id") String id, Set<String> phenotypes) {
 		try {
 			managers.getUnchecked(id).deletePhenotypes(phenotypes);
@@ -231,15 +193,6 @@ public class PhenotypeResource extends Resource {
 		}
 	}
 
-	@GET
-	@Path("/{id}/phenotype-form")
-	@Produces(MediaType.TEXT_HTML)
-	public Response getPhenotypeForm(@PathParam("id") String id) {
-		PhenotypeView view = new PhenotypeView("PhenotypeForm.ftl", rootPath, id);
-		view.setNavigationVisible(navigationVisible);
-		return Response.ok(view).build();
-	}
-
 	@POST
 	@Path("/{id}/create")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -265,33 +218,10 @@ public class PhenotypeResource extends Resource {
 		}
 	}
 
-	@GET
-	@Path("/{id}/reason-form")
-	@Produces({ MediaType.TEXT_HTML })
-	public Response getReasonForm(@PathParam("id") String id) {
-		PhenotypeView view = new PhenotypeView("PhenotypeReasonForm.ftl", rootPath, id);
-		view.setNavigationVisible(navigationVisible);
-		return Response.ok(view).build();
-	}
-
-	@GET
-	@Path("/{id}/reason-form/{iri}")
-	@Produces({ MediaType.TEXT_HTML })
-	public Response getReasonFormForPhenotype(@PathParam("id") String id, @PathParam("iri") String iri) {
-		PhenotypeView    view    = new PhenotypeView("PhenotypeReasonFormForPhenotype.ftl", rootPath, id);
-		PhenotypeManager manager = managers.getUnchecked(id);
-
-		view.setPhenotype(manager.getPhenotype(iri));
-		view.setParts(manager.getParts(iri));
-		view.setNavigationVisible(navigationVisible);
-
-		return Response.ok(view).build();
-	}
-
 	@POST
 	@Path("{id}/reason")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({ MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	@Produces({ MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON })
 	public synchronized Response classifyIndividual(
 		@Context HttpHeaders headers, @PathParam("id") String id, List<Property> properties, @QueryParam("format") String format
 	) {
@@ -308,11 +238,7 @@ public class PhenotypeResource extends Resource {
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='reasoner_report.png'")
 					.build();
 			} else {
-				if (acceptsMediaType(headers, MediaType.APPLICATION_JSON_TYPE)) {
-					return Response.ok(manager.classifyIndividualAsList(properties)).build();
-				} else {
-					return Response.ok(manager.classifyIndividualAsString(properties)).build();
-				}
+				return Response.ok(manager.classifyIndividualAsList(properties)).build();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -321,10 +247,31 @@ public class PhenotypeResource extends Resource {
 	}
 
 	private String getIdFromFilename(String filename) {
-		String namePattern = phenotypePath.replaceFirst(".*\\/", "");
+		String namePattern = phenotypePath.replaceFirst(".*/", "");
 		String prefix      = namePattern.replaceFirst("%id%.*", "");
 
 		return filename.replaceFirst("\\..+$", "").replace(prefix, "");
+	}
+
+	private List<File> getPhenotypeOntologyFiles() {
+		return Arrays.asList(
+			Objects.requireNonNull(new File(phenotypePath.replaceFirst("/[^/]*$", ""))
+				.listFiles(new CopFileFilter())));
+	}
+
+	@SuppressWarnings("unused")
+	private List<String> getPhenotypeOntologyIris() {
+		return getPhenotypeOntologyFiles().stream().map(
+			file -> PhenotypeManager.buildIri(getIdFromFilename(file.getName()))).collect(Collectors.toList());
+	}
+
+	@SuppressWarnings("unused")
+	private PhenotypeManager getPhenotypeManager(String id) {
+		try {
+			return managers.get(id);
+		} catch (ExecutionException e) {
+			return null;
+		}
 	}
 
 	public static class CopFileFilter implements FileFilter {
@@ -339,6 +286,7 @@ public class PhenotypeResource extends Resource {
 		public String id;
 		public String message;
 
+		@SuppressWarnings("WeakerAccess")
 		public CrudeResponse(String id, String message) {
 			this.id = id;
 			this.message = message;

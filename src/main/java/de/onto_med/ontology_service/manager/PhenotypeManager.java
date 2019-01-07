@@ -97,6 +97,7 @@ public class PhenotypeManager {
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	public Category getCategory(String id) {
 		if (StringUtils.isBlank(id)) return null;
 		try {
@@ -236,14 +237,14 @@ public class PhenotypeManager {
 	}
 
 	/**
-	 * This method created a temporary individual with the provided list of properties.
+	 * This method creates a temporary individual with the provided list of properties.
 	 * Thereafter, types of the individual are retrieved with a reasoner and returned as @code{ReasonerReport}.
 	 *
 	 * @param properties A list of properties, which will be used to create the individual.
 	 * @return A ReasonerReport which contains all found types of the individual.
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
-	public ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
+	private ReasonerReport classifyIndividual(List<Property> properties) throws IllegalArgumentException {
 		CompositePhenotypeInstance complex = new CompositePhenotypeInstance();
 
 		for (Property property : properties) {
@@ -263,12 +264,12 @@ public class PhenotypeManager {
 							manager.getRestrictedSinglePhenotype(name)));
 					}
 				} else if (value == null) { // skip
-				// } else if (phenotype.isAbstractBooleanPhenotype()) {
-					// complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractBooleanPhenotype(), new BooleanRange(Boolean.valueOf(value))));
-				} else if (phenotype.isAbstractCalculationPhenotype()) {
-						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
-							phenotype.asAbstractCalculationPhenotype(),
-							new DecimalValue(value, property.getObservationDate())));
+//				} else if (phenotype.isAbstractBooleanPhenotype()) {
+//					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractBooleanPhenotype(), new BooleanRange(Boolean.valueOf(value))));
+//				} else if (phenotype.isAbstractCalculationPhenotype()) {
+//						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
+//							phenotype.asAbstractCalculationPhenotype(),
+//							new DecimalValue(value, property.getObservationDate())));
 				} else if (phenotype.isAbstractSinglePhenotype()) {
 					if (OWL2Datatype.XSD_DECIMAL.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 							complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
@@ -526,6 +527,7 @@ public class PhenotypeManager {
 		public List<TreeNode> children = new ArrayList<>();
 		public AttributeList  a_attr   = new AttributeList();
 
+		@SuppressWarnings("unused")
 		TreeNode(String id, String text, String title) {
 			this(id, text);
 			a_attr.title = title;
@@ -602,10 +604,6 @@ public class PhenotypeManager {
 		void addChild(TreeNode child) {
 			children.add(child);
 		}
-
-		public void addCategory(String category) {
-			a_attr.categories.add(category);
-		}
 	}
 
 	public class AttributeList {
@@ -613,8 +611,11 @@ public class PhenotypeManager {
 		public String       id;
 		public String       title;
 		public List<String> categories;
+		@SuppressWarnings("WeakerAccess")
 		public Boolean      isPhenotype       = false;
+		@SuppressWarnings("WeakerAccess")
 		public Boolean      isRestricted      = false;
+		@SuppressWarnings("WeakerAccess")
 		public Boolean      isSinglePhenotype = false;
 	}
 

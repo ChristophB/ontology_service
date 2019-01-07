@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@SuppressWarnings("WeakerAccess")
 public class PhenotypeFormData {
 	@JsonProperty
 	private String       identifier;
@@ -80,6 +81,7 @@ public class PhenotypeFormData {
 		this.identifier = identifier;
 	}
 
+	@SuppressWarnings("unused")
 	public Map<String, String> getSelectOptions() {
 		return selectOptions;
 	}
@@ -88,6 +90,7 @@ public class PhenotypeFormData {
 		this.selectOptions = selectOptions;
 	}
 
+	@SuppressWarnings("unused")
 	public Map<String, Set<String>> getDescriptionMap() {
 		return descriptionMap;
 	}
@@ -116,6 +119,7 @@ public class PhenotypeFormData {
 		return aggregateFunction;
 	}
 
+	@SuppressWarnings("unused")
 	public void setAggregateFunction(String aggregateFunction) {
 		this.aggregateFunction = aggregateFunction;
 	}
@@ -148,6 +152,7 @@ public class PhenotypeFormData {
 		return titleLanguages;
 	}
 
+	@SuppressWarnings("unused")
 	public void setTitleLanguages(List<String> titleLanguages) {
 		this.titleLanguages = titleLanguages;
 	}
@@ -316,7 +321,7 @@ public class PhenotypeFormData {
 
 	@JsonIgnore
 	public String[] getSuperCategories() {
-		if (getSuperCategory() == null) return new String[0];
+		if (StringUtils.isBlank(getSuperCategory())) return new String[0];
 		List<String> result = new ArrayList<>();
 
 		for (String superCategory : getSuperCategory().split(";")) {
@@ -325,26 +330,7 @@ public class PhenotypeFormData {
 		return result.toArray(new String[0]);
 	}
 
-	private void addDefinition(String definition) {
-		List<String> definitions = getDescriptions() != null ? getDescriptions() : new ArrayList<>();
-		definitions.add(definition);
-	}
-
-	private void addDefinitionLanguage(String definitionLanguage) {
-		List<String> definitionLanguages = getDescriptionLanguages() != null ? getDescriptionLanguages() : new ArrayList<>();
-		definitionLanguages.add(definitionLanguage);
-	}
-
-	private void addLabel(String label) {
-		List<String> labels = getSynonyms() != null ? getSynonyms() : new ArrayList<>();
-		labels.add(label);
-	}
-
-	private void addLabelLanguage(String labelLanguage) {
-		List<String> labelLanguages = getSynonymLanguages() != null ? getSynonymLanguages() : new ArrayList<>();
-		labelLanguages.add(labelLanguage);
-	}
-
+	@SuppressWarnings("unused")
 	private String owl2DatatypeToString(OWL2Datatype datatype) {
 		if (OWL2Datatype.XSD_DECIMAL.equals(datatype))
 			return "numeric";
