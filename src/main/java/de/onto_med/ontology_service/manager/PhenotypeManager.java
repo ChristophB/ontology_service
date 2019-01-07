@@ -86,7 +86,8 @@ public class PhenotypeManager {
 		return null;
 	}
 
-	public org.lha.phenoman.model.phenotype.top_level.Phenotype getPhenotype(String id) {
+	@SuppressWarnings("unused")
+	public Phenotype getPhenotype(String id) {
 		if (StringUtils.isBlank(id)) return null;
 		try {
 			String suffix = PhenotypeFactory.getLocalName(id);
@@ -187,7 +188,7 @@ public class PhenotypeManager {
 	 */
 	public Map<String, String> getRestrictions(String abstractPhenotype) {
 		return manager.getRestrictedPhenotypes(abstractPhenotype).stream()
-			.collect(Collectors.toMap(org.lha.phenoman.model.phenotype.top_level.Phenotype::getName, c -> c.getMainTitle().getTitleText()));
+			.collect(Collectors.toMap(Phenotype::getName, c -> c.getMainTitle().getTitleText()));
 	}
 
 	/**
@@ -196,7 +197,7 @@ public class PhenotypeManager {
 	 * @param iri The local name or IRI of the phenotype to search for.
 	 * @return List of dependent phenotypes as Category.
 	 */
-	public List<org.lha.phenoman.model.phenotype.top_level.Phenotype> getDependentPhenotypes(String iri) {
+	public List<Phenotype> getDependentPhenotypes(String iri) {
 		return manager.getDependentPhenotypes(PhenotypeFactory.getLocalName(iri));
 	}
 
@@ -249,7 +250,7 @@ public class PhenotypeManager {
 
 		for (Property property : properties) {
 			if (StringUtils.isBlank(property.getName())) continue;
-			org.lha.phenoman.model.phenotype.top_level.Phenotype phenotype = manager.getPhenotype(property.getName());
+			Phenotype phenotype = manager.getPhenotype(property.getName());
 			if (phenotype == null) continue;
 
 			String value = property.getValue();
@@ -306,6 +307,7 @@ public class PhenotypeManager {
 	 * @return String representation of the reasoning result.
 	 * @throws IllegalArgumentException If a property value could not be parsed.
 	 */
+	@SuppressWarnings("unused")
 	public String classifyIndividualAsString(List<Property> properties) throws IllegalArgumentException {
 		return classifyIndividual(properties).getPhenotypes().stream().map(Phenotype::getMainTitleText).collect(Collectors.toList()).toString();
 	}
@@ -504,7 +506,7 @@ public class PhenotypeManager {
 	 *
 	 * @param phenotype A phenotype which will be added to the manager.
 	 */
-	private void addPhenotype(org.lha.phenoman.model.phenotype.top_level.Phenotype phenotype) throws WrongPhenotypeTypeException {
+	private void addPhenotype(Phenotype phenotype) throws WrongPhenotypeTypeException {
 		if (phenotype.isRestrictedCalculationPhenotype()) {
 			manager.addRestrictedCalculationPhenotype(phenotype.asRestrictedCalculationPhenotype());
 		} else if (phenotype.isRestrictedBooleanPhenotype()) {

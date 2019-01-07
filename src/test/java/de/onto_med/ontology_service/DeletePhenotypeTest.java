@@ -110,7 +110,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 
 		response
 			= client.target(url + DELETE_PHENOTYPES_PATH)
-			.request(MediaType.TEXT_HTML)
+			.request(MediaType.APPLICATION_JSON)
 			.post(Entity.json(Collections.singletonList(id)));
 
 		assertThat(response.getStatus()).isEqualTo(Response.SC_OK);
