@@ -324,7 +324,7 @@ public class PhenotypeFormData {
 		if (StringUtils.isBlank(getSuperCategory())) return new String[0];
 		List<String> result = new ArrayList<>();
 
-		for (String superCategory : getSuperCategory().split(";")) {
+		for (String superCategory : getSuperCategory().split(" ")) {
 			result.add(superCategory.trim());
 		}
 		return result.toArray(new String[0]);

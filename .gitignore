@@ -11,6 +11,5 @@ out/
 gradle/
 .gradle/
 dependency-reduced-pom.xml
-!target/service.jar
 target/
 src/test/resources/data/*
