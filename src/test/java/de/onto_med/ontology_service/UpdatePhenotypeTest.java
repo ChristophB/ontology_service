@@ -127,7 +127,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setDescriptionLanguages(Arrays.asList("en", "de"));
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setUcum("kg");
-			setSuperCategory("Category_1;Category_2");
+			setSuperCategory("Category_1 Category_2");
 		}};
 
 		javax.ws.rs.core.Response response
