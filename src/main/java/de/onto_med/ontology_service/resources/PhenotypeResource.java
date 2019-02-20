@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import de.onto_med.ontology_service.api.Timer;
+import de.onto_med.ontology_service.data_model.FhirProperties;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.data_model.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
@@ -240,6 +241,28 @@ public class PhenotypeResource extends Resource {
 			} else {
 				return Response.ok(manager.classifyIndividualAsList(properties)).build();
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.ok(e.getMessage()).status(500).build();
+		}
+	}
+
+	@POST
+	@Path("{id}/query")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({ MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON })
+	public synchronized Response queryFhir(
+		@Context HttpHeaders headers, @PathParam("id") String id, FhirProperties properties
+	) {
+		if (properties == null) {
+			LOGGER.warn("FHIR query without properties");
+			return Response.ok("No properties were provided.").status(500).build();
+		}
+
+		PhenotypeManager manager = managers.getUnchecked(id);
+
+		try {
+			return Response.ok(manager.queryFhirAsList(properties)).build();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.ok(e.getMessage()).status(500).build();

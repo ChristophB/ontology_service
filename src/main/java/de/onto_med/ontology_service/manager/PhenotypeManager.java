@@ -1,6 +1,10 @@
 package de.onto_med.ontology_service.manager;
 
+import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import de.imise.graph_api.graph.Graph;
+import de.imise.onto_api.entities.restrictions.data_range.DateRangeLimited;
+import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeLimited;
+import de.onto_med.ontology_service.data_model.FhirProperties;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.data_model.Property;
 import de.onto_med.ontology_service.factory.AbstractPhenotypeFactory;
@@ -8,7 +12,11 @@ import de.onto_med.ontology_service.factory.PhenotypeCategoryFactory;
 import de.onto_med.ontology_service.factory.PhenotypeFactory;
 import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.fhir.ucum.UcumException;
+import org.hl7.fhir.dstu3.model.Bundle;
 import org.lha.phenoman.exception.WrongPhenotypeTypeException;
+import org.lha.phenoman.io.fhir.FHIRQuery;
+import org.lha.phenoman.man.PhenotypeReasoner;
 import org.lha.phenoman.model.category_tree.EntityTreeNode;
 import org.lha.phenoman.model.instance.CompositePhenotypeInstance;
 import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
@@ -25,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -338,6 +347,79 @@ public class PhenotypeManager {
 			"png", out
 		);
 		return out.toByteArray();
+	}
+
+	/**
+	 * This method returns a list of reasoner reports for all patients fond by the specified inclusion criteria.
+	 *
+	 * @param properties A list of abstract and restricted phenotypes, which will be used to filter the patients.
+	 * @return A List of ReasonerReports.
+	 * @throws IllegalArgumentException If a property value could not be parsed.
+	 * @throws FhirClientConnectionException If the connection to the FHIR server failed.
+	 */
+	private List<ReasonerReport> queryFhir(FhirProperties properties) throws IllegalArgumentException, FhirClientConnectionException {
+		FHIRQuery query = manager.getFHIRQuery(properties.getServerUrl());
+
+		query.setGender(properties.getGender())
+			.setAgeRange(new DecimalRangeLimited().setMinInclusive(properties.getMinAge()).setMaxInclusive(properties.getMaxAge()));
+
+		try {
+			query.setDateRange(new DateRangeLimited().setMinInclusive(properties.getMinDate()).setMaxInclusive(properties.getMaxDate()));
+		} catch (ParseException e) {
+			LOGGER.warn(e.getMessage());
+			throw new IllegalArgumentException("Could not parse Date.");
+		}
+
+		List<String> parameters = new ArrayList<>();
+		for (Property property : properties.getProperties()) {
+			if (StringUtils.isBlank(property.getName())) continue;
+			Phenotype phenotype = manager.getPhenotype(property.getName());
+			if (phenotype == null) continue;
+			parameters.add(property.getName());
+		}
+
+		query.setParameters(parameters.toArray(new String[0]));
+		List<Bundle> bundles = query.execute();
+
+		List<ReasonerReport> reports = new ArrayList<>();
+		try {
+			for (Bundle bundle : bundles) {
+				reports.add(manager.derivePhenotypes(bundle, PhenotypeReasoner.HERMIT).getFinalReport());
+			}
+		} catch (FileNotFoundException | UcumException e) {
+			LOGGER.warn(e.getMessage());
+			throw new FhirClientConnectionException("Could not retrieve data from FHIR server.");
+		}
+		return reports;
+	}
+
+	/**
+	 * Returns the result of @code{queryFhir} as HTML formatted string.
+	 *
+	 * @param properties A list of abstract and restricted phenotypes, which will be used to filter the patients.
+	 * @return String representation of the reasoning result.
+	 * @throws IllegalArgumentException If a property value could not be parsed.
+	 */
+	@SuppressWarnings("unused")
+	public String queryFhirAsString(FhirProperties properties) throws IllegalArgumentException {
+		return queryFhirAsList(properties).toString();
+	}
+
+	/**
+	 * Returns the result of @code{queryFhir} as list.
+	 *
+	 * @param properties A list of abstract and restricted phenotypes, which will be used to filter the patients.
+	 * @return A list of class names.
+	 * @throws IllegalArgumentException If a property value could not be parsed.
+	 */
+	public List<String> queryFhirAsList(FhirProperties properties) throws IllegalArgumentException {
+		List<String> results = new ArrayList<>();
+
+		for (ReasonerReport report : queryFhir(properties)) {
+			results.addAll(report.getPhenotypes().stream().map(Phenotype::getMainTitleText).collect(Collectors.toList()));
+		}
+
+		return results;
 	}
 
 	/**
