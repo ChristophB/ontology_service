@@ -649,7 +649,7 @@ public class PhenotypeManager {
 		void setCategory() {
 			a_attr.isPhenotype = false;
 			a_attr.isRestricted = false;
-			icon += " fa fa-folder-open-o text-secondary";
+			icon += " far fa-folder-open text-secondary";
 		}
 
 		void setRestrictedPhenotype() {
@@ -670,27 +670,27 @@ public class PhenotypeManager {
 		}
 
 		void setNumericPhenotype() {
-			icon += " fa fa-calculator";
+			icon += " fas fa-calculator";
 		}
 
 		void setStringPhenotype() {
-			icon += " fa fa-font";
+			icon += " fas fa-font";
 		}
 
 		void setDatePhenotype() {
-			icon += " fa fa-calendar";
+			icon += " far fa-calendar-alt";
 		}
 
 		void setBooleanPhenotype() {
-			icon += " fa fa-check-circle-o";
+			icon += " far fa-check-circle";
 		}
 
 		void setCompositeBooleanPhenotype() {
-			icon += " fa fa-check-circle";
+			icon += " fas fa-check-circle";
 		}
 
 		void setCalculationPhenotype() {
-			icon += " fa fa-calculator";
+			icon += " fas fa-calculator";
 		}
 
 		void addChild(TreeNode child) {
