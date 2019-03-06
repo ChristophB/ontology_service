@@ -358,16 +358,24 @@ public class PhenotypeManager {
 	 * @throws FhirClientConnectionException If the connection to the FHIR server failed.
 	 */
 	private List<ReasonerReport> queryFhir(FhirProperties properties) throws IllegalArgumentException, FhirClientConnectionException {
+		if (StringUtils.isBlank(properties.getServerUrl()))
+			throw new IllegalArgumentException("No URL to FHIR server provided, but it is required.");
+
 		FHIRQuery query = manager.getFHIRQuery(properties.getServerUrl());
 
-		query.setGender(properties.getGender())
-			.setAgeRange(new DecimalRangeLimited().setMinInclusive(properties.getMinAge()).setMaxInclusive(properties.getMaxAge()));
+		if (StringUtils.isNoneBlank(properties.getGender()))
+			query.setGender(properties.getGender());
 
-		try {
-			query.setDateRange(new DateRangeLimited().setMinInclusive(properties.getMinDate()).setMaxInclusive(properties.getMaxDate()));
-		} catch (ParseException e) {
-			LOGGER.warn(e.getMessage());
-			throw new IllegalArgumentException("Could not parse Date.");
+		if (StringUtils.isNoneBlank(properties.getMinAge(), properties.getMaxAge()))
+			query.setAgeRange(new DecimalRangeLimited().setMinInclusive(properties.getMinAge()).setMaxInclusive(properties.getMaxAge()));
+
+		if (StringUtils.isNoneBlank(properties.getMinDate(), properties.getMaxDate())) {
+			try {
+				query.setDateRange(new DateRangeLimited().setMinInclusive(properties.getMinDate()).setMaxInclusive(properties.getMaxDate()));
+			} catch (ParseException e) {
+				LOGGER.warn(e.getMessage());
+				throw new IllegalArgumentException("Could not parse Date.");
+			}
 		}
 
 		List<String> parameters = new ArrayList<>();
