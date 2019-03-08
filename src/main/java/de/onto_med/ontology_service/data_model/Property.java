@@ -18,6 +18,8 @@ public class Property {
 	private String value;
 	@JsonProperty
 	private String observationDate;
+	@JsonProperty
+	private String negation;
 
 	public Property() {	}
 
@@ -62,6 +64,14 @@ public class Property {
 
 	public void setObservationDate(String observationDate) {
 		this.observationDate = observationDate;
+	}
+
+	public String getNegation() {
+		return negation;
+	}
+
+	public void setNegation(String negation) {
+		this.negation = negation;
 	}
 
 	public String toString() {
