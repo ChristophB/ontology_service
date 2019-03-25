@@ -8,6 +8,7 @@ This is a DropWizard bases API for WebProtégé. Specifications are not fixed ye
 * Java jre8 is required to start the service. (If you do not want to mess around with configurations consider using the Dockerfile below.)
 * Use one of our released jar files or compile the Maven Project in Eclipse and create your own one.
 * Place a file *config.yml* in the same directory as the jar file. *config.yml* should contain all configurations such as the location of WebProtégé's data dictionary and ports (use the configuration file of this git repository as reference).
+* Place the file ucum-essence.xml in the sem directory as the jar file. Thid file is required for handling units in UCUM.
 * Run `java -jar service.jar server config.yml` on command line.
 
 ## Recommendation: Docker!
