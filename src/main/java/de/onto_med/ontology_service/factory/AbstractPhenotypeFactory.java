@@ -122,7 +122,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 			throw new NullPointerException("Formula for abstract calculated phenotype is missing.");
 
 		AbstractCalculationPhenotype phenotype;
-		if ("numeric".equals(data.getFormulaDatatype())) {
+		if ("decimal".equals(data.getFormulaDatatype())) {
 			phenotype = new AbstractCalculationDecimalPhenotype(data.getIdentifier(), data.getMainTitle(), manager.getFormula(data.getFormula()), data.getSuperCategories());
 		} else if ("date".equals(data.getFormulaDatatype())) {
 			phenotype = new AbstractCalculationDatePhenotype(data.getIdentifier(), data.getMainTitle(), manager.getFormula(data.getFormula()), data.getSuperCategories());
