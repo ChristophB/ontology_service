@@ -9,6 +9,8 @@ server:
   adminContextPath: /ontology-service
   requestLog:
     appenders: []
+  registerDefaultExceptionMappers: false
+  detailedJsonProcessingExceptionMapper: true
 logging:
   level: WARN
 dataPath: /srv/webprotege/
