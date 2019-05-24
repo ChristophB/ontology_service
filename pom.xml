@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.onto_med</groupId>
     <artifactId>ontology_service</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
     <name>Ontology Service</name>
     <packaging>jar</packaging>
     <description>REST-full API to access Ontologies developed and stored in WebProtégé and to manage phenotypes.</description>
     <properties>
         <dropwizard.version>1.3.8</dropwizard.version>
-        <jackson.version>2.9.8</jackson.version>
+        <jackson.version>2.9.9</jackson.version>
         <hibernate.version>6.0.14.Final</hibernate.version>
         <guava.version>27.0.1-jre</guava.version>
         <mockito.version>2.23.4</mockito.version>
