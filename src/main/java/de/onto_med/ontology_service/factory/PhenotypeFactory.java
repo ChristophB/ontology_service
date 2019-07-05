@@ -3,6 +3,7 @@ package de.onto_med.ontology_service.factory;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.dstu3.model.CodeSystem;
 import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import java.net.URI;
@@ -26,6 +27,7 @@ public abstract class PhenotypeFactory {
 		addPhenotypeSynonyms(phenotype, formData.getSynonyms(), formData.getSynonymLanguages());
 		addPhenotypeDescriptions(phenotype, formData.getDescriptions(), formData.getDescriptionLanguages());
 		addPhenotypeRelations(phenotype, formData.getRelations());
+		addPhenotypeCodes(phenotype, formData.getCodes());
 	}
 
 	/**
@@ -82,5 +84,19 @@ public abstract class PhenotypeFactory {
 		for (String relation : relations)
 			if (StringUtils.isNoneBlank(relation))
 				phenotype.addRelatedConcept(relation);
+	}
+
+	/**
+	 * Adds provided codes to the phenotype.
+	 * @param phenotype The phenotype, where the codes will be added to.
+	 * @param codes The codes.
+	 */
+	private void addPhenotypeCodes(Entity phenotype, List<String> codes) {
+		for (String code : codes)
+			if (StringUtils.isNoneBlank(code)) {
+				String codeSystemId = code.replaceAll("/[^/]+$", "");
+				String codeId = code.replaceAll("^.*/([^/]+)$", "$1");
+				phenotype.addCodeSystemAndCode(codeSystemId, codeSystemId, codeId, codeId);
+			}
 	}
 }

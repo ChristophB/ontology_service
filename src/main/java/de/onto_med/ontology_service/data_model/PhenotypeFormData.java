@@ -60,6 +60,8 @@ public class PhenotypeFormData {
 	@JsonProperty
 	private String       expression;
 	@JsonProperty
+	private List<String> codes            = new ArrayList<>();
+	@JsonProperty
 	private List<String> relations            = new ArrayList<>();
 	@JsonProperty
 	private Double       score;
@@ -275,6 +277,14 @@ public class PhenotypeFormData {
 
 	public void setExpression(String expression) {
 		this.expression = expression;
+	}
+
+	public List<String> getCodes() {
+		return codes;
+	}
+
+	public void setCodes(List<String> codes) {
+		this.codes = codes;
 	}
 
 	public List<String> getRelations() {
