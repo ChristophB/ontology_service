@@ -34,10 +34,12 @@ import org.smith.phenoman.simple_model.PAlgorithm;
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
 import javax.ws.rs.WebApplicationException;
+import javax.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -481,8 +483,12 @@ public class PhenotypeManager {
 	 */
 	public File getMicrosoftExcel() throws IOException {
 		File xls = File.createTempFile("phenoman-", "-xls");
-		manager.writePhenotypesToSimpleXLS(xls, new PAlgorithm("", "")); // TODO: set id and name
+		manager.writePhenotypesToXLS(xls);
 		return xls;
+	}
+
+	public void importArtDecorDataSet(String categoryId, String dataSetId) throws WrongPhenotypeTypeException, URISyntaxException, JAXBException, IOException {
+		manager.addArtDecorDataSet(dataSetId);
 	}
 
 

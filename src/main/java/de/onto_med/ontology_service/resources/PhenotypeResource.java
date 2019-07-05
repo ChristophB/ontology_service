@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import de.onto_med.ontology_service.api.Timer;
+import de.onto_med.ontology_service.data_model.ArtDecorImportRequest;
 import de.onto_med.ontology_service.data_model.FhirProperties;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.data_model.Property;
@@ -97,6 +98,19 @@ public class PhenotypeResource extends Resource {
 		} catch (IOException e) {
 			return Response.ok(e.getMessage()).status(500).build();
 		}
+	}
+
+	@POST
+	@Path("{id}/import-art-decor")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response importArtDecorDataSet(@PathParam("id") String id, ArtDecorImportRequest data) {
+		try {
+			managers.getUnchecked(id).importArtDecorDataSet(data.getCategoryId(), data.getDataSetId());
+		} catch (Exception e) {
+			return Response.serverError().build();
+		}
+		return Response.ok("Phenotypes imported successfully.").build();
 	}
 
 	@GET
