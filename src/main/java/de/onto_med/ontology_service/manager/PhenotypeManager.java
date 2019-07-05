@@ -14,24 +14,25 @@ import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.fhir.ucum.UcumException;
 import org.hl7.fhir.dstu3.model.Bundle;
-import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.io.fhir.FHIRQuery;
-import org.lha.phenoman.man.PhenotypeReasoner;
-import org.lha.phenoman.model.category_tree.EntityTreeNode;
-import org.lha.phenoman.model.instance.CompositePhenotypeInstance;
-import org.lha.phenoman.model.instance.SinglePhenotypeInstance;
-import org.lha.phenoman.model.instance.value.BooleanValue;
-import org.lha.phenoman.model.instance.value.DateValue;
-import org.lha.phenoman.model.instance.value.DecimalValue;
-import org.lha.phenoman.model.instance.value.StringValue;
-import org.lha.phenoman.model.phenotype.top_level.*;
-import org.lha.phenoman.model.reasoner_result.ReasonerReport;
+import org.smith.phenoman.exception.WrongPhenotypeTypeException;
+import org.smith.phenoman.io.fhir.FHIRQuery;
+import org.smith.phenoman.man.PhenotypeReasoner;
+import org.smith.phenoman.model.category_tree.EntityTreeNode;
+import org.smith.phenoman.model.instance.CompositePhenotypeInstance;
+import org.smith.phenoman.model.instance.SinglePhenotypeInstance;
+import org.smith.phenoman.model.instance.value.BooleanValue;
+import org.smith.phenoman.model.instance.value.DateValue;
+import org.smith.phenoman.model.instance.value.DecimalValue;
+import org.smith.phenoman.model.instance.value.StringValue;
+import org.smith.phenoman.model.phenotype.top_level.*;
+import org.smith.phenoman.model.reasoner_result.ReasonerReport;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
+import javax.ws.rs.WebApplicationException;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class PhenotypeManager {
 	/**
 	 * The PhenoMan manager instance of a phenotype ontology.
 	 */
-	private org.lha.phenoman.man.PhenotypeManager manager;
+	private org.smith.phenoman.man.PhenotypeManager manager;
 	private String                                phenotypePath;
 
 	/**
@@ -68,7 +69,7 @@ public class PhenotypeManager {
 	 */
 	public PhenotypeManager(String phenotypePath) {
 		this.phenotypePath = phenotypePath;
-		manager = new org.lha.phenoman.man.PhenotypeManager(phenotypePath, false);
+		manager = new org.smith.phenoman.man.PhenotypeManager(phenotypePath, false);
 		manager.write();
 	}
 
@@ -274,12 +275,6 @@ public class PhenotypeManager {
 							manager.getRestrictedSinglePhenotype(name)));
 					}
 				} else if (value == null) { // skip
-//				} else if (phenotype.isAbstractBooleanPhenotype()) {
-//					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(phenotype.asAbstractBooleanPhenotype(), new BooleanRange(Boolean.valueOf(value))));
-//				} else if (phenotype.isAbstractCalculationPhenotype()) {
-//					complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
-//						phenotype.asAbstractCalculationPhenotype(),
-//						new DecimalValue(value, property.getObservationDate())));
 				} else if (phenotype.isAbstractSinglePhenotype()) {
 					if (OWL2Datatype.XSD_DECIMAL.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
@@ -358,47 +353,48 @@ public class PhenotypeManager {
 	 * @throws FhirClientConnectionException If the connection to the FHIR server failed.
 	 */
 	private List<ReasonerReport> queryFhir(FhirProperties properties) throws IllegalArgumentException, FhirClientConnectionException {
-		if (StringUtils.isBlank(properties.getServerUrl()))
-			throw new IllegalArgumentException("No URL to FHIR server provided, but it is required.");
-
-		FHIRQuery query = manager.getFHIRQuery(properties.getServerUrl());
-
-		if (StringUtils.isNoneBlank(properties.getGender()))
-			query.setGender(properties.getGender());
-
-		if (StringUtils.isNoneBlank(properties.getMinAge(), properties.getMaxAge()))
-			query.setAgeRange(new DecimalRangeLimited().setMinInclusive(properties.getMinAge()).setMaxInclusive(properties.getMaxAge()));
-
-		if (StringUtils.isNoneBlank(properties.getMinDate(), properties.getMaxDate())) {
-			try {
-				query.setDateRange(new DateRangeLimited().setMinInclusive(properties.getMinDate()).setMaxInclusive(properties.getMaxDate()));
-			} catch (ParseException e) {
-				LOGGER.warn(e.getMessage());
-				throw new IllegalArgumentException("Could not parse Date.");
-			}
-		}
-
-		List<String> parameters = new ArrayList<>();
-		for (Property property : properties.getProperties()) {
-			if (StringUtils.isBlank(property.getName())) continue;
-			Phenotype phenotype = manager.getPhenotype(property.getName());
-			if (phenotype == null) continue;
-			parameters.add(property.getName());
-		}
-
-		query.setParameters(parameters.toArray(new String[0]));
-		List<Bundle> bundles = query.execute();
-
-		List<ReasonerReport> reports = new ArrayList<>();
-		try {
-			for (Bundle bundle : bundles) {
-				reports.add(manager.derivePhenotypes(bundle, PhenotypeReasoner.HERMIT).getFinalReport());
-			}
-		} catch (FileNotFoundException | UcumException e) {
-			LOGGER.warn(e.getMessage());
-			throw new FhirClientConnectionException("Could not retrieve data from FHIR server.");
-		}
-		return reports;
+//		if (StringUtils.isBlank(properties.getServerUrl()))
+//			throw new IllegalArgumentException("No URL to FHIR server provided, but it is required.");
+//
+//		FHIRQuery query = manager.getFHIRQuery(properties.getServerUrl());
+//
+//		if (StringUtils.isNoneBlank(properties.getGender()))
+//			query.setGender(properties.getGender());
+//
+//		if (StringUtils.isNoneBlank(properties.getMinAge(), properties.getMaxAge()))
+//			query.setAgeRange(new DecimalRangeLimited().setMinInclusive(properties.getMinAge()).setMaxInclusive(properties.getMaxAge()));
+//
+//		if (StringUtils.isNoneBlank(properties.getMinDate(), properties.getMaxDate())) {
+//			try {
+//				query.setDateRange(new DateRangeLimited().setMinInclusive(properties.getMinDate()).setMaxInclusive(properties.getMaxDate()));
+//			} catch (ParseException e) {
+//				LOGGER.warn(e.getMessage());
+//				throw new IllegalArgumentException("Could not parse Date.");
+//			}
+//		}
+//
+//		List<String> parameters = new ArrayList<>();
+//		for (Property property : properties.getProperties()) {
+//			if (StringUtils.isBlank(property.getName())) continue;
+//			Phenotype phenotype = manager.getPhenotype(property.getName());
+//			if (phenotype == null) continue;
+//			parameters.add(property.getName());
+//		}
+//
+//		query.setParameters(parameters.toArray(new String[0]));
+//		List<Bundle> bundles = query.execute();
+//
+//		List<ReasonerReport> reports = new ArrayList<>();
+//		try {
+//			for (Bundle bundle : bundles) {
+//				reports.add(manager.derivePhenotypes(bundle, PhenotypeReasoner.HERMIT).getFinalReport());
+//			}
+//		} catch (FileNotFoundException | UcumException e) {
+//			LOGGER.warn(e.getMessage());
+//			throw new FhirClientConnectionException("Could not retrieve data from FHIR server.");
+//		}
+//		return reports;
+		throw new WebApplicationException("Not implemented");
 	}
 
 	/**

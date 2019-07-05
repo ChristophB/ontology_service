@@ -6,9 +6,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.man.PhenotypeManager;
-import org.lha.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
+import org.smith.phenoman.exception.WrongPhenotypeTypeException;
+import org.smith.phenoman.man.PhenotypeManager;
+import org.smith.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.ws.rs.client.Entity;

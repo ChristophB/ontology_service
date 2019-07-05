@@ -2,10 +2,10 @@ package de.onto_med.ontology_service.factory;
 
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.man.PhenotypeManager;
-import org.lha.phenoman.math.Function;
-import org.lha.phenoman.model.phenotype.*;
-import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
+import org.smith.phenoman.man.PhenotypeManager;
+import org.smith.phenoman.math.Function;
+import org.smith.phenoman.model.phenotype.*;
+import org.smith.phenoman.model.phenotype.top_level.AbstractPhenotype;
 
 import javax.activation.UnsupportedDataTypeException;
 import java.util.UUID;

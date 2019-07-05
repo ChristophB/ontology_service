@@ -3,7 +3,7 @@ package de.onto_med.ontology_service.factory;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.model.phenotype.top_level.Entity;
+import org.smith.phenoman.model.phenotype.top_level.Entity;
 
 import java.net.URI;
 import java.util.List;

@@ -17,7 +17,7 @@
         <owlapi.version>5.1.8</owlapi.version>
         <hermit.version>1.4.3.517</hermit.version>
         <protege.version>3.5.1</protege.version>
-        <phenoman.version>0.2.2</phenoman.version>
+        <phenoman.version>0.2.5</phenoman.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -132,7 +132,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.lha</groupId>
+            <groupId>org.smith</groupId>
             <artifactId>phenoman</artifactId>
             <version>${phenoman.version}</version>
             <exclusions>

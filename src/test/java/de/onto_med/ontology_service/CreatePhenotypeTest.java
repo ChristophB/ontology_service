@@ -11,11 +11,11 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.lha.phenoman.man.PhenotypeManager;
-import org.lha.phenoman.model.phenotype.*;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.Phenotype;
-import org.lha.phenoman.model.phenotype.top_level.Title;
+import org.smith.phenoman.man.PhenotypeManager;
+import org.smith.phenoman.model.phenotype.*;
+import org.smith.phenoman.model.phenotype.top_level.Category;
+import org.smith.phenoman.model.phenotype.top_level.Phenotype;
+import org.smith.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
@@ -74,6 +74,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.addDescription("Description NONE", "en"); // language defaults to "en"
 		expected.addRelatedConcept("IRI 2");
 		expected.addRelatedConcept("IRI 1");
+		expected.setSuperCategories("Phenotype_Category");
 
 		assertThat(actual).isEqualTo(expected);
 	}

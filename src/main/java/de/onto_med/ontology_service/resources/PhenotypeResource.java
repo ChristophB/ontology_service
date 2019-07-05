@@ -10,10 +10,10 @@ import de.onto_med.ontology_service.data_model.Property;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.model.phenotype.top_level.AbstractPhenotype;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.Entity;
-import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.smith.phenoman.model.phenotype.top_level.AbstractPhenotype;
+import org.smith.phenoman.model.phenotype.top_level.Category;
+import org.smith.phenoman.model.phenotype.top_level.Entity;
+import org.smith.phenoman.model.phenotype.top_level.RestrictedPhenotype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -4,12 +4,12 @@ import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeLimited;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.eclipse.jetty.server.Response;
 import org.junit.*;
-import org.lha.phenoman.exception.WrongPhenotypeTypeException;
-import org.lha.phenoman.man.PhenotypeManager;
-import org.lha.phenoman.model.phenotype.*;
-import org.lha.phenoman.model.phenotype.top_level.Category;
-import org.lha.phenoman.model.phenotype.top_level.Phenotype;
-import org.lha.phenoman.model.phenotype.top_level.Title;
+import org.smith.phenoman.exception.WrongPhenotypeTypeException;
+import org.smith.phenoman.man.PhenotypeManager;
+import org.smith.phenoman.model.phenotype.*;
+import org.smith.phenoman.model.phenotype.top_level.Category;
+import org.smith.phenoman.model.phenotype.top_level.Phenotype;
+import org.smith.phenoman.model.phenotype.top_level.Title;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 

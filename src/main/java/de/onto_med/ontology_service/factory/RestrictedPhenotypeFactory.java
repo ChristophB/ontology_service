@@ -4,10 +4,10 @@ import de.imise.onto_api.entities.restrictions.data_range.*;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.util.Parser;
 import org.apache.commons.lang3.StringUtils;
-import org.lha.phenoman.man.PhenotypeManager;
-import org.lha.phenoman.model.phenotype.*;
-import org.lha.phenoman.model.phenotype.top_level.Phenotype;
-import org.lha.phenoman.model.phenotype.top_level.RestrictedPhenotype;
+import org.smith.phenoman.man.PhenotypeManager;
+import org.smith.phenoman.model.phenotype.*;
+import org.smith.phenoman.model.phenotype.top_level.Phenotype;
+import org.smith.phenoman.model.phenotype.top_level.RestrictedPhenotype;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
@@ -100,7 +100,7 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param superPhenotype The super phenotype.
 	 * @return A RestrictedCalculationPhenotype.
 	 */
-	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(PhenotypeFormData data, org.lha.phenoman.model.phenotype.top_level.Phenotype superPhenotype) throws ParseException {
+	private RestrictedCalculationPhenotype createRestrictedCalculationPhenotype(PhenotypeFormData data, org.smith.phenoman.model.phenotype.top_level.Phenotype superPhenotype) throws ParseException {
 		AbstractCalculationPhenotype abstractPhenotype = superPhenotype.asAbstractCalculationPhenotype();
 		RestrictedCalculationPhenotype phenotype;
 
@@ -129,7 +129,7 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 	 * @param superPhenotype The super phenotype.
 	 * @return A RestrictedBooleanPhenotype.
 	 */
-	private RestrictedBooleanPhenotype createRestrictedBooleanPhenotype(PhenotypeFormData data, org.lha.phenoman.model.phenotype.top_level.Phenotype superPhenotype) throws NullPointerException {
+	private RestrictedBooleanPhenotype createRestrictedBooleanPhenotype(PhenotypeFormData data, org.smith.phenoman.model.phenotype.top_level.Phenotype superPhenotype) throws NullPointerException {
 		if (StringUtils.isBlank(data.getExpression()))
 			throw new NullPointerException("Boolean expression for restricted boolean phenotype is missing.");
 
