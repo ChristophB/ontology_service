@@ -82,12 +82,18 @@ public class PhenotypeResource extends Resource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.TEXT_HTML)
-	public Response getPhenotypeView(@PathParam("id") String id) {
+	public Response getPhenotypeView(@PathParam("id") String id, @QueryParam("format") String format) {
 		try {
-			return Response.ok(managers.getUnchecked(id).getFullRdfDocument())
-				.header(HttpHeaders.CONTENT_DISPOSITION,
-					String.format("attachment; filename='cop_%s.owl'", id))
-				.build();
+			if ("xls".equals(format)) {
+				return Response.ok(managers.getUnchecked(id).getMicrosoftExcel(), MediaType.APPLICATION_OCTET_STREAM)
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + id + "_PATO.xls")
+					.build();
+			} else {
+				return Response.ok(managers.getUnchecked(id).getFullRdfDocument())
+					.header(HttpHeaders.CONTENT_DISPOSITION,
+						String.format("attachment; filename=cop_%s.owl", id))
+					.build();
+			}
 		} catch (IOException e) {
 			return Response.ok(e.getMessage()).status(500).build();
 		}

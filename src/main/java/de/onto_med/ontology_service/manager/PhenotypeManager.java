@@ -29,11 +29,13 @@ import org.smith.phenoman.model.reasoner_result.ReasonerReport;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.smith.phenoman.simple_model.PAlgorithm;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
 import javax.ws.rs.WebApplicationException;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -471,6 +473,16 @@ public class PhenotypeManager {
 	 */
 	public String getFullRdfDocument() throws IOException {
 		return new String(Files.readAllBytes(Paths.get(phenotypePath)));
+	}
+
+	/**
+	 * Returns a Microsoft Excel document containing the whole ontology.
+	 * @return Microsoft Excel file
+	 */
+	public File getMicrosoftExcel() throws IOException {
+		File xls = File.createTempFile("phenoman-", "-xls");
+		manager.writePhenotypesToSimpleXLS(xls, new PAlgorithm("", "")); // TODO: set id and name
+		return xls;
 	}
 
 
