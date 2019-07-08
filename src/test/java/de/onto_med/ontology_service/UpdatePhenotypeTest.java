@@ -163,6 +163,8 @@ public class UpdatePhenotypeTest extends AbstractTest {
 			setRangeMinOperator(">");
 			setRangeMax("12.0");
 			setRangeMaxOperator("<=");
+			setCodeSystems(Arrays.asList("system1", "system2"));
+			setCodes(Arrays.asList("code1", "code2"));
 		}};
 
 		javax.ws.rs.core.Response response
@@ -185,6 +187,8 @@ public class UpdatePhenotypeTest extends AbstractTest {
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
 		expected.addRelatedConcept("IRI 2");
+		expected.addCodeSystemAndCode("system1", "system1", "code1", "code1");
+		expected.addCodeSystemAndCode("system2", "system2", "code2", "code2");
 
 		assertThat(actual.isRestrictedSinglePhenotype()).isTrue();
 		assertThat(actual.asRestrictedSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DECIMAL);

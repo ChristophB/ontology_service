@@ -107,6 +107,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 			new AbstractBooleanPhenotype(data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
+		phenotype.setMainResult(data.getIsMainResult());
 
 		return phenotype;
 	}
@@ -132,6 +133,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
+		phenotype.setMainResult(data.getIsMainResult());
 
 		return phenotype;
 	}

@@ -28,6 +28,8 @@ public class PhenotypeFormData {
 	@JsonProperty
 	private List<String> synonymLanguages     = new ArrayList<>();
 	@JsonProperty
+	private Boolean      isMainResult         = false;
+	@JsonProperty
 	private Boolean      isPhenotype;
 	@JsonProperty
 	private Boolean      isRestricted;
@@ -60,7 +62,9 @@ public class PhenotypeFormData {
 	@JsonProperty
 	private String       expression;
 	@JsonProperty
-	private List<String> codes            = new ArrayList<>();
+	private List<String> codeSystems          = new ArrayList<>();
+	@JsonProperty
+	private List<String> codes                = new ArrayList<>();
 	@JsonProperty
 	private List<String> relations            = new ArrayList<>();
 	@JsonProperty
@@ -107,6 +111,14 @@ public class PhenotypeFormData {
 
 	public void setMainTitle(String mainTitle) {
 		this.mainTitle = mainTitle;
+	}
+
+	public Boolean getIsMainResult() {
+		return isMainResult;
+	}
+
+	public void setIsMainResult(Boolean mainResult) {
+		isMainResult = mainResult;
 	}
 
 	public Double getScore() {
@@ -277,6 +289,14 @@ public class PhenotypeFormData {
 
 	public void setExpression(String expression) {
 		this.expression = expression;
+	}
+
+	public List<String> getCodeSystems() {
+		return codeSystems;
+	}
+
+	public void setCodeSystems(List<String> codeSystems) {
+		this.codeSystems = codeSystems;
 	}
 
 	public List<String> getCodes() {

@@ -141,6 +141,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 			setRelations(Arrays.asList("IRI 1", "IRI 2"));
 			setSuperCategory("Category_1");
 			setUcum("m^2");
+			setCodeSystems(Arrays.asList("system1", "system2"));
+			setCodes(Arrays.asList("code1", "code2"));
 		}};
 
 		javax.ws.rs.core.Response response
@@ -163,6 +165,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
 		expected.addRelatedConcept("IRI 2");
+		expected.addCodeSystemAndCode("system1", "system1", "code1", "code1");
+		expected.addCodeSystemAndCode("system2", "system2", "code2", "code2");
 
 		assertThat(actual.isAbstractSinglePhenotype()).isTrue();
 		assertThat(actual.asAbstractSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DECIMAL);

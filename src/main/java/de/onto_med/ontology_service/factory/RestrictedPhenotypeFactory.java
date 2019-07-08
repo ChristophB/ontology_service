@@ -119,6 +119,7 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 		} else throw new IllegalArgumentException("RestrictedCalculationPhenotype could not be created because its super phenotype has an invalid datatype");
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
+		phenotype.setMainResult(data.getIsMainResult());
 
 		return phenotype;
 	}
@@ -139,6 +140,7 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
 		if (data.getScore() != null) phenotype.asRestrictedBooleanPhenotype().setScore(data.getScore());
+		phenotype.setMainResult(data.getIsMainResult());
 
 		return phenotype;
 	}
