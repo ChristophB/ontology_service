@@ -488,7 +488,9 @@ public class PhenotypeManager {
 	}
 
 	public void importArtDecorDataSet(String categoryId, String dataSetId) throws WrongPhenotypeTypeException, URISyntaxException, JAXBException, IOException {
+		LOGGER.info(String.format("Importing Art-Decor data set %s into ontology...", dataSetId));
 		manager.addArtDecorDataSet(dataSetId);
+		LOGGER.info("Art-Decor data set import finished.");
 	}
 
 
