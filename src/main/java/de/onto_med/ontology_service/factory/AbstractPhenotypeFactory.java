@@ -77,7 +77,8 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 				try { function = Function.valueOf(data.getAggregateFunction()); } catch (IllegalArgumentException | NullPointerException ignored) { }
 
 				phenotype = new AbstractSingleDecimalPhenotype(
-					data.getIdentifier(), data.getMainTitle(), function, data.getSuperCategories());
+					data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
+				((AbstractSingleDecimalPhenotype) phenotype).setFunction(function);
 				break;
 			case "date":
 				phenotype = new AbstractSingleDatePhenotype(
