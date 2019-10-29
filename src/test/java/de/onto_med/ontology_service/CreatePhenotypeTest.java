@@ -67,7 +67,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 		Category         actual  = manager.getCategory(title);
 
-		Category expected = new Category(title, new Title(title, "en"));
+		Category expected = new Category(title, title);
 		expected.addLabel("Label EN", "en");
 		expected.addLabel("Label DE", "de");
 		expected.addDescription("Description EN", "en");

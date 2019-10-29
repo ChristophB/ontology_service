@@ -80,4 +80,15 @@ public class ApiTest extends AbstractTest {
 		manager.addAbstractSinglePhenotype(singlePhenotype);
 		manager.getFormula("single_phen");
 	}
+
+	@Test
+	public void testTitleWithoutLanguage() {
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, true);
+		String title = "test_category_title";
+
+		Category expected = new Category(title, title);
+		manager.addCategory(expected);
+
+		assertThat(manager.getCategory(title)).isEqualTo(expected);
+	}
 }
