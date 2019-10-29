@@ -95,7 +95,7 @@ public abstract class PhenotypeFactory {
 			String codeSystem = codeSystems.get(i);
 			if (StringUtils.isBlank(codeSystem)) continue;
 			if (codes.size() > i && StringUtils.isNoneBlank(codes.get(i)))
-				phenotype.addCodeSystemAndCode(codeSystem, codeSystem, codes.get(i), codes.get(i));
+				phenotype.addCode(codeSystem, codes.get(i));
 		}
 	}
 }

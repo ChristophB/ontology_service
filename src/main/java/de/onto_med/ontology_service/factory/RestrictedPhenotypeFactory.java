@@ -119,7 +119,8 @@ public class RestrictedPhenotypeFactory extends PhenotypeFactory {
 		} else throw new IllegalArgumentException("RestrictedCalculationPhenotype could not be created because its super phenotype has an invalid datatype");
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
-		phenotype.setMainResult(data.getIsMainResult());
+		// TODO: What is the replacement for this?!
+		// phenotype.setMainResult(data.getIsMainResult());
 
 		return phenotype;
 	}

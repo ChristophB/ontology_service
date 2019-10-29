@@ -2,8 +2,6 @@ package de.onto_med.ontology_service.manager;
 
 import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import de.imise.graph_api.graph.Graph;
-import de.imise.onto_api.entities.restrictions.data_range.DateRangeLimited;
-import de.imise.onto_api.entities.restrictions.data_range.DecimalRangeLimited;
 import de.onto_med.ontology_service.data_model.FhirProperties;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.data_model.Property;
@@ -12,11 +10,10 @@ import de.onto_med.ontology_service.factory.PhenotypeCategoryFactory;
 import de.onto_med.ontology_service.factory.PhenotypeFactory;
 import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
 import org.apache.commons.lang3.StringUtils;
-import org.fhir.ucum.UcumException;
-import org.hl7.fhir.dstu3.model.Bundle;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.smith.phenoman.exception.WrongPhenotypeTypeException;
-import org.smith.phenoman.io.fhir.FHIRQuery;
-import org.smith.phenoman.man.PhenotypeReasoner;
 import org.smith.phenoman.model.category_tree.EntityTreeNode;
 import org.smith.phenoman.model.instance.CompositePhenotypeInstance;
 import org.smith.phenoman.model.instance.SinglePhenotypeInstance;
@@ -26,10 +23,6 @@ import org.smith.phenoman.model.instance.value.DecimalValue;
 import org.smith.phenoman.model.instance.value.StringValue;
 import org.smith.phenoman.model.phenotype.top_level.*;
 import org.smith.phenoman.model.reasoner_result.ReasonerReport;
-import org.semanticweb.owlapi.vocab.OWL2Datatype;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.smith.phenoman.simple_model.PAlgorithm;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
@@ -37,7 +30,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -291,7 +283,7 @@ public class PhenotypeManager {
 					} else if (OWL2Datatype.XSD_BOOLEAN.equals(phenotype.asAbstractSinglePhenotype().getDatatype())) {
 						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
 							phenotype.asAbstractSinglePhenotype(),
-							new BooleanValue(Boolean.valueOf(value), property.getObservationDate())));
+							new BooleanValue(Boolean.parseBoolean(value), property.getObservationDate())));
 					} else {
 						complex.addSinglePhenotypeInstance(new SinglePhenotypeInstance(
 							phenotype.asAbstractSinglePhenotype(),

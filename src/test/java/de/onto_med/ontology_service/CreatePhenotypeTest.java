@@ -165,8 +165,8 @@ public class CreatePhenotypeTest extends AbstractTest {
 		expected.addLabel("Label DE", "de");
 		expected.addRelatedConcept("IRI 1");
 		expected.addRelatedConcept("IRI 2");
-		expected.addCodeSystemAndCode("system1", "system1", "code1", "code1");
-		expected.addCodeSystemAndCode("system2", "system2", "code2", "code2");
+		expected.addCode("system1", "code1");
+		expected.addCode("system2", "code2");
 
 		assertThat(actual.isAbstractSinglePhenotype()).isTrue();
 		assertThat(actual.asAbstractSinglePhenotype().getDatatype()).isEqualTo(OWL2Datatype.XSD_DECIMAL);
