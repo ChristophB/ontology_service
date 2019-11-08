@@ -10,6 +10,7 @@ import de.onto_med.ontology_service.factory.PhenotypeCategoryFactory;
 import de.onto_med.ontology_service.factory.PhenotypeFactory;
 import de.onto_med.ontology_service.factory.RestrictedPhenotypeFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.fhir.ucum.UcumException;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.xml.bind.JAXBException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -294,6 +296,8 @@ public class PhenotypeManager {
 				throw new IllegalArgumentException("Could not parse Date from String '" + value + "'. " + e.getMessage());
 			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Could not parse Number from String '" + value + "'.");
+			} catch (FileNotFoundException | UcumException e) {
+				e.printStackTrace();
 			}
 		}
 

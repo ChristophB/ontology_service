@@ -5,8 +5,9 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import org.smith.phenoman.exception.WrongPhenotypeTypeException;
 import org.smith.phenoman.man.PhenotypeManager;
+import org.smith.phenoman.model.code_system.Code;
+import org.smith.phenoman.model.code_system.CodeSystem;
 import org.smith.phenoman.model.phenotype.AbstractBooleanPhenotype;
-import org.smith.phenoman.model.phenotype.AbstractCalculationPhenotype;
 import org.smith.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
 import org.smith.phenoman.model.phenotype.top_level.Category;
 import org.smith.phenoman.model.phenotype.top_level.Title;
@@ -16,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -90,5 +92,20 @@ public class ApiTest extends AbstractTest {
 		manager.addCategory(expected);
 
 		assertThat(manager.getCategory(title)).isEqualTo(expected);
+	}
+
+	@Test
+	public void testReadCodeAndCodeSystemOfPhenotype() throws WrongPhenotypeTypeException {
+		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, true);
+		String id = UUID.randomUUID().toString();
+
+		AbstractSingleDecimalPhenotype expected = new AbstractSingleDecimalPhenotype(id, id);
+		expected.addCode("http://code_system.com", UUID.randomUUID().toString());
+		expected.addCode(new Code("code_System1", UUID.randomUUID().toString()));
+		expected.addCode(CodeSystem.LOINC, UUID.randomUUID().toString());
+		expected.addCode(CodeSystem.ICD_10_GM, String.format("http://%s.com", UUID.randomUUID().toString()), UUID.randomUUID().toString());
+		manager.addAbstractSinglePhenotype(expected);
+
+		assertThat(manager.getPhenotype(id)).isEqualTo(expected);
 	}
 }
