@@ -65,7 +65,7 @@ public class PhenotypeManager {
 	 *
 	 * @param phenotypePath Path to the phenotype ontology OWL file.
 	 */
-	public PhenotypeManager(String phenotypePath) {
+	public PhenotypeManager(String phenotypePath) throws IllegalAccessException, InstantiationException {
 		this.phenotypePath = phenotypePath;
 		manager = new org.smith.phenoman.man.PhenotypeManager(phenotypePath, false);
 		manager.write();

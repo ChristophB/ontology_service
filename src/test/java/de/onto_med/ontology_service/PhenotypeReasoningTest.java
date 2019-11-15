@@ -31,7 +31,7 @@ public class PhenotypeReasoningTest extends AbstractTest {
 	private static final String REASON_PATH   = "/phenotype/" + ID + "/reason";
 
 	@BeforeClass
-	public static void init() throws WrongPhenotypeTypeException {
+	public static void init() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 
 		AbstractSingleDecimalPhenotype abstractPhenotype = new AbstractSingleDecimalPhenotype("height", "height");

@@ -28,7 +28,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 
 
 	@Test
-	public void testGetDependentPhenotypes() {
+	public void testGetDependentPhenotypes() throws IllegalAccessException, InstantiationException {
 		String id = "Double_Phenotype";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -84,7 +84,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testDeletePhenotype() {
+	public void testDeletePhenotype() throws IllegalAccessException, InstantiationException {
 		String id = "Abstract_Integer_Phenotype";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -120,7 +120,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testDeletePhenotypeByApi() throws WrongPhenotypeTypeException {
+	public void testDeletePhenotypeByApi() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		String id = "Phenotype_to_be_deleted";
 
 		PhenotypeManager manager   = new PhenotypeManager(ONTOLOGY_PATH, false);
@@ -135,7 +135,7 @@ public class DeletePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testDeleteDependentInCalculation() throws WrongPhenotypeTypeException {
+	public void testDeleteDependentInCalculation() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 
 		manager.addAbstractSinglePhenotype(new AbstractSingleDecimalPhenotype("Height", "Height"));

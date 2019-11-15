@@ -113,7 +113,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdateCategoriesOfPhenotype() {
+	public void testUpdateCategoriesOfPhenotype() throws IllegalAccessException, InstantiationException {
 		String id = "Abstract_Double_Phenotype_1";
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
@@ -144,7 +144,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdatePhenotypeWithSameType() {
+	public void testUpdatePhenotypeWithSameType() throws IllegalAccessException, InstantiationException {
 		String id = "Double_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -196,7 +196,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdatePhenotypeWithSameTypeByApi() throws WrongPhenotypeTypeException {
+	public void testUpdatePhenotypeWithSameTypeByApi() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 		AbstractSingleDecimalPhenotype abstractPhenotype = new AbstractSingleDecimalPhenotype("Weight", "Weight");
 
@@ -237,7 +237,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test(expected = WrongPhenotypeTypeException.class)
-	public void testUpdatePhenotypeWithDifferentTypeByApi() throws WrongPhenotypeTypeException {
+	public void testUpdatePhenotypeWithDifferentTypeByApi() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 
 		AbstractSinglePhenotype phenotype = new AbstractSingleDecimalPhenotype("Weight", "Weight");
@@ -253,7 +253,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testUpdatePhenotypeWithDifferentSingleTypeByApi() throws WrongPhenotypeTypeException {
+	public void testUpdatePhenotypeWithDifferentSingleTypeByApi() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, false);
 
 		AbstractSinglePhenotype phenotype = new AbstractSingleDecimalPhenotype("Weight", "Weight");
@@ -270,7 +270,7 @@ public class UpdatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void testPhenotypeCreation() throws WrongPhenotypeTypeException {
+	public void testPhenotypeCreation() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(
 			RULE.getConfiguration().getPhenotypePath().replace("%id%", "test0815"), false);
 

@@ -47,7 +47,7 @@ public class PhenotypeResource extends Resource {
 		.build(
 			new CacheLoader<String, PhenotypeManager>() {
 				@Override
-				public PhenotypeManager load(@Nonnull String key) {
+				public PhenotypeManager load(@Nonnull String key) throws InstantiationException, IllegalAccessException {
 					Timer            timer   = new Timer();
 					PhenotypeManager manager = new PhenotypeManager(phenotypePath.replace("%id%", key));
 

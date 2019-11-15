@@ -11,6 +11,7 @@ import org.smith.phenoman.model.phenotype.AbstractBooleanPhenotype;
 import org.smith.phenoman.model.phenotype.AbstractSingleDecimalPhenotype;
 import org.smith.phenoman.model.phenotype.top_level.Category;
 import org.smith.phenoman.model.phenotype.top_level.Title;
+import org.smith.phenoman.model.resource_type.ResourceTypeMan;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -75,7 +76,7 @@ public class ApiTest extends AbstractTest {
 	}
 
 	@Test
-	public void testFormulaRetrieval() throws WrongPhenotypeTypeException {
+	public void testFormulaRetrieval() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, true);
 
 		AbstractSingleDecimalPhenotype singlePhenotype = new AbstractSingleDecimalPhenotype("single_phen", "single_phen");
@@ -84,7 +85,7 @@ public class ApiTest extends AbstractTest {
 	}
 
 	@Test
-	public void testTitleWithoutLanguage() {
+	public void testTitleWithoutLanguage() throws IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, true);
 		String title = "test_category_title";
 
@@ -95,7 +96,7 @@ public class ApiTest extends AbstractTest {
 	}
 
 	@Test
-	public void testReadCodeAndCodeSystemOfPhenotype() throws WrongPhenotypeTypeException {
+	public void testReadCodeAndCodeSystemOfPhenotype() throws WrongPhenotypeTypeException, IllegalAccessException, InstantiationException {
 		PhenotypeManager manager = new PhenotypeManager(ONTOLOGY_PATH, true);
 		String id = UUID.randomUUID().toString();
 

@@ -45,7 +45,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	}
 
 	@Before
-	public void createCategory() {
+	public void createCategory() throws IllegalAccessException, InstantiationException {
 		String title = "Category_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -82,37 +82,37 @@ public class CreatePhenotypeTest extends AbstractTest {
 	}
 
 	@Test
-	public void test1IntegerPhenotypeCreation() {
+	public void test1IntegerPhenotypeCreation() throws InstantiationException, IllegalAccessException {
 		testAbstractIntegerPhenotypeCreation();
 		testRestrictedIntegerPhenotypeCreation();
 	}
 
 	@Test
-	public void testStringPhenotypeCreation() {
+	public void testStringPhenotypeCreation() throws InstantiationException, IllegalAccessException {
 		testAbstractStringPhenotypeCreation();
 		testRestrictedStringPhenotypeCreation();
 	}
 
 	@Test
-	public void testDatePhenotypeCreation() throws ParseException {
+	public void testDatePhenotypeCreation() throws ParseException, InstantiationException, IllegalAccessException {
 		testAbstractDatePhenotypeCreation();
 		testRestrictedDatePhenotypeCreation();
 	}
 
 	@Test
-	public void testBooleanPhenotypeCreation() {
+	public void testBooleanPhenotypeCreation() throws InstantiationException, IllegalAccessException {
 		testAbstractBooleanPhenotypeCreation();
 		testRestrictedBooleanPhenotypeCreation();
 	}
 
 	@Test
-	public void testCompositeBooleanPhenotypeCreation() {
+	public void testCompositeBooleanPhenotypeCreation() throws InstantiationException, IllegalAccessException {
 		testAbstractCompositeBooleanPhenotypeCreation();
 		testRestrictedCompositeBooleanPhenotypeCreation();
 	}
 
 	@Test
-	public void testCalculationPhenotypeCreation() {
+	public void testCalculationPhenotypeCreation() throws InstantiationException, IllegalAccessException {
 		testAbstractCalculationPhenotypeCreation();
 		testRestrictedCalculationPhenotypeCreation();
 	}
@@ -122,7 +122,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	 * Tests for abstract phenotypes
 	 *******************************/
 
-	private void testAbstractIntegerPhenotypeCreation() {
+	private void testAbstractIntegerPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title  = "Abstract_Integer_Phenotype_1";
 		String title2 = title + "_title2";
 
@@ -175,7 +175,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractStringPhenotypeCreation() {
+	private void testAbstractStringPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Abstract_String_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -216,7 +216,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractDatePhenotypeCreation() {
+	private void testAbstractDatePhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Abstract_Date_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -257,7 +257,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractBooleanPhenotypeCreation() {
+	private void testAbstractBooleanPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Abstract_Boolean_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -298,7 +298,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractCompositeBooleanPhenotypeCreation() {
+	private void testAbstractCompositeBooleanPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Abstract_Composite_Boolean_Phenotype_1";
 
 
@@ -339,7 +339,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testAbstractCalculationPhenotypeCreation() {
+	private void testAbstractCalculationPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Abstract_Calculation_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -390,7 +390,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 	 * Tests for restricted phenotypes
 	 *********************************/
 
-	private void testRestrictedIntegerPhenotypeCreation() {
+	private void testRestrictedIntegerPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Restricted_Integer_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -437,7 +437,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedStringPhenotypeCreation() {
+	private void testRestrictedStringPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Restricted_String_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -481,7 +481,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedDatePhenotypeCreation() throws ParseException {
+	private void testRestrictedDatePhenotypeCreation() throws ParseException, IllegalAccessException, InstantiationException {
 		String title = "Restricted_Date_Phenotype_1";
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
@@ -527,7 +527,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedBooleanPhenotypeCreation() {
+	private void testRestrictedBooleanPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Restricted_Boolean_Phenotype_1";
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
 			setIsPhenotype(true);
@@ -570,7 +570,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedCompositeBooleanPhenotypeCreation() {
+	private void testRestrictedCompositeBooleanPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Restricted_Composite_Boolean_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
@@ -615,7 +615,7 @@ public class CreatePhenotypeTest extends AbstractTest {
 		assertThat(actual).isEqualTo(expected);
 	}
 
-	private void testRestrictedCalculationPhenotypeCreation() {
+	private void testRestrictedCalculationPhenotypeCreation() throws IllegalAccessException, InstantiationException {
 		String title = "Restricted_Calculation_Phenotype_1";
 
 		PhenotypeFormData phenotype = new PhenotypeFormData() {{
