@@ -17,10 +17,26 @@
         <owlapi.version>5.1.8</owlapi.version>
         <hermit.version>1.4.3.517</hermit.version>
         <protege.version>3.5.1</protege.version>
-        <phenoman.version>0.3.1</phenoman.version>
+        <phenoman.version>0.3.3</phenoman.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>OWL2GraphML</id>
+            <url>https://maven.pkg.github.com/onto-med/OWL2GraphML</url>
+        </repository>
+        <repository>
+            <id>owlapi_utils</id>
+            <url>https://maven.pkg.github.com/ChristophB/owlapi_utils</url>
+        </repository>
+        <repository>
+            <id>phep-mvn</id>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>${env.CI_MAVEN_URL}</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <!-- Dropwizard -->
@@ -132,14 +148,14 @@
         </dependency>
 
         <dependency>
-            <groupId>OWL2GRAPHML_View</groupId>
-            <artifactId>OWL2GRAPHML_View</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>de.imise.ontomed</groupId>
+            <artifactId>owl2graphml</artifactId>
+            <version>1.1.0</version>
         </dependency>
 
         <dependency>
-            <groupId>org.smith</groupId>
-            <artifactId>phenoman</artifactId>
+            <groupId>care.smith.phep.phenoman</groupId>
+            <artifactId>phenoman-core</artifactId>
             <version>${phenoman.version}</version>
             <exclusions>
                 <exclusion>

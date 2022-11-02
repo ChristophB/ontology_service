@@ -2,7 +2,7 @@ package de.onto_med.ontology_service.views;
 
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import de.onto_med.ontology_service.manager.PhenotypeManager;
-import org.smith.phenoman.model.phenotype.top_level.Entity;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.Entity;
 
 import java.util.List;
 import java.util.Map;

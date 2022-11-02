@@ -1,11 +1,12 @@
 package de.onto_med.ontology_service.factory;
 
+import care.smith.phep.phenoman.core.model.function.Functions;
 import de.onto_med.ontology_service.data_model.PhenotypeFormData;
 import org.apache.commons.lang3.StringUtils;
-import org.smith.phenoman.man.PhenotypeManager;
-import org.smith.phenoman.math.Function;
-import org.smith.phenoman.model.phenotype.*;
-import org.smith.phenoman.model.phenotype.top_level.AbstractPhenotype;
+import care.smith.phep.phenoman.core.man.PhenotypeManager;
+import care.smith.phep.phenoman.core.model.function.Function;
+import care.smith.phep.phenoman.core.model.phenotype.*;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.AbstractPhenotype;
 
 import javax.activation.UnsupportedDataTypeException;
 import java.util.UUID;
@@ -74,7 +75,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 				break;
 			case "numeric":
 				Function function = null;
-				try { function = Function.valueOf(data.getAggregateFunction()); } catch (IllegalArgumentException | NullPointerException ignored) { }
+				try { function = Functions.getFunction(data.getAggregateFunction()); } catch (IllegalArgumentException | NullPointerException ignored) { }
 
 				phenotype = new AbstractSingleDecimalPhenotype(
 					data.getIdentifier(), data.getMainTitle(), data.getSuperCategories());
@@ -92,7 +93,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 		}
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
-		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
+		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.addUnit(data.getUcum());
 
 		return phenotype;
 	}
@@ -133,7 +134,7 @@ public class AbstractPhenotypeFactory extends PhenotypeFactory {
 		} else throw new IllegalArgumentException("Missing formula datatype");
 
 		data.getTitleObjects().forEach(phenotype::addTitle);
-		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.setUnit(data.getUcum());
+		if (StringUtils.isNoneBlank(data.getUcum())) phenotype.addUnit(data.getUcum());
 		phenotype.setMainResult(data.getIsMainResult());
 
 		return phenotype;

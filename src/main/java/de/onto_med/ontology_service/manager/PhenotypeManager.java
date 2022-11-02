@@ -14,16 +14,16 @@ import org.fhir.ucum.UcumException;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.smith.phenoman.exception.WrongPhenotypeTypeException;
-import org.smith.phenoman.model.category_tree.EntityTreeNode;
-import org.smith.phenoman.model.instance.CompositePhenotypeInstance;
-import org.smith.phenoman.model.instance.SinglePhenotypeInstance;
-import org.smith.phenoman.model.instance.value.BooleanValue;
-import org.smith.phenoman.model.instance.value.DateValue;
-import org.smith.phenoman.model.instance.value.DecimalValue;
-import org.smith.phenoman.model.instance.value.StringValue;
-import org.smith.phenoman.model.phenotype.top_level.*;
-import org.smith.phenoman.model.reasoner_result.ReasonerReport;
+import care.smith.phep.phenoman.core.exception.WrongPhenotypeTypeException;
+import care.smith.phep.phenoman.core.model.category_tree.EntityTreeNode;
+import care.smith.phep.phenoman.core.model.instance.CompositePhenotypeInstance;
+import care.smith.phep.phenoman.core.model.instance.SinglePhenotypeInstance;
+import care.smith.phep.phenoman.core.model.instance.value.BooleanValue;
+import care.smith.phep.phenoman.core.model.instance.value.DateValue;
+import care.smith.phep.phenoman.core.model.instance.value.DecimalValue;
+import care.smith.phep.phenoman.core.model.instance.value.StringValue;
+import care.smith.phep.phenoman.core.model.phenotype.top_level.*;
+import care.smith.phep.phenoman.core.model.reasoner_result.ReasonerReport;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
@@ -54,7 +54,7 @@ public class PhenotypeManager {
 	/**
 	 * The PhenoMan manager instance of a phenotype ontology.
 	 */
-	private org.smith.phenoman.man.PhenotypeManager manager;
+	private care.smith.phep.phenoman.core.man.PhenotypeManager manager;
 	private String                                phenotypePath;
 
 	/**
@@ -67,7 +67,7 @@ public class PhenotypeManager {
 	 */
 	public PhenotypeManager(String phenotypePath) throws IllegalAccessException, InstantiationException {
 		this.phenotypePath = phenotypePath;
-		manager = new org.smith.phenoman.man.PhenotypeManager(phenotypePath, false);
+		manager = new care.smith.phep.phenoman.core.man.PhenotypeManager(phenotypePath, false);
 		manager.write();
 	}
 
@@ -126,7 +126,7 @@ public class PhenotypeManager {
 	 * @return Top node of the cop.owl taxonomy.
 	 */
 	public TreeNode getTaxonomy(Boolean includePhenotypes) {
-		EntityTreeNode node     = manager.getEntityTree(includePhenotypes);
+		EntityTreeNode node     = manager.getEntityTreeWithPhenotypes(includePhenotypes);
 		TreeNode       treeNode = getTreeNode(node, includePhenotypes);
 		treeNode.setOpened(true);
 
@@ -461,7 +461,7 @@ public class PhenotypeManager {
 	 * @return List of phenotype IDs.
 	 */
 	public List<String> getList() {
-		return taxonomyAsList(manager.getEntityTree(true));
+		return taxonomyAsList(manager.getEntityTreeWithPhenotypes(true));
 	}
 
 	/**
@@ -485,7 +485,7 @@ public class PhenotypeManager {
 
 	public void importArtDecorDataSet(String categoryId, String dataSetId) throws WrongPhenotypeTypeException, URISyntaxException, JAXBException, IOException {
 		LOGGER.info(String.format("Importing Art-Decor data set %s into ontology...", dataSetId));
-		manager.addArtDecorDataSet(dataSetId);
+		manager.addArtDecorDataSet(dataSetId, "en");
 		LOGGER.info("Art-Decor data set import finished.");
 	}
 
